@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tesla — Цахилгаан машин</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navbar / 2 -->
+  <header class="navbar">
+    <div class="navbar__container">
+      <a class="navbar__logo logo" href="#" aria-label="Нүүр хуудас">
+        <img src="assets/logo.svg" width="70" height="36" alt="Tesla">
+      </a>
+
+      <nav class="navbar__links" id="nav-links" aria-label="Үндсэн цэс">
+        <a href="#">Зорчигч тээврийн микоравтобус</a>
+        <a href="#">Ачааны хүргэлтийн фургон</a>
+        <a href="#">Ачааны машин 1.5т</a>
+        <a href="#">Ачааны машин 1.5т Hybrid</a>
+        <a href="#">Хөргүүртэй ачааны машин</a>
+        <a href="#">Хөргүүртэй фургон</a>
+        <a href="#">Тусгай зориулатын машин</a>
+      </nav>
+
+      <div class="navbar__actions">
+        <a class="btn btn--primary btn--nav" href="#" aria-label="Туршилтын жолоодлого">
+          <span class="btn__label-long">Туршилтын жолоодлого</span>
+          <span class="btn__label-short">Турших</span>
+        </a>
+        <button class="navbar__toggle" type="button" aria-controls="nav-links" aria-expanded="false" aria-label="Цэс нээх">
+          <img src="assets/close.svg" width="24" height="24" alt="">
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Header / 30 -->
+    <section class="hero">
+      <img class="hero__bg" src="assets/hero.png" alt="">
+      <div class="hero__overlay"></div>
+      <div class="hero__content">
+        <div class="hero__text">
+          <h1 class="h1">Бензин хомсдол, Бензиний үнэ таньд хамаатай юу? Хуучинаа өгөөд Шинийг ав.</h1>
+          <p class="text-medium">Сарын бинзений мөнгөөрөө урьдчилгаагүй банкны хөнгөлөлтэй зээлээр ав.</p>
+        </div>
+        <div class="actions actions--gap-16">
+          <a class="btn btn--primary" href="#">Холбогдох</a>
+          <a class="btn btn--secondary" href="#">Дэлгэрэнгүй</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layout / 652 -->
+    <section class="section">
+      <div class="container">
+        <div class="poll-card">
+          <div class="poll-card__content">
+            <div class="poll-card__top">
+              <div class="section-title section-title--tagline">
+                <p class="tagline">share</p>
+                <div class="section-title__text">
+                  <h2 class="h2">Монголын хүйтэн цахилгаан машин хэр бэ?</h2>
+                  <p class="text-medium">Та юу гэж бодож байгаагаа үлдүүнэ үү</p>
+                </div>
+              </div>
+              <div class="poll-card__results">
+                <div class="poll-card__result">
+                  <p class="h2">50%</p>
+                  <p class="text-regular">Асуудалгүй</p>
+                </div>
+                <div class="poll-card__result">
+                  <p class="h2">50%</p>
+                  <p class="text-regular">Сайн биш</p>
+                </div>
+              </div>
+            </div>
+            <div class="actions actions--gap-24">
+              <button class="btn btn--secondary" type="button">Асуудалгүй</button>
+              <button class="btn btn--link" type="button">
+                Сайн биш
+                <img src="assets/chevron-right.svg" width="24" height="24" alt="">
+              </button>
+            </div>
+          </div>
+          <button class="poll-card__media" type="button" aria-label="Видео тоглуулах">
+            <img class="poll-card__image" src="assets/lightbox.png" alt="">
+            <span class="poll-card__overlay"></span>
+            <img class="poll-card__play" src="assets/play-button.svg" width="64" height="64" alt="">
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonial / 66 — Vehicle models -->
+    <section class="section">
+      <div class="container container--gap-80">
+        <div class="section-title section-title--narrow">
+          <h2 class="h2">Vehicle models</h2>
+          <p class="text-medium">Real experiences from Model 3 drivers across the country</p>
+        </div>
+        <div class="slider" data-slider>
+          <div class="slider__track" data-slider-track>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-ec75.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">Зорчигч тээврийн цахилгаан автомашин</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">EC75</p>
+                    <p>Урьчилгаа 10%</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-r5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">Ачааны фургон</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">R5</p>
+                    <p>Урьчилгаа 10%</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">Ачааны машин1,5т</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">C5</p>
+                    <p>Урьчилгаа 10%</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">"Full Self-Driving supervised changed my commute. It is calm, precise, and I arrive fresh."</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">James Chen</p>
+                    <p>Engineer, Austin</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">"The lease made it easy. I pay less than I did for gas and the car is better."</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">Emily Davis</p>
+                    <p>Nurse, Miami</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">"I have put 30,000 miles on my Model 3. The battery still holds strong and the drive is true."</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">Michael Brown</p>
+                    <p>Salesman, Chicago</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="slider__controls">
+            <img src="assets/slider-dots.svg" width="88" height="8" alt="">
+            <div class="slider__buttons">
+              <button class="slider__arrow" type="button" data-slider-prev aria-label="Өмнөх">
+                <img src="assets/arrow-back.svg" width="24" height="24" alt="">
+              </button>
+              <button class="slider__arrow" type="button" data-slider-next aria-label="Дараах">
+                <img src="assets/arrow-forward.svg" width="24" height="24" alt="">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA / 1 — Promotion -->
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <div class="cta__column">
+            <div class="section-title__text">
+              <h2 class="h2">Одоогийн урамшуулал</h2>
+              <p class="text-medium">Урамшуулал, хуучин машинаа өгөх, банкны зээлийн мэдээлэлээ эндээс аваарай</p>
+            </div>
+            <div class="actions">
+              <a class="btn btn--primary" href="#">Дэлгэрэнгүй үзэх</a>
+            </div>
+          </div>
+          <img class="cta__image cta__image--4x3" src="assets/promo.png" alt="Урамшуулал">
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA / 1 — Order models -->
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <div class="cta__column">
+            <div class="section-title__text">
+              <h2 class="h2">Захиалгаар ирэх боломжтой загварууд</h2>
+              <p class="text-medium">Дэлгэрэнгүй мэдээлэлийг аваарай</p>
+            </div>
+            <div class="actions actions--gap-16">
+              <a class="btn btn--primary" href="#">Шинэ</a>
+              <a class="btn btn--secondary" href="#">Хуучин</a>
+            </div>
+          </div>
+          <img class="cta__image cta__image--square" src="assets/order-models.png" alt="Захиалгаар ирэх загварууд">
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / 29 — Location -->
+    <section class="section">
+      <div class="container container--gap-80">
+        <div class="section-title section-title--narrow">
+          <h2 class="h2">Байршил</h2>
+        </div>
+        <div class="location">
+          <div class="location__menu">
+            <div class="location__tab">
+              <p class="h5">Хайлт</p>
+            </div>
+            <div class="location__tab location__tab--detail">
+              <div class="location__tab-text">
+                <p class="h5">searching ...</p>
+                <p class="text-regular">123 Sample St, New York NY 10000 USA</p>
+              </div>
+              <a class="text-regular text-semibold" href="#">View map</a>
+            </div>
+          </div>
+          <div class="location__map"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats / 14 — Chargers -->
+    <section class="section">
+      <div class="container">
+        <div class="stats">
+          <div class="stats__intro">
+            <div class="section-title__text">
+              <h2 class="h2">Цэнэглэгчийн байршил</h2>
+              <p class="text-medium">Таны ойролцоох цэнэглэх газрууд</p>
+            </div>
+            <div class="actions actions--gap-24">
+              <a class="btn btn--secondary" href="#">Газрын зураг</a>
+              <a class="btn btn--link" href="#">
+                Дэлгэрэнгүй
+                <img src="assets/chevron-right.svg" width="24" height="24" alt="">
+              </a>
+            </div>
+          </div>
+          <div class="stats__list">
+            <div class="stat">
+              <p class="stat__number">50</p>
+              <p class="h6">Хурдан цэнэглэгч</p>
+            </div>
+            <div class="stat">
+              <p class="stat__number">5</p>
+              <p class="h6">Энгийн цэнэглэгч</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonial / 66 — Other products -->
+    <section class="section">
+      <div class="container container--gap-80">
+        <div class="section-title section-title--narrow">
+          <h2 class="h2">Other products</h2>
+          <p class="text-medium">Real experiences from Model 3 drivers across the country</p>
+        </div>
+        <div class="slider" data-slider>
+          <div class="slider__track" data-slider-track>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/product-solar.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">Long Wheelbase Midsize SUV</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">Solar Panels</p>
+                    <p>Power Your Home and Reduce Your Electricity Bill</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/product-powerwall.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">Sport Sedan</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">Powerwall</p>
+                    <p>Keep Your Lights On During Outage</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">Megapack</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">Megapack</p>
+                    <p>Massive Batteries for Massive Energy Suppor</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">"Full Self-Driving supervised changed my commute. It is calm, precise, and I arrive fresh."</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">James Chen</p>
+                    <p>Engineer, Austin</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">"The lease made it easy. I pay less than I did for gas and the car is better."</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">Emily Davis</p>
+                    <p>Nurse, Miami</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+            <article class="vcard">
+              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <div class="vcard__content">
+                <p class="vcard__title">"I have put 30,000 miles on my Model 3. The battery still holds strong and the drive is true."</p>
+                <div class="vcard__meta">
+                  <div class="vcard__info">
+                    <p class="vcard__name">Michael Brown</p>
+                    <p>Salesman, Chicago</p>
+                  </div>
+                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="slider__controls">
+            <img src="assets/slider-dots.svg" width="88" height="8" alt="">
+            <div class="slider__buttons">
+              <button class="slider__arrow" type="button" data-slider-prev aria-label="Өмнөх">
+                <img src="assets/arrow-back.svg" width="24" height="24" alt="">
+              </button>
+              <button class="slider__arrow" type="button" data-slider-next aria-label="Дараах">
+                <img src="assets/arrow-forward.svg" width="24" height="24" alt="">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery / 20 -->
+    <section class="section">
+      <div class="container container--gap-80">
+        <div class="section-title section-title--narrow">
+          <h2 class="h2">Зургийн цомог</h2>
+          <p class="text-medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div class="slider slider--gallery" data-slider>
+          <div class="slider__track" data-slider-track>
+            <img class="gallery__item" src="assets/gallery-1.png" alt="Зураг 1">
+            <img class="gallery__item" src="assets/gallery-2.png" alt="Зураг 2">
+            <img class="gallery__item" src="assets/gallery-3.png" alt="Зураг 3">
+          </div>
+          <div class="slider__controls">
+            <img src="assets/slider-dots-3.svg" width="40" height="8" alt="">
+            <div class="slider__buttons">
+              <button class="slider__arrow" type="button" data-slider-prev aria-label="Өмнөх">
+                <img src="assets/arrow-back.svg" width="24" height="24" alt="">
+              </button>
+              <button class="slider__arrow" type="button" data-slider-next aria-label="Дараах">
+                <img src="assets/arrow-forward.svg" width="24" height="24" alt="">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer / 7 -->
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__top">
+        <a class="logo" href="#" aria-label="Нүүр хуудас">
+          <img src="assets/logo.svg" width="70" height="36" alt="Tesla">
+        </a>
+        <nav class="footer__links" aria-label="Footer цэс">
+          <a href="#">Зорчигч тээврийн микоравтобус</a>
+          <a href="#">Ачааны хүргэлтийн фургон</a>
+          <a href="#">Ачааны машин 1.5т</a>
+          <a href="#">Ачааны машин 1.5т Hybrid</a>
+          <a href="#">Хөргүүртэй ачааны машин</a>
+          <a href="#">Тусгай зориулатын машин</a>
+        </nav>
+      </div>
+      <div class="footer__credits">
+        <img class="footer__divider" src="assets/divider.svg" width="1280" height="1" alt="">
+        <div class="footer__row">
+          <p class="footer__copy">Tesla © 2026</p>
+          <div class="footer__legal">
+            <a href="#">Нууцлал</a>
+            <a href="#">Үйлчилгээний нөхцөл</a>
+            <a href="#">Холбоо бариих</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
