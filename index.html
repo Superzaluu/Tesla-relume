@@ -15,7 +15,7 @@
   <header class="navbar">
     <div class="navbar__container">
       <a class="navbar__logo logo" href="#" aria-label="Нүүр хуудас">
-        <img src="assets/logo.svg" width="70" height="36" alt="Tesla">
+        <img src="assets/brand-logo.png" width="57" height="36" alt="Tesla">
       </a>
 
       <nav class="navbar__links" id="nav-links" aria-label="Үндсэн цэс">
@@ -52,7 +52,7 @@
         </div>
         <div class="actions actions--gap-16">
           <a class="btn btn--primary" href="#">Холбогдох</a>
-          <a class="btn btn--secondary" href="#">Дэлгэрэнгүй</a>
+          <a class="btn btn--on-dark" href="#">Дэлгэрэнгүй</a>
         </div>
       </div>
     </section>
@@ -263,8 +263,8 @@
     </section>
 
     <!-- Stats / 14 — Chargers -->
-    <section class="section">
-      <div class="container">
+    <section class="section" id="chargers">
+      <div class="container container--gap-80">
         <div class="stats">
           <div class="stats__intro">
             <div class="section-title__text">
@@ -272,8 +272,8 @@
               <p class="text-medium">Таны ойролцоох цэнэглэх газрууд</p>
             </div>
             <div class="actions actions--gap-24">
-              <a class="btn btn--secondary" href="#">Газрын зураг</a>
-              <a class="btn btn--link" href="#">
+              <a class="btn btn--secondary" href="#charger-map">Газрын зураг</a>
+              <a class="btn btn--link" href="https://www.google.com/maps/search/EV+charging+station+Ulaanbaatar" target="_blank" rel="noopener">
                 Дэлгэрэнгүй
                 <img src="assets/chevron-right.svg" width="24" height="24" alt="">
               </a>
@@ -289,6 +289,14 @@
               <p class="h6">Энгийн цэнэглэгч</p>
             </div>
           </div>
+        </div>
+        <div class="charger-map" id="charger-map">
+          <iframe
+            src="https://www.google.com/maps?q=EV+charging+station,+Ulaanbaatar&z=12&output=embed"
+            title="Улаанбаатар дахь цэнэглэх станцуудын газрын зураг"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen></iframe>
         </div>
       </div>
     </section>
@@ -430,7 +438,7 @@
     <div class="footer__container">
       <div class="footer__top">
         <a class="logo" href="#" aria-label="Нүүр хуудас">
-          <img src="assets/logo.svg" width="70" height="36" alt="Tesla">
+          <img src="assets/brand-logo.png" width="57" height="36" alt="Tesla">
         </a>
         <nav class="footer__links" aria-label="Footer цэс">
           <a href="#">Зорчигч тээврийн микоравтобус</a>

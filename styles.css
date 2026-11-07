@@ -44,7 +44,7 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -154,6 +154,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   color: var(--color-text);
 }
 .btn--secondary:hover { background: rgba(0, 0, 0, 0.1); }
+/* Secondary button for dark/photo backgrounds (hero) */
+.btn--on-dark {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: var(--color-white);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.btn--on-dark:hover { background: rgba(255, 255, 255, 0.25); }
 .btn--link {
   padding: 0;
   border: 0;
@@ -443,6 +452,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding-left: 32px;
   border-left: 1px solid var(--color-border);
 }
+.charger-map {
+  width: 100%;
+  height: 520px;
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  background: var(--color-foreground);
+  scroll-margin-top: 24px;
+}
+.charger-map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
 .stat__number {
   font-family: var(--font-alt);
   font-size: var(--stat-number);
@@ -585,6 +608,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .stats { flex-direction: column; align-items: stretch; gap: 48px; }
   .stats__intro { flex: none; gap: 24px; }
   .stats__list { gap: 32px; }
+  .charger-map { height: 360px; }
 
   .footer__container { gap: 48px; }
   .footer__links {
