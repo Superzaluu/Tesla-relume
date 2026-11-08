@@ -1,40 +1,46 @@
 /* ==========================================================================
-   Design tokens (Figma: Relume — Tesla Sergelen)
+   Design tokens — layout and look inspired by the tesla.com homepage:
+   full-screen photo hero, transparent nav, quiet type, 4px buttons,
+   rounded photo cards, minimal footer.
    Desktop values by default, mobile overrides in the media query below.
    ========================================================================== */
 :root {
   /* Color */
   --color-background: #ffffff;
-  --color-foreground: #f2f2f2;
-  --color-text: #000000;
-  --color-border: rgba(0, 0, 0, 0.15);
-  --color-primary: #3088f0;          /* color/dodger-blue */
+  --color-surface: #f4f4f4;
+  --color-surface-hover: #e9e9e9;
+  --color-text: #171a20;
+  --color-text-secondary: #393c41;
+  --color-text-muted: #5c5e62;
+  --color-border: #d0d1d2;
+  --color-primary: #3e6ae1;
+  --color-primary-hover: #3457b1;
   --color-white: #ffffff;
-  --color-neutral-5: rgba(0, 0, 0, 0.05);
-  --color-overlay: rgba(0, 0, 0, 0.4);
+  --color-hero-sky: #255681;      /* top row of hero-ec75-road.jpg */
 
   /* Radius */
-  --radius-large: 8px;
+  --radius-button: 4px;
+  --radius-card: 12px;
 
   /* Type scale */
-  --heading-1: 72px;
-  --heading-2: 52px;
-  --heading-5: 28px;
-  --heading-6: 22px;
-  --text-medium: 18px;
-  --text-regular: 16px;
+  --heading-1: 40px;
+  --heading-2: 36px;
+  --heading-5: 24px;
+  --heading-6: 17px;
+  --text-medium: 17px;
+  --text-regular: 15px;
   --text-small: 14px;
-  --stat-number: 80px;
+  --text-tiny: 12px;
+  --stat-number: 56px;
 
   /* Spacing */
-  --padding-global: 64px;
-  --padding-section-large: 112px;
-  --padding-section-medium: 80px;
-  --gap-section: 80px;              /* gap between section title and content */
-  --navbar-height: 72px;
+  --padding-global: 48px;
+  --padding-section-large: 96px;
+  --padding-section-medium: 56px;
+  --gap-section: 48px;
+  --navbar-height: 56px;
 
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-alt: "Roboto", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 /* ==========================================================================
@@ -53,43 +59,51 @@ body {
   font-family: var(--font-body);
   font-size: var(--text-regular);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-h1, h2, p { margin: 0; }
-img { display: block; max-width: 100%; }
+h1, h2, h3, p { margin: 0; }
+img, video { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 
 /* ==========================================================================
    Typography
    ========================================================================== */
 .h1 {
   font-size: var(--heading-1);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
 .h2 {
   font-size: var(--heading-2);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
 .h5 {
   font-size: var(--heading-5);
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+  font-weight: 500;
+  line-height: 1.3;
 }
 .h6 {
   font-size: var(--heading-6);
+  font-weight: 500;
   line-height: 1.4;
-  letter-spacing: -0.01em;
+  color: var(--color-text-secondary);
 }
-.text-medium  { font-size: var(--text-medium); line-height: 1.5; }
+.text-medium  { font-size: var(--text-medium); line-height: 1.5; color: var(--color-text-secondary); }
 .text-regular { font-size: var(--text-regular); line-height: 1.5; }
 .text-semibold { font-weight: 600; }
-.tagline { font-size: 16px; font-weight: 600; line-height: 1.5; }
+.tagline {
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
 
 /* ==========================================================================
    Layout helpers
@@ -104,27 +118,25 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1376px;
   margin: 0 auto;
 }
 .container--gap-80 { gap: var(--gap-section); }
 
 .section-title { display: flex; flex-direction: column; width: 100%; }
-.section-title--narrow { max-width: 768px; gap: 24px; }
-.section-title--tagline { gap: 16px; }
-.section-title__text { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+.section-title--narrow { max-width: 768px; gap: 12px; }
+.section-title--tagline { gap: 8px; }
+.section-title__text { display: flex; flex-direction: column; gap: 12px; width: 100%; }
 
-.actions { display: flex; align-items: center; flex-wrap: wrap; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
 .actions--gap-16 { gap: 16px; }
 .actions--gap-24 { gap: 24px; }
 
 .logo {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 84px;
-  height: 36px;
   flex-shrink: 0;
+  height: 36px;
 }
 
 /* ==========================================================================
@@ -134,42 +146,43 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 24px;
-  border: 1px solid transparent;
-  font-size: var(--text-regular);
-  font-weight: 500;
-  line-height: 1.5;
-  white-space: nowrap;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
-}
-.btn--primary {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-white);
-}
-.btn--primary:hover { opacity: 0.9; }
-.btn--secondary {
-  background: var(--color-neutral-5);
-  color: var(--color-text);
-}
-.btn--secondary:hover { background: rgba(0, 0, 0, 0.1); }
-/* Secondary button for dark/photo backgrounds (hero) */
-.btn--on-dark {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.6);
-  color: var(--color-white);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-}
-.btn--on-dark:hover { background: rgba(255, 255, 255, 0.25); }
-.btn--link {
-  padding: 0;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 24px;
   border: 0;
-  color: var(--color-text);
+  border-radius: var(--radius-button);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color 0.33s ease, color 0.33s ease;
 }
-.btn--link:hover { text-decoration: underline; }
-.btn--nav { padding: 8px 20px; }
+.btn--primary { background: var(--color-primary); color: var(--color-white); }
+.btn--primary:hover { background: var(--color-primary-hover); }
+.btn--secondary { background: var(--color-surface); color: var(--color-text-secondary); }
+.btn--secondary:hover { background: var(--color-surface-hover); }
+/* Light button over photos (tesla.com "Learn More") */
+.btn--light,
+.btn--on-dark {
+  background: rgba(244, 244, 244, 0.85);
+  color: var(--color-text);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.btn--light:hover,
+.btn--on-dark:hover { background: #ffffff; }
+.btn--link {
+  min-height: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--color-text);
+  box-shadow: inset 0 -1px 0 currentColor;
+}
+.btn--link img { width: 18px; height: 18px; }
+.btn--link:hover { box-shadow: inset 0 -2px 0 currentColor; }
+.btn--wide { min-width: 240px; }
+.btn--nav { min-height: 32px; padding: 6px 16px; }
 .btn__label-short { display: none; }
 
 @media (max-width: 479px) {
@@ -178,61 +191,86 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 
 /* ==========================================================================
-   Navbar / 2
+   Navbar — fixed, transparent over the hero, solid once the page scrolls
    ========================================================================== */
 .navbar {
-  position: relative;
-  z-index: 10;
-  background: var(--color-background);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
   padding: 0 var(--padding-global);
+  color: var(--color-white);
+  background: transparent;
+  transition: background-color 0.33s ease, color 0.33s ease, box-shadow 0.33s ease;
+}
+.navbar.is-solid {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 .navbar__container {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   min-height: var(--navbar-height);
+  max-width: 1376px;
+  margin: 0 auto;
 }
 .navbar__logo { margin-right: auto; }
+.navbar__logo img { width: 52px; height: auto; }
 .navbar__links {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 2px;
 }
 .navbar__links a {
-  font-size: var(--text-regular);
+  max-width: 150px;
+  padding: 4px 10px;
+  border-radius: var(--radius-button);
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.25;
   text-align: center;
+  transition: background-color 0.33s ease;
 }
-.navbar__links a:hover { text-decoration: underline; }
+.navbar__links a:hover { background: rgba(255, 255, 255, 0.18); }
+.navbar.is-solid .navbar__links a:hover { background: rgba(0, 0, 0, 0.05); }
+.navbar__logo { flex-basis: 0; flex-grow: 1; min-width: 52px; }
 .navbar__actions {
   display: flex;
+  flex-basis: 0;
+  flex-grow: 1;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  flex-shrink: 0;
 }
 .navbar__toggle {
   display: none;
-  width: 48px;
-  height: 48px;
-  align-items: center;
-  justify-content: center;
+  min-height: 32px;
+  padding: 4px 14px;
+  border-radius: var(--radius-button);
+  background: rgba(255, 255, 255, 0.2);
+  font-size: var(--text-small);
+  font-weight: 500;
+  transition: background-color 0.33s ease;
 }
+.navbar.is-solid .navbar__toggle { background: rgba(0, 0, 0, 0.05); }
 
 /* ==========================================================================
-   Header / 30 (Hero)
+   Hero — full-screen EC75 road photo, copy and buttons in the sky above it
    ========================================================================== */
 .hero {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  /* 2:1 keeps the whole vehicle in frame (only the white margin above/below
-     the van in model-ec75.png is cropped) */
-  aspect-ratio: 2 / 1;
-  padding: 48px var(--padding-global);
+  height: 100vh;
+  height: 100svh;
+  min-height: 640px;
   overflow: hidden;
-  background: #0d1218;
+  background: var(--color-hero-sky);
+  color: var(--color-white);
 }
 .hero__bg {
   position: absolute;
@@ -241,55 +279,68 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   height: 100%;
   max-width: none;
   object-fit: cover;
+  object-position: 50% 100%;
 }
-.hero__overlay { position: absolute; inset: 0; background: var(--color-overlay); }
+/* light shade at the top keeps the nav and headline legible on the sky */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10, 30, 55, 0.35) 0%, rgba(10, 30, 55, 0) 45%);
+  pointer-events: none;
+}
 .hero__content {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 12px;
   width: 100%;
-  max-width: 768px;
-}
-.hero__text {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  color: var(--color-white);
+  max-width: 920px;
+  padding: calc(var(--navbar-height) + 6vh) var(--padding-global) 0;
   text-align: center;
 }
-.hero .actions { justify-content: center; }
+.hero__eyebrow {
+  font-size: var(--text-small);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+.hero__subtitle { font-size: var(--text-medium); opacity: 0.92; }
+.hero__actions { justify-content: center; margin-top: 16px; }
 
-/* Below 1280px the photo gets too short to hold the text on top of it:
-   show the full photo first, then the text on a dark panel underneath. */
-@media (max-width: 1279px) {
+/* Narrow or portrait screens: the van would be cropped by a full-screen
+   cover image, so stack the copy on the sky colour and the photo below it. */
+@media (max-width: 991px), (max-aspect-ratio: 6/5) {
   .hero {
-    flex-direction: column;
-    aspect-ratio: auto;
-    padding: 0;
+    height: auto;
+    min-height: 0;
   }
+  .hero::after { display: none; }
   .hero__bg {
     position: static;
+    order: 2;
     height: auto;
-    aspect-ratio: 2 / 1;
-    object-fit: cover;
+    aspect-ratio: 4 / 3;
+    object-position: 55% 100%;   /* van sits slightly right of the photo centre */
   }
-  .hero__overlay { display: none; }
-  .hero__content {
-    max-width: calc(768px + 2 * var(--padding-global));
-    padding: 48px var(--padding-global) 64px;
-  }
+  .hero__content { padding: calc(var(--navbar-height) + 40px) var(--padding-global) 8px; }
+}
+@media (max-width: 599px) {
+  .hero__bg { aspect-ratio: 1 / 1; }
+  .hero__actions { width: 100%; flex-direction: column; align-items: stretch; gap: 12px; }
+  .hero__actions .btn { min-width: 0; width: 100%; }
 }
 
 /* ==========================================================================
-   Layout / 652 (Poll card)
+   Layout / 652 (Poll card + cold-test video)
    ========================================================================== */
 .poll-card {
   display: flex;
-  height: 640px;
-  background: var(--color-foreground);
-  border-radius: var(--radius-large);
+  min-height: 560px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
   overflow: hidden;
 }
 .poll-card__content {
@@ -299,85 +350,101 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   flex-direction: column;
   justify-content: center;
   gap: 32px;
-  padding: 48px;
+  padding: 56px;
 }
 .poll-card__top { display: flex; flex-direction: column; gap: 32px; }
-.poll-card__results { display: flex; gap: 24px; padding: 8px 0; }
-.poll-card__result { flex: 1 1 0; display: flex; flex-direction: column; gap: 8px; }
+.poll-card__results { display: flex; gap: 24px; }
+.poll-card__result {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 16px;
+  border-left: 2px solid var(--color-border);
+}
+.poll-card__result .text-regular { color: var(--color-text-muted); }
+.poll-card .btn--secondary { background: var(--color-background); }
+.poll-card .btn--secondary:hover { background: var(--color-surface-hover); }
 .poll-card__media {
   position: relative;
-  flex: 1 1 0;
+  flex: 1.2 1 0;
   min-width: 0;
-  border-radius: var(--radius-large);
   overflow: hidden;
+  background: #000;
 }
-.poll-card__image {
+.poll-card__image,
+.poll-card__video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.poll-card__overlay { position: absolute; inset: 0; background: var(--color-overlay); }
+.poll-card__video { object-fit: contain; }
+.poll-card__image { transition: transform 0.6s ease; }
+.poll-card__media:hover .poll-card__image { transform: scale(1.03); }
+.poll-card__overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.25); }
 .poll-card__play {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: transform 0.15s ease;
+  transition: transform 0.2s ease;
 }
 .poll-card__media:hover .poll-card__play { transform: translate(-50%, -50%) scale(1.08); }
 
 /* ==========================================================================
-   Slider (Testimonial / 66, Gallery / 20)
+   Slider (vehicle cards, products, gallery)
    ========================================================================== */
-.slider { display: flex; flex-direction: column; gap: 32px; width: 100%; }
-.slider--gallery { gap: 48px; }
+.slider { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+.slider--gallery { gap: 24px; }
 .slider__track {
   display: flex;
-  gap: 32px;
+  gap: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;
-  /* Let cards bleed to the viewport edge like in the design */
+  /* Let cards bleed to the viewport edge */
   margin-right: calc(-1 * var(--padding-global));
   padding-right: var(--padding-global);
 }
 .slider__track::-webkit-scrollbar { display: none; }
 .slider__track > * { scroll-snap-align: start; flex-shrink: 0; }
-.slider--gallery .slider__track { margin-right: 0; padding-right: 0; }
 
 .slider__controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.slider__buttons { display: flex; gap: 16px; }
+.slider__buttons { display: flex; gap: 8px; }
 .slider__arrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
-  background: var(--color-foreground);
-  border: 1px solid var(--color-background);
-  transition: background-color 0.15s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  transition: background-color 0.33s ease;
 }
-.slider__arrow:hover { background: #e6e6e6; }
-.slider__arrow:disabled { opacity: 0.4; cursor: default; }
+.slider__arrow img { width: 20px; height: 20px; }
+.slider__arrow:hover { background: var(--color-surface-hover); }
+.slider__arrow:disabled { opacity: 0.35; cursor: default; }
 
-/* Vehicle / product card */
+/* Vehicle / product card — photo fills the card, copy sits on a bottom shade */
 .vcard {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  width: 608px;
-  height: 560px;
+  width: 656px;
+  height: 520px;
   padding: 32px;
-  border-radius: var(--radius-large);
+  border-radius: var(--radius-card);
   overflow: hidden;
   color: var(--color-white);
+  background: #2a2d33;
 }
 .vcard__bg {
   position: absolute;
@@ -385,104 +452,131 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.6s ease;
 }
+.vcard:hover .vcard__bg { transform: scale(1.03); }
 .vcard::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: var(--color-overlay);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 45%, rgba(0, 0, 0, 0) 70%);
 }
 .vcard__content {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
-.vcard__title { font-family: var(--font-alt); font-size: 18px; line-height: 1.5; }
+.vcard__title { font-size: var(--text-regular); line-height: 1.5; opacity: 0.92; }
 .vcard__meta { display: flex; align-items: flex-end; gap: 24px; }
 .vcard__info {
   flex: 1 1 0;
   min-width: 0;
-  font-size: var(--text-regular);
+  font-size: var(--text-small);
   line-height: 1.5;
 }
-.vcard__name { font-weight: 600; }
-.vcard__logo { width: 120px; height: 48px; object-fit: cover; flex-shrink: 0; }
+.vcard__name { font-size: 18px; font-weight: 500; }
+.vcard__logo {
+  width: 96px;
+  height: 38px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: var(--radius-button);
+}
+
+/* Model cards (tesla.com style): name at the top, buttons at the bottom,
+   vehicle left clear in the middle */
+.vcard--model::before {
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 38%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 25%);
+}
+.vcard--model .vcard__content { height: 100%; justify-content: space-between; }
+.vcard__heading { display: flex; flex-direction: column; gap: 2px; }
+.vcard__model { font-size: 32px; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+.vcard__note { font-size: var(--text-small); opacity: 0.92; }
+.vcard__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.vcard__actions .btn { min-width: 160px; }
 
 /* Gallery */
 .gallery__item {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: var(--radius-large);
+  border-radius: var(--radius-card);
 }
 
 /* ==========================================================================
    CTA / 1
    ========================================================================== */
-.cta { display: flex; align-items: center; gap: 80px; }
+.cta { display: flex; align-items: center; gap: 72px; }
 .cta__column {
   flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 28px;
 }
 .cta__image {
-  flex: 1 1 0;
+  flex: 1.2 1 0;
   min-width: 0;
   object-fit: cover;
-  border-radius: var(--radius-large);
+  border-radius: var(--radius-card);
 }
-.cta__image--4x3 { aspect-ratio: 600 / 450; }
+.cta__image--4x3 { aspect-ratio: 4 / 3; }
 .cta__image--square { aspect-ratio: 1 / 1; }
 
 /* ==========================================================================
    Contact / 29 (Location)
    ========================================================================== */
-.location { display: flex; align-items: stretch; gap: 80px; }
+.location { display: flex; align-items: stretch; gap: 72px; }
 .location__menu {
   flex: 1 1 0;
   min-width: 0;
   max-width: 480px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 32px;
 }
-.location__tab { padding-left: 32px; }
-.location__tab--detail { display: flex; flex-direction: column; gap: 24px; }
-.location__tab-text { display: flex; flex-direction: column; gap: 16px; }
-.location__tab a:hover { text-decoration: underline; }
+.location__tab { padding-left: 24px; border-left: 2px solid var(--color-border); }
+.location__tab--detail { display: flex; flex-direction: column; gap: 16px; border-left-color: var(--color-text); }
+.location__tab-text { display: flex; flex-direction: column; gap: 8px; }
+.location__tab-text .text-regular { color: var(--color-text-muted); }
+.location__tab a { box-shadow: inset 0 -1px 0 currentColor; align-self: flex-start; }
 .location__map { flex: 0 1 720px; min-width: 0; }
 
 /* ==========================================================================
-   Stats / 14
+   Stats / 14 — chargers
    ========================================================================== */
-.stats { display: flex; align-items: center; gap: 80px; }
+.stats { display: flex; align-items: center; gap: 72px; }
 .stats__intro {
   flex: 0 1 616px;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 28px;
 }
-.stats__list { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 48px; }
+.stats__list { flex: 1 1 0; min-width: 0; display: flex; gap: 48px; }
 .stat {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-left: 32px;
-  border-left: 1px solid var(--color-border);
+  gap: 4px;
+}
+.stat__number {
+  font-size: var(--stat-number);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 .charger-map {
   width: 100%;
-  height: 520px;
-  border-radius: var(--radius-large);
+  height: 560px;
+  border-radius: var(--radius-card);
   overflow: hidden;
-  background: var(--color-foreground);
-  scroll-margin-top: 24px;
+  background: var(--color-surface);
+  scroll-margin-top: calc(var(--navbar-height) + 24px);
 }
 .charger-map iframe {
   display: block;
@@ -490,71 +584,63 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   height: 100%;
   border: 0;
 }
-.stat__number {
-  font-family: var(--font-alt);
-  font-size: var(--stat-number);
-  font-weight: 700;
-  line-height: 1.3;
-}
 
 /* ==========================================================================
-   Footer / 7
+   Footer — tesla.com style: logo, then one quiet centered row of links
    ========================================================================== */
 .footer {
   background: var(--color-background);
-  padding: var(--padding-section-medium) var(--padding-global);
+  padding: var(--padding-section-medium) var(--padding-global) 32px;
+  border-top: 1px solid #eeeeee;
 }
 .footer__container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 80px;
-  max-width: 1280px;
+  gap: 32px;
+  max-width: 1376px;
   margin: 0 auto;
 }
 .footer__top {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   width: 100%;
-  max-width: 480px;
 }
 .footer__links {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 32px;
-  font-size: var(--text-small);
-  font-weight: 600;
+  gap: 8px 24px;
+  font-size: var(--text-tiny);
+  font-weight: 500;
   line-height: 1.5;
+  color: var(--color-text-secondary);
 }
 .footer__links a { white-space: nowrap; }
-.footer__links a:hover { text-decoration: underline; }
-.footer__credits {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  width: 100%;
-}
-.footer__divider { width: 100%; height: 1px; max-width: none; }
+.footer__links a:hover,
+.footer__legal a:hover { color: var(--color-text); }
+.footer__credits { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.footer__divider { display: none; }
 .footer__row {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  font-size: var(--text-small);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+  font-size: var(--text-tiny);
   line-height: 1.5;
-  white-space: nowrap;
+  color: var(--color-text-muted);
 }
-.footer__legal { display: flex; gap: 24px; }
-.footer__legal a { text-decoration: underline; }
+.footer__legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; }
 
 /* ==========================================================================
    Navbar collapse — the seven links don't fit on one line below this width
    ========================================================================== */
-@media (max-width: 1199px) {
-  .navbar__toggle { display: flex; }
+@media (max-width: 1359px) {
+  .navbar__toggle { display: inline-flex; align-items: center; }
+  .navbar__logo,
+  .navbar__actions { flex-grow: 0; flex-basis: auto; }
   .navbar__links {
     position: absolute;
     top: 100%;
@@ -564,87 +650,94 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
+    max-height: calc(100vh - var(--navbar-height));
+    overflow-y: auto;
     padding: 8px var(--padding-global) 24px;
     background: var(--color-background);
-    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
   }
   .navbar__links.is-open { display: flex; }
-  .navbar__links a { padding: 12px 0; text-align: left; line-height: 1.5; }
+  .navbar__links a {
+    max-width: none;
+    padding: 12px 8px;
+    font-size: var(--text-regular);
+    text-align: left;
+  }
+  .navbar .navbar__links a:hover { background: var(--color-surface); }
 }
 
 /* ==========================================================================
-   Tablet & mobile — Figma "Home • Mobile" (375)
+   Tablet & mobile
    ========================================================================== */
 @media (max-width: 991px) {
   :root {
-    --heading-1: 44px;
-    --heading-2: 40px;
+    --heading-1: 30px;
+    --heading-2: 28px;
     --heading-5: 20px;
-    --heading-6: 18px;
-    --text-medium: 12px;   /* mobile subtitles use Text Regular (12px) */
-    --text-regular: 12px;
-    --text-small: 12px;
-    --stat-number: 56px;
+    --heading-6: 15px;
+    --text-medium: 15px;
+    --text-regular: 14px;
+    --text-small: 14px;
+    --stat-number: 44px;
 
     --padding-global: 20px;
-    --padding-section-large: 64px;
-    --padding-section-medium: 48px;
-    --gap-section: 48px;
-    --navbar-height: 64px;
+    --padding-section-large: 56px;
+    --padding-section-medium: 40px;
+    --gap-section: 32px;
+    --navbar-height: 56px;
   }
 
-  .navbar { padding: 0 12px 0 var(--padding-global); }
-  .navbar__container { gap: 16px; }
-  .btn--nav { padding: 4px 20px; }
+  .navbar__container { gap: 12px; }
 
-  .hero__content { gap: 24px; }
-  .hero__text { gap: 20px; }
-
-  .section-title--narrow,
-  .section-title__text { gap: 20px; }
-  .section-title--tagline { gap: 12px; }
-
-  .poll-card { flex-direction: column; height: auto; }
-  .poll-card__content { padding: 24px; gap: 24px; }
+  .poll-card { flex-direction: column; min-height: 0; }
+  .poll-card__content { padding: 28px 24px; gap: 24px; }
   .poll-card__top { gap: 24px; }
-  .poll-card__results { flex-direction: column; }
-  .poll-card__media { flex: none; height: 326px; }
+  .poll-card__media { flex: none; aspect-ratio: 16 / 10; }
 
-  .slider__track { gap: 24px; }
-  .slider--gallery { gap: 32px; }
-  .vcard { width: 300px; padding: 24px; }
-  .vcard__content { gap: 20px; }
+  .slider__track { gap: 16px; }
+  .vcard { width: min(86vw, 420px); height: 460px; padding: 24px; }
+  .vcard__content { gap: 16px; }
+  .vcard__model { font-size: 26px; }
   .vcard__meta { flex-direction: column; align-items: flex-start; gap: 16px; }
   .vcard__info { flex: none; width: 100%; }
-  .gallery__item { width: 93.6%; }
+  .vcard__actions .btn { flex: 1 1 0; min-width: 0; padding: 8px 12px; }
+  /* Narrow model cards would crop the vehicle: stack copy / full photo / buttons */
+  .vcard--model {
+    justify-content: flex-start;
+    gap: 16px;
+    padding: 20px 0;
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+  .vcard--model::before { display: none; }
+  .vcard--model .vcard__content { display: contents; }
+  .vcard--model .vcard__heading,
+  .vcard--model .vcard__actions { padding: 0 20px; }
+  .vcard--model .vcard__bg {
+    position: static;
+    order: 1;
+    height: auto;
+    aspect-ratio: 5 / 3;
+  }
+  .vcard--model .vcard__actions { order: 2; margin-top: auto; }
+  .vcard--model .vcard__actions .btn--light { background: var(--color-background); }
+  .gallery__item { width: 92%; }
 
-  .cta { flex-direction: column; align-items: stretch; gap: 48px; }
-  .cta__column { gap: 24px; }
+  .cta { flex-direction: column; align-items: stretch; gap: 32px; }
+  .cta__column { gap: 20px; }
   .cta__image { flex: none; width: 100%; }
 
-  .location { flex-direction: column; gap: 48px; }
+  .location { flex-direction: column; gap: 32px; }
   .location__menu { flex: none; width: 100%; }
-  .location__tab--detail { gap: 20px; }
-  .location__tab-text { gap: 12px; }
   .location__map { flex: none; width: 100%; height: 320px; }
 
-  .stats { flex-direction: column; align-items: stretch; gap: 48px; }
-  .stats__intro { flex: none; gap: 24px; }
+  .stats { flex-direction: column; align-items: stretch; gap: 32px; }
+  .stats__intro { flex: none; gap: 20px; }
   .stats__list { gap: 32px; }
-  .charger-map { height: 360px; }
+  .charger-map { height: 380px; }
 
-  .footer__container { gap: 48px; }
-  .footer__links {
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    text-align: center;
-  }
-  .footer__credits { gap: 24px; padding-bottom: 16px; }
-  .footer__row {
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 32px;
-  }
-  .footer__legal { flex-direction: column; align-items: center; gap: 16px; }
+  .footer__links { flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+  .footer__row { flex-direction: column; align-items: center; gap: 14px; }
+  .footer__legal { gap: 8px 20px; }
 }

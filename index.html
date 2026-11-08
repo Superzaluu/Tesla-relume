@@ -6,16 +6,16 @@
   <title>Tesla — Цахилгаан машин</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <!-- Navbar / 2 -->
-  <header class="navbar">
+  <header class="navbar" data-navbar>
     <div class="navbar__container">
       <a class="navbar__logo logo" href="#" aria-label="Нүүр хуудас">
-        <img src="assets/brand-logo.png" width="57" height="36" alt="Tesla">
+        <img src="assets/brand-logo-transparent.png" width="57" height="36" alt="Tesla">
       </a>
 
       <nav class="navbar__links" id="nav-links" aria-label="Үндсэн цэс">
@@ -33,9 +33,7 @@
           <span class="btn__label-long">Туршилтын жолоодлого</span>
           <span class="btn__label-short">Турших</span>
         </a>
-        <button class="navbar__toggle" type="button" aria-controls="nav-links" aria-expanded="false" aria-label="Цэс нээх">
-          <img src="assets/close.svg" width="24" height="24" alt="">
-        </button>
+        <button class="navbar__toggle" type="button" aria-controls="nav-links" aria-expanded="false">Цэс</button>
       </div>
     </div>
   </header>
@@ -43,18 +41,16 @@
   <main>
     <!-- Header / 30 -->
     <section class="hero">
-      <img class="hero__bg" src="assets/model-ec75.png" alt="">
-      <div class="hero__overlay"></div>
       <div class="hero__content">
-        <div class="hero__text">
-          <h1 class="h1">Бензин хомсдол, Бензиний үнэ таньд хамаатай юу? Хуучинаа өгөөд Шинийг ав.</h1>
-          <p class="text-medium">Сарын бинзений мөнгөөрөө урьдчилгаагүй банкны хөнгөлөлтэй зээлээр ав.</p>
-        </div>
-        <div class="actions actions--gap-16">
-          <a class="btn btn--primary" href="#">Холбогдох</a>
-          <a class="btn btn--on-dark" href="#">Дэлгэрэнгүй</a>
+        <p class="hero__eyebrow">EC75 · Цахилгаан фургон</p>
+        <h1 class="h1">Бензин хомсдол, Бензиний үнэ таньд хамаатай юу? Хуучинаа өгөөд Шинийг ав.</h1>
+        <p class="hero__subtitle">Сарын бинзений мөнгөөрөө урьдчилгаагүй банкны хөнгөлөлтэй зээлээр ав.</p>
+        <div class="actions hero__actions">
+          <a class="btn btn--primary btn--wide" href="#">Холбогдох</a>
+          <a class="btn btn--light btn--wide" href="#">Дэлгэрэнгүй</a>
         </div>
       </div>
+      <img class="hero__bg" src="assets/hero-ec75-road.jpg" width="1920" height="1028" alt="Зам дээр явж буй цэнхэр EC75 цахилгаан фургон" fetchpriority="high">
     </section>
 
     <!-- Layout / 652 -->
@@ -64,7 +60,7 @@
           <div class="poll-card__content">
             <div class="poll-card__top">
               <div class="section-title section-title--tagline">
-                <p class="tagline">share</p>
+                <p class="tagline">EC75 · −30°C хүйтний туршилт</p>
                 <div class="section-title__text">
                   <h2 class="h2">Монголын хүйтэн цахилгаан машин хэр бэ?</h2>
                   <p class="text-medium">Та юу гэж бодож байгаагаа үлдүүнэ үү</p>
@@ -89,8 +85,8 @@
               </button>
             </div>
           </div>
-          <button class="poll-card__media" type="button" aria-label="Видео тоглуулах">
-            <img class="poll-card__image" src="assets/lightbox.png" alt="">
+          <button class="poll-card__media" type="button" aria-label="EC75 −30°C хүйтний туршилтын видео тоглуулах" data-video="assets/ec75-cold-test.mp4">
+            <img class="poll-card__image" src="assets/ec75-cold-poster.jpg" alt="" loading="lazy">
             <span class="poll-card__overlay"></span>
             <img class="poll-card__play" src="assets/play-button.svg" width="64" height="64" alt="">
           </button>
@@ -107,47 +103,50 @@
         </div>
         <div class="slider" data-slider>
           <div class="slider__track" data-slider-track>
-            <article class="vcard">
-              <img class="vcard__bg" src="assets/model-ec75.png" alt="">
+            <article class="vcard vcard--model">
+              <img class="vcard__bg" src="assets/card-ec75.jpg" alt="EC75 зорчигч тээврийн цахилгаан фургон" loading="lazy">
               <div class="vcard__content">
-                <p class="vcard__title">Зорчигч тээврийн цахилгаан автомашин</p>
-                <div class="vcard__meta">
-                  <div class="vcard__info">
-                    <p class="vcard__name">EC75</p>
-                    <p>Урьчилгаа 10%</p>
-                  </div>
-                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
+                <div class="vcard__heading">
+                  <p class="vcard__title">Зорчигч тээврийн цахилгаан автомашин</p>
+                  <h3 class="vcard__model">EC75</h3>
+                  <p class="vcard__note">Урьчилгаа 10%</p>
+                </div>
+                <div class="vcard__actions">
+                  <a class="btn btn--primary" href="#">Захиалах</a>
+                  <a class="btn btn--light" href="#">Дэлгэрэнгүй</a>
+                </div>
+              </div>
+            </article>
+            <article class="vcard vcard--model">
+              <img class="vcard__bg" src="assets/card-r5.jpg" alt="R5 ачааны цахилгаан фургон" loading="lazy">
+              <div class="vcard__content">
+                <div class="vcard__heading">
+                  <p class="vcard__title">Ачааны фургон</p>
+                  <h3 class="vcard__model">R5</h3>
+                  <p class="vcard__note">Урьчилгаа 10%</p>
+                </div>
+                <div class="vcard__actions">
+                  <a class="btn btn--primary" href="#">Захиалах</a>
+                  <a class="btn btn--light" href="#">Дэлгэрэнгүй</a>
+                </div>
+              </div>
+            </article>
+            <article class="vcard vcard--model">
+              <img class="vcard__bg" src="assets/card-c5.jpg" alt="C5 1.5 тонны цахилгаан ачааны машин" loading="lazy">
+              <div class="vcard__content">
+                <div class="vcard__heading">
+                  <p class="vcard__title">Ачааны машин 1,5т</p>
+                  <h3 class="vcard__model">C5</h3>
+                  <p class="vcard__note">Урьчилгаа 10%</p>
+                </div>
+                <div class="vcard__actions">
+                  <a class="btn btn--primary" href="#">Захиалах</a>
+                  <a class="btn btn--light" href="#">Дэлгэрэнгүй</a>
                 </div>
               </div>
             </article>
             <article class="vcard">
-              <img class="vcard__bg" src="assets/model-r5.png" alt="">
-              <div class="vcard__content">
-                <p class="vcard__title">Ачааны фургон</p>
-                <div class="vcard__meta">
-                  <div class="vcard__info">
-                    <p class="vcard__name">R5</p>
-                    <p>Урьчилгаа 10%</p>
-                  </div>
-                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
-                </div>
-              </div>
-            </article>
-            <article class="vcard">
-              <img class="vcard__bg" src="assets/model-c5.png" alt="">
-              <div class="vcard__content">
-                <p class="vcard__title">Ачааны машин1,5т</p>
-                <div class="vcard__meta">
-                  <div class="vcard__info">
-                    <p class="vcard__name">C5</p>
-                    <p>Урьчилгаа 10%</p>
-                  </div>
-                  <img class="vcard__logo" src="assets/partner-logo.png" alt="">
-                </div>
-              </div>
-            </article>
-            <article class="vcard">
-              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <img class="vcard__bg" src="assets/scene-ec75-adas.jpg" alt="" loading="lazy">
               <div class="vcard__content">
                 <p class="vcard__title">"Full Self-Driving supervised changed my commute. It is calm, precise, and I arrive fresh."</p>
                 <div class="vcard__meta">
@@ -160,7 +159,7 @@
               </div>
             </article>
             <article class="vcard">
-              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <img class="vcard__bg" src="assets/scene-r5-night.jpg" alt="" loading="lazy">
               <div class="vcard__content">
                 <p class="vcard__title">"The lease made it easy. I pay less than I did for gas and the car is better."</p>
                 <div class="vcard__meta">
@@ -173,7 +172,7 @@
               </div>
             </article>
             <article class="vcard">
-              <img class="vcard__bg" src="assets/model-c5.png" alt="">
+              <img class="vcard__bg" src="assets/scene-c5-radar.jpg" alt="" loading="lazy">
               <div class="vcard__content">
                 <p class="vcard__title">"I have put 30,000 miles on my Model 3. The battery still holds strong and the drive is true."</p>
                 <div class="vcard__meta">
@@ -438,7 +437,7 @@
     <div class="footer__container">
       <div class="footer__top">
         <a class="logo" href="#" aria-label="Нүүр хуудас">
-          <img src="assets/brand-logo.png" width="57" height="36" alt="Tesla">
+          <img src="assets/brand-logo-transparent.png" width="57" height="36" alt="Tesla">
         </a>
         <nav class="footer__links" aria-label="Footer цэс">
           <a href="#">Зорчигч тээврийн микоравтобус</a>
