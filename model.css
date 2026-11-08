@@ -1,5 +1,5 @@
 /* ==========================================================================
-   EC75 model page — layout inspired by tesla.com/model3:
+   Model pages (ec75.html, r5.html) — layout inspired by tesla.com/model3:
    full-screen hero with variant toggle, key-stat strip, alternating
    feature sections, tabbed driver-assist block, specs + comparison.
    Shares tokens, nav, buttons, slider and footer with styles.css.
@@ -52,6 +52,21 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
   background: var(--color-background);
   color: var(--color-text);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Light-sky hero photo (R5): deeper top shade for white text on desktop;
+   dark text once the copy sits on the plain sky colour (stacked layout). */
+.mhero--light::after {
+  background: linear-gradient(to bottom, rgba(12, 40, 72, 0.55) 0%, rgba(12, 40, 72, 0.18) 34%, rgba(12, 40, 72, 0) 52%);
+}
+@media (max-width: 991px), (max-aspect-ratio: 6/5) {
+  .mhero--light { color: var(--color-text); }
+  .mhero--light .variant-toggle--on-photo { background: rgba(255, 255, 255, 0.45); }
+  .mhero--light .variant-toggle--on-photo .variant-toggle__btn { color: var(--color-text-secondary); }
+}
+/* Two vans side by side: keep both in frame on phones */
+@media (max-width: 599px) {
+  .mhero--wide .hero__bg { aspect-ratio: 4 / 3; }
 }
 
 /* ---------- Key stats strip ---------- */
@@ -112,6 +127,8 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
   border-radius: var(--radius-card);
 }
 .mfeature__text { display: flex; flex-direction: column; gap: 16px; }
+.mfeature__text .btn--link { align-self: flex-start; margin-top: 8px; }
+.section--dark .btn--link { color: var(--color-white); }
 .mfeature__facts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -143,6 +160,29 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 .mcard h3 span { margin-left: 6px; font-size: 13px; color: var(--color-text-muted); font-weight: 500; }
 .mcard p { font-size: var(--text-small); color: var(--color-text-muted); }
 .mcard--grid { width: auto; }
+
+/* ---------- Battery options table (dark section) ---------- */
+.mbattery { display: flex; flex-direction: column; gap: 16px; }
+.mbattery__title { font-size: 18px; font-weight: 500; }
+.mbattery .mcompare__scroll { border-radius: var(--radius-card); }
+.mbattery table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+.mbattery th,
+.mbattery td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.mbattery thead th { font-weight: 500; color: rgba(255, 255, 255, 0.6); }
+.mbattery tbody th { font-weight: 600; }
+.mbattery tbody tr:last-child th,
+.mbattery tbody tr:last-child td { border-bottom: 0; }
+.section--dark .mcolumn { border-color: rgba(255, 255, 255, 0.16); }
+.section--dark .mcolumn p:last-child { color: rgba(255, 255, 255, 0.7); }
 
 /* ---------- Charging ---------- */
 .mwide {

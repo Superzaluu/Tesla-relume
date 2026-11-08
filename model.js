@@ -1,8 +1,13 @@
-// EC75 page: cargo / passenger variant switch and driver-assist tabs.
+// Model pages (ec75.html, r5.html): cargo / passenger variant switch and
+// driver-assist tabs. Everything variant-specific lives in data attributes:
+//   [data-variant-btn]            toggle buttons
+//   [data-v-cargo|passenger]      text swapped per variant
+//   [data-v-cargo-html|...-html]  markup swapped per variant
+//   [data-src-cargo|passenger]    image src (+ optional data-alt-*)
+//   [data-variant-hero][data-sky-cargo|passenger]  stacked-hero background colour
 
 (function () {
   var VARIANTS = ["cargo", "passenger"];
-  var HERO_SKY = { cargo: "#255681", passenger: "#346488" }; // top row of each hero photo
   var hero = document.querySelector("[data-variant-hero]");
   var buttons = document.querySelectorAll("[data-variant-btn]");
 
@@ -28,7 +33,9 @@
       img.src = img.dataset["src" + key];
       if (img.dataset["alt" + key]) img.alt = img.dataset["alt" + key];
     });
-    if (hero) hero.style.setProperty("--color-hero-sky", HERO_SKY[variant]);
+    if (hero && hero.dataset["sky" + key]) {
+      hero.style.setProperty("--color-hero-sky", hero.dataset["sky" + key]);
+    }
 
     if (updateHash && window.history.replaceState) {
       window.history.replaceState(null, "", "#" + variant);
@@ -42,7 +49,8 @@
   });
 
   // Preload the other hero photo so the switch is instant
-  VARIANTS.forEach(function (v) { new Image().src = "assets/ec75/hero-" + v + ".jpg"; });
+  var heroImg = hero && hero.querySelector("[data-src-passenger]");
+  if (heroImg) VARIANTS.forEach(function (v) { new Image().src = heroImg.dataset["src" + cap(v)]; });
 
   // #cargo / #passenger pick the variant; other anchors (#specs, #test-drive) leave it alone
   function fromHash(isInitial) {

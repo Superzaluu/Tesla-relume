@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>R5 — Цахилгаан фургон</title>
+  <meta name="description" content="Ruichi R5 цахилгаан фургон: 403 км хүртэл цэнэглэлтийн зай, 18 минутын хурдан цэнэглэлт, ачааны болон зорчигчийн хувилбар.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="model.css">
+</head>
+<body>
+
+  <header class="navbar" data-navbar>
+    <div class="navbar__container">
+      <a class="navbar__logo logo" href="index.html" aria-label="Нүүр хуудас">
+        <img src="assets/brand-logo-transparent.png" width="57" height="36" alt="Tesla">
+      </a>
+
+      <nav class="navbar__links" id="nav-links" aria-label="Үндсэн цэс">
+        <a href="ec75.html#passenger">Зорчигч тээврийн микоравтобус</a>
+        <a href="ec75.html#cargo">Ачааны хүргэлтийн фургон</a>
+        <a href="#">Ачааны машин 1.5т</a>
+        <a href="#">Ачааны машин 1.5т Hybrid</a>
+        <a href="#">Хөргүүртэй ачааны машин</a>
+        <a href="#">Хөргүүртэй фургон</a>
+        <a href="#service">Тусгай зориулатын машин</a>
+      </nav>
+
+      <div class="navbar__actions">
+        <a class="btn btn--primary btn--nav" href="#test-drive" aria-label="Туршилтын жолоодлого">
+          <span class="btn__label-long">Туршилтын жолоодлого</span>
+          <span class="btn__label-short">Турших</span>
+        </a>
+        <button class="navbar__toggle" type="button" aria-controls="nav-links" aria-expanded="false">Цэс</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero: both versions in one photo, so only the copy changes per variant -->
+    <section class="hero mhero mhero--light mhero--wide" data-variant-hero data-sky-cargo="#77a5c9" data-sky-passenger="#77a5c9" style="--color-hero-sky: #77a5c9">
+      <div class="hero__content">
+        <p class="hero__eyebrow">Ruichi</p>
+        <h1 class="mhero__title">R5</h1>
+        <p class="hero__subtitle" data-v-cargo="Цахилгаан ачааны фургон" data-v-passenger="Цахилгаан зорчигч тээврийн фургон">Цахилгаан ачааны фургон</p>
+        <div class="variant-toggle variant-toggle--on-photo" role="group" aria-label="Хувилбар сонгох">
+          <button type="button" class="variant-toggle__btn is-active" data-variant-btn="cargo" aria-pressed="true">Ачааны</button>
+          <button type="button" class="variant-toggle__btn" data-variant-btn="passenger" aria-pressed="false">Зорчигчийн</button>
+        </div>
+      </div>
+      <img class="hero__bg" src="assets/r5/hero.jpg" width="1920" height="1160"
+           alt="Ногоон R5 ачааны фургон ба цагаан R5 зорчигчийн фургон" fetchpriority="high">
+    </section>
+
+    <!-- Key stats + actions -->
+    <section class="mstats" aria-label="Гол үзүүлэлт">
+      <div class="mstats__inner">
+        <dl class="mstats__list">
+          <div class="mstat">
+            <dt class="mstat__label">Цэнэглэлтийн зай (CLTC) <sup>1</sup></dt>
+            <dd class="mstat__value" data-v-cargo-html="401&lt;span&gt;км хүртэл&lt;/span&gt;" data-v-passenger-html="403&lt;span&gt;км хүртэл&lt;/span&gt;">401<span>км хүртэл</span></dd>
+          </div>
+          <div class="mstat">
+            <dt class="mstat__label">Хурдан цэнэглэлт 20–80%</dt>
+            <dd class="mstat__value">18<span>мин</span></dd>
+          </div>
+          <div class="mstat">
+            <dt class="mstat__label">Моторын хүч</dt>
+            <dd class="mstat__value" data-v-cargo-html="70&lt;span&gt;кВт&lt;/span&gt;" data-v-passenger-html="70–100&lt;span&gt;кВт&lt;/span&gt;">70<span>кВт</span></dd>
+          </div>
+          <div class="mstat">
+            <dt class="mstat__label" data-v-cargo="Ачааны багтаамж" data-v-passenger="Суудлын тоо">Ачааны багтаамж</dt>
+            <dd class="mstat__value" data-v-cargo-html="7.7&lt;span&gt;м³&lt;/span&gt;" data-v-passenger-html="6–9&lt;span&gt;суудал&lt;/span&gt;">7.7<span>м³</span></dd>
+          </div>
+        </dl>
+        <div class="actions mstats__actions">
+          <a class="btn btn--primary btn--wide" href="#test-drive">Захиалах</a>
+          <a class="btn btn--secondary btn--wide" href="#test-drive">Туршилтын жолоодлого</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Space (cargo box / seating) -->
+    <section class="section" id="space">
+      <div class="container mfeature">
+        <img class="mfeature__image" src="assets/r5/cargo-side-door.jpg" width="800" height="450"
+             data-src-cargo="assets/r5/cargo-side-door.jpg" data-src-passenger="assets/r5/pass-side-door.jpg"
+             data-alt-cargo="Хажуугийн хаалга нь онгорхой R5 ачааны фургон" data-alt-passenger="Хажуугийн хаалга нь онгорхой R5 зорчигчийн фургон"
+             alt="Хажуугийн хаалга нь онгорхой R5 ачааны фургон" loading="lazy">
+        <div class="mfeature__text">
+          <p class="tagline" data-v-cargo="Ачааны тасалгаа" data-v-passenger="Суудлын байрлал">Ачааны тасалгаа</p>
+          <h2 class="h2" data-v-cargo="Ажилд зориулсан багтаамж" data-v-passenger="Бүх хүндээ эвтэйхэн">Ажилд зориулсан багтаамж</h2>
+          <p class="text-medium"
+             data-v-cargo="3,025 × 1,750 × 1,455 мм хэмжээтэй, 7.7 м³ багтаамжтай ачааны тасалгаа. Хоёр талын гүйдэг хаалга болон 180° нээгддэг арын хаалгаар ачаагаа хаанаас ч ачиж буулгана."
+             data-v-passenger="2+2+2 буюу 6 суудалтай, эсвэл 2+2+2+3 буюу 9 суудалтай. Арын суудлын түшлэг эвхэгдэж, 22 инчийн 17 чемодан багтах ачааны зай гаргана.">3,025 × 1,750 × 1,455 мм хэмжээтэй, 7.7 м³ багтаамжтай ачааны тасалгаа. Хоёр талын гүйдэг хаалга болон 180° нээгддэг арын хаалгаар ачаагаа хаанаас ч ачиж буулгана.</p>
+          <dl class="mfeature__facts"
+              data-v-cargo-html="&lt;div&gt;&lt;dt&gt;Багтаамж&lt;/dt&gt;&lt;dd&gt;7.7 м³&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Тэнхлэг хоорондын зай&lt;/dt&gt;&lt;dd&gt;3,200 мм&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Шал&lt;/dt&gt;&lt;dd&gt;PVC&lt;/dd&gt;&lt;/div&gt;"
+              data-v-passenger-html="&lt;div&gt;&lt;dt&gt;Суудал&lt;/dt&gt;&lt;dd&gt;6 эсвэл 9&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Агааржуулагч&lt;/dt&gt;&lt;dd&gt;2 ууршуулагч&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Ачаа тээш&lt;/dt&gt;&lt;dd&gt;17 чемодан&lt;/dd&gt;&lt;/div&gt;">
+            <div><dt>Багтаамж</dt><dd>7.7 м³</dd></div>
+            <div><dt>Тэнхлэг хоорондын зай</dt><dd>3,200 мм</dd></div>
+            <div><dt>Шал</dt><dd>PVC</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- Body carousel -->
+    <section class="section section--tight">
+      <div class="container container--gap-80">
+        <div class="section-title section-title--narrow">
+          <h2 class="h2">Хоёр хувилбар, нэг платформ</h2>
+          <p class="text-medium">Ачааны болон зорчигчийн хувилбар хоёулаа 5,170 мм урт, 1,860 мм өргөн их биетэй.</p>
+        </div>
+        <div class="slider" data-slider>
+          <div class="slider__track" data-slider-track>
+            <figure class="mcard">
+              <img src="assets/r5/cargo-rear.jpg" width="800" height="450" alt="R5 ачааны фургоны онгорхой арын хаалга" loading="lazy">
+              <figcaption><h3>180° арын хаалга</h3><p>Арын хаалга бүрэн нээгдэж, ачааны тасалгаа руу шууд хандана.</p></figcaption>
+            </figure>
+            <figure class="mcard">
+              <img src="assets/r5/cargo-side.jpg" width="800" height="450" alt="R5 ачааны фургон хажуугаас" loading="lazy">
+              <figcaption><h3>1.86 м өргөн их бие</h3><p>Кабин болон ачааны тасалгаанд илүү их зай.</p></figcaption>
+            </figure>
+            <figure class="mcard">
+              <img src="assets/r5/pass-side-door.jpg" width="800" height="450" alt="R5 зорчигчийн фургоны онгорхой гүйдэг хаалга" loading="lazy">
+              <figcaption><h3>Хоёр талын гүйдэг хаалга</h3><p>Зорчигчид хоёр талаас нь сууж бууна.</p></figcaption>
+            </figure>
+            <figure class="mcard">
+              <img src="assets/r5/pass-rear.jpg" width="800" height="450" alt="R5 зорчигчийн фургоны арын хэсэг ба суудал" loading="lazy">
+              <figcaption><h3>Эвхэгддэг суудал</h3><p>Арын эгнээний түшлэгийг эвхэж ачаа тээшинд зай гаргана.</p></figcaption>
+            </figure>
+          </div>
+          <div class="slider__controls">
+            <span></span>
+            <div class="slider__buttons">
+              <button class="slider__arrow" type="button" data-slider-prev aria-label="Өмнөх">
+                <img src="assets/arrow-back.svg" width="24" height="24" alt="">
+              </button>
+              <button class="slider__arrow" type="button" data-slider-next aria-label="Дараах">
+                <img src="assets/arrow-forward.svg" width="24" height="24" alt="">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Battery & charging (dark) -->
+    <section class="section section--dark" id="battery">
+      <div class="container container--gap-80">
+        <div class="mfeature mfeature--reverse">
+          <img class="mfeature__image" src="assets/r5/glow.jpg" width="800" height="450" alt="Шөнийн замд гэрэлтэж буй R5" loading="lazy">
+          <div class="mfeature__text">
+            <p class="tagline">Зай ба цэнэглэлт</p>
+            <h2 class="h2">Ажлын хэрэгцээндээ тохирох зай</h2>
+            <p class="text-medium">41.5-аас 58.24 кВт·ц хүртэлх дөрвөн төрлийн лити төмрийн фосфат (LFP) зай. Шингэн хөргөлттэй 2C зай 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ.</p>
+            <dl class="mfeature__facts"
+                data-v-cargo-html="&lt;div&gt;&lt;dt&gt;Хүч / эргэх момент&lt;/dt&gt;&lt;dd&gt;70 кВт / 230 Н·м&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Дээд хурд&lt;/dt&gt;&lt;dd&gt;80–90 км/ц&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Хөтлөгч&lt;/dt&gt;&lt;dd&gt;Урд&lt;/dd&gt;&lt;/div&gt;"
+                data-v-passenger-html="&lt;div&gt;&lt;dt&gt;Моторын хүч&lt;/dt&gt;&lt;dd&gt;70–100 кВт&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Дээд хурд&lt;/dt&gt;&lt;dd&gt;100 км/ц&lt;/dd&gt;&lt;/div&gt;&lt;div&gt;&lt;dt&gt;Хөтлөгч&lt;/dt&gt;&lt;dd&gt;Урд&lt;/dd&gt;&lt;/div&gt;">
+              <div><dt>Хүч / эргэх момент</dt><dd>70 кВт / 230 Н·м</dd></div>
+              <div><dt>Дээд хурд</dt><dd>80–90 км/ц</dd></div>
+              <div><dt>Хөтлөгч</dt><dd>Урд</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="mbattery">
+          <h3 class="mbattery__title">Зайн сонголт</h3>
+          <div class="mcompare__scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Зай</th>
+                  <th scope="col">Хөргөлт</th>
+                  <th scope="col">Хурдан 20–80%</th>
+                  <th scope="col">Удаан цэнэглэлт</th>
+                  <th scope="col">Зай (CLTC) <sup>1</sup></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">41.5 кВт·ц</th><td>Агаар</td><td>45 мин (1C)</td><td>3.3 кВт · 10.8 ц</td><td data-v-cargo="252 км" data-v-passenger="302 км">252 км</td></tr>
+                <tr><th scope="row">50.1 кВт·ц</th><td>Шингэн</td><td>18 мин (2C)</td><td>6.6 кВт · 6.5–6.8 ц</td><td data-v-cargo="306 км" data-v-passenger="353 км">306 км</td></tr>
+                <tr><th scope="row">52.16 кВт·ц</th><td>Шингэн</td><td>18 мин (2C)</td><td>6.6 кВт · 6.8 ц</td><td data-v-cargo="322 км" data-v-passenger="367 км">322 км</td></tr>
+                <tr><th scope="row">58.24 кВт·ц</th><td>Шингэн</td><td>18 мин (2C)</td><td>6.6 кВт · 8 ц</td><td data-v-cargo="401 км" data-v-passenger="403 км">401 км</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mcolumns">
+          <div class="mcolumn">
+            <p class="mcolumn__value">18 мин</p>
+            <h3>Хурдан цэнэглэлт</h3>
+            <p>2C зайтай хувилбар хурдан цэнэглэгчээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ.</p>
+          </div>
+          <div class="mcolumn">
+            <p class="mcolumn__value">6.6 кВт</p>
+            <h3>Гэр, агуулахдаа</h3>
+            <p>Удаан цэнэглэгчээр шөнөжин цэнэглэж, өглөө бүрэн цэнэгтэй гарна.</p>
+          </div>
+          <div class="mcolumn">
+            <p class="mcolumn__value">V2L</p>
+            <h3>Цахилгаан хуваалцах</h3>
+            <p>Машины зайгаас гадны багаж, төхөөрөмжөө тэжээнэ. Тоормослох үед энерги сэргээнэ.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service version -->
+    <section class="section section--surface" id="service">
+      <div class="container mfeature">
+        <img class="mfeature__image" src="assets/r5/service-interior.jpg" width="800" height="533" alt="Багаж хэрэгслээр тоноглосон R5 үйлчилгээний фургоны дотор тал" loading="lazy">
+        <div class="mfeature__text">
+          <p class="tagline">Тусгай зориулалт</p>
+          <h2 class="h2">Явуулын засварын газар</h2>
+          <p class="text-medium">R5-ын үйлчилгээний хувилбар нь ачааны тасалгаандаа тавиур, багажны шүүгээ, засварын тоног төхөөрөмж байрлуулж, үйлчилгээгээ үйлчлүүлэгч дээр нь хүргэнэ.</p>
+          <a class="btn btn--link" href="#test-drive">Тохиргооны талаар лавлах
+            <img src="assets/chevron-right.svg" width="24" height="24" alt="">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Driver assistance (tabs) -->
+    <section class="section" id="assist">
+      <div class="container container--gap-80">
+        <div class="section-title section-title--narrow">
+          <p class="tagline">Ухаалаг жолоодлогын хувилбар</p>
+          <h2 class="h2">Жолоочийн туслах функцууд</h2>
+          <p class="text-medium">Камер болон радарт тулгуурласан туслах системүүд аялал бүрийг аюулгүй, ядаргаа багатай болгоно. <sup>2</sup></p>
+        </div>
+        <div class="adas" data-tabs>
+          <div class="adas__media">
+            <img class="adas__image is-active" data-tab-panel="acc" src="assets/r5/adas-acc.jpg" width="800" height="450" alt="Урд машиныг дагаж яваа R5 — ACC" loading="lazy">
+            <img class="adas__image" data-tab-panel="ica" src="assets/r5/adas-ica.jpg" width="800" height="450" alt="Эгнээндээ төвлөрч яваа R5 — TJA/ICA" loading="lazy">
+            <img class="adas__image" data-tab-panel="aeb" src="assets/r5/adas-aeb.jpg" width="800" height="450" alt="Мөргөлдөх эрсдэлийг анхааруулж буй R5 — AEB/FCW" loading="lazy">
+            <img class="adas__image" data-tab-panel="ldw" src="assets/r5/adas-ldw.jpg" width="800" height="450" alt="Эгнээний хил дээр анхааруулж буй R5 — LDW/LDP" loading="lazy">
+            <img class="adas__image" data-tab-panel="isa" src="assets/r5/adas-isa.jpg" width="800" height="450" alt="80 км/ц хурдны хязгаар таньж буй R5 — ISA" loading="lazy">
+            <img class="adas__image" data-tab-panel="hma" src="assets/r5/adas-hma.jpg" width="800" height="450" alt="Шөнө гэрлээ автоматаар тохируулж буй R5 — HMA" loading="lazy">
+          </div>
+          <div class="adas__list" role="tablist" aria-label="Туслах функцууд">
+            <button class="adas__item is-active" type="button" role="tab" aria-selected="true" data-tab="acc">
+              <span class="adas__name">Дасан зохицох круиз контрол <em>ACC</em></span>
+              <span class="adas__desc">Урд машиныг автоматаар дагаж, хурд болон зайгаа барина.</span>
+            </button>
+            <button class="adas__item" type="button" role="tab" aria-selected="false" data-tab="ica">
+              <span class="adas__name">Нэгдсэн круиз <em>TJA/ICA</em></span>
+              <span class="adas__desc">Түгжрэл болон хурдны замд эгнээндээ урд машиныг дагаж, жолоочийн ядаргааг бууруулна.</span>
+            </button>
+            <button class="adas__item" type="button" role="tab" aria-selected="false" data-tab="aeb">
+              <span class="adas__name">Яаралтай автомат тоормос <em>AEB · FCW</em></span>
+              <span class="adas__desc">Урд талын зайг хянаж, мөргөлдөх эрсдэлийг анхааруулна. Шаардлагатай үед автоматаар тоормослоно.</span>
+            </button>
+            <button class="adas__item" type="button" role="tab" aria-selected="false" data-tab="ldw">
+              <span class="adas__name">Эгнээ хадгалах туслах <em>LDW · LDP</em></span>
+              <span class="adas__desc">Эгнээнээс гарахад анхааруулж, санамсаргүй гарсан үед жолоог залруулж эгнээнд нь буцаана.</span>
+            </button>
+            <button class="adas__item" type="button" role="tab" aria-selected="false" data-tab="isa">
+              <span class="adas__name">Ухаалаг хурд хязгаарлагч <em>ISA</em></span>
+              <span class="adas__desc">Хурдны хязгаарын тэмдгийг таньж, хэтрүүлэхгүй байхыг сануулна.</span>
+            </button>
+            <button class="adas__item" type="button" role="tab" aria-selected="false" data-tab="hma">
+              <span class="adas__name">Ухаалаг гэрэл <em>HMA</em></span>
+              <span class="adas__desc">Харанхуй болоход гэрэл автоматаар асч, эсрэг ирж буй машинд холын гэрлээ автоматаар бууруулна.</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Safety -->
+    <section class="section section--surface" id="safety">
+      <div class="container container--gap-80">
+        <div class="section-title section-title--narrow">
+          <p class="tagline">Аюулгүй байдал</p>
+          <h2 class="h2">Зам дээр тогтвортой</h2>
+        </div>
+        <div class="msafety">
+          <figure class="mcard mcard--grid">
+            <img src="assets/r5/safety-esc.jpg" width="800" height="450" alt="Саад тойрч буй R5-ууд — ESC" loading="lazy">
+            <figcaption><h3>Тогтвортой байдлын систем <span>ESC</span></h3><p>Огцом эргэлт, хальтиргаатай замд гулгахаас сэргийлнэ.</p></figcaption>
+          </figure>
+          <figure class="mcard mcard--grid">
+            <img src="assets/r5/safety-autohold.jpg" width="800" height="450" alt="AUTO HOLD-оор зогсож буй R5" loading="lazy">
+            <figcaption><h3>Автомат зогсоол <span>AUTO HOLD</span></h3><p>Гэрлэн дохион дээр тоормос дарахгүйгээр зогсож байна.</p></figcaption>
+          </figure>
+          <figure class="mcard mcard--grid">
+            <img src="assets/r5/safety-tpms.jpg" width="800" height="450" alt="R5-ын дугуйн даралтын хяналт" loading="lazy">
+            <figcaption><h3>Дугуйн даралтын хяналт <span>TPMS</span></h3><p>Дугуй бүрийн даралтыг бодит цагт хянана.</p></figcaption>
+          </figure>
+        </div>
+        <div class="mchips">
+          <p class="mchips__title">Бүх хувилбарт стандартаар</p>
+          <ul>
+            <li>ABS + EBD</li>
+            <li>Ууланд хөдлөх туслах</li>
+            <li>EPB цахим гар тоормос</li>
+            <li>Арын зогсоолын радар</li>
+            <li>Яаралтай тоормосны дохио</li>
+            <li>Явган зорчигчид өгөх дуут дохио</li>
+            <li>Цэнэглэх үеийн түгжээ</li>
+          </ul>
+          <p class="mchips__title">Дээд хувилбарт нэмэлтээр: 360° камер, жолоочийн ядаргааны хяналт (DMS), агаарын дэр, мөргөлдөх үед цахилгаан тасалгах хамгаалалт</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interior -->
+    <section class="section" id="interior">
+      <div class="container container--gap-80">
+        <div class="mfeature">
+          <img class="mfeature__image" src="assets/r5/cockpit.jpg" width="800" height="533" alt="R5-ын кабин, төв дэлгэц" loading="lazy">
+          <div class="mfeature__text">
+            <p class="tagline">Кабин</p>
+            <h2 class="h2">Ухаалаг кабин</h2>
+            <p class="text-medium">8.8 инчийн дижитал багажны самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Дээд хувилбарт 15.6 инчийн төв дэлгэц, дуут удирдлага, утасгүй цэнэглэгч нэмэгдэнэ.</p>
+            <dl class="mfeature__facts">
+              <div><dt>Багажны самбар</dt><dd>8.8"</dd></div>
+              <div><dt>Төв дэлгэц</dt><dd>15.6"</dd></div>
+              <div><dt>Түдгэлзүүлэлт</dt><dd>MacPherson</dd></div>
+            </dl>
+          </div>
+        </div>
+        <ul class="mconnected">
+          <li><h3>Апп-аар удирдах</h3><p>Утаснаасаа машинаа алсаас удирдана.</p></li>
+          <li><h3>Алсын шинэчлэлт (OTA)</h3><p>Програм хангамж утасгүй шинэчлэгдэнэ.</p></li>
+          <li><h3>Холбогдсон машин</h3><p>Машины мэдээлэл үргэлж гарт тань.</p></li>
+          <li><h3>Bluetooth</h3><p>Утсаа холбож дуудлага, хөгжмөө удирдана.</p></li>
+          <li><h3>66W Type-C</h3><p>Хурдан цэнэглэгч Type-C болон USB порт.</p></li>
+          <li><h3>Ухаалаг 12V цэнэглэлт</h3><p>Туслах аккумляторыг автоматаар цэнэглэнэ.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Specs -->
+    <section class="section section--surface" id="specs">
+      <div class="container container--gap-80">
+        <div class="mspecs__head">
+          <h2 class="h2">R5-ын үзүүлэлт</h2>
+          <div class="variant-toggle" role="group" aria-label="Хувилбар сонгох">
+            <button type="button" class="variant-toggle__btn is-active" data-variant-btn="cargo" aria-pressed="true">Ачааны</button>
+            <button type="button" class="variant-toggle__btn" data-variant-btn="passenger" aria-pressed="false">Зорчигчийн</button>
+          </div>
+        </div>
+
+        <div class="mspecs">
+          <img class="mspecs__image" src="assets/r5/cargo-34.jpg" width="800" height="450"
+               data-src-cargo="assets/r5/cargo-34.jpg" data-src-passenger="assets/r5/pass-34.jpg"
+               data-alt-cargo="R5 ачааны хувилбар" data-alt-passenger="R5 зорчигчийн хувилбар"
+               alt="R5 ачааны хувилбар" loading="lazy">
+          <div class="mspecs__groups">
+            <dl class="mspecs__group">
+              <dt class="mspecs__heading">Хэмжээ</dt>
+              <dd><span>Урт × өргөн × өндөр</span><strong>5,170 × 1,860 × 2,020 мм</strong></dd>
+              <dd><span>Тэнхлэг хоорондын зай</span><strong>3,200 мм</strong></dd>
+              <dd><span>Урд / хойд мөр</span><strong>1,624 / 1,624 мм</strong></dd>
+              <dd data-v-cargo-html="&lt;span&gt;Ачааны тасалгаа&lt;/span&gt;&lt;strong&gt;3,025 × 1,750 × 1,455 мм · 7.7 м³&lt;/strong&gt;"
+                  data-v-passenger-html="&lt;span&gt;Суудал&lt;/span&gt;&lt;strong&gt;6 (2+2+2) · 9 (2+2+2+3)&lt;/strong&gt;"><span>Ачааны тасалгаа</span><strong>3,025 × 1,750 × 1,455 мм · 7.7 м³</strong></dd>
+            </dl>
+            <dl class="mspecs__group">
+              <dt class="mspecs__heading">Хүч</dt>
+              <dd><span>Мотор</span><strong>Байнгын соронзон синхрон, урд</strong></dd>
+              <dd data-v-cargo-html="&lt;span&gt;Хүч / эргэх момент&lt;/span&gt;&lt;strong&gt;70 кВт / 230 Н·м&lt;/strong&gt;"
+                  data-v-passenger-html="&lt;span&gt;Хүч / эргэх момент&lt;/span&gt;&lt;strong&gt;70 кВт / 230 Н·м · 58.24 кВт·ц: 100 кВт / 240 Н·м&lt;/strong&gt;"><span>Хүч / эргэх момент</span><strong>70 кВт / 230 Н·м</strong></dd>
+              <dd><span>Хөтлөгч</span><strong>Урд дугуйгаар</strong></dd>
+              <dd><span>Дээд хурд</span><strong data-v-cargo="80–90 км/ц" data-v-passenger="100 км/ц">80–90 км/ц</strong></dd>
+            </dl>
+            <dl class="mspecs__group">
+              <dt class="mspecs__heading">Зай ба цэнэглэлт</dt>
+              <dd><span>Зай</span><strong>41.5–58.24 кВт·ц LFP</strong></dd>
+              <dd><span>Цэнэглэлтийн зай (CLTC) <sup>1</sup></span><strong data-v-cargo="252–401 км" data-v-passenger="302–403 км">252–401 км</strong></dd>
+              <dd><span>Хурдан цэнэглэлт 20–80%</span><strong>18 мин (2C) · 45 мин (1C)</strong></dd>
+              <dd><span>Удаан цэнэглэлт</span><strong>6.6 кВт (41.5 кВт·ц: 3.3 кВт)</strong></dd>
+            </dl>
+            <dl class="mspecs__group">
+              <dt class="mspecs__heading">Явах эд анги</dt>
+              <dd><span>Урд / хойд түдгэлзүүлэлт</span><strong>MacPherson / навчин пүрш</strong></dd>
+              <dd><span>Тоормос</span><strong>Урд, хойд диск · EPB</strong></dd>
+              <dd><span>Жолоо</span><strong>Цахилгаан туслагчтай (EPS)</strong></dd>
+              <dd><span>Дугуй</span><strong>195/75 R16LT, ган обуд</strong></dd>
+            </dl>
+          </div>
+        </div>
+
+        <div class="mcompare">
+          <h3 class="h5">Тохиргооны харьцуулалт</h3>
+          <div class="mcompare__scroll">
+            <table>
+              <thead>
+                <tr><th scope="col">Тохиргоо</th><th scope="col">Pioneer</th><th scope="col">Ухаалаг жолоодлого</th><th scope="col">Beyond</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Багажны самбар / дэлгэц</th><td>8.8" дижитал</td><td>8.8" LCD</td><td>8.8" + 15.6" төв дэлгэц</td></tr>
+                <tr><th scope="row">Арын камер</th><td>—</td><td>●</td><td>●</td></tr>
+                <tr><th scope="row">Дугуйн даралтын хяналт (TPMS)</th><td data-v-cargo="—" data-v-passenger="●">—</td><td>●</td><td>●</td></tr>
+                <tr><th scope="row">ESC, AUTO HOLD</th><td>—</td><td>●</td><td>●</td></tr>
+                <tr><th scope="row">Автомат гэрэл, HMA</th><td>—</td><td>●</td><td>●</td></tr>
+                <tr><th scope="row">ACC, ICA, AEB, FCW, LDW, LDP, ISA</th><td>—</td><td>●</td><td>●</td></tr>
+                <tr><th scope="row">360° камер, DMS</th><td>—</td><td>—</td><td>●</td></tr>
+                <tr><th scope="row">Агаарын дэр</th><td>—</td><td>—</td><td data-v-cargo="Жолооч" data-v-passenger="Жолооч, зорчигч">Жолооч</td></tr>
+                <tr><th scope="row">Утасгүй цэнэглэгч, дуут удирдлага</th><td>—</td><td>—</td><td>●</td></tr>
+                <tr><th scope="row">Чанга яригч</th><td>2</td><td>2</td><td>4</td></tr>
+                <tr><th scope="row">Суудлын материал</th><td>Даавуу</td><td>Даавуу</td><td>Арьс + даавуу</td></tr>
+                <tr><th scope="row">Түлхүүргүй асаалт, OTA, апп</th><td>●</td><td>●</td><td>●</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- End CTA -->
+    <section class="section mend" id="test-drive">
+      <div class="container mend__inner">
+        <h2 class="h2">R5-аа өнөөдөр туршаад үзээрэй</h2>
+        <p class="text-medium">Ойролцоох салбартаа туршилтын жолоодлого захиалж, зай болон тохиргооны сонголтоо тодруулаарай.</p>
+        <img class="mend__image" src="assets/r5/cargo-front.jpg" width="800" height="450"
+             data-src-cargo="assets/r5/cargo-front.jpg" data-src-passenger="assets/r5/pass-front.jpg"
+             data-alt-cargo="R5 ачааны фургон урдаас" data-alt-passenger="R5 зорчигчийн фургон урдаас"
+             alt="R5 ачааны фургон урдаас" loading="lazy">
+        <div class="actions mend__actions">
+          <a class="btn btn--primary btn--wide" href="#">Захиалах</a>
+          <a class="btn btn--secondary btn--wide" href="index.html">Бусад загвар үзэх</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="mnotes" aria-label="Тайлбар">
+      <ol>
+        <li>Цэнэглэлтийн зай нь CLTC (GB/T 18386.1-2021) стандартын туршилтын үр дүн бөгөөд зайн багтаамжаас хамаарна. Бодит зай нь тохиргоо, зайны насжилт, жолоодлогын зуршил, цаг агаар, замын нөхцөлөөс хамаарна.</li>
+        <li>Жолоочийн туслах системүүд нь жолоочийг орлохгүй. Жолооч замын нөхцөлд үргэлж анхаарал хандуулж, машинаа бүрэн хянах ёстой. Мөс, цас, бороо, үзэгдэх орчин муу үед болгоомжтой яваарай.</li>
+        <li>Үзүүлэлт, тохиргоо нь үйлдвэрлэгчийн мэдээлэлд үндэслэсэн лавлагаа бөгөөд урьдчилан мэдэгдэлгүйгээр өөрчлөгдөж болно. Монголд нийлүүлэгдэх тохиргоог салбараас тодруулна уу.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__top">
+        <a class="logo" href="index.html" aria-label="Нүүр хуудас">
+          <img src="assets/brand-logo-transparent.png" width="57" height="36" alt="Tesla">
+        </a>
+        <nav class="footer__links" aria-label="Footer цэс">
+          <a href="ec75.html#passenger">Зорчигч тээврийн микоравтобус</a>
+          <a href="ec75.html#cargo">Ачааны хүргэлтийн фургон</a>
+          <a href="#">Ачааны машин 1.5т</a>
+          <a href="#">Ачааны машин 1.5т Hybrid</a>
+          <a href="#">Хөргүүртэй ачааны машин</a>
+          <a href="#">Тусгай зориулатын машин</a>
+        </nav>
+      </div>
+      <div class="footer__credits">
+        <div class="footer__row">
+          <p class="footer__copy">Tesla © 2026</p>
+          <div class="footer__legal">
+            <a href="#">Нууцлал</a>
+            <a href="#">Үйлчилгээний нөхцөл</a>
+            <a href="#">Холбоо бариих</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="model.js"></script>
+</body>
+</html>
