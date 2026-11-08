@@ -227,9 +227,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 900px;
-  padding: 0 var(--padding-global);
+  /* 2:1 keeps the whole vehicle in frame (only the white margin above/below
+     the van in model-ec75.png is cropped) */
+  aspect-ratio: 2 / 1;
+  padding: 48px var(--padding-global);
   overflow: hidden;
+  background: #0d1218;
 }
 .hero__bg {
   position: absolute;
@@ -257,6 +260,27 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   text-align: center;
 }
 .hero .actions { justify-content: center; }
+
+/* Below 1280px the photo gets too short to hold the text on top of it:
+   show the full photo first, then the text on a dark panel underneath. */
+@media (max-width: 1279px) {
+  .hero {
+    flex-direction: column;
+    aspect-ratio: auto;
+    padding: 0;
+  }
+  .hero__bg {
+    position: static;
+    height: auto;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+  }
+  .hero__overlay { display: none; }
+  .hero__content {
+    max-width: calc(768px + 2 * var(--padding-global));
+    padding: 48px var(--padding-global) 64px;
+  }
+}
 
 /* ==========================================================================
    Layout / 652 (Poll card)
@@ -573,7 +597,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .navbar__container { gap: 16px; }
   .btn--nav { padding: 4px 20px; }
 
-  .hero { height: 812px; }
   .hero__content { gap: 24px; }
   .hero__text { gap: 20px; }
 
