@@ -21,8 +21,8 @@
   update();
 })();
 
-// Poll card: swap the poster for the cold-test video on click
-document.querySelectorAll(".poll-card__media[data-video]").forEach(function (media) {
+// Video posters (poll card, EC75 page): swap the poster for the video on click
+document.querySelectorAll("[data-video]").forEach(function (media) {
   media.addEventListener("click", function () {
     var video = document.createElement("video");
     video.className = "poll-card__video";
@@ -33,7 +33,7 @@ document.querySelectorAll(".poll-card__media[data-video]").forEach(function (med
     video.setAttribute("aria-label", media.getAttribute("aria-label") || "");
 
     var wrap = document.createElement("div");
-    wrap.className = "poll-card__media";
+    wrap.className = media.className;
     wrap.appendChild(video);
     media.replaceWith(wrap);
     video.focus();

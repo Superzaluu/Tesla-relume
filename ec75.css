@@ -1,0 +1,409 @@
+/* ==========================================================================
+   EC75 model page — layout inspired by tesla.com/model3:
+   full-screen hero with variant toggle, key-stat strip, alternating
+   feature sections, tabbed driver-assist block, specs + comparison.
+   Shares tokens, nav, buttons, slider and footer with styles.css.
+   ========================================================================== */
+
+main section[id] { scroll-margin-top: var(--navbar-height); }
+
+/* width/height attributes are set for layout stability; let aspect-ratio drive height */
+.mfeature__image,
+.mcard img,
+.mwide,
+.mspecs__image,
+.mend__image { height: auto; }
+
+/* ---------- Hero ---------- */
+.mhero__title {
+  font-size: 64px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.mhero .hero__content { gap: 10px; }
+
+.variant-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-top: 12px;
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+.variant-toggle--on-photo {
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.variant-toggle__btn {
+  min-width: 112px;
+  padding: 6px 16px;
+  border-radius: var(--radius-button);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: background-color 0.33s ease, color 0.33s ease;
+}
+.variant-toggle--on-photo .variant-toggle__btn { color: var(--color-white); }
+.variant-toggle__btn:hover { background: rgba(0, 0, 0, 0.05); }
+.variant-toggle--on-photo .variant-toggle__btn:hover { background: rgba(255, 255, 255, 0.15); }
+.variant-toggle .variant-toggle__btn.is-active {
+  background: var(--color-background);
+  color: var(--color-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- Key stats strip ---------- */
+.mstats {
+  padding: 40px var(--padding-global);
+  border-bottom: 1px solid #eeeeee;
+}
+.mstats__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px 48px;
+  max-width: 1376px;
+  margin: 0 auto;
+}
+.mstats__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 56px;
+  margin: 0;
+}
+.mstat { display: flex; flex-direction: column-reverse; gap: 2px; }
+.mstat__value {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.mstat__value span { margin-left: 4px; font-size: 16px; font-weight: 500; }
+.mstat__label { font-size: 13px; color: var(--color-text-muted); }
+.mstat__label sup, .mspecs__group sup, .section-title sup { font-size: 0.7em; }
+.mstats__actions { gap: 12px; }
+
+/* ---------- Section variants ---------- */
+.section--tight { padding-top: 0; }
+.section--surface { background: var(--color-surface); }
+.section--dark { background: #0f1115; color: var(--color-white); }
+.section--dark .text-medium,
+.section--dark .tagline { color: rgba(255, 255, 255, 0.7); }
+.section--dark .mfeature__facts { border-color: rgba(255, 255, 255, 0.16); }
+.section--dark .mfeature__facts dt { color: rgba(255, 255, 255, 0.6); }
+
+/* ---------- Split feature (image + copy) ---------- */
+.mfeature {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: center;
+  gap: 64px;
+}
+.mfeature--reverse { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.mfeature--reverse .mfeature__image { order: 2; }
+.mfeature__image {
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+.mfeature__text { display: flex; flex-direction: column; gap: 16px; }
+.mfeature__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 12px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+.mfeature__facts div { display: flex; flex-direction: column-reverse; gap: 2px; }
+.mfeature__facts dt { font-size: 13px; color: var(--color-text-muted); }
+.mfeature__facts dd { margin: 0; font-size: 20px; font-weight: 500; }
+
+/* ---------- Image cards (carousels, safety grid) ---------- */
+.mcard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 420px;
+  margin: 0;
+}
+.mcard img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+.mcard figcaption { display: flex; flex-direction: column; gap: 4px; }
+.mcard h3 { margin: 0; font-size: 17px; font-weight: 500; }
+.mcard h3 span { margin-left: 6px; font-size: 13px; color: var(--color-text-muted); font-weight: 500; }
+.mcard p { font-size: var(--text-small); color: var(--color-text-muted); }
+.mcard--grid { width: auto; }
+
+/* ---------- Charging ---------- */
+.mwide {
+  width: 100%;
+  max-height: 560px;
+  aspect-ratio: 5 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+.mcolumns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.mcolumn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+.mcolumn__value { font-size: 32px; font-weight: 500; line-height: 1.1; }
+.mcolumn h3 { margin: 6px 0 0; font-size: 17px; font-weight: 500; }
+.mcolumn p:last-child { font-size: var(--text-small); color: var(--color-text-muted); }
+
+/* ---------- Video (poster swaps to <video> via script.js) ---------- */
+.mvideo {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: #000;
+}
+.mvideo__poster,
+.mvideo video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mvideo video { object-fit: contain; }
+.mvideo__poster { transition: transform 0.6s ease; }
+.mvideo:hover .mvideo__poster { transform: scale(1.03); }
+.mvideo__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease;
+}
+.mvideo:hover .mvideo__play { transform: translate(-50%, -50%) scale(1.08); }
+
+/* ---------- Driver assistance tabs ---------- */
+.adas {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: start;
+  gap: 48px;
+}
+.adas__media {
+  position: relative;
+  aspect-ratio: 5 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.adas__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.adas__image.is-active { opacity: 1; }
+.adas__list { display: flex; flex-direction: column; }
+.adas__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 0 14px 20px;
+  border-left: 2px solid var(--color-border);
+  text-align: left;
+  transition: border-color 0.33s ease;
+}
+.adas__item:hover { border-left-color: var(--color-text-muted); }
+.adas__item.is-active { border-left-color: var(--color-text); }
+.adas__name { font-size: 16px; font-weight: 500; color: var(--color-text-muted); }
+.adas__name em { margin-left: 6px; font-style: normal; font-size: 12px; letter-spacing: 0.04em; }
+.adas__item.is-active .adas__name { color: var(--color-text); }
+.adas__desc {
+  display: none;
+  font-size: var(--text-small);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.adas__item.is-active .adas__desc { display: block; }
+
+/* ---------- Safety ---------- */
+.msafety {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.mchips { display: flex; flex-direction: column; gap: 16px; }
+.mchips__title { font-size: var(--text-small); font-weight: 500; color: var(--color-text-muted); }
+.mchips ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mchips li {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--color-background);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Connected features ---------- */
+.mconnected {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mconnected li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 0;
+  border-top: 1px solid var(--color-border);
+}
+.mconnected h3 { margin: 0; font-size: 16px; font-weight: 500; }
+.mconnected p { font-size: var(--text-small); color: var(--color-text-muted); }
+
+/* ---------- Specs ---------- */
+.mspecs__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+.mspecs__head .variant-toggle { margin-top: 0; background: var(--color-background); }
+.mspecs {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+  gap: 56px;
+}
+.mspecs__image {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+.mspecs__groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 40px;
+}
+.mspecs__group { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.mspecs__heading { font-size: 18px; font-weight: 500; }
+.mspecs__group dd { display: flex; flex-direction: column; gap: 2px; margin: 0; }
+.mspecs__group dd span { font-size: 13px; color: var(--color-text-muted); }
+.mspecs__group dd strong { font-size: 15px; font-weight: 500; }
+
+.mcompare { display: flex; flex-direction: column; gap: 20px; }
+.mcompare__scroll { overflow-x: auto; }
+.mcompare table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+  background: var(--color-background);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.mcompare th,
+.mcompare td {
+  padding: 14px 20px;
+  text-align: left;
+  border-bottom: 1px solid #ececec;
+}
+.mcompare thead th { font-weight: 600; background: #fafafa; }
+.mcompare tbody th { font-weight: 400; color: var(--color-text-secondary); }
+.mcompare td { width: 26%; font-weight: 500; }
+.mcompare tr:last-child th,
+.mcompare tr:last-child td { border-bottom: 0; }
+
+/* ---------- End CTA + notes ---------- */
+.mend__inner { align-items: center; gap: 16px; text-align: center; }
+.mend__image {
+  width: 100%;
+  max-width: 760px;
+  margin: 24px 0;
+  border-radius: var(--radius-card);
+}
+.mend__actions { justify-content: center; }
+.mnotes {
+  padding: 0 var(--padding-global) 48px;
+}
+.mnotes ol {
+  max-width: 1376px;
+  margin: 0 auto;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991px) {
+  .mhero__title { font-size: 48px; }
+  .variant-toggle__btn { min-width: 0; flex: 1 1 0; }
+  .mhero .variant-toggle { align-self: stretch; }
+
+  .mstats { padding: 28px var(--padding-global); }
+  .mstats__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; }
+  .mstat__value { font-size: 26px; }
+  .mstats__actions { width: 100%; flex-direction: column; align-items: stretch; }
+  .mstats__actions .btn { width: 100%; min-width: 0; }
+
+  .mfeature,
+  .mfeature--reverse { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .mfeature--reverse .mfeature__image { order: 0; }
+  .mfeature__facts dd { font-size: 17px; }
+
+  .mcard { width: min(80vw, 340px); }
+  .mcard--grid { width: auto; }
+
+  .mcolumns { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .mcolumn { padding: 20px 0; }
+
+  .adas { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+
+  .msafety { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+
+  .mconnected { grid-template-columns: minmax(0, 1fr); }
+
+  .mspecs { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .mspecs__groups { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .mspecs__head .variant-toggle { width: 100%; }
+
+  .mcompare th,
+  .mcompare td { padding: 12px 14px; }
+
+  .mend__actions { width: 100%; flex-direction: column; align-items: stretch; }
+  .mend__actions .btn { width: 100%; min-width: 0; }
+}
