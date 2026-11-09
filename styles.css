@@ -1162,3 +1162,21 @@ body::before { content:""; position:fixed; z-index:-2; inset:0; background:radia
   }
 }
 
+/* Нүүр хуудасны тооцоолуур нь hero-ийн буланд байрлаж, хуудсаар дагаж хөвөхгүй. */
+.hero-carousel > .saving-calculator__trigger {
+  position:absolute;
+  z-index:13;
+  top:auto;
+  right:auto;
+  bottom:28px;
+  left:32px;
+  border-color:rgb(255 255 255 / .5);
+  background:rgb(5 8 22 / .72);
+  color:#fff;
+  backdrop-filter:blur(10px);
+}
+.hero-carousel > .saving-calculator__trigger:hover { background:var(--color-primary); color:#06101f; }
+@media (max-width:991px), (max-aspect-ratio:6/5) {
+  .hero-carousel > .saving-calculator__trigger { bottom:16px; left:20px; }
+}
+

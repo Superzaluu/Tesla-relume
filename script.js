@@ -309,10 +309,9 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
 
 // Savings calculator: injected once because every page shares this script.
 (function () {
-  var actions = document.querySelector(".navbar__actions");
-  var logo = document.querySelector(".navbar__logo");
+  var homeCarousel = document.querySelector("[data-hero-carousel]");
   var modelHero = document.querySelector(".mhero");
-  if ((!document.querySelector("[data-hero-carousel]") && !modelHero) || !actions || !logo) return;
+  if (!homeCarousel && !modelHero) return;
 
   var trigger = document.createElement("button");
   trigger.type = "button";
@@ -320,7 +319,7 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
   trigger.textContent = "Хэмнэлтийн тооцоолуур";
   trigger.setAttribute("aria-haspopup", "dialog");
   if (modelHero) modelHero.appendChild(trigger);
-  else logo.insertAdjacentElement("afterend", trigger);
+  else homeCarousel.appendChild(trigger);
 
   var modal = document.createElement("div");
   modal.className = "savings-modal";
@@ -329,7 +328,7 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
     '<div class="savings-modal__backdrop" data-savings-close></div>',
     '<section class="savings-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="savings-title">',
       '<button class="savings-modal__close" type="button" aria-label="Хаах" data-savings-close>×</button>',
-      '<header class="savings-modal__header"><h2 class="savings-modal__title" id="savings-title">Хэмнэлтийн тооцоо</h2><p class="savings-modal__intro">Одоогийн машиныхаа мэдээллийг оруулаад цахилгаан машинд шилжихэд гарах ойролцоох хэмнэлтээ тооцоолоорой.</p></header>',
+      '<header class="savings-modal__header"><h2 class="savings-modal__title" id="savings-title">Хэмнэлтийн тооцоолуур</h2><p class="savings-modal__intro">Одоогийн машиныхаа мэдээллийг оруулаад цахилгаан машинд шилжихэд гарах ойролцоох хэмнэлтээ тооцоолоорой.</p></header>',
       '<form class="savings-form" data-savings-form>',
         '<div class="savings-field"><label for="saving-maker">Үйлдвэрлэгч</label><select id="saving-maker" name="maker" required><option value="">Сонгоно уу</option><option value="Toyota">Toyota</option><option value="Nissan">Nissan</option><option value="Kia">Kia</option><option value="Hyundai">Hyundai</option><option value="Mazda">Mazda</option><option value="Mitsubishi">Mitsubishi</option></select></div>',
         '<div class="savings-field"><label for="saving-model">Загвар</label><select id="saving-model" name="model" required disabled><option value="">Эхлээд үйлдвэрлэгчээ сонгоно уу</option></select></div>',
