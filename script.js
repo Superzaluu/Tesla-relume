@@ -285,7 +285,7 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
     var resultWrap = poll.querySelector(".poll-card__results"), actionWrap = poll.querySelector(".actions");
     var choices = ["Асуудалгүй", "Мэдэхгүй", "Муу байх"], votes = [0, 0, 0];
     resultWrap.innerHTML = choices.map(function (label, index) { return '<div class="poll-card__result"><p class="h2" data-poll-percent="' + index + '">0%</p><p class="text-regular"><span data-poll-count="' + index + '">0</span> · ' + label + "</p></div>"; }).join("");
-    actionWrap.innerHTML = choices.map(function (label, index) { return '<button class="btn ' + (index === 0 ? "btn--secondary" : "btn--link") + '" type="button" data-poll-vote="' + index + '">' + label + "</button>"; }).join("");
+    actionWrap.innerHTML = choices.map(function (label, index) { return '<button class="btn btn--secondary" type="button" data-poll-vote="' + index + '">' + label + "</button>"; }).join("");
     function renderVotes() { var total = votes.reduce(function (sum, vote) { return sum + vote; }, 0); votes.forEach(function (vote, index) { resultWrap.querySelector('[data-poll-count="' + index + '"]').textContent = vote; resultWrap.querySelector('[data-poll-percent="' + index + '"]').textContent = total ? Math.round(vote / total * 100) + "%" : "0%"; }); }
     actionWrap.querySelectorAll("[data-poll-vote]").forEach(function (button) { button.addEventListener("click", function () { votes[Number(button.dataset.pollVote)] += 1; renderVotes(); }); });
   }
