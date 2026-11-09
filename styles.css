@@ -1291,3 +1291,59 @@ body::before { display:none; }
 .mhero .saving-calculator__trigger:hover,
 .hero-carousel.is-light .hero-carousel__arrow:hover { background:#083d28; color:#fff; }
 
+/* Саналын сонголтууд болон footer-д гүн ногоон өнгийг тогтмол хэрэглэнэ. */
+.poll-card .actions [data-poll-vote],
+.poll-card .btn--secondary {
+  border-color:#0f5a3a;
+  border-radius:12px;
+  background:#0f5a3a;
+  color:#fff;
+}
+.poll-card .actions [data-poll-vote]:hover,
+.poll-card .btn--secondary:hover { background:#083d28; color:#fff; }
+.site-footer,
+.site-footer__main,
+.site-footer__bottom {
+  background:#0f5a3a;
+  color:#fff;
+}
+.site-footer { border-top-color:#0b472f; }
+.site-footer__about { border-color:rgb(255 255 255 / .22); }
+.site-footer__heading,
+.site-footer__model,
+.site-footer__group h3,
+.site-footer__group a,
+.site-footer__block li a,
+.site-footer__address p,
+.site-footer__bottom,
+.site-footer__bottom a { color:#fff; }
+.site-footer__desc,
+.site-footer__address p span { color:rgb(255 255 255 / .72); }
+.site-footer__group a:hover,
+.site-footer__block li a:hover,
+.site-footer__bottom a:hover { color:#d9f7e5; }
+.site-footer__location,
+.site-footer__social a { background:rgb(255 255 255 / .14); color:#fff; }
+.site-footer__location:hover,
+.site-footer__social a:hover { background:#fff; color:#0f5a3a; }
+
+/* Дээд цэсийг брэндийн гүн ногоон өнгөтэй нэгтгэнэ. */
+.navbar,
+.navbar.is-solid {
+  color:#fff;
+  background:rgb(15 90 58 / .97);
+  border-bottom-color:#0b472f;
+  box-shadow:0 2px 14px rgb(8 61 40 / .22);
+}
+.navbar__logo img { filter:brightness(0) invert(1); }
+.navmenu__trigger { color:#fff; }
+.navmenu__trigger:hover,
+.navmenu.is-open .navmenu__trigger { background:rgb(255 255 255 / .14); color:#fff; }
+.navbar .btn--nav { border-color:rgb(255 255 255 / .45); background:#fff; color:#0f5a3a; box-shadow:none; }
+.navbar .btn--nav:hover { background:#d9f7e5; color:#083d28; }
+@media (max-width:1199px) {
+  .navbar__toggle,
+  .navbar.is-solid .navbar__toggle { border-color:rgb(255 255 255 / .45); background:rgb(255 255 255 / .12); }
+  .navbar__toggle::before { background:linear-gradient(#fff 0 2px,transparent 2px 5px,#fff 5px 7px,transparent 7px 10px,#fff 10px 12px); }
+}
+
