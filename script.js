@@ -64,12 +64,65 @@
   update();
 })();
 
+// Bonus registration page: restore the calculator values and enforce one
+// vehicle group with a maximum of two selected models.
+(function () {
+  var form = document.querySelector("[data-registration-form]");
+  if (!form) return;
+  var saved;
+  try { saved = JSON.parse(sessionStorage.getItem("savingsVehicle") || "null"); } catch (error) { saved = null; }
+  if (saved) {
+    form.querySelector("#reg-maker").value = saved.maker || "";
+    form.querySelector("#reg-model").value = saved.model || "";
+    form.querySelector("#reg-year").value = saved.year || "";
+    form.querySelector("#reg-consumption").value = saved.consumption ? saved.consumption + " л/100 км" : "";
+    form.querySelector("#reg-distance").value = saved.distance ? saved.distance + " км" : "";
+  }
+  var groups = Array.prototype.slice.call(form.querySelectorAll("[data-model-group]"));
+  var error = form.querySelector("[data-registration-error]");
+  function selected(group) { return Array.prototype.slice.call(group.querySelectorAll("input:checked")); }
+  function updateGroups() {
+    var active = groups.filter(function (group) { return selected(group).length > 0; })[0];
+    groups.forEach(function (group) {
+      var blocked = active && group !== active;
+      group.classList.toggle("is-disabled", !!blocked);
+      group.querySelectorAll("input").forEach(function (input) { input.disabled = !!blocked; });
+    });
+  }
+  groups.forEach(function (group) {
+    group.querySelectorAll("input").forEach(function (input) {
+      input.addEventListener("change", function () {
+        if (selected(group).length > 2) {
+          input.checked = false;
+          error.textContent = "Нэг ангиллаас хамгийн ихдээ 2 загвар сонгоно.";
+        } else { error.textContent = ""; }
+        updateGroups();
+      });
+    });
+  });
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    if (!groups.some(function (group) { return selected(group).length; })) {
+      error.textContent = "Сонирхож буй дор хаяж нэг загвараа сонгоно уу.";
+      return;
+    }
+    error.textContent = "";
+    form.querySelector("[data-registration-success]").hidden = false;
+    form.querySelector("button[type=submit]").disabled = true;
+  });
+})();
+
 // Hero carousel: arrows, dots, swipe, keyboard and autoplay (paused on hover/focus,
 // off for reduced motion). Light slides switch the navbar and controls to dark.
 (function () {
   var root = document.querySelector("[data-hero-carousel]");
   if (!root) return;
   var track = root.querySelector("[data-hero-track]");
+  ["hero-c9", "hero-ec35", "hero-special"].forEach(function (id) {
+    var slide = document.getElementById(id);
+    if (slide) slide.remove();
+  });
   var slides = Array.prototype.slice.call(track.children);
   var dotsWrap = root.querySelector("[data-hero-dots]");
   var navbar = document.querySelector("[data-navbar]");
@@ -220,3 +273,151 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
   window.addEventListener("resize", update);
   update();
 });
+
+// Homepage-only enhancements: carousel choices, voting and content cleanup.
+(function () {
+  var homeCarousel = document.querySelector("[data-hero-carousel]");
+  if (!homeCarousel) return;
+  ["hero-c9", "hero-ec35", "hero-special"].forEach(function (id) { var slide = document.getElementById(id); if (slide) slide.remove(); });
+
+  var poll = document.querySelector(".poll-card");
+  if (poll) {
+    var resultWrap = poll.querySelector(".poll-card__results"), actionWrap = poll.querySelector(".actions");
+    var choices = ["Асуудалгүй", "Мэдэхгүй", "Муу байх"], votes = [0, 0, 0];
+    resultWrap.innerHTML = choices.map(function (label, index) { return '<div class="poll-card__result"><p class="h2" data-poll-percent="' + index + '">0%</p><p class="text-regular"><span data-poll-count="' + index + '">0</span> · ' + label + "</p></div>"; }).join("");
+    actionWrap.innerHTML = choices.map(function (label, index) { return '<button class="btn ' + (index === 0 ? "btn--secondary" : "btn--link") + '" type="button" data-poll-vote="' + index + '">' + label + "</button>"; }).join("");
+    function renderVotes() { var total = votes.reduce(function (sum, vote) { return sum + vote; }, 0); votes.forEach(function (vote, index) { resultWrap.querySelector('[data-poll-count="' + index + '"]').textContent = vote; resultWrap.querySelector('[data-poll-percent="' + index + '"]').textContent = total ? Math.round(vote / total * 100) + "%" : "0%"; }); }
+    actionWrap.querySelectorAll("[data-poll-vote]").forEach(function (button) { button.addEventListener("click", function () { votes[Number(button.dataset.pollVote)] += 1; renderVotes(); }); });
+  }
+
+  var heading = document.querySelector("#models .h2"), subheading = document.querySelector("#models .text-medium");
+  if (heading) heading.textContent = "Бүх загвар";
+  if (subheading) subheading.textContent = "Таны хэрэгцээнд тохирох цахилгаан автомашинаа сонгоорой";
+  var modelsTrack = document.querySelector("#models [data-slider-track]");
+  if (modelsTrack) {
+    var cards = Array.prototype.slice.call(document.querySelectorAll(".navbar__links .navmenu__card"));
+    modelsTrack.innerHTML = cards.map(function (card) { var image = card.querySelector("img"), name = card.querySelector(".navmenu__name"), desc = card.querySelector(".navmenu__desc"); return '<article class="vcard vcard--model"><img class="vcard__bg" src="' + image.getAttribute("src") + '" alt="' + name.textContent + '" loading="lazy"><div class="vcard__content"><div class="vcard__heading"><p class="vcard__title">' + desc.textContent + '</p><h3 class="vcard__model">' + name.textContent + '</h3></div><div class="vcard__actions"><a class="btn btn--light" href="' + card.getAttribute("href") + '">Дэлгэрэнгүй</a></div></div></article>'; }).join("");
+  }
+
+  var orderTitle = Array.prototype.slice.call(document.querySelectorAll(".cta .h2")).filter(function (node) { return node.textContent.indexOf("Захиалгаар") !== -1; })[0];
+  if (orderTitle) { var cta = orderTitle.closest(".cta"), copy = cta.querySelector(".text-medium"), image = cta.querySelector("img"); orderTitle.textContent = "Баталгаат хугацаа"; if (copy) copy.textContent = "Зайны багц болон автомашины баталгааны нөхцөлийг харна уу."; cta.querySelectorAll(".actions").forEach(function (actions) { actions.innerHTML = '<a class="btn btn--primary" href="warranty.html">Баталгааг харах</a>'; }); if (image) { image.alt = "Баталгаат хугацаа"; cta.classList.add("cta--warranty"); } }
+
+  Array.prototype.slice.call(document.querySelectorAll("main > .section")).forEach(function (section) { var h2 = section.querySelector(".h2"); if (h2 && h2.textContent.trim() === "Other products") section.remove(); });
+  var galleryHeading = Array.prototype.slice.call(document.querySelectorAll(".section-title .h2")).filter(function (node) { return node.textContent.trim() === "Зургийн цомог"; })[0];
+  if (galleryHeading) { var galleryCopy = galleryHeading.parentElement.parentElement.querySelector(".text-medium"); if (galleryCopy) galleryCopy.textContent = "Манай автомашины зургийн цомгийг үзнэ үү."; }
+})();
+
+// Savings calculator: injected once because every page shares this script.
+(function () {
+  var actions = document.querySelector(".navbar__actions");
+  var logo = document.querySelector(".navbar__logo");
+  if (!document.querySelector("[data-hero-carousel]") || !actions || !logo) return;
+
+  var trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "saving-calculator__trigger";
+  trigger.textContent = "Хэмнэлтийн тооцоолуур";
+  trigger.setAttribute("aria-haspopup", "dialog");
+  logo.insertAdjacentElement("afterend", trigger);
+
+  var modal = document.createElement("div");
+  modal.className = "savings-modal";
+  modal.hidden = true;
+  modal.innerHTML = [
+    '<div class="savings-modal__backdrop" data-savings-close></div>',
+    '<section class="savings-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="savings-title">',
+      '<button class="savings-modal__close" type="button" aria-label="Хаах" data-savings-close>×</button>',
+      '<header class="savings-modal__header"><h2 class="savings-modal__title" id="savings-title">Хэмнэлтийн тооцоо</h2><p class="savings-modal__intro">Одоогийн машиныхаа мэдээллийг оруулаад цахилгаан машинд шилжихэд гарах ойролцоох хэмнэлтээ тооцоолоорой.</p></header>',
+      '<form class="savings-form" data-savings-form>',
+        '<div class="savings-field"><label for="saving-maker">Үйлдвэрлэгч</label><select id="saving-maker" name="maker" required><option value="">Сонгоно уу</option><option value="Toyota">Toyota</option><option value="Nissan">Nissan</option><option value="Kia">Kia</option><option value="Hyundai">Hyundai</option><option value="Mazda">Mazda</option><option value="Mitsubishi">Mitsubishi</option></select></div>',
+        '<div class="savings-field"><label for="saving-model">Загвар</label><select id="saving-model" name="model" required disabled><option value="">Эхлээд үйлдвэрлэгчээ сонгоно уу</option></select></div>',
+        '<div class="savings-field"><label for="saving-year">Он</label><input id="saving-year" name="year" type="number" min="1980" max="2026" placeholder="Жишээ: 2018" required></div>',
+        '<div class="savings-field"><label for="saving-consumption">Түлш зарцуулалт (л/100 км)</label><input id="saving-consumption" name="consumption" type="number" min="1" max="50" step=".1" inputmode="decimal" placeholder="Жишээ: 10.5" required></div>',
+        '<div class="savings-field savings-field--full"><label for="saving-distance">Өдөр таны явдаг зай (км)</label><input id="saving-distance" name="distance" type="number" min="1" max="2000" inputmode="decimal" placeholder="Жишээ: 60" required></div>',
+        '<button class="btn btn--primary savings-form__submit" type="submit">ТООЦОО ГАРГАХ</button>',
+      '</form>',
+      '<div class="savings-results" data-savings-results hidden aria-live="polite"></div>',
+    '</section>'
+  ].join("");
+  document.body.appendChild(modal);
+
+  var dialog = modal.querySelector(".savings-modal__dialog");
+  var form = modal.querySelector("[data-savings-form]");
+  var results = modal.querySelector("[data-savings-results]");
+  var maker = modal.querySelector("#saving-maker");
+  var model = modal.querySelector("#saving-model");
+  var models = {
+    Toyota: ["Prius", "Camry", "Crown", "Harrier", "RAV4", "Land Cruiser", "Alphard", "Sienta"],
+    Nissan: ["Leaf", "Note", "X-Trail", "Serena", "Tiida", "March", "Patrol", "Vanette"],
+    Kia: ["K5", "K7", "Sportage", "Sorento", "Bongo", "Morning", "Carnival", "Rio"],
+    Hyundai: ["Porter", "Tucson", "Santa Fe", "Sonata", "Accent", "Starex", "Avante", "Mighty"],
+    Mazda: ["Demio", "CX-5", "CX-9", "Axela", "Atenza", "Bongo", "Familia"],
+    Mitsubishi: ["Outlander", "Pajero", "Delica", "Lancer", "RVR", "Fuso Canter", "L200"]
+  };
+  maker.addEventListener("change", function () {
+    var list = models[maker.value] || [];
+    model.innerHTML = '<option value="">Сонгоно уу</option>' + list.map(function (item) { return '<option value="' + item + '">' + item + "</option>"; }).join("");
+    model.disabled = !list.length;
+  });
+  var lastFocus = null;
+  function openModal() {
+    lastFocus = document.activeElement;
+    form.reset();
+    model.innerHTML = '<option value="">Эхлээд үйлдвэрлэгчээ сонгоно уу</option>';
+    model.disabled = true;
+    form.hidden = false;
+    results.hidden = true;
+    modal.hidden = false;
+    document.body.classList.add("savings-modal-open");
+    maker.focus();
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.classList.remove("savings-modal-open");
+    if (lastFocus) lastFocus.focus();
+  }
+  trigger.addEventListener("click", openModal);
+  modal.querySelectorAll("[data-savings-close]").forEach(function (button) { button.addEventListener("click", closeModal); });
+  document.addEventListener("keydown", function (event) { if (!modal.hidden && event.key === "Escape") closeModal(); });
+
+  function money(value) { return new Intl.NumberFormat("mn-MN", { maximumFractionDigits: 0 }).format(Math.round(value)) + " ₮"; }
+  function number(value) { return new Intl.NumberFormat("mn-MN", { maximumFractionDigits: 0 }).format(Math.round(value)); }
+  function coins() {
+    var html = '<div class="savings-coins" aria-hidden="true">';
+    for (var i = 0; i < 18; i++) html += '<i class="savings-coin" style="--coin-left:' + (i * 5 + 1) + '%;--coin-delay:' + (i % 6) * .22 + 's;--coin-duration:' + (1.8 + (i % 4) * .3) + 's"></i>';
+    return html + "</div>";
+  }
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    var values = new FormData(form), dailyKm = Number(values.get("distance")), consumption = Number(values.get("consumption"));
+    var monthlyKm = dailyKm * 30, yearlyKm = dailyKm * 365;
+    var monthlyLitres = monthlyKm * consumption / 100, yearlyLitres = yearlyKm * consumption / 100;
+    var fuelCost = monthlyLitres * 3700, electricityCost = monthlyKm * .22 * 280;
+    var monthlySaving = Math.max(0, fuelCost - electricityCost), yearlySaving = monthlySaving * 12;
+    var serviceSaving = yearlyKm * 45;
+    var queueHours = monthlyLitres / 50 * .5, yearlyHours = queueHours * 12;
+    var vehicle = values.get("maker") + " " + values.get("model") + " (" + values.get("year") + ")";
+    form.hidden = true;
+    results.hidden = false;
+    results.innerHTML = [
+      '<p class="savings-results__vehicle">Таны машин: <strong>' + vehicle.replace(/[&<>"']/g, function (x) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[x]; }) + '</strong></p>',
+      '<h3 class="savings-results__title">Та энэ загвараар ойролцоогоор хэмнэнэ</h3>',
+      '<div class="savings-results__grid">',
+        '<div class="savings-result"><span class="savings-result__label">Сарын түлшний хэрэглээ</span><strong class="savings-result__value">' + number(monthlyLitres) + ' л</strong></div>',
+        '<div class="savings-result"><span class="savings-result__label">Жилийн түлшний хэрэглээ</span><strong class="savings-result__value">' + number(yearlyLitres) + ' л</strong></div>',
+        '<div class="savings-result"><span class="savings-result__label">Сарын мөнгөн хэмнэлт</span><strong class="savings-result__value">' + money(monthlySaving) + '</strong></div>',
+        '<div class="savings-result"><span class="savings-result__label">Жилийн мөнгөн хэмнэлт</span><strong class="savings-result__value">' + money(yearlySaving) + '</strong></div>',
+        '<div class="savings-result"><span class="savings-result__label">Үйлчилгээний зардлын хэмнэлт</span><strong class="savings-result__value">' + money(serviceSaving) + ' / жил</strong></div>',
+        '<div class="savings-result"><span class="savings-result__label">Колонкид очерлох цагийн хэмнэлт</span><strong class="savings-result__value">' + number(yearlyHours) + ' цаг / жил</strong></div>',
+      '</div>',
+      '<p class="savings-results__note">Тооцоо нь таны оруулсан түлшний зарцуулалт, шатахууны жишиг үнэ 3,700 ₮/л, цахилгаан зарцуулалт 22 кВт·ц/100 км, цэнэгийн үнэ 280 ₮/кВт·ц гэсэн таамагт үндэслэнэ.</p>',
+      '<div class="savings-choice"><p class="savings-choice__text">Та энэ мэдээллээ бүртгүүлж 100,000 ₮ бонус эрх аваарай</p><div class="savings-choice__buttons"><button class="btn btn--primary" type="button" data-savings-yes>БОНУС АВАХ</button><button class="btn btn--secondary" type="button" data-savings-no>ГАРАХ</button></div></div>'
+    ].join("");
+    results.querySelector("[data-savings-yes]").addEventListener("click", function () {
+      sessionStorage.setItem("savingsVehicle", JSON.stringify({ maker: values.get("maker"), model: values.get("model"), year: values.get("year"), consumption: values.get("consumption"), distance: values.get("distance") }));
+      window.location.href = "register.html";
+    });
+    results.querySelector("[data-savings-no]").addEventListener("click", function () { closeModal(); });
+  });
+})();

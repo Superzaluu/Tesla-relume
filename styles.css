@@ -720,6 +720,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
    Savings calculator — shared UI injected by script.js on every page
    ========================================================================== */
 .saving-calculator__trigger {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: var(--padding-global);
   min-width: auto;
   min-height: 32px;
   padding: 6px 13px;
@@ -769,8 +772,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .savings-offer[hidden] { display: none; }
 .savings-offer p { position: relative; z-index: 1; margin: 0 0 13px; font-weight: 600; line-height: 1.35; }
 .savings-coins { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.savings-coin { position: absolute; bottom: -24px; left: var(--coin-left); width: 17px; height: 17px; border: 2px solid #b77900; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff3a4, #f6b800 57%, #b77900); animation: coin-rise var(--coin-duration) ease-out var(--coin-delay) infinite; }
-@keyframes coin-rise { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-180px) rotate(300deg); opacity: 0; } }
+.savings-coin { position: absolute; bottom: -24px; left: var(--coin-left); display: grid; width: 22px; height: 22px; place-items: center; border: 2px solid #178443; border-radius: 4px; background: #67c96f; color: #fff; font-size: 15px; font-style: normal; font-weight: 700; animation: dollar-rise var(--coin-duration) ease-out var(--coin-delay) infinite; }
+.savings-coin::before { content: "$"; }
+@keyframes dollar-rise { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-180px) rotate(12deg); opacity: 0; } }
 body.savings-modal-open { overflow: hidden; }
 @media (max-width: 599px) { .saving-calculator__trigger { padding-inline: 9px; font-size: 12px; } .savings-modal { padding: 10px; } .savings-modal__dialog { padding: 25px 19px; border-radius: 12px; } .savings-form, .savings-results__grid { grid-template-columns: 1fr; } .savings-result--wide { grid-column: auto; } }
 @media (prefers-reduced-motion: reduce) { .savings-coin { animation: none; } }
@@ -1027,4 +1031,41 @@ body.savings-modal-open { overflow: hidden; }
   .charger-map { height: 380px; }
 
 }
+
+/* Homepage warranty card, footer alignment and warranty details */
+.cta--warranty { position: relative; overflow: hidden; padding: 48px; min-height: 440px; background: #101820; color: #fff; }
+.cta--warranty::after { content: "7 ЖИЛ"; position: absolute; right: 7%; bottom: 7%; z-index: 1; font-size: clamp(48px, 8vw, 120px); font-weight: 700; line-height: .8; letter-spacing: -.07em; color: rgba(255,255,255,.9); pointer-events: none; }
+.cta--warranty .cta__column { position: relative; z-index: 2; max-width: 460px; }.cta--warranty .text-medium { color: rgba(255,255,255,.84); }.cta--warranty .cta__image { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; opacity: .46; border-radius: 0; object-fit: cover; }.cta--warranty .btn { background: #fff; color: #111; }
+.site-footer__main { align-items: start; }.site-footer__models { min-width: 0; }.site-footer__about { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); align-items: start; }.site-footer__groups { grid-template-columns: repeat(3, minmax(140px,1fr)); }.site-footer__bottom { align-items: center; }
+.warranty-page { padding-top: var(--navbar-height); }.warranty-hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 440px; background: #121d25; color: #fff; }.warranty-hero > div { display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: 64px max(32px,calc((100vw - 1200px)/2)); padding-right: 48px; }.warranty-hero .text-medium { color: rgba(255,255,255,.8); }.warranty-hero img { width: 100%; height: 100%; min-height: 440px; object-fit: cover; }.warranty-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }.warranty-grid article { padding: 28px; border-radius: 12px; background: var(--color-surface); }.warranty-grid h2 { margin: 0 0 16px; font-size: 44px; letter-spacing: -.06em; }.warranty-grid p { min-height: 3.2em; margin: 0 0 16px; color: var(--color-text-secondary); line-height: 1.45; }.warranty-note { max-width: 850px; margin: 0; color: var(--color-text-muted); font-size: 13px; line-height: 1.5; }
+@media (max-width: 991px) { .site-footer__about { grid-template-columns: 1fr 1fr; }.site-footer__groups { grid-template-columns: repeat(2,minmax(140px,1fr)); }.warranty-hero { grid-template-columns: 1fr; }.warranty-hero > div { padding: 56px 32px; }.warranty-hero img { min-height: 250px; }.warranty-grid { grid-template-columns: 1fr; } }
+
+/* Registration / bonus page */
+.registration-page { padding-top: var(--navbar-height); background: var(--color-background); }
+.registration { min-height: calc(100vh - var(--navbar-height)); padding: 64px var(--padding-global); background: linear-gradient(135deg, #f7fbff, #edf5f7); }
+.registration__inner { display: grid; grid-template-columns: 180px minmax(0, .85fr) minmax(500px, 1.15fr); gap: 48px; max-width: 1260px; margin: 0 auto; align-items: start; }
+.registration__content { display: flex; flex-direction: column; gap: 20px; padding-top: 16px; }
+.registration__content .h1 { max-width: 7ch; }
+.registration__bonus { position: relative; display: flex; min-height: 180px; flex-direction: column; align-items: center; justify-content: center; gap: 4px; overflow: hidden; border-radius: 18px; background: #175f35; color: #fff; box-shadow: 0 16px 32px rgba(23,95,53,.2); text-align: center; }
+.registration__bonus > span { position: relative; z-index: 1; font-size: 22px; font-weight: 700; }
+.registration__bonus > strong { position: relative; z-index: 1; font-size: 12px; letter-spacing: .08em; }
+.registration__dollars { position: absolute; inset: 0; overflow: hidden; }
+.registration__dollars i { position: absolute; bottom: -28px; left: var(--dollar-left); display: grid; width: 24px; height: 24px; place-items: center; border: 1px solid #b6e2a8; border-radius: 4px; background: #6dc66b; color: #fff; font-style: normal; font-weight: 700; animation: dollar-rise var(--dollar-duration) ease-out var(--dollar-delay) infinite; }
+.registration__dollars i:nth-child(1) { --dollar-left: 8%; --dollar-duration: 2.4s; --dollar-delay: .1s; }.registration__dollars i:nth-child(2) { --dollar-left: 29%; --dollar-duration: 2s; --dollar-delay: .7s; }.registration__dollars i:nth-child(3) { --dollar-left: 52%; --dollar-duration: 2.7s; --dollar-delay: .3s; }.registration__dollars i:nth-child(4) { --dollar-left: 73%; --dollar-duration: 2.2s; --dollar-delay: 1.1s; }.registration__dollars i:nth-child(5) { --dollar-left: 42%; --dollar-duration: 1.9s; --dollar-delay: 1.3s; }.registration__dollars i:nth-child(6) { --dollar-left: 14%; --dollar-duration: 2.6s; --dollar-delay: 1.6s; }
+.registration-form { display: grid; gap: 22px; padding: 30px; border-radius: 16px; background: #fff; box-shadow: 0 18px 44px rgba(14,34,48,.12); }
+.registration-form__fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.registration-form__fieldset legend { margin-bottom: 14px; font-size: 18px; font-weight: 600; }
+.registration-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.registration-form input[readonly] { background: var(--color-surface); color: var(--color-text-secondary); }
+.registration-models__hint { margin: 0 0 14px; color: var(--color-text-muted); font-size: 13px; line-height: 1.4; }
+.registration-models__groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.registration-models__group { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; padding: 14px; border: 1px solid var(--color-border); border-radius: 10px; }
+.registration-models__group h2 { grid-column: 1 / -1; margin: 0 0 3px; font-size: 15px; }
+.registration-models__group label { font-size: 13px; cursor: pointer; }
+.registration-models__group input { accent-color: var(--color-primary); }
+.registration-models__group.is-disabled { opacity: .43; }
+.registration-form__error { min-height: 1.2em; margin: -8px 0 0; color: #b42318; font-size: 13px; }
+.registration-form__success { margin: 0; padding: 14px; border-radius: 8px; background: #dcfae6; color: #067647; font-weight: 600; }
+@media (max-width: 1100px) { .registration__inner { grid-template-columns: 150px 1fr; }.registration-form { grid-column: 1 / -1; }.registration__content { padding-top: 0; } }
+@media (max-width: 640px) { .registration { padding: 32px 20px; }.registration__inner { grid-template-columns: 1fr; gap: 24px; }.registration__bonus { min-height: 120px; }.registration-form { padding: 21px 16px; }.registration-form__grid, .registration-models__groups { grid-template-columns: 1fr; }.registration-models__group { grid-template-columns: 1fr; }.registration-models__group h2 { grid-column: auto; } }
 
