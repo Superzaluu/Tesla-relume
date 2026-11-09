@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruichi — Ирээдүйн логистик</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          boxShadow: { card: '0 12px 28px rgba(15, 35, 56, 0.08)' }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#F5F7FA] font-sans text-gray-900 antialiased">
+  <header class="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
+    <nav class="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 py-4 lg:px-8" aria-label="Үндсэн цэс">
+      <a href="#home" class="flex items-center gap-2" aria-label="Ruichi нүүр хуудас">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-emerald-600 font-extrabold text-white">R</span>
+        <span class="text-xl font-extrabold tracking-tight text-gray-900">RUICHI</span>
+      </a>
+
+      <div class="hidden items-center gap-8 text-sm font-medium text-gray-600 lg:flex">
+        <a class="transition hover:text-emerald-600" href="#models">Загварууд</a>
+        <a class="transition hover:text-emerald-600" href="#specs">Үзүүлэлт</a>
+        <a class="transition hover:text-emerald-600" href="#benefits">Давуу тал</a>
+        <a class="transition hover:text-emerald-600" href="#contact">Холбоо барих</a>
+      </div>
+
+      <div class="hidden lg:block">
+        <a href="#contact" class="inline-flex items-center justify-center rounded-xl bg-[#0F5A3A] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#083D28] focus:outline-none focus:ring-4 focus:ring-emerald-100">Борлуулалттай холбогдох</a>
+      </div>
+
+      <button id="menu-button" class="rounded-lg border border-gray-200 p-2 text-gray-700 lg:hidden" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Цэс нээх">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+      </button>
+    </nav>
+    <div id="mobile-menu" class="hidden border-t border-gray-100 bg-white px-5 py-4 lg:hidden">
+      <div class="flex flex-col gap-1 text-sm font-medium text-gray-700">
+        <a class="rounded-md px-3 py-3 hover:bg-emerald-50 hover:text-emerald-700" href="#models">Загварууд</a>
+        <a class="rounded-md px-3 py-3 hover:bg-emerald-50 hover:text-emerald-700" href="#specs">Үзүүлэлт</a>
+        <a class="rounded-md px-3 py-3 hover:bg-emerald-50 hover:text-emerald-700" href="#benefits">Давуу тал</a>
+        <a class="mt-2 rounded-xl bg-[#0F5A3A] px-4 py-3 text-center font-semibold text-white hover:bg-[#083D28]" href="#contact">Борлуулалттай холбогдох</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="overflow-hidden bg-white">
+      <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:py-20 lg:grid-cols-2 lg:px-8 lg:py-24">
+        <div class="max-w-xl">
+          <p class="mb-5 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700"><span class="h-2 w-2 rounded-full bg-emerald-600"></span> Цахилгаан арилжааны тээвэр</p>
+          <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">Ирээдүйн <span class="text-emerald-600">логистик</span></h1>
+          <p class="mt-6 text-lg leading-8 text-gray-600">Танай бизнесийн ачаа тээврийг илүү цэвэр, үр ашигтай, найдвартай болгох Ruichi цахилгаан ачааны автомашинууд.</p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="#contact" class="inline-flex items-center justify-center rounded-xl bg-[#0F5A3A] px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-[#083D28] focus:outline-none focus:ring-4 focus:ring-emerald-100">Үнийн санал авах <span class="ml-2" aria-hidden="true">→</span></a>
+            <a href="#specs" class="inline-flex items-center justify-center rounded-xl border border-[#0F5A3A] bg-[#0F5A3A] px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-[#083D28]">Үзүүлэлт харах</a>
+          </div>
+          <div class="mt-10 flex flex-wrap gap-x-8 gap-y-4 border-t border-gray-100 pt-6 text-sm text-gray-600">
+            <span><strong class="text-gray-900">0%</strong> Утаа ялгаруулалт</span>
+            <span><strong class="text-gray-900">24/7</strong> Бизнесийн бэлэн байдал</span>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="absolute -inset-6 rounded-full bg-emerald-100/70 blur-3xl"></div>
+          <div class="relative overflow-hidden rounded-3xl border border-gray-100 bg-gradient-to-br from-slate-100 to-emerald-50 p-3 shadow-card">
+            <img class="h-auto w-full rounded-2xl object-cover" src="https://placehold.co/1120x760/F2F6F4/1F3C35?text=RUICHI+ELECTRIC+CARGO+TRUCK" alt="Ruichi цахилгаан ачааны машины байрлалын зураг" width="1120" height="760">
+            <div class="absolute bottom-7 left-7 rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+              <p class="text-xs font-medium uppercase tracking-wider text-gray-500">Цахилгаан платформ</p>
+              <p class="mt-1 font-bold text-gray-900">Ажлын өдөр бүрт бэлэн</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="specs" class="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8">
+      <div class="max-w-2xl">
+        <p class="text-sm font-bold uppercase tracking-widest text-emerald-600">Гол үзүүлэлт</p>
+        <h2 class="mt-3 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">Логистикт зориулагдсан хүчин чадал</h2>
+        <p class="mt-4 text-gray-600">Өдөр тутмын түгээлтийн хэрэгцээнд зориулсан ойлгомжтой, хэмжигдэхүйц үзүүлэлтүүд.</p>
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-card">
+          <div class="grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-xl text-emerald-600" aria-hidden="true">▣</div>
+          <p class="mt-6 text-sm font-medium text-gray-500">Ачаа даац</p>
+          <p class="mt-1 text-3xl font-extrabold tracking-tight text-gray-900">3,500 <span class="text-base font-semibold text-gray-500">кг хүртэл</span></p>
+        </article>
+        <article class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-card">
+          <div class="grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-xl text-emerald-600" aria-hidden="true">▰</div>
+          <p class="mt-6 text-sm font-medium text-gray-500">Батарейн багтаамж</p>
+          <p class="mt-1 text-3xl font-extrabold tracking-tight text-gray-900">81 <span class="text-base font-semibold text-gray-500">кВт⋅ц</span></p>
+        </article>
+        <article class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-card">
+          <div class="grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-xl text-emerald-600" aria-hidden="true">↔</div>
+          <p class="mt-6 text-sm font-medium text-gray-500">Туулах зай</p>
+          <p class="mt-1 text-3xl font-extrabold tracking-tight text-gray-900">300 <span class="text-base font-semibold text-gray-500">км хүртэл</span></p>
+        </article>
+        <article class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-card">
+          <div class="grid h-11 w-11 place-items-center rounded-xl bg-emerald-50 text-xl text-emerald-600" aria-hidden="true">ϟ</div>
+          <p class="mt-6 text-sm font-medium text-gray-500">Цэнэглэх хугацаа</p>
+          <p class="mt-1 text-3xl font-extrabold tracking-tight text-gray-900">1.5 <span class="text-base font-semibold text-gray-500">цаг</span></p>
+        </article>
+      </div>
+    </section>
+
+    <section id="benefits" class="bg-white">
+      <div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:py-20 lg:grid-cols-3 lg:px-8">
+        <div><p class="text-sm font-bold uppercase tracking-widest text-emerald-600">Ruichi давуу тал</p><h2 class="mt-3 text-3xl font-extrabold tracking-tight text-gray-900">Илүү ухаалаг тээвэрлэлт</h2></div>
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"><h3 class="font-bold text-gray-900">Бага ашиглалтын зардал</h3><p class="mt-3 leading-7 text-gray-600">Түлш болон төлөвлөгдөөгүй засварын зардлыг бууруулах цахилгаан хөтлөгч.</p></div>
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"><h3 class="font-bold text-gray-900">Байгууллагын найдвартай шийдэл</h3><p class="mt-3 leading-7 text-gray-600">Таны түгээлтийн ажлын хуваарьт тохирох ачаалал, зай, үйлчилгээний дэмжлэг.</p></div>
+      </div>
+    </section>
+
+    <section id="contact" class="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8">
+      <div class="rounded-3xl bg-emerald-700 px-6 py-12 text-center text-white shadow-card sm:px-12">
+        <p class="text-sm font-bold uppercase tracking-widest text-emerald-100">Бизнесийн тээврийн шийдэл</p>
+        <h2 class="mx-auto mt-3 max-w-2xl text-3xl font-extrabold tracking-tight sm:text-4xl">Ruichi таны логистикт хэрхэн тохирохыг ярилцъя.</h2>
+        <p class="mx-auto mt-4 max-w-xl text-emerald-50">Манай борлуулалтын багтай холбогдож, загвар болон санхүүжилтийн сонголтоо аваарай.</p>
+        <a href="mailto:sales@example.com" class="mt-8 inline-flex rounded-xl bg-[#083D28] px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-[#062C1E]">Борлуулалттай холбогдох</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-gray-200 bg-white"><div class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-8 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between lg:px-8"><span>© 2026 Ruichi. Бүх эрх хуулиар хамгаалагдсан.</span><span>Цахилгаан арилжааны тээврийн шийдэл</span></div></footer>
+
+  <script>
+    const menuButton = document.getElementById('menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuButton.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden') === false;
+      menuButton.setAttribute('aria-expanded', String(open));
+    });
+  </script>
+</body>
+</html>
