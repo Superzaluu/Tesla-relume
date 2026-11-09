@@ -447,3 +447,54 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
   .mend__actions { width: 100%; flex-direction: column; align-items: stretch; }
   .mend__actions .btn { width: 100%; min-width: 0; }
 }
+
+/* ---------- Generated model pages: intro, gallery cards, spec table ---------- */
+.mintro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: calc(var(--navbar-height) + 48px) var(--padding-global) 40px;
+  background: linear-gradient(to bottom, var(--color-surface), var(--color-background));
+  text-align: center;
+}
+.mintro__text { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 760px; }
+.mintro__title { font-size: 56px; font-weight: 500; line-height: 1.05; letter-spacing: -0.02em; }
+.mintro__desc { font-size: 20px; font-weight: 500; color: var(--color-text-secondary); }
+.mintro__tagline { margin-top: 4px; font-size: var(--text-regular); color: var(--color-text-muted); }
+.mintro__image { width: 100%; height: auto; border-radius: var(--radius-card); }
+
+.mcard--plain img { aspect-ratio: 4 / 3; }
+
+.mspec-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: var(--color-background);
+}
+.mspec-table th,
+.mspec-table td {
+  padding: 10px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #ececec;
+}
+.mspec-table tbody th[scope="row"] { width: 26%; font-weight: 400; color: var(--color-text-secondary); }
+.mspec-table td { font-weight: 500; }
+.mspec-table tr.is-head th,
+.mspec-table tr.is-head td { font-weight: 600; background: #fafafa; color: var(--color-text); }
+.mspec-table tr.is-group th {
+  padding-top: 22px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+.mcompare__scroll { border-radius: var(--radius-card); }
+
+@media (max-width: 991px) {
+  .mintro { gap: 24px; padding: calc(var(--navbar-height) + 32px) var(--padding-global) 24px; }
+  .mintro__title { font-size: 40px; }
+  .mintro__desc { font-size: 17px; }
+}

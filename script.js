@@ -5,14 +5,57 @@
   var links = document.getElementById("nav-links");
   if (!navbar) return;
 
+  var menus = Array.prototype.slice.call(document.querySelectorAll("[data-navmenu]"));
+  var desktop = window.matchMedia("(min-width: 1200px) and (hover: hover)");
+  var hoverTimer = null;
+
   function isOpen() { return !!links && links.classList.contains("is-open"); }
-  function update() { navbar.classList.toggle("is-solid", window.scrollY > 8 || isOpen()); }
+  function anyMenuOpen() { return menus.some(function (m) { return m.classList.contains("is-open"); }); }
+  function update() { navbar.classList.toggle("is-solid", window.scrollY > 8 || isOpen() || anyMenuOpen()); }
+
+  // Category dropdowns: click/tap toggles; on desktop hover also opens
+  function setMenu(menu, open) {
+    menu.classList.toggle("is-open", open);
+    menu.querySelector(".navmenu__trigger").setAttribute("aria-expanded", String(open));
+  }
+  function closeMenus(except) { menus.forEach(function (m) { if (m !== except) setMenu(m, false); }); update(); }
+
+  menus.forEach(function (menu) {
+    var trigger = menu.querySelector(".navmenu__trigger");
+    trigger.addEventListener("click", function () {
+      var open = !menu.classList.contains("is-open");
+      closeMenus(menu);
+      setMenu(menu, open);
+      update();
+    });
+    menu.addEventListener("mouseenter", function () {
+      if (!desktop.matches) return;
+      clearTimeout(hoverTimer);
+      closeMenus(menu); setMenu(menu, true); update();
+    });
+    menu.addEventListener("mouseleave", function () {
+      if (!desktop.matches) return;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(function () { setMenu(menu, false); update(); }, 180);
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && anyMenuOpen()) {
+      var open = menus.filter(function (m) { return m.classList.contains("is-open"); })[0];
+      closeMenus();
+      if (open) open.querySelector(".navmenu__trigger").focus();
+    }
+  });
+  document.addEventListener("click", function (e) {
+    if (anyMenuOpen() && !navbar.contains(e.target)) closeMenus();
+  });
 
   if (toggle && links) {
     toggle.addEventListener("click", function () {
       var open = links.classList.toggle("is-open");
       toggle.setAttribute("aria-expanded", String(open));
       toggle.textContent = open ? "Хаах" : "Цэс";
+      if (!open) closeMenus();
       update();
     });
   }

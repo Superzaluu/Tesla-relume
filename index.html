@@ -14,22 +14,72 @@
   <!-- Navbar / 2 -->
   <header class="navbar" data-navbar>
     <div class="navbar__container">
-      <a class="navbar__logo logo" href="#" aria-label="Нүүр хуудас">
+      <a class="navbar__logo logo" href="index.html" aria-label="Нүүр хуудас">
         <img src="assets/brand-logo-transparent.png" width="57" height="36" alt="Tesla">
       </a>
 
-      <nav class="navbar__links" id="nav-links" aria-label="Үндсэн цэс">
-        <a href="ec75.html#passenger">Зорчигч тээврийн микоравтобус</a>
-        <a href="ec75.html#cargo">Ачааны хүргэлтийн фургон</a>
-        <a href="#">Ачааны машин 1.5т</a>
-        <a href="#">Ачааны машин 1.5т Hybrid</a>
-        <a href="#">Хөргүүртэй ачааны машин</a>
-        <a href="#">Хөргүүртэй фургон</a>
-        <a href="#">Тусгай зориулатын машин</a>
+      <nav class="navbar__links" id="nav-links" aria-label="Загварууд">
+        <div class="navmenu" data-navmenu>
+          <button class="navmenu__trigger" type="button" aria-expanded="false" aria-controls="menu-passenger">Зорчигч тээвэр<svg class="navmenu__chevron" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="navmenu__panel" id="menu-passenger">
+            <ul class="navmenu__grid">
+              <li><a class="navmenu__card" href="ec75.html#passenger"><img src="assets/thumbs/ec75-passenger.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC75</span><span class="navmenu__desc">Зорчигч тээврийн машин</span></a></li>
+              <li><a class="navmenu__card" href="ec75pro-passenger.html"><img src="assets/thumbs/ec75pro-passenger.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC75 Pro</span><span class="navmenu__desc">Зорчигч тээврийн машин</span></a></li>
+              <li><a class="navmenu__card" href="r5.html#passenger"><img src="assets/thumbs/r5-passenger.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">R5</span><span class="navmenu__desc">Зорчигч тээврийн машин</span></a></li>
+              <li><a class="navmenu__card" href="r5pro-passenger.html"><img src="assets/thumbs/r5pro-passenger.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">R5 Pro</span><span class="navmenu__desc">Зорчигч тээврийн машин</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="navmenu" data-navmenu>
+          <button class="navmenu__trigger" type="button" aria-expanded="false" aria-controls="menu-cargo-van">Ачаа хүргэлт фургон<svg class="navmenu__chevron" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="navmenu__panel" id="menu-cargo-van">
+            <ul class="navmenu__grid">
+              <li><a class="navmenu__card" href="ec75.html#cargo"><img src="assets/thumbs/ec75-cargo.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC75</span><span class="navmenu__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a class="navmenu__card" href="ec75pro-cargo.html"><img src="assets/thumbs/ec75pro-cargo.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC75 Pro</span><span class="navmenu__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a class="navmenu__card" href="r5.html#cargo"><img src="assets/thumbs/r5-cargo.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">R5</span><span class="navmenu__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a class="navmenu__card" href="r5pro-cargo.html"><img src="assets/thumbs/r5pro-cargo.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">R5 Pro</span><span class="navmenu__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a class="navmenu__card" href="ec35.html"><img src="assets/thumbs/ec35.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC35II</span><span class="navmenu__desc">Ачаа тээврийн фургон</span></a></li>
+              <li><a class="navmenu__card" href="ec31.html"><img src="assets/thumbs/ec31.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC31</span><span class="navmenu__desc">Хайрцагтай ачааны машин</span></a></li>
+              <li><a class="navmenu__card" href="c9.html"><img src="assets/thumbs/c9.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C9</span><span class="navmenu__desc">Хайрцагтай хөнгөн ачааны машин</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="navmenu" data-navmenu>
+          <button class="navmenu__trigger" type="button" aria-expanded="false" aria-controls="menu-flatbed">Задгай тэвштэй машин<svg class="navmenu__chevron" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="navmenu__panel" id="menu-flatbed">
+            <ul class="navmenu__grid">
+              <li><a class="navmenu__card" href="c5.html"><img src="assets/thumbs/c5.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C5</span><span class="navmenu__desc">Цахилгаан ачааны машин</span></a></li>
+              <li><a class="navmenu__card" href="c5-cng.html"><img src="assets/thumbs/c5-cng.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C5 CNG</span><span class="navmenu__desc">CNG зай сунгагчтай ачааны машин</span></a></li>
+              <li><a class="navmenu__card" href="c5-reev.html"><img src="assets/thumbs/c5-reev.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C5 Бензин</span><span class="navmenu__desc">Бензин зай сунгагчтай ачааны машин</span></a></li>
+              <li><a class="navmenu__card" href="c5l.html"><img src="assets/thumbs/c5l.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C5L</span><span class="navmenu__desc">3.8 м тэвштэй ачааны машин</span></a></li>
+              <li><a class="navmenu__card" href="c3.html"><img src="assets/thumbs/c3.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C3</span><span class="navmenu__desc">Задгай тэвштэй ачааны машин</span></a></li>
+              <li><a class="navmenu__card" href="ed71s.html"><img src="assets/thumbs/ed71s.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">ED71S</span><span class="navmenu__desc">Бага оврын ачааны машин</span></a></li>
+              <li><a class="navmenu__card" href="ec31l.html"><img src="assets/thumbs/ec31l.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC31L</span><span class="navmenu__desc">Урт тэвштэй бага оврын машин</span></a></li>
+              <li><a class="navmenu__card" href="ec31s.html"><img src="assets/thumbs/ec31s.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">EC31S</span><span class="navmenu__desc">Олон төрлийн тэвштэй машин</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="navmenu" data-navmenu>
+          <button class="navmenu__trigger" type="button" aria-expanded="false" aria-controls="menu-refrigerated">Хөргүүртэй машин<svg class="navmenu__chevron" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="navmenu__panel" id="menu-refrigerated">
+            <ul class="navmenu__grid">
+              <li><a class="navmenu__card" href="c3-cold.html"><img src="assets/thumbs/c3-cold.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C3 Хөргүүртэй</span><span class="navmenu__desc">Хөргүүртэй ачааны машин</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="navmenu" data-navmenu>
+          <button class="navmenu__trigger" type="button" aria-expanded="false" aria-controls="menu-special">Тусгай зориулалтын машин<svg class="navmenu__chevron" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="navmenu__panel" id="menu-special">
+            <ul class="navmenu__grid">
+              <li><a class="navmenu__card" href="r5-service.html"><img src="assets/thumbs/r5-service.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">R5 Үйлчилгээ</span><span class="navmenu__desc">Явуулын засварын машин</span></a></li>
+              <li><a class="navmenu__card" href="c5-drone.html"><img src="assets/thumbs/c5-drone.jpg" width="400" height="240" alt="" loading="lazy"><span class="navmenu__name">C5 Дрон</span><span class="navmenu__desc">Дроны явуулын цэнэглэх станц</span></a></li>
+            </ul>
+          </div>
+        </div>
       </nav>
 
       <div class="navbar__actions">
-        <a class="btn btn--primary btn--nav" href="#" aria-label="Туршилтын жолоодлого">
+        <a class="btn btn--primary btn--nav" href="#test-drive" aria-label="Туршилтын жолоодлого">
           <span class="btn__label-long">Туршилтын жолоодлого</span>
           <span class="btn__label-short">Турших</span>
         </a>
@@ -75,7 +125,7 @@
             <p class="hero__subtitle">Цэвэр цахилгаан, CNG болон бензин зай сунгагчтай хувилбарууд</p>
             <div class="actions hero__actions">
               <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
-              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+              <a class="btn btn--light btn--wide" href="c5.html">Дэлгэрэнгүй</a>
             </div>
           </div>
           <img class="hero__bg" src="assets/hero/c5.jpg" width="1920" height="1160" alt="Цагаан C5 цахилгаан ачааны машин" decoding="async">
@@ -88,7 +138,7 @@
             <p class="hero__subtitle">Хотын хүргэлтэд зориулсан авсаархан, хэмнэлттэй ачааны машин</p>
             <div class="actions hero__actions">
               <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
-              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+              <a class="btn btn--light btn--wide" href="c3.html">Дэлгэрэнгүй</a>
             </div>
           </div>
           <img class="hero__bg" src="assets/hero/c3.jpg" width="1920" height="1160" alt="Цагаан C3 ачааны машин" decoding="async">
@@ -101,7 +151,7 @@
             <p class="hero__subtitle">Ruichi-ийн тэргүүлэх ухаалаг хөнгөн ачааны машин</p>
             <div class="actions hero__actions">
               <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
-              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+              <a class="btn btn--light btn--wide" href="c9.html">Дэлгэрэнгүй</a>
             </div>
           </div>
           <img class="hero__bg" src="assets/hero/c9.jpg" width="1920" height="1160" alt="Саарал C9 хайрцагтай ачааны машин" decoding="async">
@@ -114,7 +164,7 @@
             <p class="hero__subtitle">Хувиргах боломжтой зай бүхий логистикийн цахилгаан фургон</p>
             <div class="actions hero__actions">
               <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
-              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+              <a class="btn btn--light btn--wide" href="ec35.html">Дэлгэрэнгүй</a>
             </div>
           </div>
           <img class="hero__bg" src="assets/hero/ec35.jpg" style="object-position: 50% 0%" width="1720" height="1276" alt="Зам дээр явж буй мөнгөлөг EC35II цахилгаан фургон" decoding="async">
@@ -127,7 +177,7 @@
             <p class="hero__subtitle">Логистикт зориулсан цэвэр цахилгаан жижиг ачааны машин · EC31 цуврал</p>
             <div class="actions hero__actions">
               <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
-              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+              <a class="btn btn--light btn--wide" href="ed71s.html">Дэлгэрэнгүй</a>
             </div>
           </div>
           <img class="hero__bg" src="assets/hero/ed71s.jpg" style="object-position: 50% 0%" width="1920" height="1425" alt="Цагаан ED71S цахилгаан ачааны машин" decoding="async">
@@ -140,7 +190,7 @@
             <p class="hero__subtitle">Хөргүүртэй тээвэр, явуулын засвар, дроны хувилбар — ажилдаа тохирсон машин</p>
             <div class="actions hero__actions">
               <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
-              <a class="btn btn--light btn--wide" href="r5.html#service">Дэлгэрэнгүй</a>
+              <a class="btn btn--light btn--wide" href="c3-cold.html">Дэлгэрэнгүй</a>
             </div>
           </div>
           <img class="hero__bg" src="assets/hero/c3-cold.jpg" width="1920" height="1160" alt="Хөргүүртэй C3 ачааны машин" decoding="async">
@@ -244,7 +294,7 @@
                 </div>
                 <div class="vcard__actions">
                   <a class="btn btn--primary" href="#">Урьдчилсан захиалга</a>
-                  <a class="btn btn--light" href="#">Дэлгэрэнгүй</a>
+                  <a class="btn btn--light" href="c5.html">Дэлгэрэнгүй</a>
                 </div>
               </div>
             </article>
@@ -531,51 +581,50 @@
         <h2 class="site-footer__heading">Загварууд</h2>
         <div class="site-footer__groups">
           <div class="site-footer__group">
-            <h3>Super VAN</h3>
+            <h3>Зорчигч тээвэр</h3>
             <ul>
-              <li><a href="ec75.html#cargo">EC75 ачааны</a></li>
-              <li><a href="ec75.html#passenger">EC75 зорчигчийн</a></li>
-              <li><a href="#">EC75 Pro ачааны</a></li>
-              <li><a href="#">EC75 Pro зорчигчийн</a></li>
-              <li><a href="r5.html#cargo">R5 ачааны</a></li>
-              <li><a href="r5.html#passenger">R5 зорчигчийн</a></li>
-              <li><a href="#">R5 Pro ачааны</a></li>
-              <li><a href="#">R5 Pro зорчигчийн</a></li>
+              <li><a href="ec75.html#passenger"><span class="site-footer__model">EC75</span> <span class="site-footer__desc">Зорчигч тээврийн машин</span></a></li>
+              <li><a href="ec75pro-passenger.html"><span class="site-footer__model">EC75 Pro</span> <span class="site-footer__desc">Зорчигч тээврийн машин</span></a></li>
+              <li><a href="r5.html#passenger"><span class="site-footer__model">R5</span> <span class="site-footer__desc">Зорчигч тээврийн машин</span></a></li>
+              <li><a href="r5pro-passenger.html"><span class="site-footer__model">R5 Pro</span> <span class="site-footer__desc">Зорчигч тээврийн машин</span></a></li>
             </ul>
           </div>
           <div class="site-footer__group">
-            <h3>Шинэ үеийн ачааны</h3>
+            <h3>Ачаа хүргэлт фургон</h3>
             <ul>
-              <li><a href="index.html#hero-c5">C5L</a></li>
-              <li><a href="index.html#hero-c5">C5 цэвэр цахилгаан</a></li>
-              <li><a href="index.html#hero-c5">C5 CNG зай сунгагчтай</a></li>
-              <li><a href="index.html#hero-c5">C5 бензин зай сунгагчтай</a></li>
-              <li><a href="index.html#hero-c3">C3</a></li>
-            </ul>
-            <h3>VAN</h3>
-            <ul>
-              <li><a href="index.html#hero-ec35">EC35II</a></li>
+              <li><a href="ec75.html#cargo"><span class="site-footer__model">EC75</span> <span class="site-footer__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a href="ec75pro-cargo.html"><span class="site-footer__model">EC75 Pro</span> <span class="site-footer__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a href="r5.html#cargo"><span class="site-footer__model">R5</span> <span class="site-footer__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a href="r5pro-cargo.html"><span class="site-footer__model">R5 Pro</span> <span class="site-footer__desc">Ачаа тээврийн машин</span></a></li>
+              <li><a href="ec35.html"><span class="site-footer__model">EC35II</span> <span class="site-footer__desc">Ачаа тээврийн фургон</span></a></li>
+              <li><a href="ec31.html"><span class="site-footer__model">EC31</span> <span class="site-footer__desc">Хайрцагтай ачааны машин</span></a></li>
+              <li><a href="c9.html"><span class="site-footer__model">C9</span> <span class="site-footer__desc">Хайрцагтай хөнгөн ачааны машин</span></a></li>
             </ul>
           </div>
           <div class="site-footer__group">
-            <h3>Бага оврын ачааны</h3>
+            <h3>Задгай тэвштэй машин</h3>
             <ul>
-              <li><a href="index.html#hero-ed71s">ED71S</a></li>
-              <li><a href="index.html#hero-ed71s">EC31</a></li>
-              <li><a href="index.html#hero-ed71s">EC31L</a></li>
-              <li><a href="index.html#hero-ed71s">EC31S</a></li>
-            </ul>
-            <h3>Хөнгөн ачааны</h3>
-            <ul>
-              <li><a href="index.html#hero-c9">C9</a></li>
+              <li><a href="c5.html"><span class="site-footer__model">C5</span> <span class="site-footer__desc">Цахилгаан ачааны машин</span></a></li>
+              <li><a href="c5-cng.html"><span class="site-footer__model">C5 CNG</span> <span class="site-footer__desc">CNG зай сунгагчтай ачааны машин</span></a></li>
+              <li><a href="c5-reev.html"><span class="site-footer__model">C5 Бензин</span> <span class="site-footer__desc">Бензин зай сунгагчтай ачааны машин</span></a></li>
+              <li><a href="c5l.html"><span class="site-footer__model">C5L</span> <span class="site-footer__desc">3.8 м тэвштэй ачааны машин</span></a></li>
+              <li><a href="c3.html"><span class="site-footer__model">C3</span> <span class="site-footer__desc">Задгай тэвштэй ачааны машин</span></a></li>
+              <li><a href="ed71s.html"><span class="site-footer__model">ED71S</span> <span class="site-footer__desc">Бага оврын ачааны машин</span></a></li>
+              <li><a href="ec31l.html"><span class="site-footer__model">EC31L</span> <span class="site-footer__desc">Урт тэвштэй бага оврын машин</span></a></li>
+              <li><a href="ec31s.html"><span class="site-footer__model">EC31S</span> <span class="site-footer__desc">Олон төрлийн тэвштэй машин</span></a></li>
             </ul>
           </div>
           <div class="site-footer__group">
-            <h3>Тусгай зориулалт</h3>
+            <h3>Хөргүүртэй машин</h3>
             <ul>
-              <li><a href="r5.html#service">R5 үйлчилгээний</a></li>
-              <li><a href="index.html#hero-special">C3 хөргүүртэй</a></li>
-              <li><a href="index.html#hero-special">C5 дроны хувилбар</a></li>
+              <li><a href="c3-cold.html"><span class="site-footer__model">C3 Хөргүүртэй</span> <span class="site-footer__desc">Хөргүүртэй ачааны машин</span></a></li>
+            </ul>
+          </div>
+          <div class="site-footer__group">
+            <h3>Тусгай зориулалтын машин</h3>
+            <ul>
+              <li><a href="r5-service.html"><span class="site-footer__model">R5 Үйлчилгээ</span> <span class="site-footer__desc">Явуулын засварын машин</span></a></li>
+              <li><a href="c5-drone.html"><span class="site-footer__model">C5 Дрон</span> <span class="site-footer__desc">Дроны явуулын цэнэглэх станц</span></a></li>
             </ul>
           </div>
         </div>
