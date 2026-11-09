@@ -39,18 +39,121 @@
   </header>
 
   <main>
-    <!-- Header / 30 -->
-    <section class="hero">
-      <div class="hero__content">
-        <p class="hero__eyebrow">EC75 · Цахилгаан фургон</p>
-        <h1 class="h1">Бензин хомсдол, Бензиний үнэ таньд хамаатай юу? Хуучинаа өгөөд Шинийг ав.</h1>
-        <p class="hero__subtitle">Сарын бинзений мөнгөөрөө урьдчилгаагүй банкны хөнгөлөлтэй зээлээр ав.</p>
-        <div class="actions hero__actions">
-          <a class="btn btn--primary btn--wide" href="#">Холбогдох</a>
-          <a class="btn btn--light btn--wide" href="ec75.html#cargo">Дэлгэрэнгүй</a>
+    <!-- Header / 30 — model carousel (one slide per Ruichi model family) -->
+    <section class="hero-carousel" data-hero-carousel aria-roledescription="carousel" aria-label="Ruichi загварууд">
+      <div class="hero-carousel__track" data-hero-track>
+        <div class="hero hero__slide" data-theme="dark" style="--color-hero-sky: #255681" id="hero-ec75" role="group" aria-roledescription="slide" aria-label="1 / 8: EC75">
+          <div class="hero__content">
+            <p class="hero__eyebrow">EC75 · Цахилгаан фургон</p>
+            <h1 class="h1">Бензин хомсдол, Бензиний үнэ таньд хамаатай юу? Хуучинаа өгөөд Шинийг ав.</h1>
+            <p class="hero__subtitle">Сарын бинзений мөнгөөрөө урьдчилгаагүй банкны хөнгөлөлтэй зээлээр ав.</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="ec75.html#cargo">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/ec75.jpg" width="1920" height="1028" alt="Зам дээр явж буй цэнхэр EC75 цахилгаан фургон" fetchpriority="high">
+        </div>
+
+        <div class="hero hero__slide" data-theme="dark" data-theme-sm="light" style="--color-hero-sky: #77a5c9" id="hero-r5" role="group" aria-roledescription="slide" aria-label="2 / 8: R5">
+          <div class="hero__content">
+            <p class="hero__eyebrow">Super VAN</p>
+            <h2 class="hero__model">R5</h2>
+            <p class="hero__subtitle">Ачааны болон зорчигчийн хувилбар · 403 км хүртэл цэнэглэлтийн зай</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="r5.html#cargo">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/r5.jpg" width="1920" height="1160" alt="Ногоон R5 ачааны фургон ба цагаан R5 зорчигчийн фургон" decoding="async">
+        </div>
+
+        <div class="hero hero__slide" data-theme="light" style="--color-hero-sky: #efeeea" id="hero-c5" role="group" aria-roledescription="slide" aria-label="3 / 8: C5">
+          <div class="hero__content">
+            <p class="hero__eyebrow">Шинэ үеийн ачааны машин</p>
+            <h2 class="hero__model">C5</h2>
+            <p class="hero__subtitle">Цэвэр цахилгаан, CNG болон бензин зай сунгагчтай хувилбарууд</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/c5.jpg" width="1920" height="1160" alt="Цагаан C5 цахилгаан ачааны машин" decoding="async">
+        </div>
+
+        <div class="hero hero__slide" data-theme="light" style="--color-hero-sky: #d7e4ec" id="hero-c3" role="group" aria-roledescription="slide" aria-label="4 / 8: C3">
+          <div class="hero__content">
+            <p class="hero__eyebrow">Шинэ үеийн ачааны машин</p>
+            <h2 class="hero__model">C3</h2>
+            <p class="hero__subtitle">Хотын хүргэлтэд зориулсан авсаархан, хэмнэлттэй ачааны машин</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/c3.jpg" width="1920" height="1160" alt="Цагаан C3 ачааны машин" decoding="async">
+        </div>
+
+        <div class="hero hero__slide" data-theme="dark" style="--color-hero-sky: #4973af" id="hero-c9" role="group" aria-roledescription="slide" aria-label="5 / 8: C9">
+          <div class="hero__content">
+            <p class="hero__eyebrow">Хөнгөн ачааны машин</p>
+            <h2 class="hero__model">C9</h2>
+            <p class="hero__subtitle">Ruichi-ийн тэргүүлэх ухаалаг хөнгөн ачааны машин</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/c9.jpg" width="1920" height="1160" alt="Саарал C9 хайрцагтай ачааны машин" decoding="async">
+        </div>
+
+        <div class="hero hero__slide" data-theme="light" style="--color-hero-sky: #bed0de" id="hero-ec35" role="group" aria-roledescription="slide" aria-label="6 / 8: EC35II">
+          <div class="hero__content">
+            <p class="hero__eyebrow">VAN</p>
+            <h2 class="hero__model">EC35II</h2>
+            <p class="hero__subtitle">Хувиргах боломжтой зай бүхий логистикийн цахилгаан фургон</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/ec35.jpg" style="object-position: 50% 0%" width="1720" height="1276" alt="Зам дээр явж буй мөнгөлөг EC35II цахилгаан фургон" decoding="async">
+        </div>
+
+        <div class="hero hero__slide" data-theme="dark" data-theme-sm="light" style="--color-hero-sky: #379cc6" id="hero-ed71s" role="group" aria-roledescription="slide" aria-label="7 / 8: ED71S">
+          <div class="hero__content">
+            <p class="hero__eyebrow">Бага оврын ачааны машин</p>
+            <h2 class="hero__model">ED71S</h2>
+            <p class="hero__subtitle">Логистикт зориулсан цэвэр цахилгаан жижиг ачааны машин · EC31 цуврал</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="#models">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/ed71s.jpg" style="object-position: 50% 0%" width="1920" height="1425" alt="Цагаан ED71S цахилгаан ачааны машин" decoding="async">
+        </div>
+
+        <div class="hero hero__slide" data-theme="dark" style="--color-hero-sky: #173245" id="hero-special" role="group" aria-roledescription="slide" aria-label="8 / 8: Тусгай зориулалт">
+          <div class="hero__content">
+            <p class="hero__eyebrow">Тусгай зориулалт</p>
+            <h2 class="hero__model">C3 хөргүүртэй</h2>
+            <p class="hero__subtitle">Хөргүүртэй тээвэр, явуулын засвар, дроны хувилбар — ажилдаа тохирсон машин</p>
+            <div class="actions hero__actions">
+              <a class="btn btn--primary btn--wide" href="#">Ногоон зээл</a>
+              <a class="btn btn--light btn--wide" href="r5.html#service">Дэлгэрэнгүй</a>
+            </div>
+          </div>
+          <img class="hero__bg" src="assets/hero/c3-cold.jpg" width="1920" height="1160" alt="Хөргүүртэй C3 ачааны машин" decoding="async">
         </div>
       </div>
-      <img class="hero__bg" src="assets/hero-ec75-road.jpg" width="1920" height="1028" alt="Зам дээр явж буй цэнхэр EC75 цахилгаан фургон" fetchpriority="high">
+
+      <button class="hero-carousel__arrow hero-carousel__arrow--prev" type="button" data-hero-prev aria-label="Өмнөх загвар">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="hero-carousel__arrow hero-carousel__arrow--next" type="button" data-hero-next aria-label="Дараагийн загвар">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="hero-carousel__dots" data-hero-dots role="tablist" aria-label="Загвар сонгох"></div>
     </section>
 
     <!-- Layout / 652 -->
@@ -95,7 +198,7 @@
     </section>
 
     <!-- Testimonial / 66 — Vehicle models -->
-    <section class="section">
+    <section class="section" id="models">
       <div class="container container--gap-80">
         <div class="section-title section-title--narrow">
           <h2 class="h2">Vehicle models</h2>
@@ -112,7 +215,7 @@
                   <p class="vcard__note">Урьчилгаа 10%</p>
                 </div>
                 <div class="vcard__actions">
-                  <a class="btn btn--primary" href="#">Захиалах</a>
+                  <a class="btn btn--primary" href="#">Урьдчилсан захиалга</a>
                   <a class="btn btn--light" href="ec75.html#passenger">Дэлгэрэнгүй</a>
                 </div>
               </div>
@@ -126,7 +229,7 @@
                   <p class="vcard__note">Урьчилгаа 10%</p>
                 </div>
                 <div class="vcard__actions">
-                  <a class="btn btn--primary" href="#">Захиалах</a>
+                  <a class="btn btn--primary" href="#">Урьдчилсан захиалга</a>
                   <a class="btn btn--light" href="r5.html#cargo">Дэлгэрэнгүй</a>
                 </div>
               </div>
@@ -140,7 +243,7 @@
                   <p class="vcard__note">Урьчилгаа 10%</p>
                 </div>
                 <div class="vcard__actions">
-                  <a class="btn btn--primary" href="#">Захиалах</a>
+                  <a class="btn btn--primary" href="#">Урьдчилсан захиалга</a>
                   <a class="btn btn--light" href="#">Дэлгэрэнгүй</a>
                 </div>
               </div>
@@ -233,30 +336,6 @@
             </div>
           </div>
           <img class="cta__image cta__image--square" src="assets/order-models.png" alt="Захиалгаар ирэх загварууд">
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact / 29 — Location -->
-    <section class="section">
-      <div class="container container--gap-80">
-        <div class="section-title section-title--narrow">
-          <h2 class="h2">Байршил</h2>
-        </div>
-        <div class="location">
-          <div class="location__menu">
-            <div class="location__tab">
-              <p class="h5">Хайлт</p>
-            </div>
-            <div class="location__tab location__tab--detail">
-              <div class="location__tab-text">
-                <p class="h5">searching ...</p>
-                <p class="text-regular">123 Sample St, New York NY 10000 USA</p>
-              </div>
-              <a class="text-regular text-semibold" href="#">View map</a>
-            </div>
-          </div>
-          <div class="location__map"></div>
         </div>
       </div>
     </section>
@@ -432,33 +511,122 @@
     </section>
   </main>
 
-  <!-- Footer / 7 -->
-  <footer class="footer">
-    <div class="footer__container">
-      <div class="footer__top">
-        <a class="logo" href="#" aria-label="Нүүр хуудас">
-          <img src="assets/brand-logo-transparent.png" width="57" height="36" alt="Tesla">
-        </a>
-        <nav class="footer__links" aria-label="Footer цэс">
-          <a href="ec75.html#passenger">Зорчигч тээврийн микоравтобус</a>
-          <a href="ec75.html#cargo">Ачааны хүргэлтийн фургон</a>
-          <a href="#">Ачааны машин 1.5т</a>
-          <a href="#">Ачааны машин 1.5т Hybrid</a>
-          <a href="#">Хөргүүртэй ачааны машин</a>
-          <a href="#">Тусгай зориулатын машин</a>
-        </nav>
+  <footer class="site-footer">
+    <!-- Sign-up band (the registration page will be added later) -->
+    <div class="site-footer__signup">
+      <div class="site-footer__signup-inner">
+        <div class="site-footer__signup-text">
+          <h2 class="site-footer__signup-title">Бүртгэл үүсгэж мэдээлэл аваарай</h2>
+          <p>Шинэ загвар, урамшуулал, ногоон зээлийн мэдээллийг хамгийн түрүүнд аваарай.</p>
+        </div>
+        <a class="btn btn--primary btn--wide" href="#" data-todo="register-page">Бүртгэл үүсгэх</a>
       </div>
-      <div class="footer__credits">
-        <img class="footer__divider" src="assets/divider.svg" width="1280" height="1" alt="">
-        <div class="footer__row">
-          <p class="footer__copy">Tesla © 2026</p>
-          <div class="footer__legal">
-            <a href="#">Нууцлал</a>
-            <a href="#">Үйлчилгээний нөхцөл</a>
-            <a href="#">Холбоо бариих</a>
+    </div>
+
+    <div class="site-footer__main">
+      <nav class="site-footer__models" aria-label="Загварууд">
+        <a class="site-footer__logo" href="index.html" aria-label="Нүүр хуудас">
+          <img src="assets/brand-logo-transparent.png" width="57" height="36" alt="">
+        </a>
+        <h2 class="site-footer__heading">Загварууд</h2>
+        <div class="site-footer__groups">
+          <div class="site-footer__group">
+            <h3>Super VAN</h3>
+            <ul>
+              <li><a href="ec75.html#cargo">EC75 ачааны</a></li>
+              <li><a href="ec75.html#passenger">EC75 зорчигчийн</a></li>
+              <li><a href="#">EC75 Pro ачааны</a></li>
+              <li><a href="#">EC75 Pro зорчигчийн</a></li>
+              <li><a href="r5.html#cargo">R5 ачааны</a></li>
+              <li><a href="r5.html#passenger">R5 зорчигчийн</a></li>
+              <li><a href="#">R5 Pro ачааны</a></li>
+              <li><a href="#">R5 Pro зорчигчийн</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__group">
+            <h3>Шинэ үеийн ачааны</h3>
+            <ul>
+              <li><a href="index.html#hero-c5">C5L</a></li>
+              <li><a href="index.html#hero-c5">C5 цэвэр цахилгаан</a></li>
+              <li><a href="index.html#hero-c5">C5 CNG зай сунгагчтай</a></li>
+              <li><a href="index.html#hero-c5">C5 бензин зай сунгагчтай</a></li>
+              <li><a href="index.html#hero-c3">C3</a></li>
+            </ul>
+            <h3>VAN</h3>
+            <ul>
+              <li><a href="index.html#hero-ec35">EC35II</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__group">
+            <h3>Бага оврын ачааны</h3>
+            <ul>
+              <li><a href="index.html#hero-ed71s">ED71S</a></li>
+              <li><a href="index.html#hero-ed71s">EC31</a></li>
+              <li><a href="index.html#hero-ed71s">EC31L</a></li>
+              <li><a href="index.html#hero-ed71s">EC31S</a></li>
+            </ul>
+            <h3>Хөнгөн ачааны</h3>
+            <ul>
+              <li><a href="index.html#hero-c9">C9</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__group">
+            <h3>Тусгай зориулалт</h3>
+            <ul>
+              <li><a href="r5.html#service">R5 үйлчилгээний</a></li>
+              <li><a href="index.html#hero-special">C3 хөргүүртэй</a></li>
+              <li><a href="index.html#hero-special">C5 дроны хувилбар</a></li>
+            </ul>
           </div>
         </div>
+      </nav>
+
+      <div class="site-footer__about">
+        <div class="site-footer__block">
+          <h2 class="site-footer__heading">Бидний тухай</h2>
+          <ul>
+            <li><a href="#">Танилцуулга</a></li>
+            <li><a href="#">Шинэ мэдээ</a></li>
+            <li><a href="#">Хүсэлт илгээх</a></li>
+            <li><a href="#">Нууцын бодлого</a></li>
+          </ul>
+        </div>
+
+        <div class="site-footer__block">
+          <h2 class="site-footer__heading">Холбоо барих</h2>
+          <div class="site-footer__address">
+            <p><span>Хаяг</span>Улаанбаатар хот</p>
+            <a class="site-footer__location" href="https://www.google.com/maps/search/?api=1&amp;query=Ulaanbaatar" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              Байршил
+            </a>
+          </div>
+        </div>
+
+        <div class="site-footer__block">
+          <h2 class="site-footer__heading">Follow us:</h2>
+          <ul class="site-footer__social">
+            <li><a href="#" aria-label="Facebook">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1z"/></svg>
+            </a></li>
+            <li><a href="#" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>
+            </a></li>
+            <li><a href="#" aria-label="YouTube">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3L10 15z"/></svg>
+            </a></li>
+          </ul>
+        </div>
       </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>© 2025. All rights reserved.</p>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Cookies Settings</a></li>
+      </ul>
     </div>
   </footer>
 

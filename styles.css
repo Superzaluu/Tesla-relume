@@ -1,7 +1,7 @@
 /* ==========================================================================
    Design tokens — layout and look inspired by the tesla.com homepage:
    full-screen photo hero, transparent nav, quiet type, 4px buttons,
-   rounded photo cards, minimal footer.
+   rounded photo cards, footer with sign-up band and model list.
    Desktop values by default, mobile overrides in the media query below.
    ========================================================================== */
 :root {
@@ -529,25 +529,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cta__image--square { aspect-ratio: 1 / 1; }
 
 /* ==========================================================================
-   Contact / 29 (Location)
-   ========================================================================== */
-.location { display: flex; align-items: stretch; gap: 72px; }
-.location__menu {
-  flex: 1 1 0;
-  min-width: 0;
-  max-width: 480px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-.location__tab { padding-left: 24px; border-left: 2px solid var(--color-border); }
-.location__tab--detail { display: flex; flex-direction: column; gap: 16px; border-left-color: var(--color-text); }
-.location__tab-text { display: flex; flex-direction: column; gap: 8px; }
-.location__tab-text .text-regular { color: var(--color-text-muted); }
-.location__tab a { box-shadow: inset 0 -1px 0 currentColor; align-self: flex-start; }
-.location__map { flex: 0 1 720px; min-width: 0; }
-
-/* ==========================================================================
    Stats / 14 — chargers
    ========================================================================== */
 .stats { display: flex; align-items: center; gap: 72px; }
@@ -586,54 +567,239 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 
 /* ==========================================================================
-   Footer — tesla.com style: logo, then one quiet centered row of links
+   Hero carousel — one full-screen slide per model family, slides sideways
    ========================================================================== */
-.footer {
-  background: var(--color-background);
-  padding: var(--padding-section-medium) var(--padding-global) 32px;
-  border-top: 1px solid #eeeeee;
+.hero-carousel {
+  position: relative;
+  overflow: hidden;
+  background: #0f1115;
 }
-.footer__container {
+.hero-carousel__track {
   display: flex;
-  flex-direction: column;
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  touch-action: pan-y;
+}
+.hero-carousel__track.is-dragging { transition: none; }
+.hero__slide { flex: 0 0 100%; min-width: 100%; }
+.hero-carousel .hero__bg { -webkit-user-drag: none; user-select: none; }
+.hero__model {
+  font-size: 56px;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+/* Light skies get dark copy and a white top wash instead of the dark one */
+.hero__slide[data-theme="light"] { color: var(--color-text); }
+.hero__slide[data-theme="light"]::after {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 45%);
+}
+.hero__slide[data-theme="light"] .btn--light {
+  background: var(--color-white);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+/* Mid-tone skies: white copy on desktop needs a deeper shade */
+.hero__slide[data-theme-sm="light"]::after {
+  background: linear-gradient(to bottom, rgba(12, 40, 72, 0.55) 0%, rgba(12, 40, 72, 0.18) 34%, rgba(12, 40, 72, 0) 52%);
+}
+
+.hero-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
   align-items: center;
-  gap: 32px;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-top: -24px;
+  border-radius: 50%;
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background-color 0.33s ease, color 0.33s ease;
+}
+.hero-carousel__arrow:hover { background: rgba(255, 255, 255, 0.32); }
+.hero-carousel__arrow--prev { left: 24px; }
+.hero-carousel__arrow--next { right: 24px; }
+.hero-carousel__dots {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+.hero-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: width 0.33s ease, background-color 0.33s ease;
+}
+.hero-carousel__dot[aria-selected="true"] { width: 28px; background: var(--color-white); }
+.hero-carousel.is-light .hero-carousel__arrow { color: var(--color-text); background: rgba(255, 255, 255, 0.7); }
+.hero-carousel.is-light .hero-carousel__arrow:hover { background: var(--color-white); }
+.hero-carousel.is-light .hero-carousel__dot { background: rgba(23, 26, 32, 0.25); }
+.hero-carousel.is-light .hero-carousel__dot[aria-selected="true"] { background: var(--color-text); }
+
+/* Navbar over a light slide */
+.navbar.is-on-light:not(.is-solid) { color: var(--color-text); }
+.navbar.is-on-light:not(.is-solid) .navbar__links a:hover { background: rgba(0, 0, 0, 0.05); }
+.navbar.is-on-light:not(.is-solid) .navbar__toggle { background: rgba(0, 0, 0, 0.06); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-carousel__track { transition: none; }
+}
+
+@media (max-width: 991px), (max-aspect-ratio: 6/5) {
+  .hero-carousel .hero__bg { margin-top: auto; aspect-ratio: 4 / 3; }
+  .hero__slide[data-theme-sm="light"] { color: var(--color-text); }
+  .hero__slide[data-theme-sm="light"] .btn--light { background: var(--color-white); }
+  .hero-carousel__arrow { display: none; }
+  .hero-carousel__dots { bottom: 16px; }
+}
+@media (max-width: 991px) {
+  .hero__model { font-size: 40px; }
+}
+
+/* ==========================================================================
+   Site footer — sign-up band, models list (left), about/contact (right)
+   ========================================================================== */
+.site-footer { background: var(--color-background); color: var(--color-text); }
+.site-footer ul { margin: 0; padding: 0; list-style: none; }
+
+.site-footer__signup {
+  padding: 48px var(--padding-global);
+  background: #171a20;
+  color: var(--color-white);
+}
+.site-footer__signup-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px 48px;
   max-width: 1376px;
   margin: 0 auto;
 }
-.footer__top {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  width: 100%;
+.site-footer__signup-text { display: flex; flex-direction: column; gap: 6px; }
+.site-footer__signup-title { font-size: 26px; font-weight: 500; line-height: 1.25; }
+.site-footer__signup-text p { font-size: var(--text-regular); color: rgba(255, 255, 255, 0.7); }
+
+.site-footer__main {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr);
+  gap: 56px;
+  max-width: 1376px;
+  margin: 0 auto;
+  padding: 64px var(--padding-global) 56px;
 }
-.footer__links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px 24px;
-  font-size: var(--text-tiny);
+.site-footer__logo { display: inline-flex; margin-bottom: 28px; }
+.site-footer__logo img { width: 52px; height: auto; }
+.site-footer__heading {
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.site-footer__groups {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+}
+.site-footer__group h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-}
-.footer__links a { white-space: nowrap; }
-.footer__links a:hover,
-.footer__legal a:hover { color: var(--color-text); }
-.footer__credits { display: flex; flex-direction: column; align-items: center; width: 100%; }
-.footer__divider { display: none; }
-.footer__row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px 24px;
-  font-size: var(--text-tiny);
-  line-height: 1.5;
+  letter-spacing: 0.02em;
   color: var(--color-text-muted);
 }
-.footer__legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; }
+.site-footer__group ul + h3 { margin-top: 24px; }
+.site-footer__group ul,
+.site-footer__block ul:not(.site-footer__social) { display: flex; flex-direction: column; gap: 9px; }
+.site-footer__group a,
+.site-footer__block li a {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+}
+.site-footer__group a:hover,
+.site-footer__block li a:hover { color: var(--color-text); text-decoration: underline; }
 
+.site-footer__about {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding-left: 48px;
+  border-left: 1px solid #ececec;
+}
+.site-footer__address {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+.site-footer__address p { font-size: var(--text-small); color: var(--color-text-secondary); }
+.site-footer__address p span {
+  display: block;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.site-footer__location {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  transition: background-color 0.2s ease;
+}
+.site-footer__location:hover { background: var(--color-surface-hover); }
+.site-footer__social { display: flex; gap: 10px; }
+.site-footer__social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.site-footer__social a:hover { background: var(--color-primary); color: var(--color-white); }
+
+.site-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  max-width: calc(1376px + 2 * var(--padding-global));
+  margin: 0 auto;
+  padding: 20px var(--padding-global) 32px;
+  border-top: 1px solid #ececec;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.site-footer__bottom a:hover { color: var(--color-text); text-decoration: underline; }
+
+@media (max-width: 991px) {
+  .site-footer__signup { padding: 36px var(--padding-global); }
+  .site-footer__signup-title { font-size: 21px; }
+  .site-footer__signup .btn { width: 100%; min-width: 0; }
+  .site-footer__main { grid-template-columns: minmax(0, 1fr); gap: 40px; padding: 48px var(--padding-global) 40px; }
+  .site-footer__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
+  .site-footer__about { padding: 32px 0 0; border-left: 0; border-top: 1px solid #ececec; gap: 28px; }
+  .site-footer__bottom { flex-direction: column; align-items: flex-start; }
+}
 /* ==========================================================================
    Navbar collapse — the seven links don't fit on one line below this width
    ========================================================================== */
@@ -720,7 +886,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     height: auto;
     aspect-ratio: 5 / 3;
   }
-  .vcard--model .vcard__actions { order: 2; margin-top: auto; }
+  .vcard--model .vcard__actions { order: 2; margin-top: auto; flex-direction: column; gap: 8px; }
+  .vcard--model .vcard__actions .btn { flex: none; width: 100%; }
   .vcard--model .vcard__actions .btn--light { background: var(--color-background); }
   .gallery__item { width: 92%; }
 
@@ -728,16 +895,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .cta__column { gap: 20px; }
   .cta__image { flex: none; width: 100%; }
 
-  .location { flex-direction: column; gap: 32px; }
-  .location__menu { flex: none; width: 100%; }
-  .location__map { flex: none; width: 100%; height: 320px; }
 
   .stats { flex-direction: column; align-items: stretch; gap: 32px; }
   .stats__intro { flex: none; gap: 20px; }
   .stats__list { gap: 32px; }
   .charger-map { height: 380px; }
 
-  .footer__links { flex-direction: column; align-items: center; gap: 14px; text-align: center; }
-  .footer__row { flex-direction: column; align-items: center; gap: 14px; }
-  .footer__legal { gap: 8px 20px; }
 }
