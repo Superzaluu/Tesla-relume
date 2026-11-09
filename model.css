@@ -448,6 +448,9 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
   .mend__actions .btn { width: 100%; min-width: 0; }
 }
 
+/* Futuristic dark extension for individual vehicle pages. */
+.section--surface,.mspecs,.mcompare,.mend { background:transparent; }.section--dark { background:rgb(255 255 255 / .035); }.mfeature__content,.mcard,.mspecs__content,.mcompare,.mend__content { border-color:rgb(255 255 255 / .14); }.variant-toggle,.mspecs__head .variant-toggle { background:rgb(255 255 255 / .09); border:1px solid rgb(255 255 255 / .15); }.variant-toggle__btn { color:var(--color-text-secondary); }.variant-toggle .variant-toggle__btn.is-active { background:var(--color-primary); color:#06101f; box-shadow:none; }.mstats,.mfeature,.mspecs,.mcompare { border-color:rgb(255 255 255 / .14); }.mcompare thead th,.mspec-table tr.is-head td { background:rgb(255 255 255 / .08); color:var(--color-text); }.mspec-table td,.mspec-table th { border-color:rgb(255 255 255 / .12); }.mfeature__image,.mwide,.mend__image { border-radius:18px; }.mcard { background:rgb(255 255 255 / .05); box-shadow:inset 0 1px 0 rgb(255 255 255 / .08); }
+
 /* ---------- Generated model pages: intro, gallery cards, spec table ---------- */
 .mintro {
   display: flex;
