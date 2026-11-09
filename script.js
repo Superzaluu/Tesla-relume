@@ -311,14 +311,16 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
 (function () {
   var actions = document.querySelector(".navbar__actions");
   var logo = document.querySelector(".navbar__logo");
-  if (!document.querySelector("[data-hero-carousel]") || !actions || !logo) return;
+  var modelHero = document.querySelector(".mhero");
+  if ((!document.querySelector("[data-hero-carousel]") && !modelHero) || !actions || !logo) return;
 
   var trigger = document.createElement("button");
   trigger.type = "button";
   trigger.className = "saving-calculator__trigger";
   trigger.textContent = "Хэмнэлтийн тооцоолуур";
   trigger.setAttribute("aria-haspopup", "dialog");
-  logo.insertAdjacentElement("afterend", trigger);
+  if (modelHero) modelHero.appendChild(trigger);
+  else logo.insertAdjacentElement("afterend", trigger);
 
   var modal = document.createElement("div");
   modal.className = "savings-modal";
