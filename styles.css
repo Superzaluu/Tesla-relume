@@ -1107,3 +1107,58 @@ body::before { content:""; position:fixed; z-index:-2; inset:0; background:radia
 #hero-c3 .hero__actions { margin-top:12px; }
 @media (max-width:991px), (max-aspect-ratio:6/5) { #hero-ec75 .hero__content { width:100%; } #hero-c5 .hero__content,#hero-c3 .hero__content { padding-top:calc(var(--navbar-height) + 2.5rem); padding-bottom:2rem; } #hero-ed71s .hero__bg { object-position:50% 100% !important; } }
 
+/* Desktop hero composition: shared action line at 2/5 of the visual field. */
+@media (min-width:992px) {
+  .hero-carousel .hero__actions { position:absolute; top:40%; left:50%; z-index:4; width:max-content; margin:0; transform:translate(-50%,-50%); }
+  #hero-ec75 .hero__bg { transform:translateY(-12%); }
+  #hero-ec75 .h1 { position:absolute; right:0; bottom:2.25rem; left:0; z-index:3; max-width:none; padding:0 var(--padding-global); text-align:center; }
+  #hero-ed71s .hero__bg { object-position:50% 80% !important; }
+}
+.hero-carousel.is-light .hero-carousel__arrow { color:#fff; border-color:rgb(255 255 255 / .42); background:rgb(5 8 22 / .64); }.hero-carousel.is-light .hero-carousel__arrow:hover { color:#071120; background:var(--color-primary); }
+
+/* Final EC75 composition and rotating value propositions. */
+.hero__rotating-message { display:none; }
+@keyframes ec75-message-flow { 0%,4% { opacity:0; transform:translateX(120%); } 10%,22% { opacity:1; transform:translateX(0); } 28%,100% { opacity:0; transform:translateX(-20%); } }
+@media (min-width:992px) {
+  .hero-carousel .hero__actions { top:35%; }
+  #hero-ec75 .hero__bg { transform:translateY(-16%); }
+  #hero-ec75 .h1 { right:auto; bottom:2rem; left:4%; width:min(57vw,780px); padding:0; font-size:clamp(30px,2.9vw,50px); text-align:left; }
+  #hero-ec75 .hero__rotating-message { position:absolute; right:5%; bottom:60px; z-index:4; display:block; width:min(31vw,430px); height:2.9em; overflow:hidden; text-align:right; }
+  #hero-ec75 .hero__rotating-message p { position:absolute; top:0; right:0; margin:0; color:#fff; font-size:clamp(17px,1.4vw,23px); font-weight:600; line-height:1.35; text-shadow:0 2px 16px rgb(0 0 0 / .6); opacity:0; transform:translateX(120%); animation:ec75-message-flow 16s cubic-bezier(.22,.8,.3,1) infinite; }
+  #hero-ec75 .hero__rotating-message p:nth-child(2) { animation-delay:4s; }
+  #hero-ec75 .hero__rotating-message p:nth-child(3) { animation-delay:8s; }
+  #hero-ec75 .hero__rotating-message p:nth-child(4) { animation-delay:12s; }
+}
+
+/* Unified desktop hero safe zones: copy never sits beneath carousel arrows. */
+@media (min-width:992px) {
+  .hero-carousel .hero__content { align-items:flex-start; justify-content:flex-start; max-width:none; padding-top:calc(var(--navbar-height) + 4.5rem); padding-right:max(7rem,var(--padding-global)); padding-left:max(7rem,var(--padding-global)); text-align:left; }
+  .hero-carousel .hero__actions { top:25%; left:50%; z-index:8; }
+  .hero-carousel .hero__eyebrow,
+  .hero-carousel .hero__model,
+  .hero-carousel .hero__content > .h1,
+  .hero-carousel .hero__subtitle { text-align:left; }
+  #hero-ec75 .h1 { position:static; width:min(62vw,840px); max-width:840px; margin:0; padding:0; font-size:clamp(30px,2.9vw,50px); text-align:left; }
+  #hero-ec75 .hero__rotating-message { top:calc(var(--navbar-height) + 4.75rem); right:max(7rem,var(--padding-global)); bottom:auto; z-index:7; }
+  .hero-carousel__arrow { z-index:12; }
+}
+
+/* EC75-ийн урт асуултыг үйлдлийн товчлууруудын дээгүүр нэг мөрийн мэдрэмжтэй байрлуулна. */
+@media (min-width:992px) {
+  #hero-ec75 .h1 {
+    position:absolute;
+    top:calc(25% - clamp(86px, 8vw, 118px));
+    right:auto;
+    bottom:auto;
+    left:max(7rem, var(--padding-global));
+    z-index:7;
+    width:min(55vw, 790px);
+    max-width:none;
+    margin:0;
+    padding:0;
+    font-size:clamp(21px, 2vw, 34px);
+    line-height:1.18;
+    text-align:left;
+  }
+}
+
