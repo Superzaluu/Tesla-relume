@@ -1347,3 +1347,51 @@ body::before { display:none; }
   .navbar__toggle::before { background:linear-gradient(#fff 0 2px,transparent 2px 5px,#fff 5px 7px,transparent 7px 10px,#fff 10px 12px); }
 }
 
+/* Загварын нэр болон сонгосон ачааны/зорчигчийн хувилбарыг ногооноор ялгаруулна. */
+.navmenu__name,
+.vcard__model,
+.hero__model,
+.mintro__title,
+.mhero__title { color:#0f5a3a; }
+.hero__model { text-shadow:0 1px 14px rgb(255 255 255 / .65); }
+
+/* Hero дээрх танигдахуйц шуурхай үзүүлэлтийн дүрсний мөр. */
+.hero__quick-specs {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 14px;
+  max-width:min(100%, 1040px);
+  margin-top:18px;
+  color:#123b2a;
+}
+.hero__quick-spec {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-height:46px;
+  padding:7px 11px;
+  border:1px solid rgb(15 90 58 / .22);
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 6px 18px rgb(15 35 56 / .1);
+}
+.hero__quick-icon { display:grid; width:28px; height:28px; place-items:center; color:#0f5a3a; }
+.hero__quick-icon img { width:28px; height:28px; object-fit:contain; filter:invert(28%) sepia(33%) saturate(1042%) hue-rotate(105deg) brightness(87%) contrast(95%); }
+.hero__quick-spec span:last-child { display:flex; flex-direction:column; min-width:0; }
+.hero__quick-spec small { color:#567063; font-size:10px; font-weight:700; line-height:1.15; letter-spacing:.02em; }
+.hero__quick-spec strong { overflow:hidden; color:#123b2a; font-size:12px; font-weight:700; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
+@media (min-width:992px) {
+  .hero-carousel .hero__quick-specs { position:absolute; z-index:7; bottom:2rem; left:max(2rem,var(--padding-global)); margin:0; max-width:min(74vw,1040px); }
+  .mhero .hero__quick-specs { position:absolute; z-index:5; bottom:2rem; left:max(2rem,var(--padding-global)); margin:0; max-width:min(74vw,1040px); }
+  .mintro__hero-frame .hero__quick-specs { position:absolute; z-index:2; bottom:2rem; left:clamp(2rem, calc((100% - 1100px) / 2 + 2rem), 9rem); margin:0; max-width:min(74vw,1040px); }
+}
+.mintro__hero-frame { position:relative; width:100%; display:flex; justify-content:center; }
+.mintro__hero-frame .mintro__image { display:block; }
+@media (max-width:991px), (max-aspect-ratio:6/5) {
+  .hero__quick-specs { gap:7px; margin-top:14px; }
+  .hero__quick-spec { min-height:40px; padding:6px 8px; }
+  .hero__quick-icon { width:23px; height:23px; }.hero__quick-icon img { width:23px; height:23px; }
+  .hero__quick-spec small { font-size:9px; }.hero__quick-spec strong { max-width:135px; font-size:11px; }
+  .mintro__hero-frame .hero__quick-specs { position:absolute; z-index:2; right:16px; bottom:16px; left:16px; margin:0; max-width:none; }
+}
+

@@ -64,6 +64,118 @@
   update();
 })();
 
+// Hero quick-spec icons: visually identify vehicle type, drive type, dimensions and range.
+(function () {
+  // Superseded by the approved PNG-icon implementation below.
+  return;
+  var icons = {
+    van: '<svg viewBox="0 0 32 24" aria-hidden="true"><path d="M2 16V9c0-2 2-4 4-4h13c2 0 3 1 4 3l3 5h3c1 0 2 1 2 2v1h-2a3 3 0 0 1-6 0H9a3 3 0 0 1-6 0H2Zm5-9v5h6V7H7Zm8 0v5h7l-3-5h-4Z"/></svg>',
+    flatbed: '<svg viewBox="0 0 32 24" aria-hidden="true"><path d="M2 16V9h10v5h14v2h3v2h-2a3 3 0 0 1-6 0H9a3 3 0 0 1-6 0H2Zm12-8h8v5h-8V8Zm-7 9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm17 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/></svg>',
+    box: '<svg viewBox="0 0 32 24" aria-hidden="true"><path d="M2 16V9h10v7h12V5h4v11h2v2h-3a3 3 0 0 1-6 0H9a3 3 0 0 1-6 0H2Zm5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm17 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/></svg>',
+    refrigerated: '<svg viewBox="0 0 32 24" aria-hidden="true"><path d="M2 16V9h10v7h12V5h4v11h2v2h-3a3 3 0 0 1-6 0H9a3 3 0 0 1-6 0H2Zm5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm17 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM27 7h3v3h-3Z"/></svg>',
+    special: '<svg viewBox="0 0 32 24" aria-hidden="true"><path d="M2 16V9h10v7h12v-7h4v7h2v2h-3a3 3 0 0 1-6 0H9a3 3 0 0 1-6 0H2Zm5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm17 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM18 5h7v3h-7Z"/></svg>',
+    fuel: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 22V3h10v19H5Zm3-15v4h4V7H8Zm7 2 3 3v6a2 2 0 0 0 4 0v-7l-4-4-2 2v2l1-1 2 2v6c0 1 1 2 2 2s2-1 2-2v-7l-4-4-2 2v-4Z"/></svg>',
+    charge: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h10c1 0 2 1 2 2v14c0 1-1 2-2 2H6c-1 0-2-1-2-2V5c0-1 1-2 2-2Zm5 3-3 7h3l-1 5 5-8h-3l2-4h-3Z M19 8h2v6c0 1 1 2 2 2v2c-2 0-4-2-4-4V8Z"/></svg>',
+    size: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4h2v2h12V4h2v16h-2v-2H6v2H4Zm3-9h10v2H7v-2Zm1-3 3-3 3 3h-2v5h2l-3 3-3-3h2V8H8Z"/></svg>',
+    range: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18L17 6l-3 3-2-4-3 4-2-3-4 12Zm6-3 3-6 3 6H9Zm3-12 3 3-3 3-3-3 3-3Z"/></svg>'
+  };
+  var data = {
+    'ec75': { type: 'van', label: 'Van', fuel: 'BEV', size: '5130 × 1860 × 2020 мм', range: '420 км' },
+    'r5': { type: 'van', label: 'Van', fuel: 'BEV', size: '5170 × 1860 × 2020 мм', range: '420 км' },
+    'ec75pro-passenger': { type: 'van', label: 'Passenger Van', fuel: 'BEV', size: '5130 × 1860 × 2020 мм', range: '430 км' },
+    'ec75pro-cargo': { type: 'van', label: 'Cargo Van', fuel: 'BEV', size: '5130 × 1860 × 2020 мм', range: '420 км' },
+    'r5pro-passenger': { type: 'van', label: 'Passenger Van', fuel: 'BEV', size: '5170 × 1860 × 2020 мм', range: '430 км' },
+    'r5pro-cargo': { type: 'van', label: 'Cargo Van', fuel: 'BEV', size: '5170 × 1860 × 2020 мм', range: '420 км' },
+    'ec35': { type: 'van', label: 'Cargo Van', fuel: 'BEV', size: '4500 × 1680 × 2000 мм', range: '282 км' },
+    'c3': { type: 'flatbed', label: 'Flatbed Truck', fuel: 'BEV', size: '5330 × 1785 × 2010 мм', range: '327 км' },
+    'c3-cold': { type: 'refrigerated', label: 'Refrigerator Truck', fuel: 'BEV', size: '5330 × 1790 × 2600 мм', range: '320 км' },
+    'c5': { type: 'flatbed', label: 'Flatbed Truck', fuel: 'BEV', size: '5990 × 1880 × 2015 мм', range: '326 км' },
+    'c5-cng': { type: 'flatbed', label: 'Flatbed Truck', fuel: 'EREV / CNG', size: '5990 × 1880 × 2030 мм', range: '70 км EV' },
+    'c5-reev': { type: 'flatbed', label: 'Flatbed Truck', fuel: 'EREV', size: '5990 × 1880 × 2030 мм', range: '1200+ км' },
+    'c5l': { type: 'flatbed', label: 'Flatbed Truck', fuel: 'BEV', size: '5995 × 1920 × 2035 мм', range: '415 км' },
+    'c9': { type: 'box', label: 'Light Truck', fuel: 'BEV', size: '5995 × 2170 × 3180 мм', range: '403 км' },
+    'ec31': { type: 'box', label: 'Box Truck', fuel: 'BEV', size: '4735 × 1655 × 2430 мм', range: '275 км' },
+    'ec31l': { type: 'flatbed', label: 'Flatbed Truck', fuel: 'BEV', size: '4855 × 1660 × 1985 мм', range: '295 км' },
+    'ec31s': { type: 'flatbed', label: 'Flatbed Truck', fuel: 'BEV', size: '5035 × 1680 × 2420 мм', range: '240 км' },
+    'ed71s': { type: 'flatbed', label: 'Light Truck', fuel: 'BEV', size: '5995 × 1870 × 2025 мм', range: '313 км' },
+    'r5-service': { type: 'special', label: 'Service Vehicle', fuel: 'EREV', size: '5990 × 1880 × 2030 мм', range: '1200 км' },
+    'c5-drone': { type: 'special', label: 'Drone Service Truck', fuel: 'EREV', size: '5990 × 1880 × 2030 мм', range: '1200 км' }
+  };
+  function item(icon, label, value) { return '<span class="hero__quick-spec"><span class="hero__quick-icon">' + icons[icon] + '</span><span><small>' + label + '</small><strong>' + value + '</strong></span></span>'; }
+  function render(spec) { return '<div class="hero__quick-specs" aria-label="Загварын шуурхай үзүүлэлтүүд">' + item(spec.type, 'Загвар', spec.label) + item(spec.fuel === 'BEV' ? 'charge' : 'fuel', 'Хөтлөгч', spec.fuel) + item('size', 'L × W × H', spec.size) + item('range', 'Range', spec.range) + '</div>'; }
+  document.querySelectorAll('[data-hero-carousel] .hero__slide').forEach(function (slide) {
+    var spec = data[(slide.id || '').replace('hero-', '')], content = slide.querySelector('.hero__content');
+    if (spec && content && !content.querySelector('.hero__quick-specs')) content.insertAdjacentHTML('beforeend', render(spec));
+  });
+  var slug = location.pathname.split('/').pop().replace(/\.html$/i, '') || 'index';
+  var pageSpec = data[slug], pageHero = document.querySelector('.mhero'), pageContent = pageHero && pageHero.querySelector('.hero__content');
+  if (pageSpec && pageContent && !pageContent.querySelector('.hero__quick-specs')) pageContent.insertAdjacentHTML('beforeend', render(pageSpec));
+})();
+
+// User-provided PNG icons for hero quick specifications.
+(function () {
+  var iconRoot = 'assets/icons/';
+  var icons = {
+    van: '01_van.png', flatbed: '02_light_flatbed_truck.png', box: '03_light_box_truck.png',
+    refrigerator: '04_refrigerator_truck.png', flatbed4: '05_flatbed_4door_truck.png',
+    fwd: '06_FWD.png', awd: '07_AWD.png', rwd: '08_RWD.png', dimension: '10_dimension.png',
+    doors: '11_doors.png', charging: '12_charging.png', range: '13_range.png',
+    engine: '14_fuel EREV машинд ашиглах.png', seats: '15_seats.png'
+  };
+  function vehicle(type, label, size, range, options) {
+    options = options || {};
+    return { type: type, label: label, size: size, range: range, drive: options.drive || 'RWD', doors: options.doors || '2 хаалга', charge: options.charge || 'DC - 30 мин', seats: options.seats || '2 суудал', engine: options.engine || '' };
+  }
+  var data = {
+    'ec75': vehicle('van', 'Фургон', '5130 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
+    'r5': vehicle('van', 'Фургон', '5170 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
+    'ec75pro-passenger': vehicle('van', 'Зорчигч фургон', '5130 x 1860 x 2020 мм', '430 км', { doors: '4 хаалга', seats: '5 суудал' }),
+    'ec75pro-cargo': vehicle('van', 'Ачааны фургон', '5130 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
+    'r5pro-passenger': vehicle('van', 'Зорчигч фургон', '5170 x 1860 x 2020 мм', '430 км', { doors: '4 хаалга', seats: '5 суудал' }),
+    'r5pro-cargo': vehicle('van', 'Ачааны фургон', '5170 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
+    'ec35': vehicle('van', 'Ачааны фургон', '4500 x 1680 x 2000 мм', '282 км', { doors: '4 хаалга' }),
+    'c3': vehicle('flatbed4', 'Задгай тэвш', '5330 x 1785 x 2010 мм', '327 км', { doors: '4 хаалга', seats: '5 суудал' }),
+    'c3-cold': vehicle('refrigerator', 'Хөргүүртэй тэвш', '5330 x 1790 x 2600 мм', '320 км'),
+    'c5': vehicle('flatbed4', 'Задгай тэвш', '5990 x 1880 x 2015 мм', '326 км', { doors: '4 хаалга', seats: '5 суудал' }),
+    'c5-cng': vehicle('flatbed4', 'Задгай тэвш', '5990 x 1880 x 2030 мм', '70 км EV', { doors: '4 хаалга', seats: '5 суудал', charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
+    'c5-reev': vehicle('flatbed4', 'Задгай тэвш', '5990 x 1880 x 2030 мм', '1200+ км', { doors: '4 хаалга', seats: '5 суудал', charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
+    'c5l': vehicle('flatbed', 'Задгай тэвш', '5995 x 1920 x 2035 мм', '415 км'),
+    'c9': vehicle('box', 'Битүү тэвш', '5995 x 2170 x 3180 мм', '403 км'),
+    'ec31': vehicle('box', 'Битүү тэвш', '4735 x 1655 x 2430 мм', '275 км'),
+    'ec31l': vehicle('flatbed', 'Задгай тэвш', '4855 x 1660 x 1985 мм', '295 км'),
+    'ec31s': vehicle('flatbed', 'Задгай тэвш', '5035 x 1680 x 2420 мм', '240 км'),
+    'ed71s': vehicle('flatbed', 'Хөнгөн ачааны машин', '5995 x 1870 x 2025 мм', '313 км'),
+    'r5-service': vehicle('box', 'Тусгай зориулалт', '5990 x 1880 x 2030 мм', '1200 км', { charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
+    'c5-drone': vehicle('flatbed4', 'Дроны үйлчилгээ', '5990 x 1880 x 2030 мм', '1200 км', { doors: '4 хаалга', seats: '5 суудал', charge: 'AC/DC - 30 мин', engine: '1,499 cc' })
+  };
+  function item(icon, label, value) {
+    return '<span class="hero__quick-spec"><span class="hero__quick-icon"><img src="' + iconRoot + icons[icon] + '" alt="" aria-hidden="true"></span><span><small>' + label + '</small><strong>' + value + '</strong></span></span>';
+  }
+  function render(spec) {
+    var html = item(spec.type, 'Загвар', spec.label) + item(spec.drive.toLowerCase(), 'Хөтлөгч', spec.drive) + item('dimension', 'Хэмжээ', spec.size) + item('doors', 'Хаалганы тоо', spec.doors) + item('charging', 'Цэнэглэх хугацаа', spec.charge) + item('range', 'Туулах зай', spec.range) + item('seats', 'Суудлын тоо', spec.seats);
+    if (spec.engine) html += item('engine', 'Хөдөлгүүр', spec.engine);
+    return '<div class="hero__quick-specs" aria-label="Загварын шуурхай үзүүлэлтүүд">' + html + '</div>';
+  }
+  document.querySelectorAll('[data-hero-carousel] .hero__slide').forEach(function (slide) {
+    var spec = data[(slide.id || '').replace('hero-', '')], content = slide.querySelector('.hero__content');
+    if (spec && content && !content.querySelector('.hero__quick-specs')) content.insertAdjacentHTML('beforeend', render(spec));
+  });
+  var slug = location.pathname.split('/').pop().replace(/\.html$/i, '') || 'index';
+  var pageSpec = data[slug];
+  var modelHeroContent = document.querySelector('.mhero .hero__content');
+  if (pageSpec && modelHeroContent && !modelHeroContent.querySelector('.hero__quick-specs')) {
+    modelHeroContent.insertAdjacentHTML('beforeend', render(pageSpec));
+  }
+  var introImage = document.querySelector('.mintro .mintro__image');
+  if (pageSpec && introImage && !document.querySelector('.mintro__hero-frame')) {
+    var frame = document.createElement('div');
+    frame.className = 'mintro__hero-frame';
+    introImage.parentNode.insertBefore(frame, introImage);
+    frame.appendChild(introImage);
+    frame.insertAdjacentHTML('beforeend', render(pageSpec));
+  }
+})();
+
 // Bonus registration page: restore the calculator values and enforce one
 // vehicle group with a maximum of two selected models.
 (function () {
