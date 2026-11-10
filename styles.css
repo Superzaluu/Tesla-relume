@@ -738,6 +738,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   transition: background-color .2s ease, color .2s ease;
 }
 .saving-calculator__trigger:hover { background: rgba(255,255,255,.25); }
+.hero__actions .saving-calculator__trigger {
+  position: static;
+  min-height: 44px;
+  padding: 12px 18px;
+  border-color: var(--color-primary);
+  background: var(--color-white);
+  color: var(--color-primary);
+}
+.hero__actions .saving-calculator__trigger:hover { background: var(--color-primary); color: var(--color-white); }
 .navbar.is-solid .saving-calculator__trigger,
 .navbar.is-on-light:not(.is-solid) .saving-calculator__trigger { background: rgba(0,0,0,.06); }
 .navbar.is-solid .saving-calculator__trigger:hover,
@@ -1180,6 +1189,77 @@ body::before { content:""; position:fixed; z-index:-2; inset:0; background:radia
   .hero-carousel > .saving-calculator__trigger { bottom:16px; left:20px; }
 }
 
+/* Нүүр хуудасны харагдац, хүртээмжийн засварууд. */
+@media (max-width:1199px) {
+  .navbar__links,
+  .navbar.is-on-light:not(.is-solid) .navbar__links {
+    background:#fff;
+    color:#14213d;
+  }
+  .navbar__links .navmenu__trigger,
+  .navbar.is-on-light:not(.is-solid) .navbar__links .navmenu__trigger,
+  .navbar__links .navmenu__card { color:#14213d; }
+  .navbar__links .navmenu__desc { color:#53627d; }
+}
+
+.hero__slide .btn--light {
+  background:#fff;
+  color:#123b2a;
+  border:1px solid rgb(15 90 58 / .45);
+  box-shadow:0 4px 14px rgb(15 35 56 / .16);
+}
+.hero__slide .btn--light:hover { background:#eaf5ef; color:#083d28; }
+#hero-ec75 .hero__content { justify-content:flex-start; gap:12px; }
+#hero-ec75 .h1 { position:static; width:auto; max-width:820px; padding:0; text-align:left; }
+#hero-ec75 .hero__subtitle { display:block; max-width:640px; }
+#hero-ec75 .hero__rotating-message { right:max(2rem,var(--padding-global)); width:min(29vw,390px); overflow:visible; }
+
+.hero-carousel > .saving-calculator__trigger {
+  right:max(2rem,var(--padding-global));
+  bottom:2rem;
+  left:auto;
+  z-index:13;
+}
+.hero-carousel .hero__quick-specs { bottom:6.25rem; }
+.hero-carousel__dots { z-index:14; }
+
+.stats__intro .actions { align-items:stretch; }
+.stats__intro .actions .btn { min-width:184px; min-height:42px; }
+.stats__intro .actions .btn--link {
+  justify-content:center;
+  padding:8px 24px;
+  border-radius:var(--radius-button);
+  background:#0f5a3a;
+  color:#fff;
+  box-shadow:none;
+}
+.cta--warranty::before { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(90deg, rgb(255 255 255 / .96) 0%, rgb(255 255 255 / .75) 46%, rgb(255 255 255 / .12) 100%); }
+.cta--warranty .btn { background:#0f5a3a; color:#fff; }
+.vcard--model::before { background:linear-gradient(to bottom, rgb(3 22 14 / .74), transparent 48%, rgb(3 22 14 / .18)); }
+.vcard--model .vcard__title,
+.vcard--model .vcard__model { color:#fff; text-shadow:0 1px 10px rgb(0 0 0 / .4); }
+
+.site-footer__groups { grid-template-columns:repeat(3, minmax(180px, 1fr)); }
+.site-footer__block { min-width:170px; }
+.site-footer__block li a { white-space:nowrap; }
+.site-footer__logo img { filter:brightness(0) invert(1); }
+
+.test-drive__inner { gap:28px; }
+.test-drive__form { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px; width:100%; }
+.test-drive__form label { display:grid; gap:7px; color:var(--color-text-secondary); font-size:14px; font-weight:600; }
+.test-drive__form input,
+.test-drive__form select { width:100%; min-height:44px; padding:10px 12px; border:1px solid var(--color-border); border-radius:8px; background:#fff; color:var(--color-text); font:inherit; }
+.test-drive__form .btn { align-self:end; min-height:44px; }
+.test-drive__success { grid-column:1 / -1; color:#0f5a3a; font-weight:600; }
+@media (max-width:991px) {
+  #hero-ec75 .hero__rotating-message { right:20px; left:20px; width:auto; }
+  .hero-carousel > .saving-calculator__trigger { right:16px; bottom:16px; }
+  .hero-carousel .hero__quick-specs { bottom:5.2rem; }
+  .stats__intro .actions .btn { flex:1 1 180px; }
+  .test-drive__form { grid-template-columns:1fr; }
+  .site-footer__groups { grid-template-columns:repeat(2, minmax(170px, 1fr)); }
+}
+
 /* ======================================================================
    Ruichi light B2B redesign — цул гадаргуу, өндөр уншигдах чанар
    ====================================================================== */
@@ -1394,4 +1474,117 @@ body::before { display:none; }
   .hero__quick-spec small { font-size:9px; }.hero__quick-spec strong { max-width:135px; font-size:11px; }
   .mintro__hero-frame .hero__quick-specs { position:absolute; z-index:2; right:16px; bottom:16px; left:16px; margin:0; max-width:none; }
 }
+
+/* Hero зургуудыг ижил харагдах хүрээ, нэг төв цэгт барина. */
+.hero-carousel .hero,
+.mhero {
+  min-height:clamp(620px, 88svh, 820px);
+}
+.hero-carousel .hero__bg,
+.mhero .hero__bg {
+  transform:none !important;
+  object-fit:cover;
+  object-position:50% 50% !important;
+}
+.mintro__hero-frame .mintro__image {
+  width:min(1100px, 100%);
+  height:clamp(420px, 52vw, 650px);
+  max-width:none !important;
+  object-fit:cover;
+  object-position:50% 50%;
+}
+
+/* Үзүүлэлтүүдийг тогтмол торонд байрлуулж, текст ба дүрс давхцахаас сэргийлнэ. */
+.hero__quick-specs {
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:8px;
+  width:min(1040px, 74vw);
+}
+.hero__quick-spec {
+  min-width:0;
+  padding:8px 10px;
+}
+.hero__quick-spec strong {
+  min-width:0;
+  max-width:100%;
+}
+@media (max-width:991px), (max-aspect-ratio:6/5) {
+  .hero-carousel .hero,
+  .mhero { min-height:0; }
+  .hero-carousel .hero__bg,
+  .mhero .hero__bg {
+    height:clamp(330px, 62vw, 500px);
+    aspect-ratio:auto;
+    object-fit:cover;
+    object-position:50% 50% !important;
+  }
+  .mintro__hero-frame .mintro__image { height:clamp(320px, 68vw, 500px); }
+  .hero__quick-specs {
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    width:auto;
+    gap:6px;
+  }
+  .hero__quick-spec { padding:6px 8px; }
+  .hero__quick-spec small,
+  .hero__quick-spec strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+}
+
+/* Эдгээр дүрэм нь өмнөх сэдвийн өнгөний дүрмийг давж, утсан дээр уншигдах байдлыг баталгаажуулна. */
+@media (max-width:1199px) {
+  .navbar .navbar__links,
+  .navbar.is-on-light .navbar__links { background:#fff; color:#14213d; }
+  .navbar .navbar__links .navmenu__trigger,
+  .navbar .navbar__links .navmenu__card { color:#14213d; }
+  .navbar .navbar__links .navmenu__desc { color:#53627d; }
+}
+.hero-carousel > .saving-calculator__trigger { right:max(2rem,var(--padding-global)); bottom:2rem; left:auto; }
+.hero-carousel .hero__quick-specs { bottom:6.25rem; }
+.cta--warranty .btn { background:#0f5a3a; color:#fff; }
+
+/* Hero-ийн гурван үйлдлийн товчийг нэгэн ижил өнгө, дарааллаар харуулна. */
+.hero__actions .saving-calculator__trigger { order:1; }
+.hero__actions .btn--light { order:2; }
+.hero__actions .btn--primary { order:3; }
+.hero__actions .btn {
+  width:240px;
+  min-width:240px;
+  min-height:44px;
+  border-color:#0f5a3a;
+  background:#0f5a3a;
+  color:#fff;
+}
+.hero__actions .btn:hover {
+  background:#fff;
+  color:#0f5a3a;
+  border-color:#0f5a3a;
+}
+
+/* "Дэлгэрэнгүй" холбоосууд (btn--light) нь карт, hero болон бусад хуудсанд ижил байна. */
+.btn--light {
+  border-color:#0f5a3a;
+  background:#0f5a3a;
+  color:#fff;
+}
+.btn--light:hover {
+  background:#fff;
+  color:#0f5a3a;
+  border-color:#0f5a3a;
+}
+/* Цайвар hero (C3, C5 гэх мэт) дээрх тусгай дүрмээс давуу байна. */
+.hero__slide[data-theme="light"] .hero__actions .btn--light,
+.hero__slide[data-theme-sm="light"] .hero__actions .btn--light {
+  border-color:#0f5a3a;
+  background:#0f5a3a;
+  color:#fff;
+}
+.hero__slide[data-theme="light"] .hero__actions .btn--light:hover,
+.hero__slide[data-theme-sm="light"] .hero__actions .btn--light:hover {
+  background:#fff;
+  color:#0f5a3a;
+}
+@media (max-width:599px) {
+  .hero__actions .btn { width:100%; min-width:0; }
+}
+.site-footer__logo img { filter:brightness(0) invert(1); }
 

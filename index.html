@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <meta name="description" content="Цахилгаан болон зай сунгагчтай Ruichi ачааны машин, фургон загварын танилцуулга, цэнэглэлт ба баталгааны мэдээлэл.">
+  <link rel="icon" href="assets/brand-logo-transparent.png" type="image/png">
+  <!-- TODO: Брэндийн нэрийг баталгаажуулмагц title дахь Tesla нэрийг солино. -->
 </head>
 <body>
 
@@ -101,12 +104,13 @@
       <div class="hero-carousel__track" data-hero-track>
         <div class="hero hero__slide" data-theme="dark" style="--color-hero-sky: #255681" id="hero-ec75" role="group" aria-roledescription="slide" aria-label="1 / 8: EC75">
           <div class="hero__content">
-            <p class="hero__eyebrow">EC75 · Цахилгаан фургон</p>
-            <h1 class="h1">Бензин хомсдол, Бензиний үнэ таньд хамаатай юу? Хуучинаа өгөөд Шинийг ав.</h1>
+            <p class="hero__eyebrow">Цахилгаан фургон</p>
+            <h1 class="hero__model">EC75</h1>
+            <p class="hero__subtitle">Ажил хэрэгтээ тохирох найдвартай цахилгаан фургоноо сонгоорой.</p>
             <div class="hero__rotating-message" aria-live="polite">
               <p>Банкны хөнгөлттэй зээлээр ав</p>
-              <p>Бинзенд биш ирээдүйдээ мөнгө төл</p>
-              <p>Бинзенд цагаа бүү үр</p>
+              <p>Бензинд биш ирээдүйдээ мөнгө төл</p>
+              <p>Бензинд цагаа бүү үр</p>
               <p>Бодит тав тухыг мэдэр</p>
             </div>
             <div class="actions hero__actions">
@@ -469,6 +473,23 @@
     </section>
   </main>
 
+  <section class="section test-drive" id="test-drive" aria-labelledby="test-drive-title">
+    <div class="container test-drive__inner">
+      <div class="section-title section-title--narrow">
+        <h2 class="h2" id="test-drive-title">Туршилтын жолоодлого</h2>
+        <p class="text-medium">Холбоо барих мэдээллээ үлдээгээрэй. Манай зөвлөх тантай холбогдоно.</p>
+      </div>
+      <form class="test-drive__form" data-test-drive-form>
+        <label>Нэр<input name="name" type="text" autocomplete="name" required></label>
+        <label>Утас<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required></label>
+        <label>Сонирхож буй загвар<select name="model" required><option value="">Загвараа сонгоно уу</option><option>EC75</option><option>R5</option><option>C5</option><option>C3</option><option>ED71S</option></select></label>
+        <button class="btn btn--primary" type="submit">Хүсэлт илгээх</button>
+        <p class="test-drive__success" data-test-drive-success hidden role="status">Хүсэлтийг хүлээн авлаа. Бид тантай удахгүй холбогдоно.</p>
+        <!-- TODO: Маягтыг серверийн хүсэлт илгээх үйлчилгээтэй холбоно. -->
+      </form>
+    </div>
+  </section>
+
   <footer class="site-footer">
     <div class="site-footer__main">
       <nav class="site-footer__models" aria-label="Загварууд">
@@ -535,11 +556,12 @@
       <div class="site-footer__about">
         <div class="site-footer__block">
           <h2 class="site-footer__heading">Бидний тухай</h2>
+          <!-- TODO: URL оруулах -->
           <ul>
             <li><a href="#">Танилцуулга</a></li>
             <li><a href="#">Шинэ мэдээ</a></li>
             <li><a href="#">Хүсэлт илгээх</a></li>
-            <li><a href="#">Нууцын бодлого</a></li>
+            <li><!-- TODO: URL оруулах --><a href="#">Нууцлалын бодлого</a></li>
           </ul>
         </div>
 
@@ -556,14 +578,15 @@
 
         <div class="site-footer__block">
           <h2 class="site-footer__heading">Биднийг дагах</h2>
+          <!-- TODO: Албан ёсны сошиал URL оруулах -->
           <ul class="site-footer__social">
-            <li><a href="#" aria-label="Facebook">
+            <li><a href="#" aria-label="Facebook" target="_blank" rel="noopener">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1z"/></svg>
             </a></li>
-            <li><a href="#" aria-label="Instagram">
+            <li><a href="#" aria-label="Instagram" target="_blank" rel="noopener">
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>
             </a></li>
-            <li><a href="#" aria-label="YouTube">
+            <li><a href="#" aria-label="YouTube" target="_blank" rel="noopener">
               <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3L10 15z"/></svg>
             </a></li>
           </ul>
@@ -574,9 +597,9 @@
     <div class="site-footer__bottom">
       <p>© 2025. Бүх эрх хуулиар хамгаалагдсан.</p>
       <ul>
-        <li><a href="#">Нууцлалын бодлого</a></li>
-        <li><a href="#">Үйлчилгээний нөхцөл</a></li>
-        <li><a href="#">Күүки тохиргоо</a></li>
+        <li><a href="https://www.tesla.com/legal/privacy" target="_blank" rel="noopener">Нууцлалын бодлого</a></li>
+        <li><a href="https://www.tesla.com/legal/terms" target="_blank" rel="noopener">Үйлчилгээний нөхцөл</a></li>
+        <li><a href="https://www.tesla.com/legal#cookie-preferences" target="_blank" rel="noopener">Күүки тохиргоо</a></li>
       </ul>
     </div>
   </footer>

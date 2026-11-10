@@ -64,6 +64,28 @@
   update();
 })();
 
+// Нүүр хуудасны тогтмол холбоос, маягт болон footer-ийн жижиг засварууд.
+(function () {
+  if (document.body && document.querySelector("[data-hero-carousel]")) document.title = "Ruichi — Цахилгаан автомашин";
+
+  document.querySelectorAll('.hero__actions a[href="#"]').forEach(function (link) {
+    link.href = "#test-drive";
+  });
+
+  var copyright = document.querySelector(".site-footer__bottom p");
+  if (copyright) copyright.innerHTML = "© " + new Date().getFullYear() + ". Бүх эрх хуулиар хамгаалагдсан.";
+
+  var form = document.querySelector("[data-test-drive-form]");
+  if (!form) return;
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    form.querySelector("[data-test-drive-success]").hidden = false;
+    form.querySelector('button[type="submit"]').disabled = true;
+    // TODO: Маягтын мэдээллийг серверийн API руу илгээнэ.
+  });
+})();
+
 // Hero quick-spec icons: visually identify vehicle type, drive type, dimensions and range.
 (function () {
   // Superseded by the approved PNG-icon implementation below.
@@ -120,51 +142,51 @@
     refrigerator: '04_refrigerator_truck.png', flatbed4: '05_flatbed_4door_truck.png',
     fwd: '06_FWD.png', awd: '07_AWD.png', rwd: '08_RWD.png', dimension: '10_dimension.png',
     doors: '11_doors.png', charging: '12_charging.png', range: '13_range.png',
-    engine: '14_fuel EREV машинд ашиглах.png', seats: '15_seats.png'
+    engine: '14_fuel EREV машинд ашиглах.png', seats: '15_seats.png', payload: '16_payload.svg'
   };
   function vehicle(type, label, size, range, options) {
     options = options || {};
-    return { type: type, label: label, size: size, range: range, drive: options.drive || 'RWD', doors: options.doors || '2 хаалга', charge: options.charge || 'DC - 30 мин', seats: options.seats || '2 суудал', engine: options.engine || '' };
+    return { type: type, label: label, size: size, range: range, drive: options.drive || 'RWD', doors: options.doors || '2 хаалга', doorLabel: options.doorLabel || 'Хаалганы тоо', charge: options.charge || 'DC - 30 мин', seats: options.seats || '2 суудал', payload: options.payload || 'Тохируулгаас хамаарна', engine: options.engine || '' };
   }
   var data = {
-    'ec75': vehicle('van', 'Фургон', '5130 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
-    'r5': vehicle('van', 'Фургон', '5170 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
-    'ec75pro-passenger': vehicle('van', 'Зорчигч фургон', '5130 x 1860 x 2020 мм', '430 км', { doors: '4 хаалга', seats: '5 суудал' }),
-    'ec75pro-cargo': vehicle('van', 'Ачааны фургон', '5130 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
-    'r5pro-passenger': vehicle('van', 'Зорчигч фургон', '5170 x 1860 x 2020 мм', '430 км', { doors: '4 хаалга', seats: '5 суудал' }),
-    'r5pro-cargo': vehicle('van', 'Ачааны фургон', '5170 x 1860 x 2020 мм', '420 км', { doors: '4 хаалга' }),
-    'ec35': vehicle('van', 'Ачааны фургон', '4500 x 1680 x 2000 мм', '282 км', { doors: '4 хаалга' }),
-    'c3': vehicle('flatbed4', 'Задгай тэвш', '5330 x 1785 x 2010 мм', '327 км', { doors: '4 хаалга', seats: '5 суудал' }),
-    'c3-cold': vehicle('refrigerator', 'Хөргүүртэй тэвш', '5330 x 1790 x 2600 мм', '320 км'),
-    'c5': vehicle('flatbed4', 'Задгай тэвш', '5990 x 1880 x 2015 мм', '326 км', { doors: '4 хаалга', seats: '5 суудал' }),
-    'c5-cng': vehicle('flatbed4', 'Задгай тэвш', '5990 x 1880 x 2030 мм', '70 км EV', { doors: '4 хаалга', seats: '5 суудал', charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
-    'c5-reev': vehicle('flatbed4', 'Задгай тэвш', '5990 x 1880 x 2030 мм', '1200+ км', { doors: '4 хаалга', seats: '5 суудал', charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
-    'c5l': vehicle('flatbed', 'Задгай тэвш', '5995 x 1920 x 2035 мм', '415 км'),
-    'c9': vehicle('box', 'Битүү тэвш', '5995 x 2170 x 3180 мм', '403 км'),
-    'ec31': vehicle('box', 'Битүү тэвш', '4735 x 1655 x 2430 мм', '275 км'),
-    'ec31l': vehicle('flatbed', 'Задгай тэвш', '4855 x 1660 x 1985 мм', '295 км'),
-    'ec31s': vehicle('flatbed', 'Задгай тэвш', '5035 x 1680 x 2420 мм', '240 км'),
-    'ed71s': vehicle('flatbed', 'Хөнгөн ачааны машин', '5995 x 1870 x 2025 мм', '313 км'),
-    'r5-service': vehicle('box', 'Тусгай зориулалт', '5990 x 1880 x 2030 мм', '1200 км', { charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
-    'c5-drone': vehicle('flatbed4', 'Дроны үйлчилгээ', '5990 x 1880 x 2030 мм', '1200 км', { doors: '4 хаалга', seats: '5 суудал', charge: 'AC/DC - 30 мин', engine: '1,499 cc' })
+    'ec75': vehicle('van', 'Фургон', '5130 x 1860 x 2020 мм', '420 км', { drive: 'FWD', doors: '5 хаалга', seats: '2–14 суудал' }),
+    'r5': vehicle('van', 'Фургон', '5170 x 1860 x 2020 мм', '403 км', { drive: 'FWD', doors: '5 хаалга', seats: '2–9 суудал' }),
+    'ec75pro-passenger': vehicle('van', 'Зорчигч фургон', '5130 x 1860 x 2020 мм', '430 км', { drive: 'FWD', doors: '5 хаалга', seats: '6–9 суудал' }),
+    'ec75pro-cargo': vehicle('van', 'Ачааны фургон', '5130 x 1860 x 2020 мм', '420 км', { drive: 'FWD', doors: '5 хаалга', seats: '2 суудал' }),
+    'r5pro-passenger': vehicle('van', 'Зорчигч фургон', '5170 x 1860 x 2020 мм', '430 км', { drive: 'FWD', doors: '5 хаалга', seats: '6–9 суудал' }),
+    'r5pro-cargo': vehicle('van', 'Ачааны фургон', '5170 x 1860 x 2020 мм', '420 км', { drive: 'FWD', doors: '5 хаалга', seats: '2 суудал' }),
+    'ec35': vehicle('van', 'Ачааны фургон', '4500 x 1680 x 2000 мм', '282 км', { drive: 'RWD', doors: '5 хаалга', seats: '2–5 суудал' }),
+    'c3': vehicle('flatbed', 'Задгай тэвш', '5330 x 1785 x 2010 мм', '327 км', { drive: 'RWD', doors: '2 хаалга', seats: '2 суудал' }),
+    'c3-cold': vehicle('refrigerator', 'Хөргүүртэй тэвш', '5330 x 1790 x 2600 мм', '320 км', { drive: 'RWD', doors: '2 хаалга', seats: '2 суудал' }),
+    'c5': vehicle('flatbed', 'Задгай тэвш', '5990 x 1880 x 2015 мм', '326 км', { drive: 'FWD', doors: '2 хаалга', seats: '2 суудал', payload: '2–2.5 т' }),
+    'c5-cng': vehicle('flatbed', 'Задгай тэвш', '5990 x 1880 x 2030 мм', '70 км EV', { drive: 'FWD', doors: '2–4 хаалга', seats: '2–5 суудал', payload: '2–2.5 т', charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
+    'c5-reev': vehicle('flatbed', 'Задгай тэвш', '5990 x 1880 x 2030 мм', '1200+ км', { drive: 'FWD', doors: '2–4 хаалга', seats: '2–5 суудал', payload: '2–2.5 т', charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
+    'c5l': vehicle('flatbed', 'Задгай тэвш', '5995 x 1920 x 2035 мм', '415 км', { drive: 'RWD', seats: '2 суудал' }),
+    'c9': vehicle('box', 'Битүү тэвш', '5995 x 2170 x 3180 мм', '403 км', { drive: 'RWD', doors: '2–4 хаалга', doorLabel: 'Ачааны хажуугийн хаалга', seats: '3 суудал', payload: '1,075–1,115 кг' }),
+    'ec31': vehicle('box', 'Битүү тэвш', '4735 x 1655 x 2430 мм', '275 км', { drive: 'RWD', doors: '2 хаалга', seats: '2 суудал', payload: '1,055–1,080 кг' }),
+    'ec31l': vehicle('flatbed', 'Задгай тэвш', '4855 x 1660 x 1985 мм', '295 км', { drive: 'RWD', doors: '2 хаалга', seats: '2 суудал', payload: '1,080–1,200 кг' }),
+    'ec31s': vehicle('flatbed', 'Задгай тэвш', '5035 x 1680 x 2420 мм', '240 км', { drive: 'RWD', doors: '2 хаалга', seats: '2 суудал', payload: '1,100–1,270 кг' }),
+    'ed71s': vehicle('flatbed', 'Хөнгөн ачааны машин', '5995 x 1870 x 2025 мм', '313 км', { drive: 'RWD', doors: '2 хаалга', seats: '2 суудал' }),
+    'r5-service': vehicle('box', 'Тусгай зориулалт', '5990 x 1880 x 2030 мм', '1200 км', { drive: 'FWD', doors: '5 хаалга', seats: '2 суудал', charge: 'AC/DC - 30 мин', engine: '1,499 cc' }),
+    'c5-drone': vehicle('flatbed', 'Дроны үйлчилгээ', '5990 x 1880 x 2030 мм', '1200 км', { drive: 'FWD', doors: '2–4 хаалга', seats: '2–5 суудал', payload: '2–2.5 т', charge: 'AC/DC - 30 мин', engine: '1,499 cc' })
   };
   function item(icon, label, value) {
     return '<span class="hero__quick-spec"><span class="hero__quick-icon"><img src="' + iconRoot + icons[icon] + '" alt="" aria-hidden="true"></span><span><small>' + label + '</small><strong>' + value + '</strong></span></span>';
   }
   function render(spec) {
-    var html = item(spec.type, 'Загвар', spec.label) + item(spec.drive.toLowerCase(), 'Хөтлөгч', spec.drive) + item('dimension', 'Хэмжээ', spec.size) + item('doors', 'Хаалганы тоо', spec.doors) + item('charging', 'Цэнэглэх хугацаа', spec.charge) + item('range', 'Туулах зай', spec.range) + item('seats', 'Суудлын тоо', spec.seats);
+    var html = item(spec.type, 'Загвар', spec.label) + item(spec.drive.toLowerCase(), 'Хөтлөгч', spec.drive) + item('dimension', 'Хэмжээ', spec.size) + item('doors', spec.doorLabel, spec.doors) + item('charging', 'Цэнэглэх хугацаа', spec.charge) + item('range', 'Туулах зай', spec.range) + item('seats', 'Суудлын тоо', spec.seats) + item('payload', 'Даац', spec.payload);
     if (spec.engine) html += item('engine', 'Хөдөлгүүр', spec.engine);
     return '<div class="hero__quick-specs" aria-label="Загварын шуурхай үзүүлэлтүүд">' + html + '</div>';
   }
   document.querySelectorAll('[data-hero-carousel] .hero__slide').forEach(function (slide) {
     var spec = data[(slide.id || '').replace('hero-', '')], content = slide.querySelector('.hero__content');
-    if (spec && content && !content.querySelector('.hero__quick-specs')) content.insertAdjacentHTML('beforeend', render(spec));
+    if (spec && content && !slide.querySelector('.hero__quick-specs')) slide.insertAdjacentHTML('beforeend', render(spec));
   });
   var slug = location.pathname.split('/').pop().replace(/\.html$/i, '') || 'index';
   var pageSpec = data[slug];
-  var modelHeroContent = document.querySelector('.mhero .hero__content');
-  if (pageSpec && modelHeroContent && !modelHeroContent.querySelector('.hero__quick-specs')) {
-    modelHeroContent.insertAdjacentHTML('beforeend', render(pageSpec));
+  var modelHero = document.querySelector('.mhero');
+  if (pageSpec && modelHero && !modelHero.querySelector('.hero__quick-specs')) {
+    modelHero.insertAdjacentHTML('beforeend', render(pageSpec));
   }
   var introImage = document.querySelector('.mintro .mintro__image');
   if (pageSpec && introImage && !document.querySelector('.mintro__hero-frame')) {
@@ -249,7 +271,7 @@
     dot.type = "button";
     dot.className = "hero-carousel__dot";
     dot.setAttribute("role", "tab");
-    dot.setAttribute("aria-label", slide.getAttribute("aria-label") || String(i + 1));
+    dot.setAttribute("aria-label", "Слайд " + (i + 1) + " / " + slides.length);
     dot.addEventListener("click", function () { go(i); restart(); });
     dotsWrap.appendChild(dot);
     return dot;
@@ -395,11 +417,16 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
   var poll = document.querySelector(".poll-card");
   if (poll) {
     var resultWrap = poll.querySelector(".poll-card__results"), actionWrap = poll.querySelector(".actions");
-    var choices = ["Асуудалгүй", "Мэдэхгүй", "Муу байх"], votes = [0, 0, 0];
+    var choices = ["Асуудалгүй", "Мэдэхгүй", "Муу байх"], votes = [0, 0, 0], voted = null;
+    try {
+      var savedVote = JSON.parse(localStorage.getItem("ruichi-home-poll") || "null");
+      if (savedVote && Array.isArray(savedVote.votes) && savedVote.votes.length === 3) { votes = savedVote.votes; voted = savedVote.choice; }
+    } catch (error) { /* TODO: Серверийн статистик ашиглах үед энд алдааг бүртгэнэ. */ }
     resultWrap.innerHTML = choices.map(function (label, index) { return '<div class="poll-card__result"><p class="h2" data-poll-percent="' + index + '">0%</p><p class="text-regular"><span data-poll-count="' + index + '">0</span> · ' + label + "</p></div>"; }).join("");
     actionWrap.innerHTML = choices.map(function (label, index) { return '<button class="btn btn--secondary" type="button" data-poll-vote="' + index + '">' + label + "</button>"; }).join("");
-    function renderVotes() { var total = votes.reduce(function (sum, vote) { return sum + vote; }, 0); votes.forEach(function (vote, index) { resultWrap.querySelector('[data-poll-count="' + index + '"]').textContent = vote; resultWrap.querySelector('[data-poll-percent="' + index + '"]').textContent = total ? Math.round(vote / total * 100) + "%" : "0%"; }); }
-    actionWrap.querySelectorAll("[data-poll-vote]").forEach(function (button) { button.addEventListener("click", function () { votes[Number(button.dataset.pollVote)] += 1; renderVotes(); }); });
+    function renderVotes() { var total = votes.reduce(function (sum, vote) { return sum + vote; }, 0); votes.forEach(function (vote, index) { resultWrap.querySelector('[data-poll-count="' + index + '"]').textContent = vote; resultWrap.querySelector('[data-poll-percent="' + index + '"]').textContent = total ? Math.round(vote / total * 100) + "%" : "0%"; }); actionWrap.querySelectorAll("[data-poll-vote]").forEach(function (button) { button.disabled = voted !== null; }); }
+    actionWrap.querySelectorAll("[data-poll-vote]").forEach(function (button) { button.addEventListener("click", function () { if (voted !== null) return; voted = Number(button.dataset.pollVote); votes[voted] += 1; try { localStorage.setItem("ruichi-home-poll", JSON.stringify({ votes: votes, choice: voted })); } catch (error) { /* TODO: Серверийн статистик ашиглах үед localStorage-ийг орлуулна. */ } renderVotes(); }); });
+    renderVotes();
   }
 
   var heading = document.querySelector("#models .h2"), subheading = document.querySelector("#models .text-medium");
@@ -425,13 +452,21 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
   var modelHero = document.querySelector(".mhero");
   if (!homeCarousel && !modelHero) return;
 
-  var trigger = document.createElement("button");
-  trigger.type = "button";
-  trigger.className = "saving-calculator__trigger";
-  trigger.textContent = "Хэмнэлтийн тооцоолуур";
-  trigger.setAttribute("aria-haspopup", "dialog");
-  if (modelHero) modelHero.appendChild(trigger);
-  else homeCarousel.appendChild(trigger);
+  var triggers = [];
+  function addTrigger(container) {
+    var trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "btn btn--secondary saving-calculator__trigger";
+    trigger.textContent = "Хэмнэлтийн тооцоолуур";
+    trigger.setAttribute("aria-haspopup", "dialog");
+    container.appendChild(trigger);
+    triggers.push(trigger);
+  }
+  if (homeCarousel) {
+    homeCarousel.querySelectorAll(".hero__actions").forEach(addTrigger);
+  } else {
+    addTrigger(modelHero);
+  }
 
   var modal = document.createElement("div");
   modal.className = "savings-modal";
@@ -459,6 +494,13 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
   var results = modal.querySelector("[data-savings-results]");
   var maker = modal.querySelector("#saving-maker");
   var model = modal.querySelector("#saving-model");
+  var validationMessages = { maker: "Үйлдвэрлэгчээ сонгоно уу.", model: "Эхлээд үйлдвэрлэгчээ сонгоод, дараа нь загвараа сонгоно уу.", year: "Үйлдвэрлэсэн оноо оруулна уу.", consumption: "Түлшний зарцуулалтаа оруулна уу.", distance: "Өдөрт явдаг зайгаа оруулна уу." };
+  Array.prototype.slice.call(form.elements).forEach(function (field) {
+    if (!field.name || !validationMessages[field.name]) return;
+    field.addEventListener("invalid", function () { field.setCustomValidity(validationMessages[field.name]); });
+    field.addEventListener("input", function () { field.setCustomValidity(""); });
+    field.addEventListener("change", function () { field.setCustomValidity(""); });
+  });
   var models = {
     Toyota: ["Prius", "Camry", "Crown", "Harrier", "RAV4", "Land Cruiser", "Alphard", "Sienta"],
     Nissan: ["Leaf", "Note", "X-Trail", "Serena", "Tiida", "March", "Patrol", "Vanette"],
@@ -489,7 +531,7 @@ document.querySelectorAll("[data-slider]").forEach(function (slider) {
     document.body.classList.remove("savings-modal-open");
     if (lastFocus) lastFocus.focus();
   }
-  trigger.addEventListener("click", openModal);
+  triggers.forEach(function (trigger) { trigger.addEventListener("click", openModal); });
   modal.querySelectorAll("[data-savings-close]").forEach(function (button) { button.addEventListener("click", closeModal); });
   document.addEventListener("keydown", function (event) { if (!modal.hidden && event.key === "Escape") closeModal(); });
 
