@@ -1,0 +1,3 @@
+import type { Spec } from "@/data/models";
+const symbols: Record<string, string> = { "Хөтлөгч": "◉", "Хаалга": "▣", "Суудал": "♙", "Даац": "▰" };
+export function QuickSpecs({ specs }: { specs: Spec[] }) { return <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Шуурхай үзүүлэлтүүд">{specs.map((spec) => <div className="flex items-center gap-2 rounded-lg bg-white/90 px-3 py-2 text-slate-900 shadow-sm" key={spec.label}><span className="text-brand">{symbols[spec.label] ?? "•"}</span><span><span className="block text-[10px] font-semibold uppercase text-slate-500">{spec.label}</span><strong className="text-xs">{spec.value}</strong></span></div>)}</div>; }
