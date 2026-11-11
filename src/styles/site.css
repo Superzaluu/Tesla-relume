@@ -1584,5 +1584,12 @@ body::before { display:none; }
 @media (max-width:599px) {
   .hero__actions .btn { width:100%; min-width:0; }
 }
+
+/* Нэг ижил товчны үсэг: өмнө нь .btn--primary 700, .btn 500,
+   тооцоолуурын товч 13px/600 байсан тул зэрэгцээ товчнууд өөр харагдаж байв. */
+.btn,
+.btn--primary,
+.saving-calculator__trigger { font-weight:600; letter-spacing:-.015em; }
+.hero__actions .btn { font-size:var(--text-small); line-height:1.2; }
 .site-footer__logo img { filter:brightness(0) invert(1); }
 
