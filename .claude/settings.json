@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($git = \"C:\\\\Users\\\\infoa\\\\AppData\\\\Local\\\\GitHubDesktop\\\\app-3.6.10\\\\resources\\\\app\\\\git\\\\cmd\\\\git.exe\"; & $git rm -r -q --cached node_modules .tools .npm-cache .next out next-env.d.ts tsconfig.tsbuildinfo; & $git add .gitignore; & $git status --short | Group-Object { $_.Substring\\(0,2\\) } | Select-Object Count, Name; & $git status --short | Where-Object { $_ -notmatch '^D  \\(node_modules|\\\\.tools|\\\\.npm-cache|\\\\.next|out\\)/' })",
+      "PowerShell($git = \"C:\\\\Users\\\\infoa\\\\AppData\\\\Local\\\\GitHubDesktop\\\\app-3.6.10\\\\resources\\\\app\\\\git\\\\cmd\\\\git.exe\"; & $git commit -q --amend --no-edit; & $git show --stat --format=\"%h %s\" HEAD; \"--- tracked junk:\"; foreach \\($d in \"node_modules\",\".tools\",\".npm-cache\",\".next\",\"out\"\\) { \"{0}: {1}\" -f $d, \\(& $git ls-files $d | Measure-Object\\).Count }; \"--- big files in HEAD:\"; & $git ls-tree -r -l HEAD | ForEach-Object { $p = $_ -split '\\\\s+', 5; if \\($p[3] -ne '-' -and [int64]$p[3] -gt 50MB\\) { $p[4] } }; & $git status -sb | Select-Object -First 1; \"--- disk check\"; Test-Path node_modules, index.html)",
+      "PowerShell($git = \"C:\\\\Users\\\\infoa\\\\AppData\\\\Local\\\\GitHubDesktop\\\\app-3.6.10\\\\resources\\\\app\\\\git\\\\cmd\\\\git.exe\"; $objs = & $git rev-list --objects origin/main..HEAD; \"objects to push: $\\($objs.Count\\)\"; \\($objs | ForEach-Object { \\($_ -split ' '\\)[0] }\\) | & $git cat-file --batch-check='%\\(objectsize\\)' | Measure-Object -Sum | ForEach-Object { \"{0:N1} MB\" -f \\($_.Sum/1MB\\) })"
+    ]
+  }
+}
