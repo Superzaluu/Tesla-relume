@@ -19,11 +19,17 @@ export type Stat = { value: V<string>; unit: V<string>; label: V<string>; note?:
 
 export type Fact = { label: string; value: string };
 
-/** Icon row shown on the hero photo (assets/icons/*). */
+/**
+ * Icon row shown on the hero photo (public/assets/icons/*, mapped in components/QuickSpecs.tsx).
+ * - type: van 01 · flatbed 02 · box 03 · refrigerator 04 · flatbed4 05 (4 хаалгатай / давхар кабинтай тэвш)
+ * - drive: FWD 06 · AWD 07 (бүх дугуйгаар хөтлөгчтэй загвар ирэхэд) · RWD 08
+ * - fuel (09): зай сунгагчийн түлш, зөвхөн EREV загварт · engine (14): хөдөлгүүрийн багтаамж
+ */
 export type QuickSpecs = {
-  type: "van" | "flatbed" | "box" | "refrigerator";
+  type: "van" | "flatbed" | "flatbed4" | "box" | "refrigerator";
   label: string;
   drive: "FWD" | "RWD" | "AWD";
+  fuel?: string;
   size: string;
   range: string;
   doors: string;

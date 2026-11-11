@@ -118,7 +118,9 @@ export function SavingsProvider({ children }: { children: ReactNode }) {
       <div className="savings-modal" hidden={!open}>
         <div className="savings-modal__backdrop" onClick={close} />
         <section className="savings-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="savings-title">
-          <button className="savings-modal__close" type="button" aria-label="Хаах" onClick={close}>×</button>
+          <button className="savings-modal__close" type="button" aria-label="Хаах" onClick={close}>
+            <img src="/assets/close.svg" width={20} height={20} alt="" />
+          </button>
           <header className="savings-modal__header">
             <h2 className="savings-modal__title" id="savings-title">Хэмнэлтийн тооцоолуур</h2>
             <p className="savings-modal__intro">Одоогийн машиныхаа мэдээллийг оруулаад цахилгаан машинд шилжихэд гарах ойролцоох хэмнэлтээ тооцоолоорой.</p>
@@ -129,15 +131,14 @@ export function SavingsProvider({ children }: { children: ReactNode }) {
               <div className="savings-field">
                 <label htmlFor="saving-maker">Үйлдвэрлэгч</label>
                 <select id="saving-maker" name="maker" required ref={makerRef} value={maker} {...validation} onChange={(event) => { event.currentTarget.setCustomValidity(""); setMaker(event.target.value); }}>
-                  <option value="">Сонгоно уу</option>
-                  {Object.keys(MAKERS).map((name) => <option key={name} value={name}>{name}</option>)}
+                  {["", ...Object.keys(MAKERS)].map((name) => <option key={name || "placeholder"} value={name}>{name || "Сонгоно уу"}</option>)}
                 </select>
               </div>
               <div className="savings-field">
                 <label htmlFor="saving-model">Загвар</label>
                 <select id="saving-model" name="model" required disabled={!models.length} {...validation} onChange={(event) => event.currentTarget.setCustomValidity("")} key={maker}>
-                  <option value="">{models.length ? "Сонгоно уу" : "Эхлээд үйлдвэрлэгчээ сонгоно уу"}</option>
-                  {models.map((name) => <option key={name} value={name}>{name}</option>)}
+                  {[{ value: "", label: models.length ? "Сонгоно уу" : "Эхлээд үйлдвэрлэгчээ сонгоно уу" }, ...models.map((name) => ({ value: name, label: name }))]
+                    .map((option) => <option key={option.value || "placeholder"} value={option.value}>{option.label}</option>)}
                 </select>
               </div>
               <div className="savings-field">

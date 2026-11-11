@@ -2,7 +2,8 @@ import type { QuickSpecs as Specs } from "@/data/types";
 
 const ICONS: Record<string, string> = {
   van: "01_van.png", flatbed: "02_light_flatbed_truck.png", box: "03_light_box_truck.png", refrigerator: "04_refrigerator_truck.png",
-  fwd: "06_FWD.png", awd: "07_AWD.png", rwd: "08_RWD.png", dimension: "10_dimension.png", doors: "11_doors.png",
+  flatbed4: "05_flatbed_4door_truck.png", fwd: "06_FWD.png", awd: "07_AWD.png", rwd: "08_RWD.png", fuel: "09_fuel.png",
+  dimension: "10_dimension.png", doors: "11_doors.png",
   charging: "12_charging.png", range: "13_range.png", engine: "14_fuel EREV машинд ашиглах.png", seats: "15_seats.png", payload: "16_payload.svg"
 };
 
@@ -27,6 +28,7 @@ export function QuickSpecs({ specs }: { specs: Specs }) {
       <Item icon="range" label="Туулах зай" value={specs.range} />
       <Item icon="seats" label="Суудлын тоо" value={specs.seats} />
       <Item icon="payload" label="Даац" value={specs.payload} />
+      {specs.fuel && <Item icon="fuel" label="Түлш" value={specs.fuel} />}
       {specs.engine && <Item icon="engine" label="Хөдөлгүүр" value={specs.engine} />}
     </div>
   );

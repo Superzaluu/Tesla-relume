@@ -190,20 +190,23 @@ export default function StyleguidePage() {
 
             <Section id="icons" num="09" title="Дүрс" lead="Загварын шуурхай үзүүлэлтийн PNG icon болон интерфейсийн SVG.">
               <Label>Шуурхай үзүүлэлт — /assets/icons/</Label>
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 xl:grid-cols-8">
-                {quickIcons.map((file) => (
-                  <div key={file} className="rounded-xl border border-line bg-white p-3 text-center">
-                    <img src={`/assets/icons/${encodeURI(file)}`} alt="" className="mx-auto h-10 w-10 object-contain" />
-                    <p className="mt-2 truncate text-[10px] text-ink-muted" title={file}>{file}</p>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+                {quickIcons.map((icon) => (
+                  <div key={icon.file} className={`relative rounded-xl border bg-white p-3 text-center ${icon.future ? "border-dashed border-[#147a48]" : "border-line"}`}>
+                    {icon.future && <span className="absolute right-2 top-2 rounded-full bg-[#eef5f3] px-1.5 text-[9px] font-semibold text-[#0f5a3a]">Ирээдүйд</span>}
+                    <img src={`/assets/icons/${encodeURI(icon.file)}`} alt="" className="mx-auto h-10 w-10 object-contain" />
+                    <p className="mt-2 truncate font-mono text-[10px] text-ink-muted" title={icon.file}>{icon.file}</p>
+                    <p className="mt-1 text-[11px] leading-snug text-ink-secondary">{icon.use}</p>
                   </div>
                 ))}
               </div>
               <Label>Интерфейс — /assets/</Label>
               <div className="flex flex-wrap gap-3">
-                {uiIcons.map((file) => (
-                  <div key={file} className="rounded-xl border border-line bg-white p-3 text-center">
-                    <img src={`/assets/${file}`} alt="" className="mx-auto h-8 w-8 object-contain" />
-                    <p className="mt-2 text-[10px] text-ink-muted">{file}</p>
+                {uiIcons.map((icon) => (
+                  <div key={icon.file} className="w-36 rounded-xl border border-line bg-white p-3 text-center">
+                    <img src={`/assets/${icon.file}`} alt="" className="mx-auto h-8 w-8 object-contain" />
+                    <p className="mt-2 font-mono text-[10px] text-ink-muted">{icon.file}</p>
+                    <p className="mt-1 text-[11px] leading-snug text-ink-secondary">{icon.use}</p>
                   </div>
                 ))}
               </div>

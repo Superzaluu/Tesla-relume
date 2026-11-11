@@ -77,13 +77,33 @@ export const shadows = [
   { name: "Navbar", value: "0 2px 14px rgb(8 61 40 / .22)", use: ".navbar.is-solid" }
 ];
 
+// `future: true` — icon is wired up in QuickSpecs but no current model needs it yet.
 export const quickIcons = [
-  "01_van.png", "02_light_flatbed_truck.png", "03_light_box_truck.png", "04_refrigerator_truck.png", "05_flatbed_4door_truck.png",
-  "06_FWD.png", "07_AWD.png", "08_RWD.png", "09_fuel.png", "10_dimension.png", "11_doors.png", "12_charging.png",
-  "13_range.png", "14_fuel EREV машинд ашиглах.png", "15_seats.png", "16_payload.svg"
+  { file: "01_van.png", use: "Фургон — EC75, R5, EC35II" },
+  { file: "02_light_flatbed_truck.png", use: "Задгай тэвш — C5, C3, ED71S" },
+  { file: "03_light_box_truck.png", use: "Битүү тэвш — C9, EC31" },
+  { file: "04_refrigerator_truck.png", use: "Хөргүүртэй — C3 Хөргүүртэй" },
+  { file: "05_flatbed_4door_truck.png", use: "4 хаалгатай тэвш — C5 CNG, C5 Бензин, C5 Дрон" },
+  { file: "06_FWD.png", use: "Урд хөтлөгч" },
+  { file: "07_AWD.png", use: "Бүх дугуй хөтлөгч — шинэ загварт", future: true },
+  { file: "08_RWD.png", use: "Хойд хөтлөгч" },
+  { file: "09_fuel.png", use: "Түлш — C5 CNG, C5 Бензин" },
+  { file: "10_dimension.png", use: "Хэмжээ" },
+  { file: "11_doors.png", use: "Хаалга" },
+  { file: "12_charging.png", use: "Цэнэглэх хугацаа" },
+  { file: "13_range.png", use: "Туулах зай" },
+  { file: "14_fuel EREV машинд ашиглах.png", use: "Хөдөлгүүр — EREV загвар" },
+  { file: "15_seats.png", use: "Суудал" },
+  { file: "16_payload.svg", use: "Даац" }
 ];
 
-export const uiIcons = ["arrow-back.svg", "arrow-forward.svg", "chevron-right.svg", "close.svg", "play-button.svg"];
+export const uiIcons = [
+  { file: "arrow-back.svg", use: "Слайдер — өмнөх" },
+  { file: "arrow-forward.svg", use: "Слайдер — дараах" },
+  { file: "chevron-right.svg", use: "Холбоос товч" },
+  { file: "close.svg", use: "Тооцоолуурын цонх хаах" },
+  { file: "play-button.svg", use: "Видео тоглуулах" }
+];
 
 export const pageSections = [
   { page: "Нүүр хуудас", href: "/", items: [
