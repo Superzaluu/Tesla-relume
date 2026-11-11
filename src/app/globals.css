@@ -1,0 +1,9 @@
+/* Loaded after src/styles/site.css and model.css (see layout.tsx), so
+   Tailwind utilities can override the migrated component styles.
+   Preflight is disabled in tailwind.config.ts: site.css has its own base. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Self-hosted Inter from next/font replaces the Google Fonts <link>. */
+:root { --font-body: var(--font-inter), "Inter", Arial, sans-serif; }
