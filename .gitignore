@@ -1,7 +1,0 @@
-node_modules
-.tools
-.npm-cache
-.next
-out
-next-env.d.ts
-tsconfig.tsbuildinfo

@@ -1,2 +1,0 @@
-import Link from "next/link";
-export default function NotFound() { return <main className="page-shell grid min-h-screen place-items-center pt-16 text-center"><div><p className="text-7xl font-bold text-brand">404</p><h1 className="mt-4 text-3xl font-bold">Хуудас олдсонгүй</h1><Link className="mt-6 inline-block font-semibold text-brand underline" href="/">Нүүр хуудас руу буцах</Link></div></main>; }
