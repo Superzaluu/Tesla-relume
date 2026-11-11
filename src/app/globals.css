@@ -5,5 +5,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Preflight is off, so Tailwind's `border` utilities have no border-style.
+   Inside a `.tw` wrapper (pages built with Tailwind, e.g. /styleguide) give every
+   element a solid 0-width border like preflight does. Scoped so legacy pages keep
+   the browser's default borders on inputs, fieldsets, etc.; :where() keeps
+   specificity at 0, so site.css rules still win. */
+:where(.tw, .tw *, .tw ::before, .tw ::after) { border-width: 0; border-style: solid; }
+
+/* /styleguide demos: show elements that are absolutely positioned over the
+   hero photo on real pages as ordinary inline blocks. */
+.sg-demo .saving-calculator__trigger,
+.sg-demo .hero__quick-specs { position: static; max-width: none; margin: 0; }
+.sg-demo .hero__quick-specs { width: auto; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+
 /* Self-hosted Inter from next/font replaces the Google Fonts <link>. */
 :root { --font-body: var(--font-inter), "Inter", Arial, sans-serif; }

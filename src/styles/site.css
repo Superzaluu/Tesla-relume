@@ -1593,3 +1593,12 @@ body::before { display:none; }
 .hero__actions .btn { font-size:var(--text-small); line-height:1.2; }
 .site-footer__logo img { filter:brightness(0) invert(1); }
 
+/* Утсан дээр загварын карт цайвар дэвсгэртэй болдог (дээрх 991px дүрэм),
+   гэвч ".vcard--model .vcard__title { color:#fff }" дүрэм түүнийг дарж,
+   нэр, тайлбар, товч цагаан дэвсгэр дээр харагдахгүй байсан. */
+@media (max-width: 991px) {
+  .vcard--model .vcard__title,
+  .vcard--model .vcard__model { color:var(--color-text); text-shadow:none; }
+  .vcard--model .vcard__actions .btn--light { border-color:#0f5a3a; background:#0f5a3a; color:#fff; }
+}
+

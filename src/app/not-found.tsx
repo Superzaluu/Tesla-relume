@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="section grid min-h-[70vh] place-items-center pt-[calc(var(--navbar-height)+4rem)]">
+    <main className="tw section grid min-h-[70vh] place-items-center pt-[calc(var(--navbar-height)+4rem)]">
       <div className="section-title section-title--narrow">
         <p className="tagline">404</p>
         <h1 className="h2">Хуудас олдсонгүй</h1>
