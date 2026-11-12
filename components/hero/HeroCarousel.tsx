@@ -1,17 +1,15 @@
 "use client";
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
-import type { HeroSlide } from "@/data/home";
-import { QuickSpecs } from "@/components/QuickSpecs";
-import { SavingsTrigger } from "@/components/SavingsCalculator";
-import { useSiteChrome } from "@/components/SiteChrome";
+import type { HeroSlide as SlideData } from "@/data/home";
+import { HeroSlide } from "@/components/hero/HeroSlide";
+import { useSiteChrome } from "@/components/layout/SiteChrome";
 
 const DELAY = 7000;
 const STACKED = "(max-width: 991px), (max-aspect-ratio: 6/5)";
 
 // Full-screen model carousel: arrows, dots, swipe, keyboard, autoplay
 // (paused on hover/focus and for reduced motion), #hero-<model> deep links.
-export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
+export function HeroCarousel({ slides }: { slides: SlideData[] }) {
   const { setHeroLight } = useSiteChrome();
   const [index, setIndex] = useState(0);
   const [stacked, setStacked] = useState(false);
@@ -24,6 +22,17 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
 
   const count = slides.length;
   const go = useCallback((i: number) => setIndex(((i % count) + count) % count), [count]);
+
+  // With one slide per model there are ~20 large photos: only load the current
+  // slide and its neighbours, and keep anything already shown.
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set([0, 1, count - 1]));
+  useEffect(() => {
+    setLoaded((prev) => {
+      const wanted = [index - 1, index, index + 1].map((i) => (i + count) % count);
+      if (wanted.every((i) => prev.has(i))) return prev;
+      return new Set([...prev, ...wanted]);
+    });
+  }, [index, count]);
 
   // Initial slide from #hero-* and the stacked-layout media query.
   useEffect(() => {
@@ -82,6 +91,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   return (
     <section
       className={`hero-carousel${light ? " is-light" : ""}`} aria-roledescription="carousel" aria-label="Ruichi загварууд"
+      // A #hero-<model> link makes the browser scroll the carousel sideways to that
+      // slide's id on top of our own translateX; keep the section unscrolled.
+      onScroll={(e) => { if (e.currentTarget.scrollLeft) e.currentTarget.scrollLeft = 0; }}
+      ref={(node) => { if (node && node.scrollLeft) node.scrollLeft = 0; }}
       onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}
       onKeyDown={(e) => { if (e.key === "ArrowRight") go(index + 1); else if (e.key === "ArrowLeft") go(index - 1); }}
@@ -91,40 +104,9 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endDrag} onPointerCancel={endDrag} onPointerLeave={endDrag}
         onClickCapture={(e) => { if (Math.abs(dragDelta.current) > 8) { e.preventDefault(); dragDelta.current = 0; } }}
       >
-        {slides.map((s, i) => {
-          const active = i === index;
-          const Heading = i === 0 ? "h1" : "h2";
-          return (
-            <div
-              key={s.id} id={s.id} className="hero hero__slide" data-theme={s.theme} data-theme-sm={s.themeSm}
-              style={{ "--color-hero-sky": s.sky } as CSSProperties}
-              role="group" aria-roledescription="slide" aria-label={`${i + 1} / ${count}: ${s.model}`}
-              aria-hidden={!active} inert={!active}
-            >
-              <div className="hero__content">
-                <p className="hero__eyebrow">{s.eyebrow}</p>
-                <Heading className="hero__model">{s.model}</Heading>
-                <p className="hero__subtitle">{s.subtitle}</p>
-                {s.messages && (
-                  <div className="hero__rotating-message" aria-live="polite">
-                    {s.messages.map((message) => <p key={message}>{message}</p>)}
-                  </div>
-                )}
-                <div className="actions hero__actions">
-                  <a className="btn btn--primary btn--wide" href="#test-drive">Ногоон зээл</a>
-                  <Link className="btn btn--light btn--wide" href={s.href}>Дэлгэрэнгүй</Link>
-                  <SavingsTrigger />
-                </div>
-              </div>
-              <img
-                className="hero__bg" src={s.image.src} width={s.image.width} height={s.image.height} alt={s.image.alt}
-                style={s.image.position ? { objectPosition: s.image.position } : undefined}
-                fetchPriority={i === 0 ? "high" : undefined} decoding={i === 0 ? undefined : "async"}
-              />
-              {s.quick && <QuickSpecs specs={s.quick} />}
-            </div>
-          );
-        })}
+        {slides.map((s, i) => (
+          <HeroSlide key={s.id} slide={s} position={i} total={count} active={i === index} showImage={loaded.has(i)} />
+        ))}
       </div>
 
       <button className="hero-carousel__arrow hero-carousel__arrow--prev" type="button" aria-label="Өмнөх загвар" onClick={() => go(index - 1)}>

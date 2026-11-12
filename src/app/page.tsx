@@ -1,9 +1,10 @@
-import { HeroCarousel } from "@/components/HeroCarousel";
-import { ChargerStats, CtaBlock, GallerySlider, ModelCardSlider, TestDriveSection } from "@/components/HomeSections";
-import { PollCard } from "@/components/PollCard";
-import { TestDriveForm } from "@/components/TestDriveForm";
+import { HeroCarousel } from "@/components/hero/HeroCarousel";
+import { ChargerStats, CtaBlock, GallerySlider, TestDriveSection } from "@/components/home/HomeSections";
+import { ModelGrid } from "@/components/cards/ModelGrid";
+import { PollCard } from "@/components/home/PollCard";
+import { TestDriveForm } from "@/components/forms/TestDriveForm";
 import { galleryImages, heroSlides, pollChoices, testDriveModels } from "@/data/home";
-import { navigation } from "@/data/navigation";
+import { modelCardCategories, modelCards } from "@/data/modelCards";
 
 export default function HomePage() {
   return (
@@ -17,7 +18,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <ModelCardSlider items={navigation.flatMap((category) => category.items)} />
+        <ModelGrid cards={modelCards} categories={modelCardCategories} />
 
         <CtaBlock
           title="Одоогийн урамшуулал"

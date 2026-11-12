@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ModelPage } from "@/components/ModelPage";
+import { ModelPage } from "@/components/model/ModelPage";
 import { modelBySlug, models } from "@/data/models";
 import { categoryOf } from "@/data/navigation";
 import { readSpecTable } from "@/data/specTable";

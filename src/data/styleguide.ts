@@ -107,9 +107,9 @@ export const uiIcons = [
 
 export const pageSections = [
   { page: "Нүүр хуудас", href: "/", items: [
-    ["HeroCarousel", "Бүтэн дэлгэцийн 5 загварын слайд", "/"],
+    ["HeroCarousel + HeroSlide", "Загвар бүрийн бүтэн дэлгэцийн слайд", "/"],
     ["PollCard", "−30°C санал асуулга ба видео", "/"],
-    ["ModelCardSlider", "Бүх загварын карт", "/#models"],
+    ["ModelGrid", "Бүх загварын карт, ангиллаар шүүх", "/#models"],
     ["CtaBlock", "Урамшуулал, баталгаа", "/"],
     ["ChargerStats", "Цэнэглэгчийн тоо ба газрын зураг", "/#chargers"],
     ["GallerySlider", "Зургийн цомог", "/"],

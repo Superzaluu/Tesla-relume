@@ -1,5 +1,5 @@
 import { isByVariant, type Fact, type Img, type V } from "@/data/types";
-import { VariantFacts, VariantImg, VariantText } from "./Variant";
+import { VariantFacts, VariantImg, VariantText } from "@/components/model/Variant";
 
 // Server-side helpers: plain values render as static HTML, and only values
 // that differ per variant become small client components.

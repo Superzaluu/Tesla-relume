@@ -7,10 +7,13 @@ const ICONS: Record<string, string> = {
   charging: "12_charging.png", range: "13_range.png", engine: "14_fuel EREV машинд ашиглах.png", seats: "15_seats.png", payload: "16_payload.svg"
 };
 
+/** Path of a quick-spec icon by key (van, flatbed, fwd, seats, payload, ...). */
+export const quickIconSrc = (key: string) => `/assets/icons/${encodeURI(ICONS[key] ?? ICONS.van)}`;
+
 function Item({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
     <span className="hero__quick-spec">
-      <span className="hero__quick-icon"><img src={`/assets/icons/${encodeURI(ICONS[icon])}`} alt="" aria-hidden="true" /></span>
+      <span className="hero__quick-icon"><img src={quickIconSrc(icon)} alt="" aria-hidden="true" /></span>
       <span><small>{label}</small><strong>{value}</strong></span>
     </span>
   );

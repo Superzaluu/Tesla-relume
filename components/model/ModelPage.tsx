@@ -1,12 +1,12 @@
 import type { Model } from "@/data/types";
 import type { SpecRow } from "@/data/specTable";
-import { QuickSpecs } from "@/components/QuickSpecs";
-import { SavingsTrigger } from "@/components/SavingsCalculator";
-import { SectionTitle } from "@/components/SectionTitle";
-import { Slider } from "@/components/Slider";
-import { SectionView } from "./Blocks";
-import { Picture, T } from "./VariantValues";
-import { VariantProvider, VariantSection, VariantToggle } from "./Variant";
+import { QuickSpecs } from "@/components/ui/QuickSpecs";
+import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import { Slider } from "@/components/ui/Slider";
+import { SectionView } from "@/components/model/Blocks";
+import { Picture, T } from "@/components/model/VariantValues";
+import { VariantProvider, VariantSection, VariantToggle } from "@/components/model/Variant";
 
 // One template for every model. Sections only render when the model's data
 // has them, so EC75/R5 (variants, ADAS, charging...) and the simpler catalog

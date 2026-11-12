@@ -15,7 +15,14 @@ npm run build    # production build
 | Хавтас | Агуулга |
 | --- | --- |
 | `src/app/` | Хуудаснууд: `/`, `/models/[slug]/`, `/register/`, `/warranty/` |
-| `components/` | Бүх component нэг хавтсанд (төслийн үндсэн хавтаст): `SiteHeader`, `SiteFooter`, `HeroCarousel`, `ModelPage` (бүх загварын нэг template), `SavingsCalculator` гэх мэт |
+| `components/layout/` | `SiteHeader` (ангиллын dropdown), `SiteFooter`, `SiteChrome` |
+| `components/hero/` | `HeroCarousel` (слайдерын удирдлага), `HeroSlide` (нэг загварын слайд) |
+| `components/cards/` | `ModelGrid` (шүүлтүүр + grid), `ModelSpecCard` (загварын карт) |
+| `components/home/` | Нүүр хуудасны бусад хэсэг: `HomeSections`, `PollCard` |
+| `components/model/` | `ModelPage` — бүх загварын нэг template, `Blocks`, `AdasTabs`, хувилбар солих (`Variant`) |
+| `components/forms/` | `SavingsCalculator`, `RegistrationForm`, `TestDriveForm` |
+| `components/ui/` | Олон газар ашиглагддаг: `Slider`, `SectionTitle`, `VideoPoster`, `QuickSpecs` |
+| `components/styleguide/` | `/styleguide` хуудасны туслах хэсгүүд |
 | `src/data/` | Бүх контент: загварууд, цэс, нүүр хуудас |
 | `src/styles/` | Хуучин сайтаас шилжүүлсэн CSS (дизайн 1:1) |
 | `public/assets/` | Зураг, видео, icon |

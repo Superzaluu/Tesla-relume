@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { NavCategory } from "@/data/navigation";
-import { useSiteChrome } from "./SiteChrome";
+import { useSiteChrome } from "@/components/layout/SiteChrome";
 
 // Pages with a dark full-bleed photo under the navbar keep it transparent with
 // white text; template model pages start on a light background; form pages

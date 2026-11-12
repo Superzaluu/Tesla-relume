@@ -1602,3 +1602,19 @@ body::before { display:none; }
   .vcard--model .vcard__actions .btn--light { border-color:#0f5a3a; background:#0f5a3a; color:#fff; }
 }
 
+/* Hero товчнууд дэлгэцийн 25%-д тогтмол (absolute) байрлалтай байсан тул
+   урт нэртэй загвар (C5 Дрон, C3 Хөргүүртэй...) болон тайлбар текст дээр давхцаж байв.
+   Одоо текстийн доор урсгалаараа байрлана. */
+@media (min-width:992px) {
+  .hero-carousel .hero__actions { position:static; width:auto; margin-top:24px; justify-content:flex-start; transform:none; }
+}
+
+/* Утсан дээр текст зургийн дээр биш, слайдын "sky" өнгөн дэвсгэр дээр байрладаг.
+   Бараан дэвсгэртэй (data-theme="dark") слайдад ногоон бичиг уншигдахгүй байсан тул цагаан болгоно. */
+@media (max-width:991px), (max-aspect-ratio:6/5) {
+  .hero__slide[data-theme="dark"]:not([data-theme-sm="light"]) .hero__eyebrow,
+  .hero__slide[data-theme="dark"]:not([data-theme-sm="light"]) .hero__model,
+  .hero__slide[data-theme="dark"]:not([data-theme-sm="light"]) .hero__subtitle { color:#fff; text-shadow:none; }
+  .hero__slide[data-theme="dark"]:not([data-theme-sm="light"]) .hero__eyebrow { color:rgb(255 255 255 / .8); }
+}
+

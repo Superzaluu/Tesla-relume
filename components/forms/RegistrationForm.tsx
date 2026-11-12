@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, type FormEvent } from "react";
-import { SAVINGS_STORAGE_KEY, type SavedVehicle } from "@/components/SavingsCalculator";
+import { SAVINGS_STORAGE_KEY, type SavedVehicle } from "@/components/forms/SavingsCalculator";
 
 export type ModelGroup = { id: string; label: string; options: { value: string; label: string }[] };
 

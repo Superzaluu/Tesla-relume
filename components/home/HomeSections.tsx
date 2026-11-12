@@ -1,40 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { NavItem } from "@/data/navigation";
-import { SectionTitle } from "@/components/SectionTitle";
-import { Slider } from "@/components/Slider";
-
-/** Photo card with the model's descriptor, name and "Дэлгэрэнгүй" link. */
-export function ModelCard({ item }: { item: NavItem }) {
-  return (
-    <article className="vcard vcard--model">
-      <img className="vcard__bg" src={item.thumb} alt={item.name} loading="lazy" />
-      <div className="vcard__content">
-        <div className="vcard__heading">
-          <p className="vcard__title">{item.desc}</p>
-          <h3 className="vcard__model">{item.name}</h3>
-        </div>
-        <div className="vcard__actions">
-          <Link className="btn btn--light" href={item.href}>Дэлгэрэнгүй</Link>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/** "Бүх загвар" — one card per menu entry. */
-export function ModelCardSlider({ items }: { items: NavItem[] }) {
-  return (
-    <section className="section" id="models">
-      <div className="container container--gap-80">
-        <SectionTitle title="Бүх загвар" text="Таны хэрэгцээнд тохирох цахилгаан автомашинаа сонгоорой" />
-        <Slider dots={{ src: "/assets/slider-dots.svg", width: 88 }}>
-          {items.map((item) => <ModelCard item={item} key={item.key} />)}
-        </Slider>
-      </div>
-    </section>
-  );
-}
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import { Slider } from "@/components/ui/Slider";
 
 /** Text + image call-to-action block (promotion, warranty). */
 export function CtaBlock({ title, text, action, image, className = "" }: {

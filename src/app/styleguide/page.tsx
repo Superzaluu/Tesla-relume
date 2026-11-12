@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { AdasTabs } from "@/components/AdasTabs";
-import { ModelCard } from "@/components/HomeSections";
-import { QuickSpecs } from "@/components/QuickSpecs";
-import { SavingsTrigger } from "@/components/SavingsCalculator";
-import { SectionTitle } from "@/components/SectionTitle";
-import { Slider } from "@/components/Slider";
-import { StyleguideNav, TokenValue, TypeSample } from "@/components/StyleguideLive";
-import { TestDriveForm } from "@/components/TestDriveForm";
-import { VariantProvider, VariantToggle } from "@/components/Variant";
+import { AdasTabs } from "@/components/model/AdasTabs";
+import { ModelSpecCard } from "@/components/cards/ModelSpecCard";
+import { QuickSpecs } from "@/components/ui/QuickSpecs";
+import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import { Slider } from "@/components/ui/Slider";
+import { StyleguideNav, TokenValue, TypeSample } from "@/components/styleguide/StyleguideLive";
+import { TestDriveForm } from "@/components/forms/TestDriveForm";
+import { VariantProvider, VariantToggle } from "@/components/model/Variant";
 import { ec75 } from "@/data/ec75";
-import { navigation } from "@/data/navigation";
+import { modelCards } from "@/data/modelCards";
 import { readSpecTable } from "@/data/specTable";
 import {
   brandColors, colorGroups, motion, pageSections, principles, quickIcons, radii, sections, shadows, spacingTokens, typeTokens, uiIcons
@@ -44,8 +44,7 @@ export default function StyleguidePage() {
   const cards = pick("cards");
   const adas = pick("adas");
   const specRows = (readSpecTable("c3") ?? []).slice(0, 9);
-  const items = navigation.flatMap((c) => c.items);
-  const sampleCards = [items[0], items.find((i) => i.slug === "c5")!];
+  const sampleCards = [modelCards[0], modelCards.find((c) => c.key === "c5-cng")!];
 
   return (
     <main className="tw bg-[#f5f7fa] pt-[var(--navbar-height)]">
@@ -250,9 +249,9 @@ export default function StyleguidePage() {
                 <div className="sg-demo">{ec75.quick && <QuickSpecs specs={ec75.quick} />}</div>
               </Demo>
 
-              <Label>Загварын карт — ModelCard</Label>
-              <div className="grid gap-4 sm:grid-cols-2 [&_.vcard]:w-full [&_.vcard]:min-w-0">
-                {sampleCards.map((item) => <ModelCard item={item} key={item.key} />)}
+              <Label>Загварын карт — ModelSpecCard</Label>
+              <div className="grid gap-6 sm:grid-cols-2">
+                {sampleCards.map((card) => <ModelSpecCard model={card} key={card.key} />)}
               </div>
 
               {cards && <>

@@ -1,10 +1,10 @@
 import type { Block, Section, TableRow } from "@/data/types";
-import { SectionTitle } from "@/components/SectionTitle";
-import { Slider } from "@/components/Slider";
-import { VideoPoster } from "@/components/VideoPoster";
-import { AdasTabs } from "./AdasTabs";
-import { Facts, Picture, T } from "./VariantValues";
-import { VariantToggle } from "./Variant";
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import { Slider } from "@/components/ui/Slider";
+import { VideoPoster } from "@/components/ui/VideoPoster";
+import { AdasTabs } from "@/components/model/AdasTabs";
+import { Facts, Picture, T } from "@/components/model/VariantValues";
+import { VariantToggle } from "@/components/model/Variant";
 
 type FeatureBlock = Extract<Block, { type: "feature" }>;
 

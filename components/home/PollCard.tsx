@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { VideoPoster } from "@/components/VideoPoster";
+import { VideoPoster } from "@/components/ui/VideoPoster";
 
 const STORAGE_KEY = "ruichi-home-poll";
 

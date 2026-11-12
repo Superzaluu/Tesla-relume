@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RegistrationForm, type ModelGroup } from "@/components/RegistrationForm";
+import { RegistrationForm, type ModelGroup } from "@/components/forms/RegistrationForm";
 
 export const metadata: Metadata = { title: "Бонус бүртгэл — Ruichi" };
 

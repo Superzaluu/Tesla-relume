@@ -4,10 +4,10 @@ import type { ReactNode } from "react";
 import "@/styles/site.css";
 import "@/styles/model.css";
 import "./globals.css";
-import { SavingsProvider } from "@/components/SavingsCalculator";
-import { SiteChromeProvider } from "@/components/SiteChrome";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
+import { SavingsProvider } from "@/components/forms/SavingsCalculator";
+import { SiteChromeProvider } from "@/components/layout/SiteChrome";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { navigation } from "@/data/navigation";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", display: "swap" });
