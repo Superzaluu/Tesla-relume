@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ModelPage } from "@/components/model/ModelPage";
-import { getCategoryLabel, getModel, getSpecRows } from "@/data/content";
+import { getCategoryLabel, getModel, getModelSlugs, getSpecRows } from "@/data/content";
 import { models } from "@/data/models";
 
 type Props = { params: Promise<{ slug: string }> };
 
-// Pages exist for the models laid out in code; their content refreshes from Supabase at most once a minute.
-export const dynamicParams = false;
+// Every model in Supabase gets a page; models added later in /admin are built on first visit.
+// Content refreshes at most once a minute (immediately after saving in /admin).
 export const revalidate = 60;
 
-export function generateStaticParams() {
-  return models.map((model) => ({ slug: model.slug }));
+export async function generateStaticParams() {
+  const slugs = new Set([...models.map((model) => model.slug), ...(await getModelSlugs())]);
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

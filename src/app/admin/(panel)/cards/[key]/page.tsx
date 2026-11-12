@@ -1,0 +1,131 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ImageField, StatsEditor, SubmitButton, type StatDraft } from "@/components/admin/AdminInputs";
+import { Checkbox, Field, inputClass, Notice, Panel, Select, TextInput } from "@/components/admin/AdminUi";
+import { listingThumb, type CategoryRow, type ListingRow, type ModelRow } from "@/data/content";
+import { modelBySlug as pageModelBySlug, modelHref } from "@/data/models";
+import { isByVariant, type Stat, type V } from "@/data/types";
+import { requireAdmin } from "@/lib/supabase-auth";
+import { saveCard } from "../../../actions";
+
+const cargo = (value: V<string>) => (isByVariant(value) ? value.cargo : value);
+const passenger = (value: V<string>) => (isByVariant(value) ? value.passenger : "");
+
+const toDraft = (stat: Stat): StatDraft => ({
+  value: cargo(stat.value), unit: cargo(stat.unit), label: cargo(stat.label), note: stat.note ? String(stat.note) : "",
+  pValue: passenger(stat.value), pUnit: passenger(stat.unit), pLabel: passenger(stat.label)
+});
+
+export default async function EditCardPage({ params, searchParams }: {
+  params: Promise<{ key: string }>; searchParams: Promise<{ saved?: string; error?: string }>;
+}) {
+  const key = decodeURIComponent((await params).key);
+  const { saved, error } = await searchParams;
+  const { supabase } = await requireAdmin();
+
+  const { data: listing } = await supabase.from("model_listings").select("*").eq("key", key).maybeSingle<ListingRow>();
+  if (!listing) notFound();
+  const [{ data: model }, { data: categories }, { data: siblings }] = await Promise.all([
+    supabase.from("models").select("*").eq("slug", listing.model_slug).single<ModelRow & { spec: string[][] | null }>(),
+    supabase.from("categories").select("id,label,sort").order("sort"),
+    supabase.from("model_listings").select("key").eq("model_slug", listing.model_slug)
+  ]);
+  if (!model) notFound();
+
+  const codePage = pageModelBySlug(model.slug);
+  const variants = Boolean(codePage?.page.variants) || model.stats.some((stat) => [stat.value, stat.unit, stat.label].some(isByVariant));
+  const shared = (siblings ?? []).length;
+  const specText = (model.spec ?? []).map((row) => row.join(" | ")).join("\n");
+  const showsSpec = codePage ? codePage.page.specTable !== undefined : true;
+
+  return (
+    <>
+      <Link href="/admin/cards/" className="text-small text-ink-muted hover:text-ink">← Машины карт</Link>
+      <div className="mb-6 mt-2 flex flex-wrap items-end justify-between gap-4">
+        <h1 className="text-[32px] font-bold tracking-tight text-ink">{model.name}</h1>
+        <a href={modelHref(model.slug, listing.variant ?? undefined)} target="_blank" className="text-small font-semibold text-[#0f5a3a] hover:underline">Сайт дээр харах ↗</a>
+      </div>
+      <Notice saved={saved} error={error} />
+
+      <form action={saveCard} className="space-y-6">
+        <input type="hidden" name="key" value={listing.key} />
+        <input type="hidden" name="model_slug" value={model.slug} />
+
+        <Panel title="Карт" description="Энэ картын байрлал, зураг, тайлбар.">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Select name="category_id" label="Ангилал" value={listing.category_id} options={((categories ?? []) as CategoryRow[]).map((c) => [c.id, c.label])} />
+            <TextInput name="sort" label="Дараалал" value={listing.sort} hint="Бага тоо түрүүлж харагдана (0, 1, 2 …)." />
+            <TextInput name="listing_description" label="Карт дээрх тайлбар" value={listing.description} placeholder={model.description} hint="Хоосон бол загварын тайлбар харагдана." />
+            <Select
+              name="variant" label="Хувилбар" value={listing.variant ?? ""}
+              options={[["", "Нэг хувилбартай"], ["cargo", "Ачааны хувилбар"], ["passenger", "Зорчигчийн хувилбар"]]}
+            />
+            <div className="sm:col-span-2"><ImageField name="thumb_file" label="Картын зураг" current={listingThumb(listing)} /></div>
+            <Checkbox name="active" label="Сайт дээр харуулах" checked={listing.active} />
+          </div>
+        </Panel>
+
+        <Panel
+          title="Загвар"
+          description={shared > 1 ? `Энэ мэдээлэл ${model.name}-ийн ${shared} картад, мөн загварын хуудсанд хамт өөрчлөгдөнө.` : "Карт, hero слайд болон загварын хуудсанд харагдана."}
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextInput name="name" label="Нэр *" value={model.name} required />
+            <TextInput name="description" label="Тайлбар *" value={model.description} required />
+            {!codePage && (
+              <>
+                <Field label="Хуудасны танилцуулга" className="sm:col-span-2">
+                  <textarea name="tagline" defaultValue={model.tagline ?? ""} rows={2} className={inputClass} />
+                </Field>
+                <div className="sm:col-span-2">
+                  <ImageField name="image_file" label="Загварын хуудасны том зураг" current={model.image_src} hint="Хоосон бол картын зураг ашиглагдана." />
+                </div>
+              </>
+            )}
+          </div>
+        </Panel>
+
+        <Panel title="Icon-той мэдээлэл" description="Карт болон hero зураг дээрх icon-той мөр.">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Select name="quick_type" label="Машины төрөл (icon)" value={model.quick_type ?? ""} options={[
+              ["", "— Харуулахгүй —"], ["van", "Фургон"], ["flatbed", "Задгай тэвш"], ["flatbed4", "Задгай тэвш, давхар кабин"],
+              ["box", "Битүү тэвш"], ["refrigerator", "Хөргүүртэй"]
+            ]} />
+            <TextInput name="quick_label" label="Загвар (бичиг)" value={model.quick_label} placeholder="Ачааны фургон" />
+            <Select name="drive" label="Хөтлөгч" value={model.drive ?? "RWD"} options={[["FWD", "FWD — урд дугуй"], ["RWD", "RWD — хойд дугуй"], ["AWD", "AWD — бүх дугуй"]]} />
+            <TextInput name="size" label="Хэмжээ" value={model.size} placeholder="5130 x 1860 x 2020 мм" />
+            <TextInput name="range" label="Туулах зай" value={model.range} placeholder="420 км" />
+            <TextInput name="charge" label="Цэнэглэх хугацаа" value={model.charge} placeholder="DC - 30 мин" />
+            <TextInput name="seats" label="Суудал" value={model.seats} placeholder="2 суудал" />
+            <TextInput name="payload" label="Даац" value={model.payload} placeholder="1,080 кг" />
+            <TextInput name="doors" label="Хаалга" value={model.doors} placeholder="5 хаалга" />
+            <TextInput name="door_label" label="Хаалганы гарчиг" value={model.door_label} placeholder="Хаалга" hint="Хоосон бол &quot;Хаалга&quot;." />
+            <TextInput name="fuel" label="Түлш" value={model.fuel} placeholder="CNG" hint="Зөвхөн зай сунгагчтай загварт." />
+            <TextInput name="engine" label="Хөдөлгүүр" value={model.engine} placeholder="1,499 cc" hint="Зөвхөн зай сунгагчтай загварт." />
+          </div>
+        </Panel>
+
+        <Panel title="Гол үзүүлэлт" description="Эхний 3 нь карт дээр, бүгд загварын хуудасны дээд хэсэгт харагдана.">
+          <StatsEditor initial={model.stats.map(toDraft)} variants={variants} />
+        </Panel>
+
+        <Panel
+          title="Техникийн үзүүлэлт"
+          description={showsSpec ? "Мөр бүр: Мөрийн нэр | утга 1 | утга 2 … Утгагүй мөр (жишээ нь \"Батерей\") бүлгийн гарчиг болно. Эхний утгатай мөр нь хүснэгтийн толгой." : "Энэ загварын хуудас өөрийн техникийн хэсэгтэй тул энэ хүснэгт харагдахгүй."}
+        >
+          <textarea
+            name="spec_text" defaultValue={specText} rows={Math.min(30, Math.max(8, (model.spec ?? []).length + 2))} spellCheck={false}
+            className={`${inputClass} font-mono text-xs leading-relaxed`}
+            placeholder={"Тохиргоо | Стандарт | Тансаг\nБатерей\nЗайн багтаамж (кВт·ц) | 58.24 | 58.24"}
+          />
+          <p className="mt-2 text-xs text-ink-muted">Бүгдийг нь арилгавал хуудсанд &quot;Энэ загварын тохиргоог салбараас лавлана уу&quot; гэж гарна.</p>
+        </Panel>
+
+        <div className="sticky bottom-4 z-10 flex items-center gap-4 rounded-2xl border border-line bg-white/95 p-4 shadow-[0_10px_30px_rgb(15_35_56/.12)] backdrop-blur">
+          <SubmitButton>Хадгалах</SubmitButton>
+          <span className="text-xs text-ink-muted">Хадгалмагц сайтад шууд гарна.</span>
+        </div>
+      </form>
+    </>
+  );
+}

@@ -1,10 +1,9 @@
-// Content loaded from Supabase (server components only).
+// Content loaded from Supabase (server components only). Edited in /admin.
 //
-// Supabase holds: menu categories and their models, model names/descriptions,
-// the icon facts (QuickSpecs), key stats, hero slides and spec tables.
-// The page layout of each model (hero photo, sections, gallery, notes) stays in
-// code: src/data/catalog.ts, ec75.ts, r5.ts. A model therefore needs a page
-// there before its menu entry, card and hero slide are shown.
+// Supabase holds: menu categories and cards (model_listings), models with their
+// icon facts, key stats and spec table, and the homepage hero slides.
+// Models with a hand-made page in code (src/data/catalog.ts, ec75.ts, r5.ts) keep
+// that page layout; models added in /admin get a standard page built from Supabase.
 import { cache } from "react";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { select } from "@/lib/supabase";
@@ -12,74 +11,94 @@ import type { HeroSlide } from "./home";
 import { modelBySlug as pageModelBySlug, modelHref } from "./models";
 import type { NavCategory } from "./navigation";
 import { buildSpecRows, type SpecRow } from "./specTable";
-import { pick, type CategoryId, type Model, type QuickSpecs, type Stat, type V, type Variant } from "./types";
+import { pick, type CategoryId, type Model, type QuickSpecs, type Stat, type Variant } from "./types";
 
-type CategoryRow = { id: string; label: string; sort: number };
-type ModelRow = {
-  slug: string; name: string; description: string;
+export type CategoryRow = { id: string; label: string; sort: number };
+export type ModelRow = {
+  slug: string; name: string; description: string; tagline: string | null;
   quick_type: QuickSpecs["type"] | null; quick_label: string | null; drive: QuickSpecs["drive"] | null;
   fuel: string | null; size: string | null; range: string | null; doors: string | null; door_label: string | null;
   charge: string | null; seats: string | null; payload: string | null; engine: string | null;
+  stats: Stat[]; image_src: string | null; image_width: number | null; image_height: number | null;
 };
-type StatRow = { model_slug: string; sort: number; variant: Variant | null; value: string; unit: string; label: string; note: number | null };
-type ListingRow = { key: string; category_id: string; model_slug: string; variant: Variant | null; description: string | null; sort: number };
-type HeroRow = {
-  model_slug: string; theme: "light" | "dark"; theme_sm: "light" | "dark" | null; sky: string;
+export type ListingRow = {
+  key: string; category_id: string; model_slug: string; variant: Variant | null;
+  description: string | null; sort: number; active: boolean; thumb: string | null;
+};
+export type HeroRow = {
+  model_slug: string; sort: number; active: boolean; theme: "light" | "dark"; theme_sm: "light" | "dark" | null; sky: string;
   eyebrow: string | null; subtitle: string | null; href: string | null;
   image_src: string; image_width: number; image_height: number; image_alt: string | null; image_position: string | null;
   messages: string[] | null;
 };
 
+/** Every models column except the (large) spec table. */
+export const MODEL_COLUMNS =
+  "slug,name,description,tagline,quick_type,quick_label,drive,fuel,size,range,doors,door_label,charge,seats,payload,engine,stats,image_src,image_width,image_height";
+
 const getCategoryRows = cache(() => select<CategoryRow>("categories", "select=id,label,sort&order=sort,id"));
-const getModelRows = cache(async () => new Map((await select<ModelRow>("models", "select=*")).map((row) => [row.slug, row])));
-const getStatRows = cache(() =>
-  select<StatRow>("model_stats", "select=model_slug,sort,variant,value,unit,label,note&order=model_slug,sort,variant")
+const getModelRows = cache(async () =>
+  new Map((await select<ModelRow>("models", `select=${MODEL_COLUMNS}`)).map((row) => [row.slug, row]))
 );
 const getListingRows = cache(() =>
-  select<ListingRow>("model_listings", "select=key,category_id,model_slug,variant,description,sort&active=eq.true&order=sort,key")
+  select<ListingRow>("model_listings", "select=*&active=eq.true&order=sort,key")
 );
 
-const toQuick = (row: ModelRow): QuickSpecs | undefined =>
+export const listingThumb = (listing: Pick<ListingRow, "key" | "thumb">) => listing.thumb || `/assets/thumbs/${listing.key}.jpg`;
+
+export const toQuick = (row: ModelRow): QuickSpecs | undefined =>
   row.quick_type
     ? {
         type: row.quick_type, label: row.quick_label ?? "", drive: row.drive ?? "RWD",
-        fuel: row.fuel ?? undefined, size: row.size ?? "", range: row.range ?? "", doors: row.doors ?? "",
-        doorLabel: row.door_label ?? undefined, charge: row.charge ?? "", seats: row.seats ?? "",
-        payload: row.payload ?? "", engine: row.engine ?? undefined
+        fuel: row.fuel || undefined, size: row.size ?? "", range: row.range ?? "", doors: row.doors ?? "",
+        doorLabel: row.door_label || undefined, charge: row.charge ?? "", seats: row.seats ?? "",
+        payload: row.payload ?? "", engine: row.engine || undefined
       }
     : undefined;
 
-/** Rows with the same `sort` form one stat; cargo/passenger rows become a variant value. */
-function toStats(rows: StatRow[]): Stat[] {
-  const groups = new Map<number, StatRow[]>();
-  for (const row of rows) groups.set(row.sort, [...(groups.get(row.sort) ?? []), row]);
-  return [...groups.entries()].sort(([a], [b]) => a - b).map(([, group]) => {
-    const shared = group.find((row) => row.variant === null);
-    if (shared) return { value: shared.value, unit: shared.unit, label: shared.label, note: shared.note ?? undefined };
-    const cargo = group.find((row) => row.variant === "cargo") ?? group[0];
-    const passenger = group.find((row) => row.variant === "passenger") ?? cargo;
-    const both = (field: "value" | "unit" | "label"): V<string> =>
-      cargo[field] === passenger[field] ? cargo[field] : { cargo: cargo[field], passenger: passenger[field] };
-    return { value: both("value"), unit: both("unit"), label: both("label"), note: cargo.note ?? passenger.note ?? undefined };
-  });
+/** Standard page for a model added in /admin (no hand-made page in code). */
+function standardPage(row: ModelRow, photo: string | undefined): Model["page"] {
+  const width = row.image_width ?? 1200;
+  const height = row.image_height ?? 720;
+  return {
+    tagline: row.tagline ?? undefined,
+    hero: {
+      kind: "intro",
+      image: { src: row.image_src || photo || "/assets/brand-logo-transparent.png", width, height, alt: `${row.name} — ${row.description}` },
+      maxWidth: Math.min(1100, Math.round(width * 1.5))
+    },
+    stats: row.stats,
+    statsSecondary: "specs",
+    specTable: true,
+    end: {
+      title: "Туршаад үзэх үү?",
+      text: "Ойролцоох салбартаа туршилтын жолоодлого захиалж, ногоон зээл болон урьдчилсан захиалгын нөхцөлөө тодруулаарай.",
+      secondary: { label: "Ногоон зээл", href: "#" }
+    },
+    notes: [
+      "Явах зай нь стандарт туршилтын үр дүн. Бодит зай нь тохиргоо, ачаа, зайны насжилт, жолоодлогын зуршил, цаг агаар, замын нөхцөлөөс хамаарна.",
+      "Үзүүлэлт, тохиргоо нь урьдчилан мэдэгдэлгүйгээр өөрчлөгдөж болно. Зурагт харуулсан машин бодит машинаас ялгаатай байж болно."
+    ]
+  };
 }
 
-/** A model's page layout from code, merged with its name, description, icon facts and stats from Supabase. */
+/** A model's page: its layout from code (or the standard page), with name, description, icon facts and stats from Supabase. */
 export const getModel = cache(async (slug: string): Promise<Model | undefined> => {
   const base = pageModelBySlug(slug);
-  if (!base) return undefined;
-  const [rows, statRows] = await Promise.all([getModelRows(), getStatRows()]);
-  const row = rows.get(slug);
+  const row = (await getModelRows()).get(slug);
   if (!row) return base;
-  const stats = statRows.filter((stat) => stat.model_slug === slug);
-  return {
-    ...base,
-    name: row.name,
-    desc: row.description,
-    quick: toQuick(row),
-    page: { ...base.page, stats: stats.length > 0 ? toStats(stats) : base.page.stats }
-  };
+  const content = { slug, name: row.name, desc: row.description, quick: toQuick(row) };
+  if (base) {
+    return { ...base, ...content, page: { ...base.page, stats: row.stats.length > 0 ? row.stats : base.page.stats } };
+  }
+  // A model added in /admin has a page only while one of its cards is shown.
+  const listing = (await getListingRows()).find((item) => item.model_slug === slug);
+  if (!listing) return undefined;
+  return { ...content, page: standardPage(row, listingThumb(listing)) };
 });
+
+/** Slugs of models with a shown card (pages built ahead of time; hand-made pages are added by the route). */
+export const getModelSlugs = async () => [...new Set((await getListingRows()).map((listing) => listing.model_slug))];
 
 /** Menu categories with their models (header, footer, homepage cards). */
 export const getNavigation = cache(async (): Promise<NavCategory[]> => {
@@ -89,13 +108,13 @@ export const getNavigation = cache(async (): Promise<NavCategory[]> => {
       id: category.id as CategoryId,
       label: category.label,
       items: listings
-        .filter((listing) => listing.category_id === category.id && models.has(listing.model_slug) && pageModelBySlug(listing.model_slug))
+        .filter((listing) => listing.category_id === category.id && models.has(listing.model_slug))
         .map((listing) => {
           const model = models.get(listing.model_slug)!;
           return {
             key: listing.key, slug: listing.model_slug, variant: listing.variant ?? undefined, name: model.name,
-            desc: listing.description ?? model.description, href: modelHref(listing.model_slug, listing.variant ?? undefined),
-            thumb: `/assets/thumbs/${listing.key}.jpg`
+            desc: listing.description || model.description, href: modelHref(listing.model_slug, listing.variant ?? undefined),
+            thumb: listingThumb(listing)
           };
         })
     }))
@@ -132,9 +151,9 @@ export const getHeroSlides = cache(async (): Promise<HeroSlide[]> => {
     select<HeroRow>("hero_slides", "select=*&active=eq.true&order=sort,model_slug"),
     getModelRows()
   ]);
-  const slides = await Promise.all(
+  return Promise.all(
     rows
-      .filter((row) => models.has(row.model_slug) && pageModelBySlug(row.model_slug))
+      .filter((row) => models.has(row.model_slug))
       .map(async (row): Promise<HeroSlide> => {
         const model = models.get(row.model_slug)!;
         return {
@@ -142,24 +161,23 @@ export const getHeroSlides = cache(async (): Promise<HeroSlide[]> => {
           theme: row.theme,
           themeSm: row.theme_sm ?? undefined,
           sky: row.sky,
-          eyebrow: row.eyebrow ?? (await getCategoryLabel(row.model_slug)) ?? "",
+          eyebrow: row.eyebrow || (await getCategoryLabel(row.model_slug)) || "",
           model: model.name,
-          subtitle: row.subtitle ?? model.description,
-          href: row.href ?? modelHref(row.model_slug),
-          messages: row.messages ?? undefined,
+          subtitle: row.subtitle || model.description,
+          href: row.href || modelHref(row.model_slug),
+          messages: row.messages?.length ? row.messages : undefined,
           quick: toQuick(model),
           image: {
             src: row.image_src, width: row.image_width, height: row.image_height,
-            alt: row.image_alt ?? `${model.name} — ${model.description}`, position: row.image_position ?? undefined
+            alt: row.image_alt || `${model.name} — ${model.description}`, position: row.image_position || undefined
           }
         };
       })
   );
-  return slides;
 });
 
 /** The detailed spec table of one model, or null when it has none. */
 export const getSpecRows = cache(async (slug: string): Promise<SpecRow[] | null> => {
-  const rows = await select<{ cells: string[] }>("spec_rows", `select=cells&model_slug=eq.${encodeURIComponent(slug)}&order=sort`);
-  return buildSpecRows(rows.map((row) => row.cells));
+  const [row] = await select<{ spec: string[][] | null }>("models", `select=spec&slug=eq.${encodeURIComponent(slug)}`);
+  return row?.spec ? buildSpecRows(row.spec) : null;
 });

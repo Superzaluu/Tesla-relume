@@ -9,7 +9,7 @@ import { useSiteChrome } from "@/components/layout/SiteChrome";
 // white text; template model pages start on a light background; form pages
 // get a solid bar from the start.
 function baseClass(pathname: string) {
-  if (pathname === "/") return "navbar";
+  if (pathname === "/" || pathname === "/index") return "navbar"; // "/index" when Vercel re-renders the cached homepage
   if (/^\/models\/(ec75|r5)\/?$/.test(pathname)) return "navbar";
   if (pathname.startsWith("/models/")) return "navbar is-on-light";
   return "navbar is-solid";
