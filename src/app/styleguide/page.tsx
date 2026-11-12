@@ -11,14 +11,14 @@ import { StyleguideNav, TokenValue, TypeSample } from "@/components/styleguide/S
 import { TestDriveForm } from "@/components/forms/TestDriveForm";
 import { VariantProvider, VariantToggle } from "@/components/model/Variant";
 import { ec75 } from "@/data/ec75";
-import { modelCards } from "@/data/modelCards";
-import { readSpecTable } from "@/data/specTable";
+import { getModelCards, getSpecRows } from "@/data/content";
 import {
   brandColors, colorGroups, motion, pageSections, principles, quickIcons, radii, sections, shadows, spacingTokens, typeTokens, uiIcons
 } from "@/data/styleguide";
 import type { Block } from "@/data/types";
 
 export const metadata: Metadata = { title: "Styleguide — Ruichi", robots: { index: false } };
+export const revalidate = 60;
 
 function Section({ id, num, title, lead, children }: { id: string; num: string; title: string; lead: string; children: ReactNode }) {
   return (
@@ -40,11 +40,12 @@ const Demo = ({ children, dark = false, className = "" }: { children: ReactNode;
 const pick = <T extends Block["type"]>(type: T) =>
   ec75.page.sections?.flatMap((s) => s.blocks).find((b): b is Extract<Block, { type: T }> => b.type === type);
 
-export default function StyleguidePage() {
+export default async function StyleguidePage() {
   const cards = pick("cards");
   const adas = pick("adas");
-  const specRows = (readSpecTable("c3") ?? []).slice(0, 9);
-  const sampleCards = [modelCards[0], modelCards.find((c) => c.key === "c5-cng")!];
+  const [specTable, { cards: modelCards }] = await Promise.all([getSpecRows("c3"), getModelCards()]);
+  const specRows = (specTable ?? []).slice(0, 9);
+  const sampleCards = [modelCards[0], modelCards.find((c) => c.key === "c5-cng") ?? modelCards[1]].filter(Boolean);
 
   return (
     <main className="tw bg-[#f5f7fa] pt-[var(--navbar-height)]">

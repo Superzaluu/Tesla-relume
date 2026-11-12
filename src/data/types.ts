@@ -92,7 +92,7 @@ export type ModelPage = {
   sections?: Section[];
   /** Gallery images (assets/models/<slug>/g*.jpg). */
   gallery?: Img[];
-  /** Detailed spec table parsed from src/data/specs/<slug>.txt. */
+  /** Show the "Техникийн үзүүлэлт" section; its rows come from Supabase (table spec_rows). */
   specTable?: boolean;
   end: EndCta;
   notes: string[];

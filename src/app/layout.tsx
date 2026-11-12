@@ -8,7 +8,7 @@ import { SavingsProvider } from "@/components/forms/SavingsCalculator";
 import { SiteChromeProvider } from "@/components/layout/SiteChrome";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { navigation } from "@/data/navigation";
+import { getNavigation } from "@/data/content";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", display: "swap" });
 
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   icons: { icon: "/assets/brand-logo-transparent.png" }
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const navigation = await getNavigation();
   return (
     <html lang="mn" className={inter.variable}>
       <body>
@@ -26,7 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <SavingsProvider>
             <SiteHeader navigation={navigation} />
             {children}
-            <SiteFooter />
+            <SiteFooter navigation={navigation} />
           </SavingsProvider>
         </SiteChromeProvider>
       </body>

@@ -29,13 +29,31 @@ npm run build    # production build
 
 ## Контент засах
 
-- **Цэс, footer, ангилал:** `src/data/navigation.ts`
-- **Энгийн загварууд (C5, C3, EC31 …):** `src/data/catalog.ts`
-- **EC75, R5-ын дэлгэрэнгүй хуудас:** `src/data/ec75.ts`, `src/data/r5.ts`
-- **Техникийн хүснэгт:** `src/data/specs/<slug>.txt` (машин орчуулга; build үед уншигдана)
-- **Нүүр хуудасны слайд:** `src/data/home.ts`
+### Supabase (Test Ruichi төсөл → Table Editor)
 
-Шинэ загвар нэмэх: `catalog.ts`-д мөр нэмж, `navigation.ts`-д ангилалд нь оруулаад зургийг `public/assets/` руу хуулна.
+Засварууд сайтад **1 минутын дотор** гарна, дахин deploy хийх шаардлагагүй.
+
+| Хүснэгт | Юуг удирдана |
+| --- | --- |
+| `categories` | Цэсний ангиллын нэр, дараалал (`sort`) |
+| `model_listings` | Аль ангилалд аль загвар, ямар дарааллаар (цэс, footer, "Бүх загвар" карт). `active=false` бол нуугдана |
+| `models` | Загварын нэр, тайлбар, icon-той үзүүлэлт (хөтлөгч, суудал, даац, хаалга, хэмжээ …) |
+| `model_stats` | Гол тоонууд (430 км, 61.94 кВт·ц …). Эхний 3 нь карт дээр гарна |
+| `hero_slides` | Нүүр хуудасны слайд: дараалал, өнгө, текст, зураг. `active=false` бол нуугдана |
+| `spec_rows` | "Техникийн үзүүлэлт" хүснэгт. `cells[1]` = мөрийн нэр, бусад нь утгууд |
+
+Холболт: `.env.local` (загвар нь `.env.example`). Vercel дээр мөн ижил 2 хувьсагчийг Settings → Environment Variables-д нэмнэ.
+Хүснэгтийн бүтэц `supabase/migrations/`, анхны өгөгдөл `supabase/seed.sql`-д байна.
+
+### Кодонд
+
+- **Загварын хуудасны бүтэц (hero зураг, галерей):** `src/data/catalog.ts`
+- **EC75, R5-ын дэлгэрэнгүй хэсгүүд (ADAS, аюулгүй байдал …):** `src/data/ec75.ts`, `src/data/r5.ts`
+- **Нүүр хуудасны бусад хэсэг (санал асуулга, зургийн цомог):** `src/data/home.ts`
+
+Шинэ загвар нэмэх: `catalog.ts`-д хуудсыг нь нэмж, зургийг `public/assets/` (картын зураг `public/assets/thumbs/<key>.jpg`) руу хуулна.
+Дараа нь Supabase-д `models`, `model_stats`, `model_listings`, хүсвэл `hero_slides`, `spec_rows`-д мөр нэмнэ.
+Кодонд хуудасгүй загвар цэс, карт, слайдад харагдахгүй.
 
 ## Загварын шийдэл
 

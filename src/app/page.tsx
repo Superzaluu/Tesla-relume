@@ -3,10 +3,15 @@ import { ChargerStats, CtaBlock, GallerySlider, TestDriveSection } from "@/compo
 import { ModelGrid } from "@/components/cards/ModelGrid";
 import { PollCard } from "@/components/home/PollCard";
 import { TestDriveForm } from "@/components/forms/TestDriveForm";
-import { galleryImages, heroSlides, pollChoices, testDriveModels } from "@/data/home";
-import { modelCardCategories, modelCards } from "@/data/modelCards";
+import { getHeroSlides, getModelCards } from "@/data/content";
+import { galleryImages, pollChoices, testDriveModels } from "@/data/home";
 
-export default function HomePage() {
+// Refresh the Supabase content at most once a minute.
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [heroSlides, { cards, categories }] = await Promise.all([getHeroSlides(), getModelCards()]);
+
   return (
     <>
       <main>
@@ -18,7 +23,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <ModelGrid cards={modelCards} categories={modelCardCategories} />
+        <ModelGrid cards={cards} categories={categories} />
 
         <CtaBlock
           title="Одоогийн урамшуулал"

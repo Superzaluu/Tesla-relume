@@ -151,7 +151,7 @@ export function ModelPage({ model, category, specRows }: { model: Model; categor
       <Stats model={model} />
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       <Gallery model={model} />
-      {page.specTable !== undefined && <SpecTableSection rows={page.specTable ? specRows ?? null : null} />}
+      {page.specTable !== undefined && <SpecTableSection rows={specRows ?? null} />}
       <EndCta model={model} />
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>

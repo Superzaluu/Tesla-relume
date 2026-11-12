@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { navigation } from "@/data/navigation";
+import type { NavCategory } from "@/data/navigation";
 
 // TODO: Албан ёсны сошиал болон "Бидний тухай" хуудсуудын URL-ийг оруулах.
 const about = [
@@ -15,7 +15,7 @@ const legal = [
   { label: "Күүки тохиргоо", href: "https://www.tesla.com/legal#cookie-preferences" }
 ];
 
-export function SiteFooter() {
+export function SiteFooter({ navigation }: { navigation: NavCategory[] }) {
   return (
     <footer className="site-footer">
       <div className="site-footer__main">

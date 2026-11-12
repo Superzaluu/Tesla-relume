@@ -1,5 +1,10 @@
 // The 18 models whose pages follow the standard template (intro, stats,
 // gallery, spec table). Previously tools/catalog.json + tools/build-site.ps1.
+//
+// NOTE: name, desc, quick, stats and the spec tables now live in Supabase
+// (tables models, model_stats, spec_rows) and override the values below at
+// runtime. Edit them in the Supabase dashboard; here they are only the
+// original seed values. The page layout (hero image, gallery) is still read from here.
 import type { Img, Model, QuickSpecs, Stat } from "./types";
 
 type Size = [width: number, height: number];
