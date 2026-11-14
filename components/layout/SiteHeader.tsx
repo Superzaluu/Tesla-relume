@@ -119,10 +119,10 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
         <div className="navbar__actions">
           <Link className="btn btn--nav btn--nav-ghost" href="/green-loan/" aria-current={pathname.startsWith("/green-loan") ? "page" : undefined}>Ногоон зээл</Link>
           {/* The test-drive form lives on the homepage; "#test-drive" alone did nothing on other pages. */}
-          <a className="btn btn--primary btn--nav" href="/#test-drive" aria-label="Туршилтын жолоодлого">
+          <Link className="btn btn--primary btn--nav" href="/#test-drive" aria-label="Туршилтын жолоодлого">
             <span className="btn__label-long">Туршилтын жолоодлого</span>
             <span className="btn__label-short">Турших</span>
-          </a>
+          </Link>
           <button
             className="navbar__toggle" type="button" aria-controls="nav-links" aria-expanded={mobileOpen}
             onClick={() => { setMobileOpen((value) => !value); if (mobileOpen) setOpenMenu(null); }}
