@@ -12,6 +12,7 @@ import type { HeroSlide } from "./home";
 import { greenLoanHref, modelBySlug as pageModelBySlug, modelHref, preorderHref } from "./models";
 import type { NavCategory } from "./navigation";
 import { buildSpecRows, type SpecRow } from "./specTable";
+import { fromLegacy, viewSheet, type SheetView, type SpecSheet } from "./specSheet";
 import { isByVariant, pick, toFuelType, type CategoryId, type Model, type QuickSpecs, type Stat, type Variant } from "./types";
 
 export type CategoryRow = { id: string; label: string; sort: number };
@@ -230,3 +231,16 @@ export const getSpecRows = cache(async (slug: string): Promise<SpecRow[] | null>
   const [row] = await select<{ spec: string[][] | null }>("models", `select=spec&slug=eq.${encodeURIComponent(slug)}`);
   return row?.spec ? buildSpecRows(row.spec) : null;
 });
+
+/** The structured spec sheet: saved from the admin form, or converted from the old table until then. */
+export async function getSpecSheet(slug: string): Promise<SpecSheet | null> {
+  const [row] = await select<{ spec: string[][] | null; specs: SpecSheet | null }>("models", `select=spec,specs&slug=eq.${encodeURIComponent(slug)}`);
+  if (row?.specs?.configs?.length) return row.specs;
+  return row?.spec?.length ? fromLegacy(row.spec) : null;
+}
+
+/** What the model page shows from the spec sheet (only configurations marked for sale). */
+export async function getSpecView(slug: string, fuel?: string): Promise<SheetView | null> {
+  const sheet = await getSpecSheet(slug);
+  return sheet ? viewSheet(sheet, fuel) : null;
+}

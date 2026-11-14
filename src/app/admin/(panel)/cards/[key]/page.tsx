@@ -4,7 +4,9 @@ import { ImageField, StatsEditor, SubmitButton, type StatDraft } from "@/compone
 import { Checkbox, Field, inputClass, Notice, Panel, Select, TextInput } from "@/components/admin/AdminUi";
 import { listingThumb, type CategoryRow, type ListingRow, type ModelRow } from "@/data/content";
 import { modelBySlug as pageModelBySlug, modelHref } from "@/data/models";
+import { collectSuggestions, fromLegacy, type SpecSheet } from "@/data/specSheet";
 import { isByVariant, toFuelType, type Stat, type V } from "@/data/types";
+import { SpecSheetEditor } from "@/components/admin/SpecSheetEditor";
 import { requireAdmin } from "@/lib/supabase-auth";
 import { saveCard } from "../../../actions";
 
@@ -25,17 +27,22 @@ export default async function EditCardPage({ params, searchParams }: {
 
   const { data: listing } = await supabase.from("model_listings").select("*").eq("key", key).maybeSingle<ListingRow>();
   if (!listing) notFound();
-  const [{ data: model }, { data: categories }, { data: siblings }] = await Promise.all([
-    supabase.from("models").select("*").eq("slug", listing.model_slug).single<ModelRow & { spec: string[][] | null }>(),
+  type SheetRow = { slug: string; spec: string[][] | null; specs: SpecSheet | null };
+  const [{ data: model }, { data: categories }, { data: siblings }, { data: allSheets }] = await Promise.all([
+    supabase.from("models").select("*").eq("slug", listing.model_slug).single<ModelRow & SheetRow>(),
     supabase.from("categories").select("id,label,sort").order("sort"),
-    supabase.from("model_listings").select("key").eq("model_slug", listing.model_slug)
+    supabase.from("model_listings").select("key").eq("model_slug", listing.model_slug),
+    supabase.from("models").select("slug,spec,specs").returns<SheetRow[]>()
   ]);
   if (!model) notFound();
 
   const codePage = pageModelBySlug(model.slug);
   const variants = Boolean(codePage?.page.variants) || model.stats.some((stat) => [stat.value, stat.unit, stat.label].some(isByVariant));
   const shared = (siblings ?? []).length;
-  const specText = (model.spec ?? []).map((row) => row.join(" | ")).join("\n");
+  const toSheet = (row: SheetRow): SpecSheet | null =>
+    row.specs?.configs?.length ? row.specs : row.spec?.length ? fromLegacy(row.spec) : null;
+  const sheet = toSheet(model) ?? { configs: [{ name: "Стандарт", sold: true }], values: {}, extras: [] };
+  const suggestions = collectSuggestions((allSheets ?? []).map(toSheet).filter((item): item is SpecSheet => item !== null));
   const showsSpec = codePage ? codePage.page.specTable !== undefined : true;
 
   return (
@@ -123,14 +130,11 @@ export default async function EditCardPage({ params, searchParams }: {
 
         <Panel
           title="Техникийн үзүүлэлт"
-          description={showsSpec ? "Мөр бүр: Мөрийн нэр | утга 1 | утга 2 … Утгагүй мөр (жишээ нь \"Батерей\") бүлгийн гарчиг болно. Эхний утгатай мөр нь хүснэгтийн толгой." : "Энэ загварын хуудас өөрийн техникийн хэсэгтэй тул энэ хүснэгт харагдахгүй."}
+          description={showsSpec
+            ? "1-р хэсэгт тоон үзүүлэлт, 2-р хэсэгт тоноглол. Мөрийн нэр, нэгж тогтмол тул зөвхөн утгыг бөглөнө. Сайт тохиргоонуудыг харьцуулж, бүгдэд байгаа тоноглолыг \"стандарт\" гэж автоматаар харуулна."
+            : "Энэ загварын хуудас өөрийн техникийн хэсэгтэй (кодонд) тул энд оруулсан утга одоогоор сайтад харагдахгүй."}
         >
-          <textarea
-            name="spec_text" defaultValue={specText} rows={Math.min(30, Math.max(8, (model.spec ?? []).length + 2))} spellCheck={false}
-            className={`${inputClass} font-mono text-xs leading-relaxed`}
-            placeholder={"Тохиргоо | Стандарт | Тансаг\nБатерей\nЗайн багтаамж (кВт·ц) | 58.24 | 58.24"}
-          />
-          <p className="mt-2 text-xs text-ink-muted">Бүгдийг нь арилгавал хуудсанд &quot;Энэ загварын тохиргоог салбараас лавлана уу&quot; гэж гарна.</p>
+          <SpecSheetEditor initial={sheet} suggestions={suggestions} fuel={toFuelType(model.fuel, model.engine)} />
         </Panel>
 
         <div className="sticky bottom-4 z-10 flex items-center gap-4 rounded-2xl border border-line bg-white/95 p-4 shadow-[0_10px_30px_rgb(15_35_56/.12)] backdrop-blur">

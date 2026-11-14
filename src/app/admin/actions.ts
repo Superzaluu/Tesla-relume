@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServer, requireAdmin } from "@/lib/supabase-auth";
 import { toFuelType, type Stat } from "@/data/types";
 import { PREORDER_STATUSES } from "@/data/preorder";
+import { parseSheet } from "@/data/specSheet";
 
 type Supabase = Awaited<ReturnType<typeof createSupabaseServer>>;
 
@@ -84,11 +85,6 @@ function parseStats(json: string | null): Stat[] {
 }
 
 /** Spec table typed as lines: "Мөрийн нэр | утга 1 | утга 2". */
-function parseSpec(value: string | null): string[][] | null {
-  if (!value) return null;
-  const rows = value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).map((line) => line.split("|").map((cell) => cell.trim()));
-  return rows.length > 0 ? rows : null;
-}
 
 const QUICK_TYPES = ["van", "flatbed", "flatbed4", "box", "refrigerator"];
 const DRIVES = ["FWD", "RWD", "AWD"];
@@ -131,7 +127,12 @@ export async function saveCard(form: FormData) {
   }
 
   const image = await upload(supabase, form.get("image_file"), `models/${slug}`, back);
-  const modelUpdate: Record<string, unknown> = { ...model, stats, spec: parseSpec(text(form, "spec_text")) };
+  // The structured sheet replaces the old free-form table; models.spec is left untouched as a backup.
+  const sheetJson = text(form, "spec_sheet");
+  const specs = sheetJson ? parseSheet(sheetJson) : null;
+  if (sheetJson && !specs) fail(back, "Техникийн үзүүлэлтийн мэдээлэл буруу байна.");
+  const modelUpdate: Record<string, unknown> = { ...model, stats };
+  if (specs) modelUpdate.specs = specs;
   if (image) Object.assign(modelUpdate, { image_src: image, image_width: int(form, "image_file_width", 1200), image_height: int(form, "image_file_height", 720) });
   const { error: modelError } = await supabase.from("models").update(modelUpdate).eq("slug", slug);
   if (modelError) fail(back, `Загварыг хадгалахад алдаа гарлаа: ${modelError.message}`);

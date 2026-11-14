@@ -555,3 +555,21 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 
 /* Photo heroes are light now: the white subtitle was unreadable (EC75). R5 keeps its own shaded style. */
 .mhero:not(.mhero--light) .hero__subtitle { color:#123b2a; opacity:1; }
+
+/* ---------- Structured spec sheet (SpecSheetSection) — R5 layout without the side image ---------- */
+.msheet { display:flex; flex-direction:column; gap:48px; }
+.msheet__summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:20px; }
+.msheet__summary .mspecs__group { padding:24px; border:1px solid #dce3ea; border-radius:16px; background:#fff; }
+.msheet__summary .mspecs__group a { color:#0f5a3a; text-decoration:underline; text-underline-offset:3px; }
+.msheet__title { margin:0 0 16px; }
+.msheet__chips { display:flex; flex-direction:column; gap:20px; }
+.msheet__chips .mchips { margin:0; }
+.msheet__full { border:1px solid #dce3ea; border-radius:16px; background:#fff; }
+.msheet__full > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:0 24px; cursor:pointer; font-weight:600; color:#0f5a3a; list-style:none; }
+.msheet__full > summary::-webkit-details-marker { display:none; }
+.msheet__full > summary::after { content:"+"; font-size:22px; line-height:1; }
+.msheet__full[open] > summary::after { content:"–"; }
+.msheet__full[open] > summary { border-bottom:1px solid #dce3ea; }
+.msheet__full .mspec-table { box-shadow:none; border-radius:0 0 16px 16px; }
+@media (max-width:767px) { .msheet { gap:36px; } .msheet__summary .mspecs__group { padding:20px; } }
+.msheet .mcompare tbody th[scope="row"] { min-width:200px; max-width:280px; }

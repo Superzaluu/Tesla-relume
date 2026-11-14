@@ -1,6 +1,7 @@
 import type { Model } from "@/data/types";
 import { greenLoanHref, preorderHref } from "@/data/models";
-import type { SpecRow } from "@/data/specTable";
+import type { SheetView } from "@/data/specSheet";
+import { SpecSheetSection } from "@/components/model/SpecSheetSection";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -90,37 +91,6 @@ function Gallery({ model }: { model: Model }) {
   );
 }
 
-function SpecTableSection({ rows }: { rows: SpecRow[] | null }) {
-  if (!rows) {
-    return (
-      <section className="section section--surface" id="specs">
-        <div className="container"><p className="text-medium">Энэ загварын тохиргоог салбараас лавлана уу.</p></div>
-      </section>
-    );
-  }
-  return (
-    <section className="section section--surface" id="specs">
-      <div className="container container--gap-80">
-        <SectionTitle title="Техникийн үзүүлэлт" text="Тохиргоо бүрийн дэлгэрэнгүй үзүүлэлт. Хүснэгтийг хажуу тийш гүйлгэж үзнэ үү." />
-        <div className="mcompare__scroll">
-          <table className="mspec-table">
-            <tbody>
-              {rows.map((row, i) => row.kind === "group" ? (
-                <tr className="is-group" key={i}><th colSpan={row.span} scope="colgroup">{row.label}</th></tr>
-              ) : (
-                <tr className={row.head ? "is-head" : undefined} key={i}>
-                  <th scope="row">{row.label}</th>
-                  {row.cells.map((cell, j) => <td key={j} colSpan={cell.span}>{cell.text}</td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function EndCta({ model }: { model: Model }) {
   const { end } = model.page;
   return (
@@ -138,7 +108,7 @@ function EndCta({ model }: { model: Model }) {
   );
 }
 
-export function ModelPage({ model, category, specRows }: { model: Model; category?: string; specRows?: SpecRow[] | null }) {
+export function ModelPage({ model, category, specView }: { model: Model; category?: string; specView?: SheetView | null }) {
   const { page } = model;
   const preload = page.hero.kind === "photo" && typeof page.hero.image.src === "object"
     ? [page.hero.image.src.cargo, page.hero.image.src.passenger] : undefined;
@@ -149,7 +119,7 @@ export function ModelPage({ model, category, specRows }: { model: Model; categor
       <ActionBar model={model} />
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       <Gallery model={model} />
-      {page.specTable !== undefined && <SpecTableSection rows={specRows ?? null} />}
+      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} />}
       <EndCta model={model} />
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>
