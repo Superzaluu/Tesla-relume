@@ -23,21 +23,37 @@ export type Fact = { label: string; value: string };
  * Icon row shown on the hero photo (public/assets/icons/*, mapped in components/QuickSpecs.tsx).
  * - type: van 01 · flatbed 02 · box 03 · refrigerator 04 · flatbed4 05 (4 хаалгатай / давхар кабинтай тэвш)
  * - drive: FWD 06 · AWD 07 (бүх дугуйгаар хөтлөгчтэй загвар ирэхэд) · RWD 08
- * - fuel (09): зай сунгагчийн түлш, зөвхөн EREV загварт · engine (14): хөдөлгүүрийн багтаамж
+ * - fuel (09): BEV · EREV · PHEV, бүх загварт · engine (17): хөдөлгүүрийн багтаамж, зөвхөн EREV/PHEV загварт
  */
+export const FUEL_TYPES = ["BEV", "EREV", "PHEV"] as const;
+export type FuelType = (typeof FUEL_TYPES)[number];
+
+/** Stored fuel value → BEV/EREV/PHEV. Old values (empty, "CNG", "Бензин") fall back to EREV when the model has an engine. */
+export const toFuelType = (fuel?: string | null, engine?: string | null): FuelType =>
+  (FUEL_TYPES as readonly string[]).includes(fuel ?? "") ? (fuel as FuelType) : engine ? "EREV" : "BEV";
+
+/** Engine size is shown only for models with a combustion engine. */
+export const hasEngine = (specs: Pick<QuickSpecs, "fuel" | "engine">) => specs.fuel !== "BEV" && Boolean(specs.engine);
+
 export type QuickSpecs = {
   type: "van" | "flatbed" | "flatbed4" | "box" | "refrigerator";
   label: string;
   drive: "FWD" | "RWD" | "AWD";
-  fuel?: string;
+  fuel: FuelType;
   size: string;
   range: string;
   doors: string;
   doorLabel?: string;
   charge: string;
   seats: string;
+  /** Passenger version's seats on a two-version page (EC75, R5); `seats` is then the cargo version. */
+  seatsPassenger?: string;
   payload: string;
   engine?: string;
+  /** Read from the model's key stats (see quickFromStats in content.ts): "130 кВт", "18 мин", "115 км". */
+  power?: string;
+  fastCharge?: string;
+  evRange?: string;
 };
 
 export type Card = { image: Img; title: string; text: string; tag?: string };

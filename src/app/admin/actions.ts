@@ -4,7 +4,8 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServer, requireAdmin } from "@/lib/supabase-auth";
-import type { Stat } from "@/data/types";
+import { toFuelType, type Stat } from "@/data/types";
+import { PREORDER_STATUSES } from "@/data/preorder";
 
 type Supabase = Awaited<ReturnType<typeof createSupabaseServer>>;
 
@@ -15,6 +16,12 @@ const text = (form: FormData, name: string) => {
 const int = (form: FormData, name: string, fallback = 0) => {
   const value = Number.parseInt(text(form, name) ?? "", 10);
   return Number.isFinite(value) ? value : fallback;
+};
+
+/** A positive number below `max` ("10,5" and "10.5" both work), or null when empty or out of range. */
+const decimal = (form: FormData, name: string, max: number) => {
+  const value = Number((text(form, name) ?? "").replace(",", "."));
+  return Number.isFinite(value) && value > 0 && value < max ? value : null;
 };
 
 function fail(path: string, message: string): never {
@@ -96,8 +103,13 @@ function modelFields(form: FormData) {
     quick_type: quickType && QUICK_TYPES.includes(quickType) ? quickType : null,
     quick_label: text(form, "quick_label"),
     drive: drive && DRIVES.includes(drive) ? drive : null,
-    fuel: text(form, "fuel"), size: text(form, "size"), range: text(form, "range"), doors: text(form, "doors"),
+    fuel: toFuelType(text(form, "fuel"), text(form, "engine")), size: text(form, "size"), range: text(form, "range"), doors: text(form, "doors"),
     door_label: text(form, "door_label"), charge: text(form, "charge"), seats: text(form, "seats"),
+    seats_passenger: text(form, "seats_passenger"),
+    compare_name: text(form, "compare_name"),
+    compare_fuel: ["dt", "euro92", "ai95"].includes(text(form, "compare_fuel") ?? "") ? text(form, "compare_fuel") : null,
+    compare_consumption: decimal(form, "compare_consumption", 60),
+    ev_consumption: decimal(form, "ev_consumption", 80),
     payload: text(form, "payload"), engine: text(form, "engine")
   };
 }
@@ -237,4 +249,18 @@ export async function setHeroActive(form: FormData) {
   const { error } = await supabase.from("hero_slides").update({ active: form.get("active") === "true" }).eq("model_slug", text(form, "model_slug") ?? "");
   if (error) fail("/admin/hero/", error.message);
   done("/admin/hero/");
+}
+
+// ---------- Pre-orders ----------
+
+/** Move a pre-order to new / contacted / closed (rows are never deleted). */
+export async function setPreorderStatus(form: FormData) {
+  const { supabase } = await requireAdmin();
+  const back = `/admin/preorders/${form.get("filter") ? `?status=${encodeURIComponent(String(form.get("filter")))}` : ""}`;
+  const status = text(form, "status");
+  if (!status || !PREORDER_STATUSES.some((option) => option.value === status)) fail("/admin/preorders/", "Төлөв буруу байна.");
+  const { error } = await supabase.from("preorders").update({ status }).eq("id", text(form, "id") ?? "");
+  if (error) fail("/admin/preorders/", `Төлөв солиход алдаа гарлаа: ${error.message}`);
+  revalidatePath("/admin/preorders/");
+  redirect(back);
 }

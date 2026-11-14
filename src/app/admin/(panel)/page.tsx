@@ -3,9 +3,10 @@ import { requireAdmin } from "@/lib/supabase-auth";
 
 export default async function AdminHome() {
   const { supabase } = await requireAdmin();
-  const [{ data: listings }, { data: slides }] = await Promise.all([
+  const [{ data: listings }, { data: slides }, { count: newPreorders }] = await Promise.all([
     supabase.from("model_listings").select("active"),
-    supabase.from("hero_slides").select("active")
+    supabase.from("hero_slides").select("active"),
+    supabase.from("preorders").select("id", { count: "exact", head: true }).eq("status", "new")
   ]);
   const count = (rows: { active: boolean }[] | null) => ({
     shown: (rows ?? []).filter((row) => row.active).length,
@@ -30,6 +31,11 @@ export default async function AdminHome() {
             </p>
           </Link>
         ))}
+        <Link href="/admin/preorders/?status=new" className="group rounded-2xl border border-line bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgb(15_35_56/.09)]">
+          <h2 className="text-[22px] font-bold text-ink group-hover:text-[#0f5a3a]">Урьдчилсан захиалга →</h2>
+          <p className="mt-2 text-small text-ink-secondary">Сайтаас ирсэн захиалга: загвар, нэр, утас, төлбөрийн хэлбэр, тайлбар.</p>
+          <p className="mt-4 text-small text-ink-muted"><strong className="text-ink">{newPreorders ?? 0}</strong> шинэ (холбогдоогүй)</p>
+        </Link>
       </div>
     </>
   );

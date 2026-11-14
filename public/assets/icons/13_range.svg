@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Location pin over a road: distance you can travel -->
+  <path fill-rule="evenodd" d="M16 1a7 7 0 0 1 7 7c0 5.2-7 11.5-7 11.5S9 13.2 9 8a7 7 0 0 1 7-7Zm0 4.4a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2Z"/>
+  <path fill-rule="evenodd" d="M11.8 21h8.4l8.8 10H3Zm3.3 1.8v2.6h1.8v-2.6Zm-.3 4.4v3h2.4v-3Z"/>
+</svg>

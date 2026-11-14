@@ -58,7 +58,7 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
     return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("click", onClick); };
   }, [openMenu]);
 
-  const hoverEnabled = () => window.matchMedia("(min-width: 1200px) and (hover: hover)").matches;
+  const hoverEnabled = () => window.matchMedia("(min-width: 1500px) and (hover: hover)").matches;
   const onEnter = (id: string) => {
     if (!hoverEnabled()) return;
     clearTimeout(hoverTimer.current);
@@ -112,10 +112,14 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
               </div>
             );
           })}
+          {/* On narrow phones the bar has no room for the button, so the link lives in the menu. */}
+          <Link className="navbar__menu-link" href="/green-loan/" onClick={closeAll}>Ногоон зээл</Link>
         </nav>
 
         <div className="navbar__actions">
-          <a className="btn btn--primary btn--nav" href="#test-drive" aria-label="Туршилтын жолоодлого">
+          <Link className="btn btn--nav btn--nav-ghost" href="/green-loan/" aria-current={pathname.startsWith("/green-loan") ? "page" : undefined}>Ногоон зээл</Link>
+          {/* The test-drive form lives on the homepage; "#test-drive" alone did nothing on other pages. */}
+          <a className="btn btn--primary btn--nav" href="/#test-drive" aria-label="Туршилтын жолоодлого">
             <span className="btn__label-long">Туршилтын жолоодлого</span>
             <span className="btn__label-short">Турших</span>
           </a>

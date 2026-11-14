@@ -8,7 +8,7 @@ export const ec75: Model = {
   slug: "ec75",
   name: "EC75",
   desc: "Цахилгаан фургон",
-  quick: { type: "van", label: "Фургон", size: "5130 x 1860 x 2020 мм", range: "420 км", drive: "FWD", doors: "5 хаалга", charge: "DC - 30 мин", seats: "2–14 суудал", payload: "Тохируулгаас хамаарна" },
+  quick: { type: "van", label: "Фургон", size: "5130 x 1860 x 2020 мм", range: "420 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 30 мин", seats: "2–6 суудал", seatsPassenger: "6–14 суудал", payload: "Тохируулгаас хамаарна" },
   page: {
     pageTitle: "Цахилгаан фургон",
     variants: true,

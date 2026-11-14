@@ -5,14 +5,14 @@ import type { NavCategory } from "@/data/navigation";
 const about = [
   { label: "Танилцуулга", href: "#" },
   { label: "Шинэ мэдээ", href: "#" },
-  { label: "Хүсэлт илгээх", href: "#" },
-  { label: "Нууцын бодлого", href: "#" }
+  { label: "Хүсэлт илгээх", href: "/#test-drive" },
+  { label: "Нууцын бодлого", href: "/legal/privacy/" }
 ];
 
 const legal = [
-  { label: "Нууцлалын бодлого", href: "https://www.tesla.com/legal/privacy" },
-  { label: "Үйлчилгээний нөхцөл", href: "https://www.tesla.com/legal/terms" },
-  { label: "Күүки тохиргоо", href: "https://www.tesla.com/legal#cookie-preferences" }
+  { label: "Нууцлалын бодлого", href: "/legal/privacy/" },
+  { label: "Үйлчилгээний нөхцөл", href: "/legal/terms/" },
+  { label: "Күүки тохиргоо", href: "/legal/cookies/" }
 ];
 
 export function SiteFooter({ navigation }: { navigation: NavCategory[] }) {
@@ -82,7 +82,7 @@ export function SiteFooter({ navigation }: { navigation: NavCategory[] }) {
       <div className="site-footer__bottom">
         <p>© {new Date().getFullYear()}. Бүх эрх хуулиар хамгаалагдсан.</p>
         <ul>
-          {legal.map((item) => <li key={item.label}><a href={item.href} target="_blank" rel="noopener">{item.label}</a></li>)}
+          {legal.map((item) => <li key={item.label}><Link href={item.href}>{item.label}</Link></li>)}
         </ul>
       </div>
     </footer>

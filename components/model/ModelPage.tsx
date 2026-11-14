@@ -1,4 +1,5 @@
 import type { Model } from "@/data/types";
+import { greenLoanHref, preorderHref } from "@/data/models";
 import type { SpecRow } from "@/data/specTable";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
@@ -22,6 +23,9 @@ function Hero({ model, category }: { model: Model; category?: string }) {
           <h1 className="mintro__title">{model.name}</h1>
           <p className="mintro__desc">{model.desc}</p>
           {tagline && <p className="mintro__tagline">{tagline}</p>}
+          <div className="actions mintro__actions">
+            <a className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</a>
+          </div>
         </div>
         <div className="mintro__hero-frame">
           <img
@@ -41,34 +45,28 @@ function Hero({ model, category }: { model: Model; category?: string }) {
         <h1 className="mhero__title">{model.name}</h1>
         <p className="hero__subtitle"><T v={hero.subtitle} /></p>
         {model.page.variants && <VariantToggle onPhoto />}
+        <div className="actions mhero__actions">
+          <a className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</a>
+        </div>
       </div>
       <Picture image={hero.image} className="hero__bg" eager />
       {model.quick && <QuickSpecs specs={model.quick} />}
-      <SavingsTrigger />
     </VariantSection>
   );
 }
 
-function Stats({ model }: { model: Model }) {
-  const { stats, statsSecondary } = model.page;
+/**
+ * Action bar under the hero. The key numbers that used to sit here are in the hero icon strip
+ * (range, charging, motor) or in the spec table. "Урьдчилсан захиалга" is in the hero just above
+ * (and again at the end of the page), so here only the money questions remain.
+ */
+function ActionBar({ model }: { model: Model }) {
   return (
-    <section className="mstats" aria-label="Гол үзүүлэлт">
+    <section className="mstats mstats--actions" aria-label="Үйлдэл">
       <div className="mstats__inner">
-        {stats.length > 0 && (
-          <dl className="mstats__list">
-            {stats.map((stat, i) => (
-              <div className="mstat" key={i}>
-                <dt className="mstat__label"><T v={stat.label} />{stat.note ? <> <sup>{stat.note}</sup></> : null}</dt>
-                <dd className="mstat__value"><T v={stat.value} /><span><T v={stat.unit} /></span></dd>
-              </div>
-            ))}
-          </dl>
-        )}
         <div className="actions mstats__actions">
-          <a className="btn btn--primary btn--wide" href="#test-drive">Урьдчилсан захиалга</a>
-          {statsSecondary === "specs"
-            ? <a className="btn btn--secondary btn--wide" href="#specs">Үзүүлэлт харах</a>
-            : <a className="btn btn--secondary btn--wide" href="#test-drive">Туршилтын жолоодлого</a>}
+          <SavingsTrigger model={model.slug} />
+          <a className="btn btn--tint btn--wide" href={greenLoanHref(model.slug)}>Ногоон зээл</a>
         </div>
       </div>
     </section>
@@ -132,7 +130,7 @@ function EndCta({ model }: { model: Model }) {
         <p className="text-medium">{end.text}</p>
         {end.image && <Picture image={end.image} className="mend__image" />}
         <div className="actions mend__actions">
-          <a className="btn btn--primary btn--wide" href="#">Урьдчилсан захиалга</a>
+          <a className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</a>
           <a className="btn btn--secondary btn--wide" href={end.secondary.href}>{end.secondary.label}</a>
         </div>
       </div>
@@ -148,7 +146,7 @@ export function ModelPage({ model, category, specRows }: { model: Model; categor
   const content = (
     <main>
       <Hero model={model} category={category} />
-      <Stats model={model} />
+      <ActionBar model={model} />
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       <Gallery model={model} />
       {page.specTable !== undefined && <SpecTableSection rows={specRows ?? null} />}

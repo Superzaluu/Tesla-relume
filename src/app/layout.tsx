@@ -8,7 +8,8 @@ import { SavingsProvider } from "@/components/forms/SavingsCalculator";
 import { SiteChromeProvider } from "@/components/layout/SiteChrome";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { getNavigation } from "@/data/content";
+import { getCalculatorModels, getNavigation } from "@/data/content";
+import { getFuelPrices } from "@/lib/fuelPrices";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", display: "swap" });
 
@@ -19,12 +20,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const navigation = await getNavigation();
+  const [navigation, calculatorModels, fuelPrices] = await Promise.all([getNavigation(), getCalculatorModels(), getFuelPrices()]);
   return (
     <html lang="mn" className={inter.variable}>
       <body>
         <SiteChromeProvider>
-          <SavingsProvider>
+          <SavingsProvider models={calculatorModels} fuelPrices={fuelPrices}>
             <SiteHeader navigation={navigation} />
             {children}
             <SiteFooter navigation={navigation} />

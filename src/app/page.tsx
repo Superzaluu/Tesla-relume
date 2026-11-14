@@ -28,7 +28,7 @@ export default async function HomePage() {
         <CtaBlock
           title="Одоогийн урамшуулал"
           text="Урамшуулал, хуучин машинаа өгөх, банкны зээлийн мэдээлэлээ эндээс аваарай"
-          action={{ label: "Дэлгэрэнгүй үзэх", href: "#" }}
+          action={{ label: "Дэлгэрэнгүй үзэх", href: "/green-loan/" }}
           image={{ src: "/assets/promo.png", alt: "Урамшуулал", shape: "4x3" }}
         />
         <CtaBlock

@@ -35,9 +35,8 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
           </div>
         )}
         <div className="actions hero__actions">
-          <a className="btn btn--primary btn--wide" href="#test-drive">Ногоон зээл</a>
           <Link className="btn btn--light btn--wide" href={slide.href}>Дэлгэрэнгүй</Link>
-          <SavingsTrigger />
+          <SavingsTrigger model={slide.id.replace(/^hero-/, "")} />
         </div>
       </div>
       {showImage && (

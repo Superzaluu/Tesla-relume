@@ -7,19 +7,21 @@
 import { cache } from "react";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { select } from "@/lib/supabase";
+import { DEFAULT_EV_CONSUMPTION, type CalcModel, type FuelCode } from "./savings";
 import type { HeroSlide } from "./home";
-import { modelBySlug as pageModelBySlug, modelHref } from "./models";
+import { greenLoanHref, modelBySlug as pageModelBySlug, modelHref, preorderHref } from "./models";
 import type { NavCategory } from "./navigation";
 import { buildSpecRows, type SpecRow } from "./specTable";
-import { pick, type CategoryId, type Model, type QuickSpecs, type Stat, type Variant } from "./types";
+import { isByVariant, pick, toFuelType, type CategoryId, type Model, type QuickSpecs, type Stat, type Variant } from "./types";
 
 export type CategoryRow = { id: string; label: string; sort: number };
 export type ModelRow = {
   slug: string; name: string; description: string; tagline: string | null;
   quick_type: QuickSpecs["type"] | null; quick_label: string | null; drive: QuickSpecs["drive"] | null;
   fuel: string | null; size: string | null; range: string | null; doors: string | null; door_label: string | null;
-  charge: string | null; seats: string | null; payload: string | null; engine: string | null;
+  charge: string | null; seats: string | null; seats_passenger: string | null; payload: string | null; engine: string | null;
   stats: Stat[]; image_src: string | null; image_width: number | null; image_height: number | null;
+  compare_name: string | null; compare_fuel: FuelCode | null; compare_consumption: number | null; ev_consumption: number | null;
 };
 export type ListingRow = {
   key: string; category_id: string; model_slug: string; variant: Variant | null;
@@ -34,7 +36,8 @@ export type HeroRow = {
 
 /** Every models column except the (large) spec table. */
 export const MODEL_COLUMNS =
-  "slug,name,description,tagline,quick_type,quick_label,drive,fuel,size,range,doors,door_label,charge,seats,payload,engine,stats,image_src,image_width,image_height";
+  "slug,name,description,tagline,quick_type,quick_label,drive,fuel,size,range,doors,door_label,charge,seats,seats_passenger,payload,engine,stats,image_src,image_width,image_height," +
+  "compare_name,compare_fuel,compare_consumption,ev_consumption";
 
 const getCategoryRows = cache(() => select<CategoryRow>("categories", "select=id,label,sort&order=sort,id"));
 const getModelRows = cache(async () =>
@@ -46,13 +49,30 @@ const getListingRows = cache(() =>
 
 export const listingThumb = (listing: Pick<ListingRow, "key" | "thumb">) => listing.thumb || `/assets/thumbs/${listing.key}.jpg`;
 
+/** A cargo/passenger value as one string: "70" + "70–100" → "70–100", "7.7" + "6–14" → "7.7/6–14". */
+const flatten = (value: Stat["value"]): string => {
+  if (!isByVariant(value)) return value;
+  const { cargo, passenger } = value;
+  if (cargo === passenger || cargo.includes(passenger)) return cargo;
+  return passenger.includes(cargo) ? passenger : `${cargo}/${passenger}`;
+};
+/** "130 кВт" from the first key stat whose label matches, e.g. "Моторын хүч". */
+const statText = (stats: Stat[], label: RegExp) => {
+  const stat = stats.find((item) => label.test(flatten(item.label)));
+  return stat ? `${flatten(stat.value)} ${flatten(stat.unit)}`.trim() : undefined;
+};
+
 export const toQuick = (row: ModelRow): QuickSpecs | undefined =>
   row.quick_type
     ? {
         type: row.quick_type, label: row.quick_label ?? "", drive: row.drive ?? "RWD",
-        fuel: row.fuel || undefined, size: row.size ?? "", range: row.range ?? "", doors: row.doors ?? "",
+        fuel: toFuelType(row.fuel, row.engine), size: row.size ?? "", range: row.range ?? "", doors: row.doors ?? "",
         doorLabel: row.door_label || undefined, charge: row.charge ?? "", seats: row.seats ?? "",
-        payload: row.payload ?? "", engine: row.engine || undefined
+        seatsPassenger: row.seats_passenger || undefined,
+        payload: row.payload ?? "", engine: row.engine || undefined,
+        power: statText(row.stats, /моторын хүч/i),
+        fastCharge: statText(row.stats, /хурдан цэнэглэлт/i),
+        evRange: statText(row.stats, /цахилгаанаар/i)
       }
     : undefined;
 
@@ -73,7 +93,7 @@ function standardPage(row: ModelRow, photo: string | undefined): Model["page"] {
     end: {
       title: "Туршаад үзэх үү?",
       text: "Ойролцоох салбартаа туршилтын жолоодлого захиалж, ногоон зээл болон урьдчилсан захиалгын нөхцөлөө тодруулаарай.",
-      secondary: { label: "Ногоон зээл", href: "#" }
+      secondary: { label: "Ногоон зээл", href: greenLoanHref(row.slug) }
     },
     notes: [
       "Явах зай нь стандарт туршилтын үр дүн. Бодит зай нь тохиргоо, ачаа, зайны насжилт, жолоодлогын зуршил, цаг агаар, замын нөхцөлөөс хамаарна.",
@@ -136,13 +156,42 @@ export const getModelCards = cache(async (): Promise<{ cards: ModelCardData[]; c
           value: pick(stat.value, variant), unit: pick(stat.unit, variant), label: pick(stat.label, variant)
         }));
         return {
-          key: item.key, href: item.href, thumb: item.thumb, name: item.name, desc: item.desc,
-          categoryId: category.id, category: category.label, stats, quick: model.quick
+          key: item.key, href: item.href, preorderHref: preorderHref(item.slug, item.variant), thumb: item.thumb, name: item.name, desc: item.desc,
+          categoryId: category.id, category: category.label, stats,
+          // A card shows one version, so it gets that version's seats.
+          quick: model.quick && {
+            ...model.quick,
+            seats: variant === "passenger" && model.quick.seatsPassenger ? model.quick.seatsPassenger : model.quick.seats,
+            seatsPassenger: undefined
+          }
         };
       })
     )
   );
   return { cards, categories: navigation.map(({ id, label }) => ({ id, label })) };
+});
+
+/** Every menu card for the savings calculator, with the combustion vehicle it is compared to. */
+export const getCalculatorModels = cache(async (): Promise<CalcModel[]> => {
+  const [navigation, rows] = await Promise.all([getNavigation(), getModelRows()]);
+  return navigation.flatMap((category) =>
+    category.items.flatMap((item) => {
+      const row = rows.get(item.slug);
+      if (!row) return [];
+      const evRange = statText(row.stats, /цахилгаанаар/i);
+      return [{
+        value: `${item.slug}|${item.variant ?? ""}`, slug: item.slug, name: item.name, category: category.label,
+        fuel: toFuelType(row.fuel, row.engine),
+        evConsumption: Number(row.ev_consumption) || DEFAULT_EV_CONSUMPTION,
+        evRangeKm: evRange ? Number.parseFloat(evRange) || undefined : undefined,
+        compare: {
+          name: row.compare_name || "Ижил ангиллын дизель машин",
+          fuel: row.compare_fuel ?? "dt",
+          consumption: Number(row.compare_consumption) || 11
+        }
+      }];
+    })
+  );
 });
 
 /** Homepage hero slides in `sort` order. Empty text fields fall back to the category, description and model page. */

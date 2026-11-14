@@ -9,7 +9,7 @@ export const r5: Model = {
   slug: "r5",
   name: "R5",
   desc: "Цахилгаан фургон",
-  quick: { type: "van", label: "Фургон", size: "5170 x 1860 x 2020 мм", range: "403 км", drive: "FWD", doors: "5 хаалга", charge: "DC - 30 мин", seats: "2–9 суудал", payload: "Тохируулгаас хамаарна" },
+  quick: { type: "van", label: "Фургон", size: "5170 x 1860 x 2020 мм", range: "403 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 30 мин", seats: "2–9 суудал", payload: "Тохируулгаас хамаарна" },
   page: {
     pageTitle: "Цахилгаан фургон",
     variants: true,
@@ -78,7 +78,7 @@ export const r5: Model = {
         type: "feature", image: img("service-interior.jpg", 800, 533, "Багаж хэрэгслээр тоноглосон R5 үйлчилгээний фургоны дотор тал"),
         tagline: "Тусгай зориулалт", title: "Явуулын засварын газар",
         text: "R5-ын үйлчилгээний хувилбар нь ачааны тасалгаандаа тавиур, багажны шүүгээ, засварын тоног төхөөрөмж байрлуулж, үйлчилгээгээ үйлчлүүлэгч дээр нь хүргэнэ.",
-        link: { label: "Тохиргооны талаар лавлах", href: "#test-drive" }
+        link: { label: "Тохиргооны талаар лавлах", href: "/#test-drive" }
       }] },
       { id: "assist", blocks: [
         { type: "title", tagline: "Ухаалаг жолоодлогын хувилбар", title: "Жолоочийн туслах функцууд", text: "Камер болон радарт тулгуурласан туслах системүүд аялал бүрийг аюулгүй, ядаргаа багатай болгоно.", note: 2 },

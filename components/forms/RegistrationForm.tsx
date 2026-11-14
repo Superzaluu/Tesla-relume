@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, type FormEvent } from "react";
-import { SAVINGS_STORAGE_KEY, type SavedVehicle } from "@/components/forms/SavingsCalculator";
+import { SAVINGS_STORAGE_KEY, type SavedVehicle } from "@/data/savings";
 
 export type ModelGroup = { id: string; label: string; options: { value: string; label: string }[] };
 
@@ -50,11 +50,10 @@ export function RegistrationForm({ groups }: { groups: ModelGroup[] }) {
       <fieldset className="registration-form__fieldset">
         <legend>Тооцооллын мэдээлэл</legend>
         <div className="registration-form__grid">
-          {field("reg-maker", "previousMaker", "Үйлдвэрлэгч", vehicle?.maker)}
-          {field("reg-model", "previousModel", "Загвар", vehicle?.model)}
-          {field("reg-year", "previousYear", "Он", vehicle?.year)}
-          {field("reg-consumption", "previousConsumption", "Түлш зарцуулалт", vehicle?.consumption ? `${vehicle.consumption} л/100 км` : "")}
-          {field("reg-distance", "previousDistance", "Өдөр тутмын явалт", vehicle?.distance ? `${vehicle.distance} км` : "", true)}
+          {field("reg-model", "ruichiModel", "Ruichi загвар", vehicle?.model)}
+          {field("reg-compare", "compareVehicle", "Харьцуулсан машин", vehicle?.compare)}
+          {field("reg-consumption", "compareConsumption", "Түлш зарцуулалт", vehicle?.consumption ? `${vehicle.consumption} л/100 км` : "")}
+          {field("reg-distance", "dailyDistance", "Өдөр тутмын явалт", vehicle?.distance ? `${vehicle.distance} км` : "")}
         </div>
       </fieldset>
 

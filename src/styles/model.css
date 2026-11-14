@@ -530,3 +530,28 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 }
 .mstats__actions .btn--secondary:hover,
 .mend__actions .btn--secondary:hover { background:#083d28; color:#fff; }
+
+/* Action bar under the hero (the stats row it replaced is now the hero icon strip):
+   pre-order is the main action, the calculator and green loan are tinted secondary actions. */
+.mstats--actions { padding-block:28px; }
+.mstats--actions .mstats__inner { justify-content:center; }
+.mstats--actions .mstats__actions .btn { min-height:44px; }
+.mstats__actions .btn.saving-calculator__trigger { position:static; min-width:240px; min-height:44px; padding:12px 18px; font-size:var(--text-small); border-color:#eaf3ee; background:#eaf3ee; color:#0f5a3a; box-shadow:none; }
+.mstats__actions .btn.saving-calculator__trigger:hover { border-color:#d6e9de; background:#d6e9de; color:#083d28; box-shadow:none; }
+.mintro__actions { justify-content:center; margin-top:12px; }
+.mhero__actions { margin-top:8px; }
+/* ---------- Gestalt pass (model pages) ---------- */
+/* Common Region: image cards have a border, so their caption sits inside with padding and the
+   photo is clipped by the card corners (text used to touch the card edge). */
+.mcard:not(.mcard--plain) { overflow:hidden; gap:14px; }
+.mcard:not(.mcard--plain) img { border-radius:0; }
+.mcard:not(.mcard--plain) figcaption { padding:0 18px 18px; }
+/* The "dark" feature section is light green now: its fact labels were white on light green. */
+.section--dark .mfeature__facts { border-color:#cfe1d7; }
+.section--dark .mfeature__facts dt { color:var(--color-text-muted); }
+/* Similarity + Common Region: standard equipment as visible pills of one kind (they used to have
+   the page colour as background and read as loose text). */
+.mchips li { border:1px solid #dce3ea; background:#fff; }
+
+/* Photo heroes are light now: the white subtitle was unreadable (EC75). R5 keeps its own shaded style. */
+.mhero:not(.mhero--light) .hero__subtitle { color:#123b2a; opacity:1; }

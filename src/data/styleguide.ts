@@ -84,17 +84,17 @@ export const quickIcons = [
   { file: "03_light_box_truck.png", use: "Битүү тэвш — C9, EC31" },
   { file: "04_refrigerator_truck.png", use: "Хөргүүртэй — C3 Хөргүүртэй" },
   { file: "05_flatbed_4door_truck.png", use: "4 хаалгатай тэвш — C5 CNG, C5 Бензин, C5 Дрон" },
-  { file: "06_FWD.png", use: "Урд хөтлөгч" },
-  { file: "07_AWD.png", use: "Бүх дугуй хөтлөгч — шинэ загварт", future: true },
-  { file: "08_RWD.png", use: "Хойд хөтлөгч" },
-  { file: "09_fuel.png", use: "Түлш — C5 CNG, C5 Бензин" },
-  { file: "10_dimension.png", use: "Хэмжээ" },
-  { file: "11_doors.png", use: "Хаалга" },
-  { file: "12_charging.png", use: "Цэнэглэх хугацаа" },
-  { file: "13_range.png", use: "Туулах зай" },
-  { file: "14_fuel EREV машинд ашиглах.png", use: "Хөдөлгүүр — EREV загвар" },
-  { file: "15_seats.png", use: "Суудал" },
-  { file: "16_payload.svg", use: "Даац" }
+  { file: "06_FWD.svg", use: "Урд хөтлөгч (урд дугуй дүүрэн)" },
+  { file: "07_AWD.svg", use: "Бүх дугуй хөтлөгч — шинэ загварт", future: true },
+  { file: "08_RWD.svg", use: "Хойд хөтлөгч (хойд дугуй дүүрэн)" },
+  { file: "09_fuel.svg", use: "Түлш — BEV, EREV, PHEV (бүх загвар)" },
+  { file: "10_dimension.svg", use: "Хэмжээ" },
+  { file: "11_doors.svg", use: "Хаалга" },
+  { file: "12_charging.png", use: "Цэнэглэх хугацаа", future: true },
+  { file: "13_range.svg", use: "Туулах зай (EREV/PHEV-д нийт зай)" },
+  { file: "17_engine.svg", use: "Хөдөлгүүр — зөвхөн EREV, PHEV загвар" },
+  { file: "15_seats.svg", use: "Суудал (суудал × хүн — тоог илэрхийлнэ)" },
+  { file: "16_payload_filled.svg", use: "Даац — утга оруулсан үед л харагдана" }
 ];
 
 export const uiIcons = [

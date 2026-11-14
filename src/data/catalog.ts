@@ -5,7 +5,7 @@
 // (tables models, model_stats, spec_rows) and override the values below at
 // runtime. Edit them in the Supabase dashboard; here they are only the
 // original seed values. The page layout (hero image, gallery) is still read from here.
-import type { Img, Model, QuickSpecs, Stat } from "./types";
+import { toFuelType, type Img, type Model, type QuickSpecs, type Stat } from "./types";
 
 type Size = [width: number, height: number];
 
@@ -16,11 +16,11 @@ const SOURCE = {
 
 const quick = (
   type: QuickSpecs["type"], label: string, size: string, range: string,
-  o: Partial<Omit<QuickSpecs, "type" | "label" | "size" | "range">> = {}
+  o: Partial<Omit<QuickSpecs, "type" | "label" | "size" | "range" | "fuel">> & { fuel?: string } = {}
 ): QuickSpecs => ({
   type, label, size, range,
   drive: o.drive ?? "RWD", doors: o.doors ?? "2 хаалга", doorLabel: o.doorLabel, charge: o.charge ?? "DC - 30 мин",
-  seats: o.seats ?? "2 суудал", payload: o.payload ?? "Тохируулгаас хамаарна", fuel: o.fuel, engine: o.engine
+  seats: o.seats ?? "2 суудал", payload: o.payload ?? "", fuel: toFuelType(o.fuel, o.engine), engine: o.engine
 });
 
 type Entry = {
@@ -79,7 +79,7 @@ const entries: Entry[] = [
     tagline: "Бензин зай сунгагчтай C5: 25 кВт·ц зай, бензин генератор зайг цэнэглэж нийт 1200 гаруй км явна.",
     stats: [["1200+", "км", "Нийт явах зай"], ["25", "кВт·ц", "Зайн багтаамж"], ["110", "кВт", "Моторын хүч"], ["95", "км/ц", "Дээд хурд"]],
     gallery: [...Array(7).fill([800, 450]), [800, 449]],
-    quick: quick("flatbed4", "Задгай тэвш", "5990 x 1880 x 2030 мм", "1200+ км", { drive: "FWD", doors: "2–4 хаалга", seats: "2–5 суудал", payload: "2–2.5 т", charge: "AC/DC - 30 мин", fuel: "Бензин", engine: "1,499 cc" }) },
+    quick: quick("flatbed4", "Задгай тэвш", "5990 x 1880 x 2030 мм", "1200 км", { drive: "RWD", doors: "2–4 хаалга", seats: "2–5 суудал", payload: "2–2.5 т", charge: "DC - 25 мин", fuel: "EREV", engine: "1,499 cc" }) },
   { slug: "c5l", name: "C5L", desc: "3.8 м тэвштэй ачааны машин", hero: ["/assets/hero/c5l.jpg", 1920, 1080],
     tagline: "3.8 м урт тэвштэй C5L: 70.92 кВт·ц зай, 415 км явах зай. Задгай тэвш болон хайрцагтай хувилбартай.",
     stats: [["415", "км", "Цэнэглэлтийн зай (CLTC)"], ["70.92", "кВт·ц", "Зайн багтаамж"], ["110", "кВт", "Моторын хүч"], ["3.8", "м", "Тэвшний урт"]],
@@ -131,7 +131,7 @@ const toModel = (e: Entry): Model => {
       end: {
         title: "Туршаад үзэх үү?",
         text: "Ойролцоох салбартаа туршилтын жолоодлого захиалж, ногоон зээл болон урьдчилсан захиалгын нөхцөлөө тодруулаарай.",
-        secondary: { label: "Ногоон зээл", href: "#" }
+        secondary: { label: "Ногоон зээл", href: `/green-loan/?model=${encodeURIComponent(e.slug)}` }
       },
       notes: [
         "Явах зай нь стандарт туршилтын (CLTC, WLTC, NEDC, CHTC) үр дүн. Бодит зай нь тохиргоо, ачаа, зайны насжилт, жолоодлогын зуршил, цаг агаар, замын нөхцөлөөс хамаарна.",

@@ -4,7 +4,7 @@ import { ImageField, StatsEditor, SubmitButton, type StatDraft } from "@/compone
 import { Checkbox, Field, inputClass, Notice, Panel, Select, TextInput } from "@/components/admin/AdminUi";
 import { listingThumb, type CategoryRow, type ListingRow, type ModelRow } from "@/data/content";
 import { modelBySlug as pageModelBySlug, modelHref } from "@/data/models";
-import { isByVariant, type Stat, type V } from "@/data/types";
+import { isByVariant, toFuelType, type Stat, type V } from "@/data/types";
 import { requireAdmin } from "@/lib/supabase-auth";
 import { saveCard } from "../../../actions";
 
@@ -96,16 +96,28 @@ export default async function EditCardPage({ params, searchParams }: {
             <TextInput name="size" label="Хэмжээ" value={model.size} placeholder="5130 x 1860 x 2020 мм" />
             <TextInput name="range" label="Туулах зай" value={model.range} placeholder="420 км" />
             <TextInput name="charge" label="Цэнэглэх хугацаа" value={model.charge} placeholder="DC - 30 мин" />
-            <TextInput name="seats" label="Суудал" value={model.seats} placeholder="2 суудал" />
+            <TextInput name="seats" label="Суудал" value={model.seats} placeholder="2 суудал" hint="Хоёр хувилбартай бол ачааны хувилбарынх." />
+            <TextInput name="seats_passenger" label="Суудал (зорчигчийн хувилбар)" value={model.seats_passenger} placeholder="6–14 суудал" hint="Зөвхөн ачаа/зорчигч хоёр хувилбартай загварт." />
             <TextInput name="payload" label="Даац" value={model.payload} placeholder="1,080 кг" />
             <TextInput name="doors" label="Хаалга" value={model.doors} placeholder="5 хаалга" />
             <TextInput name="door_label" label="Хаалганы гарчиг" value={model.door_label} placeholder="Хаалга" hint="Хоосон бол &quot;Хаалга&quot;." />
-            <TextInput name="fuel" label="Түлш" value={model.fuel} placeholder="CNG" hint="Зөвхөн зай сунгагчтай загварт." />
-            <TextInput name="engine" label="Хөдөлгүүр" value={model.engine} placeholder="1,499 cc" hint="Зөвхөн зай сунгагчтай загварт." />
+            <Select name="fuel" label="Түлш" value={toFuelType(model.fuel, model.engine)} options={[
+              ["BEV", "BEV — цэвэр цахилгаан"], ["EREV", "EREV — зай сунгагчтай"], ["PHEV", "PHEV — залгууртай хайбрид"]
+            ]} />
+            <TextInput name="engine" label="Хөдөлгүүр" value={model.engine} placeholder="1,499 cc" hint="Зөвхөн EREV, PHEV загварт харагдана." />
           </div>
         </Panel>
 
-        <Panel title="Гол үзүүлэлт" description="Эхний 3 нь карт дээр, бүгд загварын хуудасны дээд хэсэгт харагдана.">
+        <Panel title="Хэмнэлтийн тооцоолуур" description="Энэ загварыг ямар ижил ангиллын шатахуунт машинтай харьцуулах вэ. Хэрэглэгч тооцоолуур дээр зарцуулалтыг өөрөө өөрчилж болно.">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextInput name="compare_name" label="Төстэй машин" value={model.compare_name} placeholder="Hyundai Porter II 2.5" />
+            <Select name="compare_fuel" label="Түүний түлш" value={model.compare_fuel ?? "dt"} options={[["dt", "Дизель"], ["euro92", "Евро-92"], ["ai95", "АИ-95"]]} />
+            <TextInput name="compare_consumption" label="Түүний зарцуулалт (л/100 км)" value={model.compare_consumption} placeholder="10.5" />
+            <TextInput name="ev_consumption" label="Ruichi-н цахилгаан зарцуулалт (кВт·ц/100 км)" value={model.ev_consumption} placeholder="22" hint="Хоосон бол 22 гэж тооцно." />
+          </div>
+        </Panel>
+
+        <Panel title="Гол үзүүлэлт" description="Эхний 3 нь зөвхөн нүүр хуудасны картад харагдана. &quot;Моторын хүч&quot;, &quot;Хурдан цэнэглэлт&quot;, &quot;Цэвэр цахилгаанаар&quot; гэсэн мөрүүдийн утгыг загварын хуудасны icon мөр ашиглана.">
           <StatsEditor initial={model.stats.map(toDraft)} variants={variants} />
         </Panel>
 
