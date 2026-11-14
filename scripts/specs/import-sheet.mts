@@ -16,6 +16,28 @@ type Rule = { cn?: RegExp; en?: RegExp; key?: string; part?: string; extra?: str
 // Order matters: the first matching rule wins.
 const RULES: Rule[] = [
   { cn: /版本|产品名称|指导价|质保|保修/, en: /^(verison|version|productname|configurationversion|marketguideprice|price|warranty)/, skip: true },
+  // Label variants seen in the 2026-11-15 tabs (C9, C5L EV, ED71S, EC31S, EC35II). Before the general rules.
+  { cn: /货厢照明/, key: "cargo_light" },
+  { cn: /续驶里程/, key: "range" },
+  { cn: /^充电类型$|充电倍率/, key: "charge_rate" },
+  { cn: /^动力电池$/, key: "battery_type" },
+  { cn: /^电动机$/, key: "motor_type" },
+  { cn: /^车身形式$/, key: "body" },
+  { cn: /车门玻璃/, key: "windows" },
+  { cn: /^阅读灯/, key: "reading" },
+  { cn: /^cltc电量$/, key: "consumption" },
+  { cn: /空调温(度)?控/, key: "ac_control" },
+  { cn: /轮圈/, key: "rims" },
+  { cn: /近光灯/, key: "headlights" },
+  { cn: /外观颜色/, key: "color_ext" },
+  { cn: /防抱死/, key: "abs" },
+  { cn: /车身电子稳定|车身稳定/, key: "esc" },
+  { cn: /倒车(视频)?影像/, key: "rear_camera" },
+  { cn: /电池(系统)?热管理/, key: "battery_heating" },
+  { cn: /^直流快充$/, key: "dc" },
+  { cn: /充电电子锁/, key: "charge_lock" },
+  { cn: /滑行能量回馈/, key: "regen" },
+  { cn: /远程监控|远程控制/, key: "app" },
   { cn: /配置版本/, skip: true },
   { cn: /动力类型|能源类型/, en: /^(powertype|powertraintype|energytype)$/, key: "energy" },
   { cn: /燃料形式/, key: "fuel_kind", extra: "Түлшний төрөл", group: "extender" },
@@ -24,24 +46,33 @@ const RULES: Rule[] = [
   { cn: /前后轮距/, key: "track" },
   { cn: /前轮距/, key: "track", part: "front" },
   { cn: /后轮距/, key: "track", part: "rear" },
-  { cn: /货箱内部尺寸|货箱尺寸/, en: /^cargo/, key: "cargo_size" },
+  { cn: /^货箱长/, key: "cargo_size", part: "cl" },
+  { cn: /^货箱宽/, key: "cargo_size", part: "cw" },
+  { cn: /^货箱高/, key: "cargo_size", part: "ch" },
+  { cn: /货厢地板/, key: "cargo_floor" },
+  { cn: /电(动)?机总功率/, key: "power" },
+  { cn: /电(动)?机总扭矩/, key: "torque" },
+  { cn: /货箱内部尺寸|货箱尺寸/, en: /^cargo(?!.*volume)/, key: "cargo_size" },
   { cn: /外形尺寸|长宽高/, en: /^(lengthwidthheight|body|vehicledimensions)$/, key: "size" },
-  { cn: /^长度$/, key: "size", part: "l" },
-  { cn: /^宽度$/, key: "size", part: "w" },
-  { cn: /^高度$/, key: "size", part: "h" },
+  { cn: /^长(度)?$/, key: "size", part: "l" },
+  { cn: /^宽(度)?$/, key: "size", part: "w" },
+  { cn: /^高(度)?$/, key: "size", part: "h" },
+  // One combined row: "Slow charge: … ; Fast charge: 0%-80% in 1h" (ED71S).
+  { cn: /^充电时间/, key: "dc_time", part: "combo" },
   { cn: /轴距/, key: "wheelbase" },
   { cn: /整备质量/, key: "curb_weight" },
   { cn: /总质量/, key: "gross_weight" },
   { cn: /额定载/, en: /payload|ratedload/, key: "payload" },
   { cn: /车门数/, key: "doors" },
-  { cn: /座位数/, key: "seats" },
+  { cn: /座位数|准乘人数/, key: "seats" },
   { cn: /最高车速/, key: "top_speed" },
   { cn: /载货容积|货箱容积/, key: "cargo_volume" },
   { cn: /驱动桥速比/, key: "gear_ratio" },
   { cn: /接近角/, key: "approach", part: "a" },
   { cn: /离去角/, key: "approach", part: "d" },
   { cn: /最大爬坡/, extra: "Өгсөх чадвар (%)", group: "dims" },
-  { cn: /制冷温度/, extra: "Хөргөлтийн хэм (℃)", group: "dims" },
+  { cn: /制冷温度|冷藏温度/, en: /refrigerationtemperature|coolingtemperature/, key: "fridge_temp" },
+  { cn: /货箱侧门|侧门/, en: /sidedoor/, key: "side_doors" },
 
   { cn: /^增程器$/, en: /^rangeextender$/, key: "engine_model" },
   { cn: /^发动机$|发动机型号/, en: /^engine(model)?$/, key: "engine_model", part: "engine" },
@@ -168,6 +199,72 @@ const RULES: Rule[] = [
 
 // English → Mongolian, applied in order to every text value.
 const DICT: [RegExp, string][] = [
+  // ---- 2026-11-15 tabs (C9, C5L EV, ED71S, EC31S, EC35II, C3); specific phrases first
+  [/permanent magnet \/ synchronization/i, "Байнгын соронзон синхрон мотор"],
+  [/lithium iron phosphate battery/i, "LFP (лити төмрийн фосфат)"],
+  [/^postposition$/i, "Арын"], [/^transverse$/i, "Хөндлөн"],
+  [/^(?:load-bearing(?: type)?|monocoque)$/i, "Даацын их бие"],
+  [/(\d+(?:\+\d+)?)-leaf (?:longitudinal )?(?:leaf )?springs?,? non-independent suspension(?:, spring top-mounted)?/i, "$1 навчит пүрштэй, хамааралтай"],
+  [/five-leaf springs \(non-independent suspension, with lower leaf springs\)/i, "5 навчит пүрштэй, хамааралтай"],
+  [/leaf springs are not independent suspension|leaf spring rigid axle \(non-independent suspension\)/i, "Навчит пүрштэй, хамааралтай"],
+  [/mc ?pherson strut suspension/i, "Макферсон, бие даасан"],
+  [/^disc$/i, "диск"], [/^drum$/i, "хүрд"], [/\s*brakes$/i, ""],
+  [/mechanical handbrake \(rear axle wheel-side braking\)|^mechanical$/i, "Механик гар тоормос"],
+  [/^electric power steering$/i, "EPS (цахилгаан)"],
+  [/^steel wheels?(?: rim)?(?: \(silver\))?$/i, "Ган обуд"],
+  [/^(?:electric power window|power windows)$/i, "Цахилгаан цонх"], [/^(?:former|front)$/i, "Урд"],
+  [/^manual lens adjustment$/i, "Гар"],
+  [/front (?:windscreen )?wiper only \((?:bone type|framed)\)/i, "Зөвхөн урд, хүрээтэй"], [/^split front wiper$/i, "Урд, хагас далд"],
+  [/halogen head(?:light|lamp)s? \+ LED turn signals?/i, "Галоген, LED эргэлтийн гэрэл"], [/^LED headlamps$/i, "LED"],
+  [/2 (?:dials|pointers) \+ 3\.5(?:-inch|")? (?:black and white|B&W) TFT (?:screen|display)/i, "2 заагч + 3.5 инч TFT дэлгэц"],
+  [/^knob-type electronic gear shift$/i, "Эргэдэг бариул (цахилгаан)"], [/^(?:handheld gearshift|column shifter)$/i, "Жолооны багана дээр"],
+  [/^manual anti-glare$/i, "Гар, гялбаа сааруулагчтай"],
+  [/driver's seat: 4-way manual adjustment, with slide rail, adjustable backrest, split headrest/i, "Гар тохируулгатай, 4 чиглэл, гулсууртай, тусдаа толгойн түшлэгтэй"],
+  [/passenger seat: 2-way manual adjustment, no slide rail, foldable backrest, split headrest/i, "Гар тохируулгатай, 2 чиглэл, түшлэг эвхэгддэг"],
+  [/^(\d)-way manual adjustment, split headrest$/i, "Гар тохируулгатай, $1 чиглэл, тусдаа толгойн түшлэгтэй"],
+  [/^(\d)-way manual adjustment$/i, "Гар тохируулгатай, $1 чиглэл"],
+  [/^front and rear adjustment \+ backrest adjustment$/i, "Урагш хойш, түшлэгийн тохируулгатай"], [/^backrest adjustment$/i, "Түшлэгийн тохируулгатай"],
+  [/^foldable center seatback$/i, "Дунд түшлэг эвхэгддэг"],
+  [/MP3 player with USB port \+ FM stereo\/AM radio/i, "MP3 (USB), FM/AM радио"], [/MP3 player \+ radio/i, "MP3, радио"],
+  [/(\d+)" central color HD screen, Bluetooth phone, USB audio input \+ radio/i, "$1 инч төв дэлгэц, Bluetooth, USB, радио"],
+  [/^radio \+ bluetooth calling$/i, "Радио, Bluetooth дуудлага"], [/^bluetooth box ○ electric radio$/i, "Bluetooth; ○ радио"],
+  [/^front:?\s*●\s*\/\s*rear:?\s*●$/i, "Урд, хойд"], [/^front:?\s*[─—–-]\s*\/\s*rear:?\s*(\d)$/i, "Хойд $1"],
+  [/front door remote central (?:control|locking)/i, "Урд хаалга, алсын удирдлагатай"],
+  [/^high-top integrated$/i, "Өндөр дээвэртэй"], [/\(dual-side doors\)/gi, "(2 хажуу хаалгатай)"], [/\(quad-side doors\)/gi, "(4 хажуу хаалгатай)"], [/\(fence\)/gi, "(торон)"],
+  [/dual-side doors/i, "2 хаалга"], [/quad-side doors/i, "4 хаалга"], [/\(with spliced panels\)/i, "(хавчаар хавтан)"],
+  [/^inovance integrated /i, "Inovance, "], [/^inboer 2-in-1 integrated /i, "Inboer, "],
+  [/^electric drive axle \(maintenance-free at rear wheel hub\)$/i, "Цахилгаан хөтлөгч тэнхлэг"],
+  [/^body-color mirror$/i, "Их биеийн өнгөтэй"], [/^dual rear fog$/i, "Арын, 2"], [/^automatic AC$/i, "Автомат"],
+  [/^Ports \(Type-C 66W \+ Type-A 27W \+ Type-A Data\) Type-C$/i, "Type-C 66W, Type-A 27W, Type-A өгөгдөл"],
+  [/^driver ● \/ passenger ○$/i, "Жолоочийн; зорчигчийн — нэмэлт сонголтоор"],
+  [/^eco \/ normal \/ power$/i, "Хэмнэлт / Энгийн / Хүчтэй"], [/^smart energy saving$/i, "Хэмнэлттэй / Хүчтэй"],
+  [/^single sun visor$/i, "Жолоочийн"], [/^single motor$/i, "1"],
+  [/^steel$/i, "Ган обуд"], [/^white\/silvery$/i, "Цагаан, мөнгөлөг"], [/front reading (?:light|lamp)$/i, "Урд"],
+  // ---- EC75 P/C, R5 P/C tabs
+  [/^(?:longitudinal )?leaf spring non-independent suspension$/i, "Навчит пүрштэй, хамааралтай"],
+  [/mc ?pherson independent suspension/i, "Макферсон, бие даасан"],
+  [/^front and rear disc(?: brakes)?$/i, "Урд, хойд диск"],
+  [/^electronic (?:assist \(EPS\)|power EPS)$/i, "EPS (цахилгаан)"], [/^electric parking brake$/i, "EPB (цахилгаан)"],
+  [/^full size$/i, "Бүтэн хэмжээтэй"],
+  [/^front:?\s*[─—–-]\s*\/$/i, "Хойд"], [/^front:?\s*[─—–-]\s*\/\s*(?:rear|back):?\s*●$/i, "Хойд"], [/^front:?\s*●\s*\/\s*(?:rear|back):?\s*●$/i, "Урд, хойд"],
+  [/^main:?\s*[—–-]?\s*\/\s*auxiliary:?\s*[—–-]?$/i, "–"], [/^main\s*●\s*\/\s*(?:auxiliary|secondary)\s*●$/i, "Жолооч, зорчигч"],
+  [/^8\.8-inch digital screen$/i, "8.8 инч дижитал дэлгэц"],
+  [/^electric dual-\s?zone air conditioning$|^electric double-\s?steam$/i, "Цахилгаан, 2 бүстэй"],
+  [/^electric,? single(?: evaporator|-zone A\/C)$/i, "Цахилгаан, 1 бүстэй"],
+  [/^column shift$/i, "Жолооны багана дээр"],
+  [/^reclining backrest, flip-\s?forward cushion with storage box$/i, "Түшлэг тохируулгатай, суудал урагш эргэдэг, хайрцагтай"],
+  [/^2-seat bench, no headrest, foldable backrest$/i, "2 хүний, толгойн түшлэггүй, түшлэг эвхэгддэг"],
+  [/^halogen headlights? with lens$/i, "Галоген, линзтэй"], [/^(\d)(?:,| pieces?,)? halogen$/i, "$1, галоген"],
+  [/^bluetooth audio \(with MP3\)(?: MP3\))?$/i, "Bluetooth аудио, MP3"], [/^15\.6-inch central control screen$/i, "15.6 инч төв дэлгэц"],
+  [/integrated in the instrument/i, "багажны самбарт"], [/integrated in the large screen/i, "том дэлгэцэнд"],
+  [/^electric \(driver & passenger\)$/i, "Цахилгаан (жолооч, зорчигч)"],
+  [/^leather \+ fabric$/i, "Арьс + даавуу"], [/^no-key start \(keyless start\)$/i, "Түлхүүргүй асаалт"],
+  [/^single sun visor \(driver\)$/i, "Жолоочийн"], [/^dual sun visors$/i, "Жолооч, зорчигч"],
+  [/^2C on-board DC charging$/i, "2C хурдан цэнэглэлт (DC)"],
+  // C9 tab: the English cell repeats the gear shifter; the Chinese one says 8.8" LCD cluster with the reversing camera.
+  [/^column-mounted gear shifter$/i, "8.8 инч LCD, арын камерын дүрстэй"],
+  [/(\d+)-inch central control color HD\s*screen, car Bluetooth call, USB audio input, FM radio\s*\(supports MP3\/WMA\)/i, "$1 инч төв дэлгэц, Bluetooth дуудлага, USB, FM радио"],
+  [/^manual air conditioning$/i, "Гар удирдлагатай"], [/^● ?manual$/i, "Гар удирдлагатай"],
   [/^(\w+) \(lithium iron phosphate\)$/i, "LFP (лити төмрийн фосфат), $1"],
   [/lithium iron phosphate(?: \(LFP\))?/i, "LFP (лити төмрийн фосфат)"],
   [/^2C Supercharge$/i, "2C хурдан цэнэглэлт"], [/^on-board DC$/i, "DC"],
@@ -220,7 +317,9 @@ const DICT: [RegExp, string][] = [
   [/china vi b/i, "China VI B"]
 ];
 
-const BODY: Record<string, string> = { flatbed: "Задгай", fence: "Торон хаалттай", box: "Битүү", "flatbed/fence": "Задгай, торон хаалттай" };
+const BODY: Record<string, string> = {
+  flatbed: "Задгай", fence: "Торон хаалттай", box: "Битүү", "flatbed/fence": "Задгай, торон хаалттай", refrigerated: "Хөргүүртэй"
+};
 const KEEP_LATIN = /\b(Ganfeng|CATL|Type-C|LFP|PMSM|EPS|C-EPS|R-EPS|EPB|ABS|EBD|ESC|LED|LCD|USB|HD|MP3|PTC|DC|AC|EREV|V2L|OTA|SER\d+\w*|H\d+\w*|China|VI|B|LT|PR|R\d+)\b/g;
 
 const CJK = /[㐀-鿿]/;
@@ -244,7 +343,8 @@ const norm = (label: string) => (label ?? "").toLowerCase().replace(/[（(][^）
 function translate(value: string) {
   let out = value;
   for (const [from, to] of DICT) out = out.replace(from, to);
-  return out.replace(/\s+/g, " ").trim();
+  // "Түлхүүргүй асаалт ()": brackets left empty once the Chinese inside was removed.
+  return out.replace(/\s*\(\s*\)/g, "").replace(/\s+/g, " ").trim();
 }
 
 /** Still contains English words after translation → the admin should look at it. */
@@ -259,7 +359,8 @@ function asMark(raw: string) {
   const head = value.match(/^([●○]|[─—–-]+)\s*/);
   if (head) {
     const sign = head[1] === "●" ? "●" : head[1] === "○" ? "○" : "–";
-    const note = translate(value.slice(head[0].length).replace(/^[(（]|[)）]$/g, "").trim());
+    // "○ (MP5)○（MP5）": the English and Chinese halves repeat the note; keep the first.
+    const note = translate(value.slice(head[0].length).replace(/^[(（]|[)）]$/g, "").replace(/\)?\s*[●○].*$/, "").trim());
     return note && sign !== "–" ? `${sign} ${note}` : sign;
   }
   return normalizeMark(`● ${translate(value)}`);
@@ -269,6 +370,28 @@ function asNumber(key: string, raw: string) {
   const value = english(raw);
   if (!value || /^(үгүй|no|[─—–-]+)$/i.test(value)) return "";
   if (key === "payload" && /^[\d.]+\s*t$/i.test(value)) return String(Math.round(parseFloat(value) * 1000));
+  const tons = key === "payload" && value.match(/^([\d.]+)\s*[-–]\s*([\d.]+)\s*t$/i);
+  if (tons) return `${Math.round(parseFloat(tons[1]) * 1000)}–${Math.round(parseFloat(tons[2]) * 1000)}`;
+  // Fast charge given in hours ("1h", "1小时") → minutes; dropping the unit made it "1 мин".
+  if (key === "dc_time" && /^[\d.]+\s*(h|hours?|小时|цаг)$/i.test((raw ?? "").replace(/\n.*/s, "").trim())) return String(Math.round(parseFloat(value) * 60));
+  // "327 (Refrigrated 320)" → one value per body, so the refrigerated page shows 320.
+  const fridge = value.match(/^([\d.]+)\s*\(refrige?rated\s*([\d.]+)\)$/i);
+  if (fridge) return `Задгай, торон хаалттай, битүү: ${fridge[1]} · Хөргүүртэй: ${fridge[2]}`;
+  // "Basic: 6 seats (2+2+2) 9 seats (…) 11 seats … contact sales" → "6 / 9 / 11 / 14".
+  if (key === "seats") {
+    const counts = [...value.matchAll(/(\d+)\s*seats/gi)].map((m) => m[1]);
+    if (counts.length > 1) return counts.join(" / ");
+  }
+  // "●（6.6kW）" → "6.6".
+  if (key === "ac_power") { const m = value.match(/^●?\s*\(?\s*([\d.]+)\s*kW\)?$/i); if (m) return m[1]; }
+  // "2 pcs, on instrument panel" → "2"; "●1个 ○2个" → "1 (○ 2)".
+  if (key === "speakers") {
+    const opt = value.match(/^●\s*(\d+)\s*○\s*(\d+)$/);
+    if (opt) return `${opt[1]} (○ ${opt[2]})`;
+    const m = value.match(/^(\d+)/); if (m) return m[1];
+  }
+  // "CATL 120 kWh (liquid-cooled)" → "120"; brand and cooling are in their own rows.
+  if (key === "battery_kwh") { const m = value.match(/([\d.]+)\s*kWh/i); if (m) return m[1]; }
   // "58.24 (Supercharge)" → "58.24"; the note lives in its own row (charge type).
   if (/^[\d.]+\s*\([^)]*\)$/.test(value)) return value.replace(/\s*\(.*$/, "");
   const m = value.match(/^([<>≤≥]?\s*[\d.,]+(?:\s*[-–\/~]\s*[\d.,]+)?)\s*[\p{L}/.%³°·]{0,8}$/u);
@@ -277,16 +400,21 @@ function asNumber(key: string, raw: string) {
 
 function asText(key: string, raw: string) {
   const value = english(raw);
+  // A cell only in Chinese ("磷酸铁锂") loses everything in english().
+  if (!value && /磷酸铁锂/.test(raw ?? "")) return "LFP (лити төмрийн фосфат)";
   if (!value || /^(үгүй|no|[─—–-]+)$/i.test(value)) return value ? "–" : "";
   if (/^(тийм|support|yes)$/i.test(value)) return key === "airbags" ? "Жолоочийн" : "Байгаа";
   if (/^●/.test(value)) return translate(value.replace(/^●\s*[(（]?/, "").replace(/[)）]$/, "")) || "Байгаа";
-  if (key === "drive") return /all|4wd|awd/i.test(value) ? "AWD" : /front-wheel|fwd/i.test(value) ? "FWD" : /rear-wheel|rwd/i.test(value) ? "RWD" : value;
-  if (key === "motor_layout") return /^rear/i.test(value) ? "Арын" : /^front/i.test(value) ? "Урд" : translate(value);
+  if (key === "drive") return /all|4wd|awd/i.test(value) ? "AWD" : /front-wheel|fwd|front front/i.test(value) || /前驱/.test(raw ?? "") ? "FWD" : /rear-wheel|rwd/i.test(value) || /后驱/.test(raw ?? "") ? "RWD" : value;
+  // The Chinese 前置/后置 is reliable; the English is sometimes another row's text ("Liquid cooling", "Pre").
+  if (key === "motor_layout") return /前置/.test(raw ?? "") || /^(front|pre)\b/i.test(value) ? "Урд" : /后置/.test(raw ?? "") || /^rear/i.test(value) ? "Арын" : translate(value);
   if (key === "parking_brake") return /EPB/.test(value) ? "EPB (цахилгаан)" : translate(value);
   if (key === "size" || key === "cargo_size") {
     return translate(value).replace(/(\d)\s*[*x×]\s*(?=\d)/gi, "$1×").replace(/:(?=\d)/g, ": ").replace(/(\d)\s*,\s*(?=\d)/g, "$1/").replace(/(\d)\s+(?=\d{3,5}×)/g, "$1; ");
   }
   if (key === "cabin") return translate(value).replace(/^(Нэг|Давхар) эгнээ.*/, "$1 эгнээ");
+  // "4向" / "4 Way" → "4 чиглэл".
+  if (key === "driver_seat" && /^(\d)(?:\s*way)?$/i.test(value)) return `${value.match(/\d/)![0]} чиглэлд тохируулгатай`;
   return translate(value);
 }
 
@@ -307,10 +435,11 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
   header.forEach((cell, i) => {
     const h = (cell ?? "").trim();
     if (/^Үзүүлэлт \(EN\)/.test(h)) col.en = i;
-    else if (/^Дэд төрөл \(EN\)/.test(h)) col.subEn = i;
+    else if (/^Дэд төрөл \(EN\)|^Дэд төрөл \/ нийтлэг утга/.test(h)) col.subEn = i;
     else if (/^Үзүүлэлт \(中文\)/.test(h)) col.cn = i;
     else if (/^Дэд төрөл \(中文\)/.test(h)) { /* same as subEn */ }
     else if (/Монгол нэр|Үзүүлэлт \(MN\)/.test(h)) col.mn = i;
+    else if (/\(MN\)$/.test(h)) { /* machine-translated copies of the columns on the right ("1. … (MN)", "Дэд төрөл (MN)") */ }
     else if (h) configCols.push(i);
   });
   const n = configCols.length;
@@ -332,7 +461,7 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
     const cells = configCols.map((i) => (row[i] ?? "").trim());
     if (!en && !cn) continue;
     if (cells.every((cell) => cell === en || cell === cn || !cell)) continue; // section heading
-    if (/产品名称/.test(cn)) { productRows.push(cells); continue; }
+    if (/产品名称/.test(cn) || /^productname/.test(norm(en))) { productRows.push(cells); continue; }
 
     const ncn = norm(cn), nen = norm(en);
     const rule = RULES.find((item) => (item.cn && ncn && item.cn.test(ncn)) || (item.en && nen && item.en.test(nen)));
@@ -340,11 +469,13 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
     if (rule.skip) continue;
     const id = rule.key ?? `extra:${rule.extra}`;
     const entry = entries.get(id) ?? { key: rule.key, extra: rule.extra, group: rule.group, parts: [] };
-    entry.parts.push({ part: rule.part, sub: col.subEn >= 0 ? english(row[col.subEn] ?? "") : "", cells, label: english(en) });
+    // Tabs with a "Дэд төрөл / нийтлэг утга" column put either a body type or the common value there; only body types are subs.
+    const sub = col.subEn >= 0 ? english(row[col.subEn] ?? "") : "";
+    entry.parts.push({ part: rule.part, sub: BODY[sub.toLowerCase().replace(/\s+/g, "")] ? sub : "", cells, label: english(en) });
     entries.set(id, entry);
   }
 
-  if (productRows.length && names.every((name) => /^PDF багана/.test(name))) {
+  if (productRows.length && names.every((name) => /^(PDF багана|Үзүүлэлт$)/.test(name))) {
     names = configCols.map((_, i) => productRows.map((cells) => english(cells[i])).filter(Boolean).join(" · "));
   }
   names = names.map((name) => name.replace(/\s*Edition\b/gi, "").replace(/\s+/g, " ").trim());
@@ -356,6 +487,14 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
     return Array.from({ length: n }, (_, i) => {
       const list = bySub.map((p) => ({ sub: BODY[p.sub.toLowerCase().replace(/\s+/g, "")] ?? p.sub, value: convertCell(key, p.cells[i]) }));
       if (new Set(list.map((item) => item.value)).size === 1) return list[0].value;
+      // Two rows of the same item without a body label (standard ● + optional ○ audio system): one value.
+      // Marks keep the best sign; text keeps the real descriptions ("Байгаа" from a yes/no row adds nothing).
+      if (list.every((item) => !item.sub)) {
+        if (FIELD[key]?.kind === "mark") return ["●", "○", "–"].find((sign) => list.some((item) => item.value.startsWith(sign))) ?? list[0].value;
+        // A number has one value; a second row with the same label is a mislabelled neighbour (EC75 C slow-charge time).
+        if (FIELD[key]?.kind === "number") return list.find((item) => item.value)?.value ?? "";
+        return list.map((item) => item.value).filter((v) => v && !/^(Байгаа|–|●)$/.test(v)).join("; ");
+      }
       return list.map((item) => `${item.sub}: ${item.value}`).join(" · ");
     });
   };
@@ -383,6 +522,15 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
     if (key === "size" && !list && at(p, "l")) {
       list = Array.from({ length: n }, (_, i) => ["l", "w", "h"].map((x) => english(at(p, x)?.cells[i] ?? "")).join("×"));
     }
+    if (key === "cargo_size" && !list && at(p, "cl")) {
+      list = Array.from({ length: n }, (_, i) => ["cl", "cw", "ch"].map((x) => english(at(p, x)?.cells[i] ?? "")).join("×"));
+    }
+    if (key === "dc_time" && !list && at(p, "combo")) {
+      list = at(p, "combo")!.cells.map((cell) => {
+        const m = english(cell).match(/fast charge:[^;]*?([\d.]+)\s*(h|min)\b/i);
+        return m ? String(Math.round(parseFloat(m[1]) * (m[2].toLowerCase() === "h" ? 60 : 1))) : "";
+      });
+    }
     if (key === "approach") {
       list = Array.from({ length: n }, (_, i) => [at(p, "a"), at(p, "d")].map((x) => english(x?.cells[i] ?? "")).filter(Boolean).join(" / "));
     }
@@ -398,8 +546,12 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
     }
     if (key === "usb") {
       list = Array.from({ length: n }, (_, i) => {
-        const [u, c] = [at(p, "usb"), at(p, "c")].map((x) => english(x?.cells[i] ?? "").replace(/个/g, ""));
-        return [u && u !== "–" ? `${u} USB` : "", c && c !== "–" ? `${c} Type-C` : ""].filter(Boolean).join(", ");
+        // EC75/R5: one cell "●(1, type-C, 66W fast charging)/(1, USB, data transfer)", often garbled by the PDF.
+        if ([at(p, "usb"), at(p, "c")].some((x) => /type-?\s*c[^]*66\s*W/i.test(x?.cells[i] ?? ""))) return "1 Type-C (66W хурдан цэнэглэлт), 1 USB";
+        const [u, c] = [at(p, "usb"), at(p, "c")].map((x) => english(x?.cells[i] ?? "").replace(/个/g, "").replace(/^(тийм|yes)$/i, ""));
+        const has = (x: typeof u, cell?: string) => x && x !== "–" ? x : /^(тийм|yes)$/i.test((cell ?? "").trim()) ? "●" : "";
+        const [uu, cc] = [has(u, at(p, "usb")?.cells[i]), has(c, at(p, "c")?.cells[i])];
+        return translate([uu ? (uu === "●" ? "USB" : `${uu} USB`) : "", cc ? (cc === "●" ? "Type-C" : `${cc} Type-C`) : ""].filter(Boolean).join(", "));
       });
     }
     if (key === "engine_model") {
@@ -421,6 +573,17 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
     if (list.some((v) => untranslated(v)) || (field && list.some((v) => checkValue(field, v)?.level === "error")) ||
         (field?.kind === "mark" && list.some((v) => !v) && list.some(Boolean))) check.add(key);
   }
+
+  // Pure-electric tabs label the motor torque "最大扭矩", which the engine rule takes: move it back to the motor.
+  const noEngine = !values.engine_model || values.engine_model.every((v) => !v || /^(–|үгүй)$/i.test(v));
+  const engineTorque = extras.findIndex((e) => e.label.startsWith("Хөдөлгүүрийн эргэх момент"));
+  if (noEngine && !values.torque && engineTorque >= 0 && extras[engineTorque].values.some((v) => /\d/.test(v))) {
+    values.torque = extras[engineTorque].values;
+    extras.splice(engineTorque, 1);
+  }
+
+  // Some tabs only describe the AC control ("Manual air conditioning"): that means the car has AC.
+  if (!values.ac && values.ac_control?.some((v) => v && v !== "–")) values.ac = values.ac_control.map((v) => (v && v !== "–" ? "●" : ""));
 
   // Configurations with the same trim name (single / double cab) get the cab added.
   const dup = names.some((name, i) => names.indexOf(name) !== i);
@@ -445,11 +608,13 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
  * One sellable vehicle out of a tab: only the given cab ("Нэг эгнээ" / "Давхар эгнээ"), only the given
  * body ("Задгай" / "Битүү"; other bodies such as "Торон хаалттай" disappear), and without the dropped trims.
  */
-export function narrow(sheet: SpecSheet, { cab, body, drop = [], dropLowest = true }: { cab?: string; body?: string; drop?: string[]; dropLowest?: boolean }): SpecSheet {
+export function narrow(sheet: SpecSheet, { cab, body, drop = [], dropLowest = true, cols }: { cab?: string; body?: string; drop?: string[]; dropLowest?: boolean; cols?: number[] }): SpecSheet {
   const trimOf = (i: number) => (cab ? sheet.configs[i].name.replace(` · ${cab}`, "") : sheet.configs[i].name);
   let keep = sheet.configs.map((_, i) => i).filter((i) => (!cab || sheet.values.cabin?.[i] === cab) && !drop.includes(trimOf(i)));
+  // Tabs whose columns are body types or different products (ED71S, EC31S): pick the columns (1-based) by hand.
+  if (cols) keep = cols.map((c) => c - 1).filter((i) => i >= 0 && i < sheet.configs.length);
   // Dealer rule (2026-11-14): the lowest trim (first column) is never sold, unless it is the only one.
-  if (dropLowest && keep.length > 1) keep = keep.slice(1);
+  else if (dropLowest && keep.length > 1) keep = keep.slice(1);
   const pick = (list: string[]) => keep.map((i) => (body ? valueForBody(list[i] ?? "", body) : list[i] ?? ""));
   return {
     configs: keep.map((i) => ({ ...sheet.configs[i], name: trimOf(i) })),
@@ -462,12 +627,17 @@ export function narrow(sheet: SpecSheet, { cab, body, drop = [], dropLowest = tr
 
 if (process.argv[1]?.endsWith("import-sheet.mts")) {
   // node … import-sheet.mts <tab.json> "<tab>" <out.json> [--cab "Нэг эгнээ"] [--body "Задгай"] [--drop "Pioneer,…"] [--keep-lowest]
+  //   [--cols "3"]                keep only these columns (1-based), for tabs whose columns are body types or products
+  //   [--names "Pioneer,Beyond"]  new names for the kept configurations, in order
   const [input, tab, output, ...flags] = process.argv.slice(2);
   const flag = (name: string) => { const at = flags.indexOf(`--${name}`); return at >= 0 ? flags[at + 1] : undefined; };
   const imported = importTab(JSON.parse(readFileSync(input, "utf8")), tab);
   const sheet = narrow(imported.sheet, {
-    cab: flag("cab"), body: flag("body"), drop: flag("drop")?.split(",").map((item) => item.trim()), dropLowest: !flags.includes("--keep-lowest")
+    cab: flag("cab"), body: flag("body"), drop: flag("drop")?.split(",").map((item) => item.trim()), dropLowest: !flags.includes("--keep-lowest"),
+    cols: flag("cols")?.split(",").map(Number)
   });
+  const rename = flag("names")?.split(",").map((item) => item.trim());
+  if (rename) sheet.configs = sheet.configs.map((config, i) => ({ ...config, name: rename[i] || config.name }));
   const report = imported.report;
   writeFileSync(output, JSON.stringify(sheet, null, 1));
   console.log(report.join("\n"));

@@ -66,7 +66,7 @@ export function bodyParts(value: string): [string, string][] {
   const isBody = (label: string) => label.split(/,\s*/).every((name) => BODY_TYPES.includes(name.toLowerCase()));
   return parts.every(([label]) => label && isBody(label)) ? parts : [["", value]];
 }
-const BODY_TYPES = ["задгай", "торон хаалттай", "битүү"];
+const BODY_TYPES = ["задгай", "торон хаалттай", "битүү", "хөргүүртэй"];
 
 export const DEALER_WARRANTY = "6 жил / 300,000 км";
 
@@ -102,6 +102,8 @@ export const FIELDS: Field[] = [
   f("dims", "track", "Урд / хойд мөр", "text", { unit: "мм", aliases: ["урд/арын тэнхлэг хоорондын зай", "урд болон хойд тэнхлэг хоорондын зай"] }),
   f("dims", "cargo_size", "Тэвш / ачааны хайрцаг", "text", { unit: "мм", aliases: ["тэвшний хэмжээ"], summary: true }),
   f("dims", "cargo_volume", "Ачааны багтаамж", "number", { unit: "м³", aliases: ["ачааны хайрцаг ачааны хэмжээ", "ачааны хэмжээ", "контейнер ачааны хэмжээ"], range: [1, 40], summary: true }),
+  f("dims", "side_doors", "Ачааны хажуугийн хаалга", "text", { aliases: ["тэвшний хажуугийн хаалга", "хайрцагны хажуугийн хаалга"] }),
+  f("dims", "fridge_temp", "Хөргөлтийн хэм", "text", { unit: "°C", aliases: ["хөргөлтийн температур", "хөргөгчийн температур", "хөргөлтийн хүрээ"] }),
   f("dims", "curb_weight", "Өөрийн жин", "number", { unit: "кг", aliases: ["өөрийн жин"], range: [700, 6000] }),
   f("dims", "gross_weight", "Нийт жин", "number", { unit: "кг", aliases: ["нийт масс", "нийт жин"], range: [1200, 9000] }),
   f("dims", "payload", "Даац", "number", { unit: "кг", aliases: ["ачааллын нэрлэсэн жин", "даац"], range: [200, 6000], summary: true }),
@@ -276,6 +278,8 @@ function cleanValue(field: Field | undefined, raw: string): string {
   }
   if (field.key === "motor_layout") return /урд/i.test(value) ? "Урд" : /ар|хойд/i.test(value) ? "Арын" : value;
   if (field.kind === "number") {
+    // Minutes written in hours ("1 цаг" for fast charging) → minutes; dropping the unit made it "1 мин".
+    if (field.unit === "мин" && /^[\d.,]+\s*цаг$/.test(value)) return String(Math.round(numbersIn(value)[0] * 60));
     // "18мин", "15л", "6.5 цаг" → number only; keeps ranges such as "1080/1055" or "70–100".
     const m = value.match(/^([\d.,]+(?:\s*[-–\/~]\s*[\d.,]+)?)\s*[\p{L}/.%³°·]{0,8}$/u);
     if (m) return m[1].replace(/\s+/g, "");
@@ -394,10 +398,10 @@ export function fromLegacy(rows: string[][]): SpecSheet {
 
 export type CompareRow = { label: string; cells: string[] };
 export type ChipGroup = { heading: string; chips: string[] };
-/** One line of the short "Гол үзүүлэлт" list (icon key → components/model/SpecIcon). */
+/** One line of the short "Гол үзүүлэлт" list (icon key → components/model/SpecIcon). Empty `value` = not entered yet ("Тодруулна уу"). */
 export type KeySpec = { icon: string; label: string; value: string; href?: string };
-/** One line of the short "Тоноглол" list for one trim: standard, optional extra, or not available (struck through). */
-export type EquipItem = { icon: string; label: string; state: "yes" | "option" | "none" };
+/** One line of the short "Тоноглол" list for one trim: standard, optional extra, not available (struck through), or not entered yet. */
+export type EquipItem = { icon: string; label: string; state: "yes" | "option" | "none" | "unknown" };
 /** One trim (иж бүрдэл) as shown in the spec section: its own key numbers and equipment. */
 export type PickerOption = {
   /** Column in SheetView.configs / the comparison tables. */
@@ -429,19 +433,45 @@ export type SheetView = {
   picker: Picker;
 };
 
-// Short lists shown before "Бүх үзүүлэлтийг харах" — in priority order, at most 10 each.
-const KEY_SPECS: { key: string; icon: string }[] = [
-  { key: "range", icon: "range" }, { key: "total_range", icon: "range" }, { key: "battery_kwh", icon: "battery" },
-  { key: "dc_time", icon: "charging" }, { key: "power", icon: "motor" }, { key: "payload", icon: "payload" },
-  { key: "size", icon: "dimension" }, { key: "cargo_size", icon: "cargo" }, { key: "seats", icon: "seats" },
-  { key: "drive", icon: "drive" }, { key: "tank", icon: "fuel" }
+// ---------------------------------------------------------------- fixed key slots
+//
+// The short lists before "Бүх үзүүлэлтийг харах" have FIXED slots: the same rows in the same order on
+// every model, so a visitor's eye finds "Даац" in the same place on each page. A row without a value
+// stays in its slot as "Тодруулна уу" instead of being dropped (which used to shift the later icons).
+//
+// Key numbers: 7 slots shared by every model + 3 that depend on the menu category:
+//   1–4 range, battery, fast charge, motor · 5–7 category slots · 8–10 size, drive, warranty.
+
+/** Menu categories (Supabase `categories.id`); each has its own three middle slots. */
+export type SlotSet = "passenger" | "cargo-van" | "flatbed" | "box" | "refrigerated" | "special";
+type Slot = { key: string; icon: string; label?: string };
+
+export const CATEGORY_SLOTS: Record<SlotSet, Slot[]> = {
+  "cargo-van": [{ key: "cargo_volume", icon: "van" }, { key: "payload", icon: "payload" }, { key: "seats", icon: "seats" }],
+  passenger: [{ key: "seats", icon: "seats" }, { key: "doors", icon: "doors" }, { key: "cargo_volume", icon: "van", label: "Ачааны зай" }],
+  flatbed: [{ key: "cargo_size", icon: "cargo", label: "Тэвшний хэмжээ" }, { key: "payload", icon: "payload" }, { key: "seats", icon: "seats" }],
+  box: [{ key: "cargo_size", icon: "box", label: "Хайрцагны хэмжээ" }, { key: "payload", icon: "payload" }, { key: "side_doors", icon: "doors", label: "Хажуугийн хаалга" }],
+  refrigerated: [{ key: "cargo_size", icon: "refrigerator", label: "Хайрцагны хэмжээ" }, { key: "fridge_temp", icon: "snow" }, { key: "payload", icon: "payload" }],
+  special: [{ key: "cargo_size", icon: "box", label: "Ачааны хэмжээ" }, { key: "payload", icon: "payload" }, { key: "seats", icon: "seats" }]
+};
+const SLOTS_BEFORE: Slot[] = [
+  { key: "range", icon: "range" }, { key: "battery_kwh", icon: "battery", label: "Батерей" },
+  { key: "dc_time", icon: "charging" }, { key: "power", icon: "motor" }
 ];
+const SLOTS_AFTER: Slot[] = [{ key: "size", icon: "dimension", label: "Гадна хэмжээ" }, { key: "drive", icon: "drive" }];
+
+/** The model's slot set: its menu category, or (for a model without a menu card) a guess from its body type. */
+export function slotSetFor(categoryId?: string, bodyType?: string): SlotSet {
+  if (categoryId && categoryId in CATEGORY_SLOTS) return categoryId as SlotSet;
+  const byBody: Record<string, SlotSet> = { van: "cargo-van", flatbed: "flatbed", flatbed4: "flatbed", box: "box", refrigerator: "refrigerated" };
+  return byBody[bodyType ?? ""] ?? "special";
+}
+
+/** Ten equipment lines, the same on every model; no mark entered → "Тодруулна уу". */
 const KEY_EQUIPMENT: { key: string; icon: string }[] = [
   { key: "rear_camera", icon: "camera" }, { key: "camera360", icon: "camera360" }, { key: "abs", icon: "shield" },
   { key: "esc", icon: "steer" }, { key: "aeb", icon: "brake" }, { key: "acc", icon: "cruise" }, { key: "tpms", icon: "tire" },
-  { key: "v2l", icon: "plug" }, { key: "ac", icon: "snow" }, { key: "bluetooth", icon: "bluetooth" }, { key: "app", icon: "phone" },
-  { key: "ota", icon: "cloud" }, { key: "battery_heating", icon: "heat" }, { key: "regen", icon: "regen" },
-  { key: "ldw", icon: "lane" }, { key: "dms", icon: "eye" }
+  { key: "ac", icon: "snow" }, { key: "battery_heating", icon: "heat" }, { key: "v2l", icon: "plug" }
 ];
 
 /** Configurations shown on the site: for sale and with every must-have item (rear camera) as standard. */
@@ -535,7 +565,7 @@ export function siteColumns(sheet: SpecSheet): number[] {
   return sold.length ? [sold[sold.length - 1]] : [];
 }
 
-export function viewSheet(sheet: SpecSheet, fuel?: string): SheetView {
+export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "special"): SheetView {
   const cols = siteColumns(sheet);
   const groups = GROUPS.filter((group) => !group.fuelOnly || needsExtender(fuel));
   const visible = (field: Field) => !field.hidden && groups.some((group) => group.key === field.group);
@@ -595,11 +625,11 @@ export function viewSheet(sheet: SpecSheet, fuel?: string): SheetView {
   const total = full.reduce((sum, group) => sum + group.rows.length, 0);
   return {
     configs: cols.map((i) => sheet.configs[i].name), compare, chips, optional, full, total,
-    picker: buildPicker(sheet, cols, fuel, new Set(fields.map((field) => field.key)))
+    picker: buildPicker(sheet, cols, fuel, slotSet)
   };
 }
 
-function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined, visible: Set<string>): Picker {
+function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined, slotSet: SlotSet): Picker {
   const value = (key: string, i: number) => {
     const raw = sheet.values[key]?.[i] ?? "";
     return FIELD[key] && checkValue(FIELD[key], raw)?.level === "error" ? "" : raw;
@@ -618,25 +648,36 @@ function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined,
     }
   }
 
-  // Ten key numbers per trim and body: nine from KEY_SPECS that have a value, plus the dealer warranty.
+  // Ten fixed key slots per trim and body (see CATEGORY_SLOTS); the last one is always the dealer warranty.
   const std = [...new Set(cols.map((i) => value("range_std", i)).filter(Boolean))];
-  const rangeLabel = `${extender ? "Цахилгаанаар" : "Туулах зай"}${std.length === 1 ? ` (${std[0]})` : ""}`;
+  const slots = [...SLOTS_BEFORE, ...CATEGORY_SLOTS[slotSet], ...SLOTS_AFTER];
+  const shown = (key: string, i: number, body: string) => {
+    const raw = valueForBody(value(key, i), body);
+    if (!raw || raw === "–") return "";
+    return key === "drive" ? DRIVE_LABEL[raw] ?? raw : withUnit(raw, FIELD[key].unit);
+  };
   const specs = (i: number) => (bodies.length ? bodies : [""]).map((body) => {
-    const items = KEY_SPECS.filter((item) => visible.has(item.key)).map((item): KeySpec => {
-      const field = FIELD[item.key];
-      const raw = valueForBody(value(item.key, i), body);
-      const shown = !raw || raw === "–" ? "" : item.key === "drive" ? DRIVE_LABEL[raw] ?? raw : withUnit(raw, field.unit);
-      return { icon: item.icon === "drive" ? (raw || "rwd").toLowerCase() : item.icon, label: item.key === "range" ? rangeLabel : field.label, value: shown };
-    }).filter((item) => item.value).slice(0, 9);
+    const items = slots.map((slot): KeySpec => {
+      if (slot.key === "range") {
+        // Range extender: battery-only and total range in one slot, "70 / 1200 км" (as in the hero icon strip).
+        const ev = shown("range", i, body);
+        const total = extender ? shown("total_range", i, body) : "";
+        const label = `${extender ? (total ? "Цахилгаанаар / нийт" : "Цахилгаанаар") : "Туулах зай"}${std.length === 1 ? ` (${std[0]})` : ""}`;
+        const both = ev && total ? `${ev.replace(/\s*км$/, "")} / ${total}` : ev || (total ? `– / ${total}` : "");
+        return { icon: "range", label, value: both };
+      }
+      const raw = valueForBody(value(slot.key, i), body);
+      const icon = slot.key === "drive" ? (raw || "rwd").toLowerCase() : slot.icon;
+      return { icon, label: slot.label ?? FIELD[slot.key].label, value: shown(slot.key, i, body) };
+    });
     items.push({ icon: "shield", label: "Батерейн баталгаа", value: DEALER_WARRANTY, href: "/warranty/" });
     return { body, items };
   });
 
-  // The same ten equipment lines for every trim, so switching trims shows what comes and goes.
-  const equipKeys = KEY_EQUIPMENT.filter((item) => visible.has(item.key) && cols.some((i) => markOf(value(item.key, i)))).slice(0, 10);
-  const equipment = (i: number): EquipItem[] => equipKeys.map((item) => {
+  // The same ten equipment lines for every model and trim, so switching trims shows what comes and goes.
+  const equipment = (i: number): EquipItem[] => KEY_EQUIPMENT.map((item) => {
     const mark = markOf(value(item.key, i));
-    return { icon: item.icon, label: FIELD[item.key].label, state: mark === "●" ? "yes" : mark === "○" ? "option" : "none" };
+    return { icon: item.icon, label: FIELD[item.key].label, state: mark === "●" ? "yes" : mark === "○" ? "option" : mark === "–" ? "none" : "unknown" };
   });
 
   const options: PickerOption[] = cols.map((i, col) => {

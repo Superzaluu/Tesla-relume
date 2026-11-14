@@ -4,7 +4,7 @@ import { QuickIcon } from "@/components/ui/QuickSpecs";
 // same images (QuickIcon); the rest are drawn here in the same thin-stroke style.
 const QUICK: Record<string, string> = {
   range: "range", charging: "charging", motor: "motor", payload: "payload", dimension: "dimension", seats: "seats",
-  rwd: "rwd", fwd: "fwd", awd: "awd", fuel: "fuel", cargo: "flatbed"
+  rwd: "rwd", fwd: "fwd", awd: "awd", fuel: "fuel", cargo: "flatbed", van: "van", box: "box", refrigerator: "refrigerator", doors: "doors"
 };
 
 const PATHS: Record<string, string> = {

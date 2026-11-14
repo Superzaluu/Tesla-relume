@@ -8,7 +8,8 @@ export const ec75: Model = {
   slug: "ec75",
   name: "EC75",
   desc: "Цахилгаан фургон",
-  quick: { type: "van", label: "Фургон", size: "5130 x 1860 x 2020 мм", range: "420 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 30 мин", seats: "2–6 суудал", seatsPassenger: "6–14 суудал", payload: "Тохируулгаас хамаарна" },
+  // Checked against Google Sheet «Ruichi specs» EC75 P / EC75 C, 61.94 kWh columns (2026-11-15).
+  quick: { type: "van", label: "Фургон", size: "5130 x 1860 x 2020 мм", range: "415–420 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 18 мин", seats: "2 суудал", seatsPassenger: "6–14 суудал", payload: "1,500–2,000 кг" },
   page: {
     pageTitle: "Цахилгаан фургон",
     variants: true,
@@ -22,7 +23,7 @@ export const ec75: Model = {
       }
     },
     stats: [
-      { value: "420", unit: "км", label: "Цэнэглэлтийн зай (CLTC)", note: 1 },
+      { value: { cargo: "420", passenger: "415" }, unit: "км", label: "Цэнэглэлтийн зай (CLTC)", note: 1 },
       { value: "18", unit: "мин", label: "Хурдан цэнэглэлт 20–80%" },
       { value: "130", unit: "кВт", label: "Моторын хүч" },
       { value: { cargo: "7.7", passenger: "6–14" }, unit: { cargo: "м³", passenger: "суудал" }, label: { cargo: "Ачааны багтаамж", passenger: "Суудлын сонголт" } }
@@ -68,9 +69,10 @@ export const ec75: Model = {
       { id: "assist", blocks: [
         { type: "title", tagline: "Ухаалаг жолоодлогын хувилбар", title: "Жолоочийн 7 туслах функц", text: "Камер болон радарт тулгуурласан туслах системүүд аялал бүрийг аюулгүй, ядаргаа багатай болгоно.", note: 2 },
         { type: "adas", items: [
-          { id: "acc", name: "Дасан зохицох круиз контрол", code: "ACC", text: "0–80 км/ц хурдад урд машиныг автоматаар дагаж, зогсоод дахин хөдөлнө.", image: img("adas-acc.jpg", 800, 480, "Урд машиныг дагаж яваа EC75 — ACC") },
+          // Only what the spec sheet confirms (ACC/AEB present); no speed range or pedestrian detection claims.
+          { id: "acc", name: "Дасан зохицох круиз контрол", code: "ACC", text: "Урд машиныг автоматаар дагаж, хурд болон зайгаа барина.", image: img("adas-acc.jpg", 800, 480, "Урд машиныг дагаж яваа EC75 — ACC") },
           { id: "ica", name: "Нэгдсэн круиз", code: "TJA/ICA", text: "Түгжрэл болон хурдны замд эгнээндээ урд машиныг дагаж, жолоочийн ядаргааг бууруулна.", image: img("adas-ica.jpg", 800, 480, "Эгнээндээ төвлөрч яваа EC75 — TJA/ICA") },
-          { id: "aeb", name: "Яаралтай автомат тоормос", code: "AEB · FCW", text: "Урд талын зайг хянаж, мөргөлдөх эрсдэлийг анхааруулна. Гэнэт гарч ирсэн явган зорчигч, машины өмнө автоматаар тоормослоно.", image: img("adas-aeb.jpg", 800, 480, "Мөргөлдөх эрсдэлийг анхааруулж буй EC75 — AEB/FCW") },
+          { id: "aeb", name: "Яаралтай автомат тоормос", code: "AEB · FCW", text: "Урд талын зайг хянаж, мөргөлдөх эрсдэлийг анхааруулна. Шаардлагатай үед автоматаар тоормослоно.", image: img("adas-aeb.jpg", 800, 480, "Мөргөлдөх эрсдэлийг анхааруулж буй EC75 — AEB/FCW") },
           { id: "ldw", name: "Эгнээнээс гарах анхааруулга", code: "LDW", text: "Эгнээг тасралтгүй хянаж, эгнээнээс гарахад даруй анхааруулна.", image: img("adas-ldw.jpg", 800, 480, "Эгнээнээс гарах анхааруулга — LDW") },
           { id: "ldp", name: "Эгнээ хадгалах туслах", code: "LDP", text: "Санамсаргүй эгнээнээс гарах үед жолоог залруулж эгнээнд нь буцаана.", image: img("adas-ldp.jpg", 800, 480, "Эгнээнд буцаан залруулж буй EC75 — LDP") },
           { id: "isa", name: "Ухаалаг хурд хязгаарлагч", code: "ISA", text: "Хурдны хязгаарын тэмдгийг таньж, хэтрүүлэхгүй байхыг сануулна.", image: img("adas-isa.jpg", 800, 480, "Хурдны хязгаарын тэмдэг таньж буй EC75 — ISA") }
@@ -114,27 +116,28 @@ export const ec75: Model = {
           ] },
           { heading: "Зай ба цэнэглэлт", rows: [
             { label: "Зай", value: "61.94 кВт·ц LFP (CALB), шингэн хөргөлт" },
-            { label: "Цэнэглэлтийн зай (CLTC)", value: "420 км", note: 1 },
+            { label: "Цэнэглэлтийн зай (CLTC)", value: { cargo: "420 км", passenger: "415 км" }, note: 1 },
             { label: "Хурдан цэнэглэлт 20–80%", value: "18 мин" },
             { label: "Удаан цэнэглэлт", value: "6.6 кВт · ойролцоогоор 8 цаг" }
           ] },
           { heading: "Явах эд анги", rows: CHASSIS() }
         ],
+        // Pioneer I Supercharger has no standard rear camera, so it is not sold (dealer rule): one trim is left.
         compare: {
-          title: "Тохиргооны харьцуулалт", columns: ["Тохиргоо", "Pioneer I", "Ухаалаг жолоодлого"],
+          title: "Иж бүрдлийн тоноглол", columns: ["Тоноглол", "Pioneer I Smart Driving"],
           rows: [
-            { head: "Багажны самбар", cells: [{ text: "8.8\" дижитал" }, { text: "8.8\" LCD" }] },
-            { head: "Аудио", cells: [{ text: "—" }, { text: "MP3" }] },
-            { head: "Арын камер", cells: [{ text: "—" }, { text: "●" }] },
-            { head: "Дугуйн даралтын хяналт (TPMS)", cells: [{ text: { cargo: "—", passenger: "●" } }, { text: "●" }] },
-            { head: "Тогтвортой байдлын систем (ESC)", cells: [{ text: "—" }, { text: "●" }] },
-            { head: "AUTO HOLD", cells: [{ text: "—" }, { text: "●" }] },
-            { head: "ACC, TJA/ICA круиз", cells: [{ text: "—" }, { text: "●" }] },
-            { head: "AEB, FCW", cells: [{ text: "—" }, { text: "●" }] },
-            { head: "LDW, LDP", cells: [{ text: "—" }, { text: "●" }] },
-            { head: "Хурд хязгаарлагч (ISA)", cells: [{ text: "—" }, { text: "●" }] },
-            { head: "Агааржуулагч", cells: [{ text: { cargo: "Цахилгаан, нэг ууршуулагч", passenger: "Цахилгаан, хоёр ууршуулагч" }, span: 2 }] },
-            { head: "Түлхүүргүй асаалт, OTA, апп, V2L", cells: [{ text: "●" }, { text: "●" }] }
+            { head: "Багажны самбар", cells: [{ text: "8.8\" LCD" }] },
+            { head: "Аудио", cells: [{ text: "Bluetooth, MP3" }] },
+            { head: "Арын камер", cells: [{ text: "● багажны самбарт" }] },
+            { head: "Дугуйн даралтын хяналт (TPMS)", cells: [{ text: "●" }] },
+            { head: "Тогтвортой байдлын систем (ESC), AUTO HOLD", cells: [{ text: "●" }] },
+            { head: "ACC, TJA/ICA круиз", cells: [{ text: "●" }] },
+            { head: "AEB, FCW", cells: [{ text: "●" }] },
+            { head: "LDW, LDP", cells: [{ text: "●" }] },
+            { head: "Хурд хязгаарлагч (ISA)", cells: [{ text: "●" }] },
+            { head: "Автомат гэрэл, HMA", cells: [{ text: "●" }] },
+            { head: "Агааржуулагч", cells: [{ text: { cargo: "Цахилгаан, нэг ууршуулагч", passenger: "Цахилгаан, хоёр ууршуулагч" } }] },
+            { head: "Түлхүүргүй асаалт, OTA, апп, V2L", cells: [{ text: "●" }] }
           ]
         }
       }] }

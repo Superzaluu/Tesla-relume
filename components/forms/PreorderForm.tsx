@@ -76,8 +76,10 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
         {/* Honeypot: hidden from people, bots fill it. */}
         <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-px w-px opacity-0" />
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        {/* Proximity: fields are 20px apart inside a group and 32px between groups (model / contact /
+            payment / note), so the form reads as four steps instead of one flat list of nine fields. */}
+        <div className="grid gap-8">
+          <div>
             <label className={label} htmlFor="po-model">Загвар</label>
             <select id="po-model" name="model" required className={input} value={value} onChange={(e) => setValue(e.target.value)}>
               <option value="">Загвараа сонгоно уу</option>
@@ -91,28 +93,30 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
             </select>
           </div>
 
-          <div>
-            <label className={label} htmlFor="po-last-name">Овог</label>
-            <input id="po-last-name" name="last_name" autoComplete="family-name" required maxLength={80} className={input} />
-          </div>
-          <div>
-            <label className={label} htmlFor="po-name">Нэр</label>
-            <input id="po-name" name="name" autoComplete="given-name" required minLength={2} maxLength={80} className={input} />
-          </div>
-          <div>
-            <label className={label} htmlFor="po-phone">Утас</label>
-            <input id="po-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required pattern="[0-9+ \-]{8,20}" placeholder="9911 2233" className={input} />
-          </div>
-          <div>
-            <label className={label} htmlFor="po-email">И-мэйл</label>
-            <input id="po-email" name="email" type="email" autoComplete="email" required maxLength={160} placeholder="name@example.mn" className={input} />
-          </div>
-          <div className="sm:col-span-2">
-            <label className={label} htmlFor="po-facebook">Facebook нэр <span className="font-normal text-ink-muted">(заавал биш)</span></label>
-            <input id="po-facebook" name="facebook" maxLength={120} placeholder="Facebook дээрх таны нэр" className={input} />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className={label} htmlFor="po-last-name">Овог</label>
+              <input id="po-last-name" name="last_name" autoComplete="family-name" required maxLength={80} className={input} />
+            </div>
+            <div>
+              <label className={label} htmlFor="po-name">Нэр</label>
+              <input id="po-name" name="name" autoComplete="given-name" required minLength={2} maxLength={80} className={input} />
+            </div>
+            <div>
+              <label className={label} htmlFor="po-phone">Утас</label>
+              <input id="po-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required pattern="[0-9+ \-]{8,20}" placeholder="9911 2233" className={input} />
+            </div>
+            <div>
+              <label className={label} htmlFor="po-email">И-мэйл</label>
+              <input id="po-email" name="email" type="email" autoComplete="email" required maxLength={160} placeholder="name@example.mn" className={input} />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={label} htmlFor="po-facebook">Facebook нэр <span className="font-normal text-ink-muted">(заавал биш)</span></label>
+              <input id="po-facebook" name="facebook" maxLength={120} placeholder="Facebook дээрх таны нэр" className={input} />
+            </div>
           </div>
 
-          <fieldset className="m-0 min-w-0 border-0 p-0 sm:col-span-2">
+          <fieldset className="m-0 min-w-0 border-0 p-0">
             <legend className={label}>Төлбөрийн хэлбэр</legend>
             <div className="grid grid-cols-3 gap-2">
               {PAYMENTS.map((option, i) => (
@@ -134,7 +138,7 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
             )}
           </fieldset>
 
-          <div className="sm:col-span-2">
+          <div>
             <label className={label} htmlFor="po-note">Тайлбар <span className="font-normal text-ink-muted">(заавал биш)</span></label>
             <textarea id="po-note" name="note" rows={4} maxLength={1000} placeholder="Өнгө, тохиргоо, тоо ширхэг эсвэл асуух зүйл" className={`${input} resize-y`} />
           </div>

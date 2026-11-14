@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
 
-/** Text + image call-to-action block (promotion, warranty). */
-export function CtaBlock({ title, text, action, image, className = "" }: {
+/** Text + image call-to-action block (promotion, warranty). `figures` are key numbers shown large under the text. */
+export function CtaBlock({ title, text, action, image, figures, className = "" }: {
   title: string; text: string; action: { label: string; href: string };
-  image: { src: string; alt: string; shape: "4x3" | "square" }; className?: string;
+  image: { src: string; alt: string; shape: "4x3" | "square" | "banner" }; figures?: { value: string; label: string }[]; className?: string;
 }) {
   return (
     <section className="section">
@@ -17,6 +17,13 @@ export function CtaBlock({ title, text, action, image, className = "" }: {
               <h2 className="h2">{title}</h2>
               <p className="text-medium">{text}</p>
             </div>
+            {figures && (
+              <dl className="cta__figures">
+                {figures.map((figure) => (
+                  <div className="cta__figure" key={figure.label}><dt>{figure.label}</dt><dd>{figure.value}</dd></div>
+                ))}
+              </dl>
+            )}
             <div className={`actions${className ? " actions--gap-16" : ""}`}>
               <Link className="btn btn--primary" href={action.href}>{action.label}</Link>
             </div>

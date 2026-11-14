@@ -7,6 +7,8 @@ import { SpecIcon } from "@/components/model/SpecIcon";
 import type { Picker } from "@/data/specSheet";
 
 const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
+/** Text in a fixed slot whose value has not been entered yet. */
+const MISSING = "Тодруулна уу";
 
 function Segmented({ label, items, value, onPick, available }: {
   label: string; items: string[]; value: string; onPick: (item: string) => void; available: (item: string) => boolean;
@@ -69,12 +71,15 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
           <div>
             <h3 className="h5 mkey__title">Гол үзүүлэлт</h3>
             <ul className="mkey__list">
+              {/* Fixed slots: a slot without a value keeps its place ("Тодруулна уу") so icons never shift. */}
               {specs.items.map((item) => (
-                <li key={item.label}>
+                <li key={item.label} className={item.value ? undefined : "is-missing"}>
                   <SpecIcon icon={item.icon} />
                   <span className="mkey__text">
                     <span className="mkey__label">{item.label}</span>
-                    <strong>{item.href ? <a href={item.href}>{item.value}</a> : item.value}</strong>
+                    {item.value
+                      ? <strong>{item.href ? <a href={item.href}>{item.value}</a> : item.value}</strong>
+                      : <span className="mkey__missing">{MISSING}</span>}
                   </span>
                 </li>
               ))}
@@ -86,11 +91,12 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
               <h3 className="h5 mkey__title">Тоноглол</h3>
               <ul className="mkey__list">
                 {option.equipment.map((item) => (
-                  <li key={item.label} className={item.state === "none" ? "is-none" : undefined}>
+                  <li key={item.label} className={item.state === "none" ? "is-none" : item.state === "unknown" ? "is-missing" : undefined}>
                     <SpecIcon icon={item.icon} off={item.state === "none"} />
                     <span className="mkey__text">
                       <span className="mkey__name">{item.label}</span>
                       {item.state === "option" && <span className="mkey__note">Нэмэлт сонголтоор</span>}
+                      {item.state === "unknown" && <span className="mkey__missing">{MISSING}</span>}
                       {item.state === "none" && <span className="sr-only"> — энэ иж бүрдэлд байхгүй</span>}
                     </span>
                   </li>

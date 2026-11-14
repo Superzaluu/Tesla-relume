@@ -638,3 +638,29 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 .msheet .mcompare__scroll{border:1px solid #dce3ea;background:#fff;}
 .msheet .mcompare table,
 .msheet .mspec-table{border-radius:0;background:#fff;box-shadow:none;}
+
+/* ---------- Proximity pass (model pages) ---------- */
+/* Feature blocks: the small tagline is the title's label, so it sits 8px above the title; the
+   title and its text stay 16px apart. (All four lines used to be 16px apart, reading as four items.) */
+.mfeature__text .tagline + .h2{margin-top:-8px;}
+/* Equipment chips: a heading was 16px from its own pills but only 20px from the previous group,
+   so it could belong to either. Now 10px inside a group, 32px between groups. */
+.mchips{gap:10px;}
+.msheet__chips{gap:32px;}
+/* "Бүх үзүүлэлтийг харах": the opened content belongs to the button, so it opens 24px below it —
+   closer than the 48px between the button and the trim card above it. */
+.msheet__more-body{margin-top:24px;}
+
+/* ---------- Prägnanz pass (model pages) ---------- */
+/* One card radius: the trim card and battery cards were 16px next to 14px image cards and tables. */
+.mpick__panel,
+.mpick__head,
+.mpick__cards li{border-radius:var(--radius-card);}
+.mpick__panel > .mpick__head{border-radius:0;}
+
+/* ---------- Fixed key slots ---------- */
+/* A slot without a value keeps its place: muted icon and "Тодруулна уу" instead of a value, so the
+   icons sit in the same position on every model page. */
+.mkey__list li.is-missing .mkey__icon{color:var(--color-text-secondary);opacity:.45;}
+.mkey__missing{font-size:15px;font-weight:500;color:var(--color-text-muted);}
+.mkey__list li.is-missing .mkey__name{color:var(--color-text-secondary);}

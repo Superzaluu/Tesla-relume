@@ -1713,3 +1713,38 @@ body::before { display:none; }
 @media (max-width:991px), (max-aspect-ratio:6/5) {
   .hero__quick-specs { gap:2px 6px; padding:6px 8px; border-radius:14px; }
 }
+
+/* ---------- Proximity pass ---------- */
+/* Section titles: the tagline labels the title, so it sits 6px above it while the title and its
+   text stay 12px apart (all three were 12px apart, so the tagline floated as a separate line). */
+.section-title--narrow .tagline + .h2 { margin-top:-6px; }
+/* Poll: the answer buttons are one set; at 24px apart they were nearly as far from each other as
+   from the results above (32px). */
+.poll-card .actions--gap-24 { gap:12px; }
+
+/* ---------- Prägnanz pass ---------- */
+/* Warranty card: it was three stacked layers — the model line-up at 27% opacity, a white gradient
+   over it, and "6 ЖИЛ · 300,000 КМ" as a 14%-opacity watermark across the vans. The key fact was
+   the faintest thing in the card and the photo read as noise. Now: text, the two numbers as real
+   large text, the button, then the line-up photo as a plain full-width banner. */
+.cta--warranty { flex-direction:column; align-items:stretch; gap:36px; min-height:0; padding:48px; }
+.cta--warranty::before,
+.cta--warranty::after { content:none; display:none; }
+.cta--warranty .cta__column { max-width:none; }
+.cta--warranty .cta__image { position:static; flex:none; width:100%; height:auto; opacity:1; border-radius:var(--radius-card); }
+.cta__image--banner { aspect-ratio:24 / 5; }
+.cta__figures { display:flex; flex-wrap:wrap; gap:16px 56px; margin:0; }
+.cta__figure { display:flex; flex-direction:column-reverse; gap:4px; }
+.cta__figure dd { margin:0; font-size:clamp(36px, 4vw, 56px); font-weight:700; line-height:1; letter-spacing:-.03em; color:#0f5a3a; }
+.cta__figure dt { font-size:var(--text-small); font-weight:600; color:var(--color-text-secondary); }
+@media (max-width:991px) {
+  .cta--warranty { gap:24px; padding:28px 22px; }
+  .cta__image--banner { aspect-ratio:3 / 1; }
+}
+
+/* One card radius (--radius-card, 14px) for every card-like region; 16px panels sat next to 14px cards. */
+.hero__quick-specs { border-radius:var(--radius-card); }
+
+/* Fixed icon slots: a fact not entered yet keeps its slot with a muted icon and "—". */
+.hero__quick-spec.is-missing .hero__quick-icon { opacity:.35; }
+.hero__quick-spec.is-missing strong { color:var(--color-text-muted); font-weight:500; }

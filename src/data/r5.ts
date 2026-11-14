@@ -9,7 +9,8 @@ export const r5: Model = {
   slug: "r5",
   name: "R5",
   desc: "Цахилгаан фургон",
-  quick: { type: "van", label: "Фургон", size: "5170 x 1860 x 2020 мм", range: "403 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 30 мин", seats: "2–9 суудал", payload: "Тохируулгаас хамаарна" },
+  // Sold in Mongolia with the 58.24 kWh battery only (one step below R5 Pro's 61.94 kWh; dealer, 2026-11-15).
+  quick: { type: "van", label: "Фургон", size: "5170 x 1860 x 2020 мм", range: "401–403 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 18 мин", seats: "2 суудал", seatsPassenger: "6–9 суудал", payload: "1,500–2,000 кг" },
   page: {
     pageTitle: "Цахилгаан фургон",
     variants: true,
@@ -19,9 +20,9 @@ export const r5: Model = {
       image: { src: "/assets/r5/hero.jpg", width: 1920, height: 1160, alt: "Ногоон R5 ачааны фургон ба цагаан R5 зорчигчийн фургон" }
     },
     stats: [
-      { value: { cargo: "401", passenger: "403" }, unit: "км хүртэл", label: "Цэнэглэлтийн зай (CLTC)", note: 1 },
+      { value: { cargo: "401", passenger: "403" }, unit: "км", label: "Цэнэглэлтийн зай (CLTC)", note: 1 },
       { value: "18", unit: "мин", label: "Хурдан цэнэглэлт 20–80%" },
-      { value: { cargo: "70", passenger: "70–100" }, unit: "кВт", label: "Моторын хүч" },
+      { value: { cargo: "70", passenger: "100" }, unit: "кВт", label: "Моторын хүч" },
       { value: { cargo: "7.7", passenger: "6–9" }, unit: { cargo: "м³", passenger: "суудал" }, label: { cargo: "Ачааны багтаамж", passenger: "Суудлын тоо" } }
     ],
     statsSecondary: "test-drive",
@@ -55,22 +56,14 @@ export const r5: Model = {
       { id: "battery", tone: "dark", blocks: [
         { type: "feature", reverse: true, image: img("glow.jpg", 800, 450, "Шөнийн замд гэрэлтэж буй R5"),
           tagline: "Зай ба цэнэглэлт", title: "Ажлын хэрэгцээндээ тохирох зай",
-          text: "41.5-аас 58.24 кВт·ц хүртэлх дөрвөн төрлийн лити төмрийн фосфат (LFP) зай. Шингэн хөргөлттэй 2C зай 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ.",
+          text: "58.24 кВт·ц багтаамжтай, шингэн хөргөлттэй лити төмрийн фосфат (LFP) зай. 2C хурдан цэнэглэлтээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэж, нэг цэнэглэлтээр 401–403 км явна.",
           facts: {
-            cargo: [{ label: "Хүч / эргэх момент", value: "70 кВт / 230 Н·м" }, { label: "Дээд хурд", value: "80–90 км/ц" }, { label: "Хөтлөгч", value: "Урд" }],
-            passenger: [{ label: "Моторын хүч", value: "70–100 кВт" }, { label: "Дээд хурд", value: "100 км/ц" }, { label: "Хөтлөгч", value: "Урд" }]
+            cargo: [{ label: "Хүч / эргэх момент", value: "70 кВт / 230 Н·м" }, { label: "Дээд хурд", value: "90 км/ц" }, { label: "Хөтлөгч", value: "Урд" }],
+            passenger: [{ label: "Хүч / эргэх момент", value: "100 кВт / 240 Н·м" }, { label: "Дээд хурд", value: "100 км/ц" }, { label: "Хөтлөгч", value: "Урд" }]
           } },
-        { type: "table", title: "Зайн сонголт", className: "mbattery",
-          columns: ["Зай", "Хөргөлт", "Хурдан 20–80%", "Удаан цэнэглэлт", "Зай (CLTC)"], columnNotes: { 4: 1 },
-          rows: [
-            { head: "41.5 кВт·ц", cells: [{ text: "Агаар" }, { text: "45 мин (1C)" }, { text: "3.3 кВт · 10.8 ц" }, { text: { cargo: "252 км", passenger: "302 км" } }] },
-            { head: "50.1 кВт·ц", cells: [{ text: "Шингэн" }, { text: "18 мин (2C)" }, { text: "6.6 кВт · 6.5–6.8 ц" }, { text: { cargo: "306 км", passenger: "353 км" } }] },
-            { head: "52.16 кВт·ц", cells: [{ text: "Шингэн" }, { text: "18 мин (2C)" }, { text: "6.6 кВт · 6.8 ц" }, { text: { cargo: "322 км", passenger: "367 км" } }] },
-            { head: "58.24 кВт·ц", cells: [{ text: "Шингэн" }, { text: "18 мин (2C)" }, { text: "6.6 кВт · 8 ц" }, { text: { cargo: "401 км", passenger: "403 км" } }] }
-          ] },
         { type: "columns", items: [
-          { value: "18 мин", title: "Хурдан цэнэглэлт", text: "2C зайтай хувилбар хурдан цэнэглэгчээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ." },
-          { value: "6.6 кВт", title: "Гэр, агуулахдаа", text: "Удаан цэнэглэгчээр шөнөжин цэнэглэж, өглөө бүрэн цэнэгтэй гарна." },
+          { value: "18 мин", title: "Хурдан цэнэглэлт", text: "Хурдан цэнэглэгчээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ." },
+          { value: "6.6 кВт", title: "Гэр, агуулахдаа", text: "Удаан цэнэглэгчээр ойролцоогоор 8 цагт бүрэн цэнэглэгдэж, өглөө бэлэн гарна." },
           { value: "V2L", title: "Цахилгаан хуваалцах", text: "Машины зайгаас гадны багаж, төхөөрөмжөө тэжээнэ. Тоормослох үед энерги сэргээнэ." }
         ] }
       ] },
@@ -105,7 +98,7 @@ export const r5: Model = {
       { id: "interior", blocks: [
         { type: "feature", image: img("cockpit.jpg", 800, 533, "R5-ын кабин, төв дэлгэц"),
           tagline: "Кабин", title: "Ухаалаг кабин",
-          text: "8.8 инчийн дижитал багажны самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Дээд хувилбарт 15.6 инчийн төв дэлгэц, дуут удирдлага, утасгүй цэнэглэгч нэмэгдэнэ.",
+          text: "8.8 инчийн LCD багажны самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Beyond II иж бүрдэлд 15.6 инчийн төв дэлгэц, дуут удирдлага, утасгүй цэнэглэгч нэмэгдэнэ.",
           facts: [{ label: "Багажны самбар", value: "8.8\"" }, { label: "Төв дэлгэц", value: "15.6\"" }, { label: "Түдгэлзүүлэлт", value: "MacPherson" }] },
         { type: "connected", items: CONNECTED() }
       ] },
@@ -121,33 +114,33 @@ export const r5: Model = {
           ] },
           { heading: "Хүч", rows: [
             { label: "Мотор", value: "Байнгын соронзон синхрон, урд" },
-            { label: "Хүч / эргэх момент", value: { cargo: "70 кВт / 230 Н·м", passenger: "70 кВт / 230 Н·м · 58.24 кВт·ц: 100 кВт / 240 Н·м" } },
+            { label: "Хүч / эргэх момент", value: { cargo: "70 кВт / 230 Н·м", passenger: "100 кВт / 240 Н·м" } },
             { label: "Хөтлөгч", value: "Урд дугуйгаар" },
-            { label: "Дээд хурд", value: { cargo: "80–90 км/ц", passenger: "100 км/ц" } }
+            { label: "Дээд хурд", value: { cargo: "90 км/ц", passenger: "100 км/ц" } }
           ] },
           { heading: "Зай ба цэнэглэлт", rows: [
-            { label: "Зай", value: "41.5–58.24 кВт·ц LFP" },
-            { label: "Цэнэглэлтийн зай (CLTC)", value: { cargo: "252–401 км", passenger: "302–403 км" }, note: 1 },
-            { label: "Хурдан цэнэглэлт 20–80%", value: "18 мин (2C) · 45 мин (1C)" },
-            { label: "Удаан цэнэглэлт", value: "6.6 кВт (41.5 кВт·ц: 3.3 кВт)" }
+            { label: "Зай", value: "58.24 кВт·ц LFP (Ganfeng), шингэн хөргөлт" },
+            { label: "Цэнэглэлтийн зай (CLTC)", value: { cargo: "401 км", passenger: "403 км" }, note: 1 },
+            { label: "Хурдан цэнэглэлт 20–80%", value: "18 мин (2C)" },
+            { label: "Удаан цэнэглэлт", value: "6.6 кВт · ойролцоогоор 8 цаг" }
           ] },
           { heading: "Явах эд анги", rows: CHASSIS() }
         ],
+        // Pioneer I Supercharger has no standard rear camera, so it is not sold (dealer rule); two trims remain.
         compare: {
-          title: "Тохиргооны харьцуулалт", columns: ["Тохиргоо", "Pioneer", "Ухаалаг жолоодлого", "Beyond"],
+          title: "Иж бүрдлийн харьцуулалт", columns: ["Иж бүрдэл", "Pioneer I Smart Driving", "Beyond II Smart Driving"],
           rows: [
-            { head: "Багажны самбар / дэлгэц", cells: [{ text: "8.8\" дижитал" }, { text: "8.8\" LCD" }, { text: "8.8\" + 15.6\" төв дэлгэц" }] },
-            { head: "Арын камер", cells: [{ text: "—" }, { text: "●" }, { text: "●" }] },
-            { head: "Дугуйн даралтын хяналт (TPMS)", cells: [{ text: { cargo: "—", passenger: "●" } }, { text: "●" }, { text: "●" }] },
-            { head: "ESC, AUTO HOLD", cells: [{ text: "—" }, { text: "●" }, { text: "●" }] },
-            { head: "Автомат гэрэл, HMA", cells: [{ text: "—" }, { text: "●" }, { text: "●" }] },
-            { head: "ACC, ICA, AEB, FCW, LDW, LDP, ISA", cells: [{ text: "—" }, { text: "●" }, { text: "●" }] },
-            { head: "360° камер, DMS", cells: [{ text: "—" }, { text: "—" }, { text: "●" }] },
-            { head: "Агаарын дэр", cells: [{ text: "—" }, { text: "—" }, { text: { cargo: "Жолооч", passenger: "Жолооч, зорчигч" } }] },
-            { head: "Утасгүй цэнэглэгч, дуут удирдлага", cells: [{ text: "—" }, { text: "—" }, { text: "●" }] },
-            { head: "Чанга яригч", cells: [{ text: "2" }, { text: "2" }, { text: "4" }] },
-            { head: "Суудлын материал", cells: [{ text: "Даавуу" }, { text: "Даавуу" }, { text: "Арьс + даавуу" }] },
-            { head: "Түлхүүргүй асаалт, OTA, апп", cells: [{ text: "●" }, { text: "●" }, { text: "●" }] }
+            { head: "Багажны самбар / дэлгэц", cells: [{ text: "8.8\" LCD" }, { text: "8.8\" LCD + 15.6\" төв дэлгэц" }] },
+            { head: "Арын камер, TPMS, ESC, AUTO HOLD", cells: [{ text: "●" }, { text: "●" }] },
+            { head: "Автомат гэрэл, HMA", cells: [{ text: "●" }, { text: "●" }] },
+            { head: "ACC, ICA, AEB, FCW, LDW, LDP, ISA", cells: [{ text: "●" }, { text: "●" }] },
+            { head: "Зогсоолын радар", cells: [{ text: "Хойд" }, { text: "Урд, хойд" }] },
+            { head: "360° камер, DMS", cells: [{ text: "—" }, { text: "●" }] },
+            { head: "Агаарын дэр", cells: [{ text: "—" }, { text: "Жолооч, зорчигч" }] },
+            { head: "Утасгүй цэнэглэгч, дуут удирдлага", cells: [{ text: "—" }, { text: "●" }] },
+            { head: "Чанга яригч", cells: [{ text: "2" }, { text: "4" }] },
+            { head: "Суудлын материал", cells: [{ text: "Даавуу" }, { text: "Арьс + даавуу" }] },
+            { head: "Түлхүүргүй асаалт, OTA, апп, V2L", cells: [{ text: "●" }, { text: "●" }] }
           ]
         }
       }] }

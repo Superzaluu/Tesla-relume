@@ -12,7 +12,7 @@ import type { HeroSlide } from "./home";
 import { greenLoanHref, modelBySlug as pageModelBySlug, modelHref, preorderHref } from "./models";
 import type { NavCategory } from "./navigation";
 import { buildSpecRows, type SpecRow } from "./specTable";
-import { fromLegacy, viewSheet, type SheetView, type SpecSheet } from "./specSheet";
+import { fromLegacy, viewSheet, type SheetView, type SlotSet, type SpecSheet } from "./specSheet";
 import { isByVariant, pick, toFuelType, type CategoryId, type Model, type QuickSpecs, type Stat, type Variant } from "./types";
 
 export type CategoryRow = { id: string; label: string; sort: number };
@@ -151,8 +151,10 @@ export const getNavigation = cache(async (): Promise<NavCategory[]> => {
     .filter((category) => category.items.length > 0);
 });
 
-export const getCategoryLabel = async (slug: string) =>
-  (await getNavigation()).find((category) => category.items.some((item) => item.slug === slug))?.label;
+/** The first menu category that lists the model (id + label). */
+export const getCategory = async (slug: string) =>
+  (await getNavigation()).find((category) => category.items.some((item) => item.slug === slug));
+export const getCategoryLabel = async (slug: string) => (await getCategory(slug))?.label;
 
 /** Homepage "Бүх загвар" cards: every menu entry with its first three stats. */
 export const getModelCards = cache(async (): Promise<{ cards: ModelCardData[]; categories: { id: string; label: string }[] }> => {
@@ -249,7 +251,7 @@ export async function getSpecSheet(slug: string): Promise<SpecSheet | null> {
 }
 
 /** What the model page shows from the spec sheet (only configurations marked for sale). */
-export async function getSpecView(slug: string, fuel?: string): Promise<SheetView | null> {
+export async function getSpecView(slug: string, fuel?: string, slotSet?: SlotSet): Promise<SheetView | null> {
   const sheet = await getSpecSheet(slug);
-  return sheet ? viewSheet(sheet, fuel) : null;
+  return sheet ? viewSheet(sheet, fuel, slotSet) : null;
 }

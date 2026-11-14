@@ -145,7 +145,7 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
           </ul>
         </nav>
 
-        <article className="rounded-2xl border border-solid border-[#dce3ea] bg-white px-6 py-8 md:px-10 md:py-10">
+        <article className="rounded-card border border-solid border-[#dce3ea] bg-white px-6 py-8 md:px-10 md:py-10">
           <p className="tagline">Хууль эрх зүй</p>
           <h1 className="mt-2 text-[clamp(30px,3.6vw,44px)] font-bold leading-tight tracking-tight text-ink">{page.title}</h1>
           <p className="m-0 mt-2 text-xs text-ink-muted">Шинэчилсэн: {UPDATED_ON} · Түр хувилбар</p>

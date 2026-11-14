@@ -36,7 +36,8 @@ export default async function HomePage() {
           title="Баталгаат хугацаа"
           text="Зайны багц болон автомашины баталгааны нөхцөлийг харна уу."
           action={{ label: "Баталгааг харах", href: "/warranty/" }}
-          image={{ src: "/assets/order-models.png", alt: "Баталгаат хугацаа: 6 жил, 300,000 км", shape: "square" }}
+          figures={[{ value: "6 жил", label: "Баталгаат хугацаа" }, { value: "300,000 км", label: "Гүйлтийн хязгаар" }]}
+          image={{ src: "/assets/order-models.png", alt: "Ruichi-ийн цахилгаан загварууд", shape: "banner" }}
         />
 
         <ChargerStats stats={[{ value: "50", label: "Хурдан цэнэглэгч" }, { value: "5", label: "Энгийн цэнэглэгч" }]} />

@@ -33,11 +33,14 @@ export const rangeValue = (specs: Specs) =>
 /** Fast-charge time: the key stat when there is one ("18 мин"), otherwise the icon field without its "DC -" prefix. */
 export const chargeValue = (specs: Specs) => specs.fastCharge ?? specs.charge.replace(/^\s*(AC\/DC|DC|AC)\s*[-–]\s*/i, "").trim();
 
-/** Motor: BEV "130 кВт" with the electric motor icon; EREV/PHEV "110 кВт/1,499 cc" with the hybrid icon. */
-export const motorFact = (specs: Specs) => {
-  const value = specs.fuel === "BEV" ? specs.power : [specs.power, hasEngine(specs) ? specs.engine : undefined].filter(Boolean).join("/");
-  return value ? { icon: specs.fuel === "BEV" ? "motor" : "hybrid", value } : null;
-};
+/** Motor: BEV "130 кВт" with the electric motor icon; EREV/PHEV "110 кВт/1,499 cc" with the hybrid icon. Value "" when not entered. */
+export const motorFact = (specs: Specs) => ({
+  icon: specs.fuel === "BEV" ? "motor" : "hybrid",
+  value: (specs.fuel === "BEV" ? specs.power : [specs.power, hasEngine(specs) ? specs.engine : undefined].filter(Boolean).join("/")) ?? ""
+});
+
+/** Shown in a fixed icon slot whose value has not been entered yet. */
+export const MISSING_SHORT = "—";
 
 /**
  * Quick-spec icon drawn as a CSS mask, so it takes the text colour (`color`) exactly —
@@ -49,10 +52,14 @@ export function QuickIcon({ icon, className = "" }: { icon: string; className?: 
 
 // The icon and value say what each item is (Prägnanz); the label is kept for screen readers only.
 function Item({ icon, label, value }: { icon: string; label: string; value: ReactNode }) {
+  const missing = value === "" || value === undefined || value === null;
   return (
-    <span className="hero__quick-spec">
+    <span className={`hero__quick-spec${missing ? " is-missing" : ""}`}>
       <span className="hero__quick-icon"><QuickIcon icon={icon} /></span>
-      <span><small className="sr-only">{label}: </small><strong>{value}</strong></span>
+      <span>
+        <small className="sr-only">{label}: </small>
+        {missing ? <strong aria-label="тодруулна уу">{MISSING_SHORT}</strong> : <strong>{value}</strong>}
+      </span>
     </span>
   );
 }
@@ -60,24 +67,24 @@ function Item({ icon, label, value }: { icon: string; label: string; value: Reac
 /**
  * Icon strip with the model's key facts, laid over the hero photo. On model pages it is the only
  * place for these facts (the separate stats row was removed); battery capacity, top speed etc. stay in the spec table.
+ * Nine fixed slots in a fixed order on every model; a fact not entered yet shows "—" in its slot.
  */
 export function QuickSpecs({ specs }: { specs: Specs }) {
   const motor = motorFact(specs);
-  const charge = chargeValue(specs);
   return (
     <div className="hero__quick-specs" aria-label="Загварын шуурхай үзүүлэлтүүд">
       <Item icon="fuel" label="Түлш" value={specs.fuel} />
-      <Item icon={specs.drive.toLowerCase()} label="Хөтлөгч" value={specs.drive} />
+      <Item icon={(specs.drive || "RWD").toLowerCase()} label="Хөтлөгч" value={specs.drive} />
       <Item icon="range" label={specs.fuel === "BEV" ? "Туулах зай" : "Цахилгаанаар / нийт туулах зай"} value={rangeValue(specs)} />
-      {charge && <Item icon="charging" label="Хурдан цэнэглэлт" value={charge} />}
-      {motor && <Item icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын хүч" : "Моторын хүч / хөдөлгүүр"} value={motor.value} />}
+      <Item icon="charging" label="Хурдан цэнэглэлт" value={chargeValue(specs)} />
+      <Item icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын хүч" : "Моторын хүч / хөдөлгүүр"} value={motor.value} />
       <Item icon="dimension" label="Хэмжээ" value={compactSize(specs.size)} />
       <Item icon="doors" label={specs.doorLabel ?? "Хаалганы тоо"} value={countOnly(specs.doors)} />
       <Item
         icon="seats" label="Суудлын тоо"
         value={specs.seatsPassenger ? <T v={{ cargo: countOnly(specs.seats), passenger: countOnly(specs.seatsPassenger) }} /> : countOnly(specs.seats)}
       />
-      {payloadValue(specs.payload) && <Item icon="payload" label="Даац" value={payloadValue(specs.payload)} />}
+      <Item icon="payload" label="Даац" value={payloadValue(specs.payload)} />
     </div>
   );
 }

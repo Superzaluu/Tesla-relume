@@ -39,7 +39,7 @@ export default async function GreenLoanPage({ searchParams }: { searchParams: Pr
 
         <ul className="m-0 mb-10 mt-8 grid list-none gap-3 p-0 sm:grid-cols-3">
           {HIGHLIGHTS.map((item) => (
-            <li key={item.label} className="rounded-2xl border border-line bg-white px-5 py-4">
+            <li key={item.label} className="rounded-card border border-line bg-white px-5 py-4">
               <p className="m-0 text-[28px] font-bold leading-none tracking-tight text-[#0f5a3a]">{item.value}</p>
               <p className="m-0 mt-2 text-small font-semibold text-ink">{item.label}</p>
               <p className="m-0 text-xs text-ink-muted">{item.note}</p>
@@ -52,7 +52,7 @@ export default async function GreenLoanPage({ searchParams }: { searchParams: Pr
         <section className="mt-14" aria-labelledby="rates-title">
           <h2 id="rates-title" className="text-[26px] font-bold tracking-tight text-ink">Зээлийн хүү</h2>
           <p className="mb-5 mt-1 text-small text-ink-muted">Шинэ тээврийн хэрэгслийн зээл. Хүү нь орлогын төрөл, хугацаанаас хамаарна.</p>
-          <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+          <div className="overflow-x-auto rounded-card border border-line bg-white">
             <table className="w-full min-w-[520px] border-collapse text-left text-small">
               <thead>
                 <tr className="bg-[#f3f7f5] text-xs uppercase tracking-wide text-ink-muted">
@@ -80,7 +80,7 @@ export default async function GreenLoanPage({ searchParams }: { searchParams: Pr
             { title: "Тавигдах шаардлага", items: REQUIREMENTS },
             { title: "Бүрдүүлэх материал", items: DOCUMENTS }
           ].map((block) => (
-            <div key={block.title} className="rounded-2xl border border-line bg-white p-6">
+            <div key={block.title} className="rounded-card border border-line bg-white p-6">
               <h2 className="text-[20px] font-bold tracking-tight text-ink">{block.title}</h2>
               <ul className="m-0 mt-4 grid list-none gap-3 p-0">
                 {block.items.map((item) => (

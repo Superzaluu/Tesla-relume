@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { hasEngine, type QuickSpecs } from "@/data/types";
-import { compactSize, countOnly, payloadValue, QuickIcon } from "@/components/ui/QuickSpecs";
+import { compactSize, countOnly, MISSING_SHORT, payloadValue, QuickIcon } from "@/components/ui/QuickSpecs";
 
 export type ModelCardData = {
   key: string;
@@ -41,7 +41,9 @@ export function ModelSpecCard({ model }: { model: ModelCardData }) {
         { icon: quick.drive.toLowerCase(), label: "Хөтлөгч", value: quick.drive },
         { icon: "seats", label: "Суудал", value: countOnly(quick.seats) },
         { icon: "doors", label: quick.doorLabel ?? "Хаалга", value: countOnly(quick.doors) },
-        ...(payloadValue(quick.payload) ? [{ icon: "payload", label: "Даац", value: payloadValue(quick.payload) }] : []),
+        // Fixed slot: payload keeps its place ("—") when not entered, so every card has the same rows.
+        { icon: "payload", label: "Даац", value: payloadValue(quick.payload) },
+        // Engine size exists only on range-extender models (a fuel difference, not missing data).
         ...(hasEngine(quick) ? [{ icon: "hybrid", label: "Хөдөлгүүр", value: quick.engine! }] : []),
         { icon: "dimension", label: "Хэмжээ", value: compactSize(quick.size) }
       ]
@@ -92,7 +94,9 @@ export function ModelSpecCard({ model }: { model: ModelCardData }) {
                 <QuickIcon icon={fact.icon} className="h-6 w-6 text-[#6b8578]" />
                 <span className="min-w-0">
                   <span className="sr-only">{fact.label}: </span>
-                  <span className="block text-small font-medium leading-snug text-ink-secondary">{fact.value}</span>
+                  {fact.value
+                    ? <span className="block text-small font-medium leading-snug text-ink-secondary">{fact.value}</span>
+                    : <span className="block text-small font-medium leading-snug text-ink-muted" aria-label="тодруулна уу">{MISSING_SHORT}</span>}
                 </span>
               </li>
             ))}
