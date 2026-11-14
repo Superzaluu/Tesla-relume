@@ -109,6 +109,68 @@ export function sortCards(cards: ModelCardData[], sort: SortId) {
   return cards;
 }
 
+// ---------------------------------------------------------------- rows and families
+//
+// The grid shows three sideways-scrolling rows by use (cargo / passengers / refrigerated + special) and,
+// in each row, one card per model family: the versions of one vehicle (EC75 and EC75 Pro, the twelve C5s…)
+// share a card instead of filling the page with near-identical cards. A version still counts on its own
+// for the filters: a family card shows when at least one of its versions matches.
+
+export type RowId = "cargo" | "passenger" | "special";
+export const ROWS: { id: RowId; label: string; text: string; categories: string[] }[] = [
+  { id: "cargo", label: "Хотын хүргэлт ба хүнд ачаа", text: "Фургон, задгай болон битүү тэвштэй ачааны машин", categories: ["cargo-van", "flatbed", "box"] },
+  { id: "passenger", label: "Зорчигч тээвэр", text: "Ажилчдын болон аяллын үйлчилгээний фургон", categories: ["passenger"] },
+  { id: "special", label: "Хөргүүр болон тусгай зориулалтын", text: "Хүнс, эм тээвэр, явуулын засвар үйлчилгээ", categories: ["refrigerated", "special"] }
+];
+const rowOf = (card: ModelCardData): RowId => ROWS.find((row) => row.categories.includes(card.categoryId))?.id ?? "cargo";
+
+/** Family of a model page: its versions share one card. Models not listed here are a family of their own. */
+const FAMILIES: [RegExp, string][] = [
+  [/^r5-service$/, ""], [/^c5-drone$/, ""], [/^c3-cold$/, ""], // special builds keep their own card
+  [/^ec75/, "EC75"], [/^r5/, "R5"], [/^c5l/, "C5L"], [/^c5/, "C5"], [/^ec31/, "EC31"]
+];
+export const familyName = (card: ModelCardData) => FAMILIES.find(([pattern]) => pattern.test(card.slug))?.[1] || card.name;
+
+export type Family = { key: string; name: string; members: ModelCardData[] };
+export type Row = { id: RowId; label: string; text: string; families: Family[] };
+
+/** Rows of families from the (already filtered and sorted) cards; empty rows are left out. */
+export function buildRows(cards: ModelCardData[]): Row[] {
+  return ROWS.map((row) => {
+    const families = new Map<string, Family>();
+    for (const card of cards.filter((c) => rowOf(c) === row.id)) {
+      const name = familyName(card);
+      const family = families.get(name) ?? { key: `${row.id}-${name}`, name, members: [] };
+      family.members.push(card);
+      families.set(name, family);
+    }
+    return { ...row, families: [...families.values()] };
+  }).filter((row) => row.families.length > 0);
+}
+
+/** How many versions each family has in total (before filtering), keyed like Family.key. */
+export const familySizes = (cards: ModelCardData[]) =>
+  Object.fromEntries(buildRows(cards).flatMap((row) => row.families.map((family) => [family.key, family.members.length])));
+
+/** "1,500–3,000 кг" from several versions' [min, max] values; "" when none has a value. */
+export function spanText(values: ([number, number] | null)[], unit: string) {
+  const known = values.filter((v): v is [number, number] => Boolean(v));
+  if (known.length === 0) return "";
+  const min = Math.min(...known.map((v) => v[0])), max = Math.max(...known.map((v) => v[1]));
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  return `${min === max ? fmt(min) : `${fmt(min)}–${fmt(max)}`}${unit ? ` ${unit}` : ""}`;
+}
+
+/** Payload for a small tile: tons from 1,000 kg up ("1.5–2 т", "3 т"), kilograms below ("780 кг"). */
+export function payloadText(values: ([number, number] | null)[]) {
+  const known = values.filter((v): v is [number, number] => Boolean(v));
+  if (known.length === 0) return "";
+  const min = Math.min(...known.map((v) => v[0])), max = Math.max(...known.map((v) => v[1]));
+  if (min < 1000) return spanText(known, "кг");
+  const t = (kg: number) => String(Math.round(kg / 100) / 10);
+  return `${min === max ? t(min) : `${t(min)}–${t(max)}`} т`;
+}
+
 /** Selection ⇄ URL query (?category=flatbed,box&fuel=BEV), so a filtered view can be shared or bookmarked. */
 export function readSelection(search: string, groups: Group[]): { selection: Selection; sort: SortId } {
   const params = new URLSearchParams(search);

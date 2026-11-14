@@ -183,7 +183,7 @@ export const getModelCards = cache(async (): Promise<{ cards: ModelCardData[]; c
           value: pick(stat.value, variant), unit: pick(stat.unit, variant), label: pick(stat.label, variant)
         }));
         return {
-          key: item.key, href: item.href, preorderHref: preorderHref(item.slug, item.variant), thumb: item.thumb, name: item.name, desc: item.desc,
+          key: item.key, slug: item.slug, href: item.href, preorderHref: preorderHref(item.slug, item.variant), thumb: item.thumb, name: item.name, desc: item.desc,
           categoryId: category.id, category: category.label, stats,
           // A card shows one version, so it gets that version's seats.
           quick: model.quick && {

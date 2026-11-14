@@ -1745,6 +1745,24 @@ body::before { display:none; }
 /* Model grid: the filter column is sticky, which "overflow: hidden" on .section would break; clip still stops sideways scroll. */
 #models.section { overflow: clip; }
 
+/* ---------- Spacing pass (2026-11-15) ---------- */
+/* The homepage was ~16,300 px tall; part of it was 192 px of empty space between every two sections.
+   Sections: 64 px top/bottom on desktop (was 96), 44 px on phones (was 56). Title → content: 32 / 24 px. */
+:root { --padding-section-large: 64px; --gap-section: 32px; }
+@media (max-width: 991px) { :root { --padding-section-large: 44px; --gap-section: 24px; } }
+.section-title--narrow { gap: 10px; }
+
+/* Homepage hero: at most 640 px tall on desktop (was 88svh ≈ 870 px). The benefit strip below overlaps its
+   bottom edge, so the slide dots move up above it. Phones keep the stacked layout (photo under the text). */
+@media (min-width: 992px) and (min-aspect-ratio: 6/5) {
+  .hero-carousel .hero { height: clamp(540px, 72svh, 640px); min-height: 0; }
+  .hero-carousel .hero__content { padding-bottom: 4rem; }
+  .hero-carousel__dots { bottom: 64px; }
+}
+.benefit-strip { margin-top: -44px; }
+@media (max-width: 991px), (max-aspect-ratio: 6/5) { .benefit-strip { margin-top: -16px; } }
+.hero-carousel .hero__quick-specs { display: none; }
+
 /* One card radius (--radius-card, 14px) for every card-like region; 16px panels sat next to 14px cards. */
 .hero__quick-specs { border-radius:var(--radius-card); }
 

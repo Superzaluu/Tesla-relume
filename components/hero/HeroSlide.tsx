@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { HeroSlide as Slide } from "@/data/home";
-import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 
 type Props = {
@@ -14,7 +13,7 @@ type Props = {
   showImage: boolean;
 };
 
-/** One full-screen model slide: copy, actions, background photo and quick-spec icons. */
+/** One model slide: copy, actions and background photo. */
 export function HeroSlide({ slide, position, total, active, showImage }: Props) {
   const first = position === 0;
   const Heading = first ? "h1" : "h2";
@@ -46,7 +45,7 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
           fetchPriority={first ? "high" : undefined} decoding={first ? undefined : "async"}
         />
       )}
-      {slide.quick && <QuickSpecs specs={slide.quick} />}
+      {/* The key facts moved to the benefit strip under the carousel and to the model cards (2026-11-15). */}
     </div>
   );
 }

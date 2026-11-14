@@ -1,17 +1,73 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ModelSpecCard, type ModelCardData } from "@/components/cards/ModelSpecCard";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ModelCardData } from "@/components/cards/ModelSpecCard";
+import { ModelFamilyCard } from "@/components/cards/ModelFamilyCard";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import {
-  buildGroups, optionCount, passes, readSelection, sortCards, SORTS, writeSelection,
-  type Group, type Option, type Selection, type SortId
+  buildGroups, buildRows, familySizes, optionCount, passes, readSelection, sortCards, SORTS, writeSelection,
+  type Group, type Option, type Row, type Selection, type SortId
 } from "@/components/cards/modelFilters";
+
+/** One use-case row: heading on the left, arrows on the right, family cards scrolling sideways. */
+function FamilyRow({ row, sizes }: { row: Row; sizes: Record<string, number> }) {
+  const track = useRef<HTMLDivElement>(null);
+  const [edge, setEdge] = useState({ start: true, end: true });
+  const update = useCallback(() => {
+    const el = track.current;
+    if (el) setEdge({ start: el.scrollLeft <= 1, end: el.scrollLeft >= el.scrollWidth - el.clientWidth - 1 });
+  }, []);
+  useEffect(() => {
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [update, row]);
+  const move = (dir: 1 | -1) => {
+    const el = track.current;
+    const card = el?.firstElementChild as HTMLElement | null;
+    if (el && card) el.scrollBy({ left: dir * (card.offsetWidth + 16) * Math.max(1, Math.floor(el.clientWidth / (card.offsetWidth + 16))), behavior: "smooth" });
+  };
+  const versions = row.families.reduce((sum, family) => sum + family.members.length, 0);
+  const arrow = "grid h-10 w-10 place-items-center rounded-full border border-solid border-line bg-white text-ink transition-colors hover:border-[#0f5a3a] hover:text-[#0f5a3a] disabled:cursor-default disabled:opacity-35";
+
+  return (
+    <section aria-labelledby={`row-${row.id}`} className="grid gap-4">
+      <div className="flex items-end justify-between gap-4">
+        <div className="min-w-0">
+          <h3 id={`row-${row.id}`} className="m-0 text-[22px] font-bold leading-tight tracking-tight text-ink">{row.label}</h3>
+          <p className="m-0 mt-1 text-small text-ink-muted">
+            {row.text} · {row.families.length} загвар{versions > row.families.length ? `, ${versions} хувилбар` : ""}
+          </p>
+        </div>
+        {!(edge.start && edge.end) && (
+          <div className="flex shrink-0 gap-2">
+            <button type="button" className={arrow} onClick={() => move(-1)} disabled={edge.start} aria-label={`${row.label}: өмнөх`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
+            <button type="button" className={arrow} onClick={() => move(1)} disabled={edge.end} aria-label={`${row.label}: дараах`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
+          </div>
+        )}
+      </div>
+      <div
+        ref={track} onScroll={update}
+        className="-mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-3 [scrollbar-width:thin]"
+      >
+        {row.families.map((family) => (
+          <ModelFamilyCard key={family.key} family={family} total={sizes[family.key] ?? family.members.length} passengers={row.id === "passenger"} />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 // Homepage "Бүх загвар": filters on the left (cars.com / rbauction / unegui layout), every option with the
 // number of models it leads to (encar), the active choices as removable chips above the results.
 // There is no second set of filter controls above the grid (unegui's top brand list was disliked):
 // the top row only shows what is chosen, the count and the sort order. On phones the same filters open
 // in a full-screen panel with a "N загвар харах" button at the bottom.
+// Results: three rows by use (cargo / passengers / refrigerated + special), each scrolling sideways with
+// one card per model family (ModelFamilyCard). Filters still work per version.
 // Monthly payment on the card (cars.com) comes later, once prices are entered.
 
 type Props = { cards: ModelCardData[]; categories: { id: string; label: string }[] };
@@ -102,6 +158,9 @@ export function ModelGrid({ cards, categories }: Props) {
   }, [panelOpen]);
 
   const visible = useMemo(() => sortCards(cards.filter((card) => passes(card, groups, selection)), sort), [cards, groups, selection, sort]);
+  const rows = useMemo(() => buildRows(visible), [visible]);
+  const sizes = useMemo(() => familySizes(cards), [cards]);
+  const familyCount = rows.reduce((sum, row) => sum + row.families.length, 0);
   const count = (group: Group, option: Option) => optionCount(cards, groups, selection, group, option);
   const toggle = (group: Group, option: Option) =>
     setSelection((current) => {
@@ -143,7 +202,7 @@ export function ModelGrid({ cards, categories }: Props) {
             <div className="mb-6 grid gap-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="m-0 text-regular text-ink-secondary" aria-live="polite">
-                  <strong className="text-ink">{visible.length}</strong> загвар{active.length > 0 ? ` (${cards.length}-аас)` : ""}
+                  <strong className="text-ink">{familyCount}</strong> загвар, {visible.length} хувилбар{active.length > 0 ? ` (${cards.length}-аас)` : ""}
                 </p>
                 <div className="flex items-center gap-2">
                   <button
@@ -174,9 +233,9 @@ export function ModelGrid({ cards, categories }: Props) {
               )}
             </div>
 
-            {visible.length > 0 ? (
-              <div className="grid gap-6 sm:grid-cols-2 2xl:grid-cols-3">
-                {visible.map((card) => <ModelSpecCard model={card} key={card.key} />)}
+            {rows.length > 0 ? (
+              <div className="grid gap-10">
+                {rows.map((row) => <FamilyRow key={row.id} row={row} sizes={sizes} />)}
               </div>
             ) : (
               <div className="rounded-card border border-dashed border-line bg-white px-6 py-12 text-center">
@@ -200,7 +259,7 @@ export function ModelGrid({ cards, categories }: Props) {
             </div>
             <div className="flex gap-3 border-0 border-t border-solid border-line px-4 py-3" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
               <button type="button" onClick={clear} disabled={active.length === 0} className="btn btn--tint flex-1 px-4 disabled:opacity-50">Арилгах</button>
-              <button type="button" onClick={() => setPanelOpen(false)} className="btn btn--primary flex-[2] px-4">{visible.length} загвар харах</button>
+              <button type="button" onClick={() => setPanelOpen(false)} className="btn btn--primary flex-[2] px-4">{familyCount} загвар харах</button>
             </div>
           </div>
         )}

@@ -1,47 +1,33 @@
 import { HeroCarousel } from "@/components/hero/HeroCarousel";
-import { ChargerStats, CtaBlock, GallerySlider, TestDriveSection } from "@/components/home/HomeSections";
+import { BenefitStrip, ChargerStats, GalleryMosaic, NumberBand, OrderSteps, TestDriveSection } from "@/components/home/HomeSections";
 import { ModelGrid } from "@/components/cards/ModelGrid";
-import { PollCard } from "@/components/home/PollCard";
+import { buildRows } from "@/components/cards/modelFilters";
 import { TestDriveForm } from "@/components/forms/TestDriveForm";
 import { getHeroSlides, getModelCards } from "@/data/content";
-import { galleryImages, pollChoices, testDriveModels } from "@/data/home";
+import { galleryImages, testDriveModels } from "@/data/home";
 
 // Refresh the Supabase content at most once a minute.
 export const revalidate = 60;
 
+const CHARGERS = [{ value: "50", label: "Хурдан цэнэглэгч" }, { value: "5", label: "Энгийн цэнэглэгч" }];
+
+// Order (2026-11-15 layout pass): hero with the benefit strip on its edge, the model families in three
+// rows, one number band (promotion + warranty), the order steps, chargers next to the map, photos and
+// the −30°C video as one mosaic, then the test-drive form. About a third of the old page height.
 export default async function HomePage() {
   const [heroSlides, { cards, categories }] = await Promise.all([getHeroSlides(), getModelCards()]);
+  const families = buildRows(cards).reduce((sum, row) => sum + row.families.length, 0);
 
   return (
     <>
       <main>
         <HeroCarousel slides={heroSlides} />
-
-        <section className="section">
-          <div className="container">
-            <PollCard choices={pollChoices} />
-          </div>
-        </section>
-
+        <BenefitStrip />
         <ModelGrid cards={cards} categories={categories} />
-
-        <CtaBlock
-          title="Одоогийн урамшуулал"
-          text="Урамшуулал, хуучин машинаа өгөх, банкны зээлийн мэдээлэлээ эндээс аваарай"
-          action={{ label: "Дэлгэрэнгүй үзэх", href: "/green-loan/" }}
-          image={{ src: "/assets/promo.png", alt: "Урамшуулал", shape: "4x3" }}
-        />
-        <CtaBlock
-          className="cta--warranty"
-          title="Баталгаат хугацаа"
-          text="Зайны багц болон автомашины баталгааны нөхцөлийг харна уу."
-          action={{ label: "Баталгааг харах", href: "/warranty/" }}
-          figures={[{ value: "6 жил", label: "Баталгаат хугацаа" }, { value: "300,000 км", label: "Гүйлтийн хязгаар" }]}
-          image={{ src: "/assets/order-models.png", alt: "Ruichi-ийн цахилгаан загварууд", shape: "banner" }}
-        />
-
-        <ChargerStats stats={[{ value: "50", label: "Хурдан цэнэглэгч" }, { value: "5", label: "Энгийн цэнэглэгч" }]} />
-        <GallerySlider images={galleryImages} />
+        <NumberBand models={families} versions={cards.length} fastChargers={Number(CHARGERS[0].value)} />
+        <OrderSteps />
+        <ChargerStats stats={CHARGERS} />
+        <GalleryMosaic images={galleryImages} />
       </main>
 
       <TestDriveSection>

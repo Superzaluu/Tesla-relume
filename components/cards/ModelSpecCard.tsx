@@ -4,6 +4,8 @@ import { compactSize, countOnly, MISSING_SHORT, payloadValue, QuickIcon } from "
 
 export type ModelCardData = {
   key: string;
+  /** Model page slug (several cards can share one: cargo / passenger versions). */
+  slug: string;
   href: string;
   /** Pre-order page with this card's model and variant chosen. */
   preorderHref: string;

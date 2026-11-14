@@ -107,12 +107,13 @@ export const uiIcons = [
 
 export const pageSections = [
   { page: "Нүүр хуудас", href: "/", items: [
-    ["HeroCarousel + HeroSlide", "Загвар бүрийн бүтэн дэлгэцийн слайд", "/"],
-    ["PollCard", "−30°C санал асуулга ба видео", "/"],
-    ["ModelGrid", "Бүх загварын карт: зүүн талын шүүлтүүр (тоотой), сонгосон chip, эрэмбэ", "/#models"],
-    ["CtaBlock", "Урамшуулал, баталгаа", "/"],
-    ["ChargerStats", "Цэнэглэгчийн тоо ба газрын зураг", "/#chargers"],
-    ["GallerySlider", "Зургийн цомог", "/"],
+    ["HeroCarousel + HeroSlide", "Загвар бүрийн слайд, desktop дээр 640px хүртэл", "/"],
+    ["BenefitStrip", "Hero-ийн доод ирмэг дээрх 4 давуу тал", "/"],
+    ["ModelGrid + ModelFamilyCard", "Шүүлтүүр, хэрэглээний 3 гүйдэг мөр, загварын гэр бүлийн карт", "/#models"],
+    ["NumberBand", "Машинуудын эгнээний зураг, 4 тоо, урамшууллын тууз", "/"],
+    ["OrderSteps", "Захиалах 4 алхам", "/"],
+    ["ChargerStats", "Цэнэглэгчийн тоо ба газрын зураг нэг мөрөнд", "/#chargers"],
+    ["GalleryMosaic", "−30°C видео ба зургууд", "/#gallery"],
     ["TestDriveSection", "Туршилтын жолоодлогын маягт", "/#test-drive"]
   ] },
   { page: "Загварын хуудас (ModelPage)", href: "/models/ec75/", items: [
