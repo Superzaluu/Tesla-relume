@@ -1742,6 +1742,9 @@ body::before { display:none; }
   .cta__image--banner { aspect-ratio:3 / 1; }
 }
 
+/* Model grid: the filter column is sticky, which "overflow: hidden" on .section would break; clip still stops sideways scroll. */
+#models.section { overflow: clip; }
+
 /* One card radius (--radius-card, 14px) for every card-like region; 16px panels sat next to 14px cards. */
 .hero__quick-specs { border-radius:var(--radius-card); }
 

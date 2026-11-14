@@ -25,6 +25,8 @@ export type ModelRow = {
   compare_name: string | null; compare_fuel: FuelCode | null; compare_consumption: number | null; ev_consumption: number | null;
   /** Online pre-order deposit in MNT (Byl); null = none. */
   deposit_amount?: number | null;
+  /** Payload per configuration from the spec sheet (models.specs → values.payload, kg); preferred over `payload`. */
+  sheet_payload?: string[] | null;
 };
 export type ListingRow = {
   key: string; category_id: string; model_slug: string; variant: Variant | null;
@@ -44,8 +46,20 @@ export const MODEL_COLUMNS =
 
 const getCategoryRows = cache(() => select<CategoryRow>("categories", "select=id,label,sort&order=sort,id"));
 const getModelRows = cache(async () =>
-  new Map((await select<ModelRow>("models", `select=${MODEL_COLUMNS}`)).map((row) => [row.slug, row]))
+  new Map((await select<ModelRow>("models", `select=${MODEL_COLUMNS},sheet_payload:specs->values->payload`)).map((row) => [row.slug, row]))
 );
+
+/**
+ * Payload for the card and hero strip from the spec sheet, so the two never disagree:
+ * ["3000", "3000"] → "3,000 кг", ["1500–2000"] → "1,500–2,000 кг". Undefined when the sheet has none.
+ */
+function sheetPayload(row: ModelRow): string | undefined {
+  const kg = (row.sheet_payload ?? []).flatMap((value) => (value.match(/\d+(?:[.,]\d+)?/g) ?? []).map((n) => Number(n.replace(",", "."))));
+  if (kg.length === 0) return undefined;
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const [min, max] = [Math.min(...kg), Math.max(...kg)];
+  return `${min === max ? fmt(min) : `${fmt(min)}–${fmt(max)}`} кг`;
+}
 const getListingRows = cache(() =>
   select<ListingRow>("model_listings", "select=*&active=eq.true&order=sort,key")
 );
@@ -79,7 +93,8 @@ export const toQuick = (row: ModelRow): QuickSpecs | undefined =>
         fuel: toFuelType(row.fuel, row.engine), size: row.size ?? "", range: row.range ?? "", doors: row.doors ?? "",
         doorLabel: row.door_label || undefined, charge: row.charge ?? "", seats: row.seats ?? "",
         seatsPassenger: row.seats_passenger || undefined,
-        payload: row.payload ?? "", engine: row.engine || undefined,
+        // The spec sheet wins; the hand-entered field is only for models without a sheet (EC31, EC75, R5…).
+        payload: sheetPayload(row) ?? row.payload ?? "", engine: row.engine || undefined,
         power: statText(row.stats, /моторын хүч/i),
         fastCharge: statText(row.stats, /хурдан цэнэглэлт/i),
         evRange: statText(row.stats, /цахилгаанаар/i)

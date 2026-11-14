@@ -112,7 +112,8 @@ const entries: Entry[] = [
     tagline: "C5 дроны хувилбар: хөдөө аж ахуйн дроныг талбай руу тээвэрлэж, газар дээр нь цэнэглэх явуулын хурдан цэнэглэх станц.",
     stats: [["1200", "км", "Нийт явах зай (NEDC)"], ["115", "км", "Цэвэр цахилгаанаар (NEDC)"], ["25", "кВт·ц", "Зайн багтаамж"], ["110", "кВт", "Моторын хүч"]],
     gallery: Array(3).fill([600, 400]), galleryStart: 2,
-    quick: quick("flatbed4", "Дроны үйлчилгээ", "5990 x 1880 x 2030 мм", "1200 км", { drive: "FWD", doors: "2–4 хаалга", seats: "2–5 суудал", payload: "2–2.5 т", charge: "AC/DC - 30 мин", engine: "1,499 cc" }) }
+    // Double-cab C5 base: 4 doors, 5 seats, 1.5 t like c5-reev-crew (user, 2026-11-15).
+    quick: quick("flatbed4", "Дроны үйлчилгээ", "5990 x 1880 x 2030 мм", "1200 км", { drive: "FWD", doors: "4 хаалга", seats: "5 суудал", payload: "1,500 кг", charge: "AC/DC - 30 мин", engine: "1,499 cc" }) }
 ];
 
 const toModel = (e: Entry): Model => {
