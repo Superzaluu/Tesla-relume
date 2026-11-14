@@ -48,7 +48,18 @@ export type SpecSheet = {
   check?: string[];
   /** True while the sheet is only a conversion of the old table (never saved from the form). */
   converted?: boolean;
+  /** Where the values were imported from, e.g. "Google Sheet «Ruichi specs» · C5 REEV · 2026-11-14". */
+  source?: string;
 };
+
+/** "Задгай: 5990×1880×2030 · Битүү: 5950×1880×2635" → [["Задгай", "5990×…"], ["Битүү", "5950×…"]]; plain values give [["", value]]. */
+export function bodyParts(value: string): [string, string][] {
+  if (!value.includes(": ")) return [["", value]];
+  return value.split(" · ").map((part) => {
+    const at = part.indexOf(": ");
+    return at > 0 ? [part.slice(0, at), part.slice(at + 2)] : ["", part];
+  });
+}
 
 export const DEALER_WARRANTY = "6 жил / 300,000 км";
 
@@ -281,7 +292,7 @@ export function checkValue(field: Field, value: string): Check {
       return { level: "warn", text: `Ихэвчлэн ${field.range[0]}–${field.range[1]} ${field.unit ?? ""}`.trim() };
     }
   }
-  if (field.kind === "dims" && !/^\d{3,5}×\d{3,5}×\d{3,5}/.test(value)) return { level: "warn", text: "Урт×Өргөн×Өндөр хэлбэрээр (мм)" };
+  if (field.kind === "dims" && !bodyParts(value).every(([, part]) => /^\d{3,5}×\d{3,5}×\d{3,5}/.test(part))) return { level: "warn", text: "Урт×Өргөн×Өндөр хэлбэрээр (мм)" };
   if (field.kind === "mark" && !markOf(value)) return { level: "warn", text: "●, ○ эсвэл – сонгоно" };
   if (field.kind === "select" && field.options && !field.options.includes(value)) return { level: "warn", text: "Жагсаалтаас сонгоно уу" };
   return null;
@@ -387,10 +398,23 @@ export type SheetView = {
 };
 
 /** "52.16 (2C)" + "кВт·ц" → "52.16 кВт·ц (2C)": the unit goes right after the leading number. */
-function withUnit(value: string, unit?: string) {
+function withUnit(value: string, unit?: string): string {
   if (!unit || !value || value === "–" || value.includes(unit)) return value;
-  const m = value.match(/^([\d.,]+(?:\s*[-–\/~×]\s*[\d.,]+)*)(.*)$/);
+  const parts = bodyParts(value);
+  if (parts.length > 1 || parts[0][0]) return parts.map(([body, part]) => (body ? `${body}: ${withUnit(part, unit)}` : withUnit(part, unit))).join(" · ");
+  const m = value.match(/^([<>≤≥]?[\d.,]+(?:\s*[-–\/~×]\s*[\d.,]+)*)(.*)$/);
   return m ? `${m[1]} ${unit}${m[2] ? ` ${m[2].trim()}` : ""}` : value;
+}
+
+/** Several "L×W×H" values → one "5950–5990×1880×2030–2695" range (null when the values have none). */
+function dimsRange(list: string[]): string | null {
+  const triples = list.flatMap((value) => [...value.matchAll(/(\d{3,5})×(\d{3,5})×(\d{3,5})/g)].map((m) => [1, 2, 3].map((i) => Number(m[i]))));
+  if (triples.length === 0) return null;
+  return [0, 1, 2].map((d) => {
+    const nums = triples.map((t) => t[d]);
+    const min = Math.min(...nums), max = Math.max(...nums);
+    return min === max ? String(min) : `${min}–${max}`;
+  }).join("×");
 }
 
 const DRIVE_LABEL: Record<string, string> = { FWD: "Урд дугуйгаар (FWD)", RWD: "Хойд дугуйгаар (RWD)", AWD: "Бүх дугуйгаар (AWD)" };
@@ -399,6 +423,23 @@ function aggregate(field: Field, list: string[]): string {
   if (field.key === "drive") list = list.map((value) => DRIVE_LABEL[value] ?? value);
   const unique = [...new Set(list.filter((value) => value && value !== "–"))];
   if (unique.length === 0) return "";
+  // Body-dependent values ("Задгай: … · Битүү: …"): numbers as one range, sizes for the first body type.
+  if (unique.some((value) => bodyParts(value).length > 1)) {
+    if (field.kind === "number") {
+      const nums = unique.flatMap(numbersIn);
+      const min = Math.min(...nums), max = Math.max(...nums);
+      if (nums.length) return withUnit(min === max ? String(min) : `${min}–${max}`, field.unit);
+    }
+    if (field.kind === "dims" || field.key === "cargo_size") {
+      const first = unique.map((value) => bodyParts(value)[0]);
+      const range = dimsRange(first.map(([, part]) => part));
+      if (range) return `${withUnit(range, field.unit)}${first[0][0] ? ` (${first[0][0].toLowerCase()})` : ""}`;
+    }
+  }
+  if (field.kind === "dims" || field.key === "cargo_size") {
+    const range = dimsRange(unique);
+    if (range && (unique.length > 1 || bodyParts(unique[0]).length > 1)) return withUnit(range, field.unit);
+  }
   if (unique.length === 1) return withUnit(unique[0], field.unit);
   if (field.kind === "number") {
     const nums = unique.flatMap(numbersIn);
@@ -526,7 +567,8 @@ export function parseSheet(json: string): SpecSheet | null {
     .map((row) => ({ group: GROUPS.some((g) => g.key === row?.group) ? row.group : "general", label: str(row?.label, 120), values: fit(row?.values) }))
     .filter((row) => row.label && row.values.some(Boolean));
   const check = (Array.isArray(data.check) ? data.check : []).filter((key): key is string => typeof key === "string" && key in FIELD);
-  return { configs, values, extras, check };
+  const source = str(data.source, 160);
+  return { configs, values, extras, check, ...(source ? { source } : {}) };
 }
 
 /** Values already used across all models, most common first — offered as suggestions in the form. */

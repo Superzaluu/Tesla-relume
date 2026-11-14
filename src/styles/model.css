@@ -573,3 +573,8 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 .msheet__full .mspec-table { box-shadow:none; border-radius:0 0 16px 16px; }
 @media (max-width:767px) { .msheet { gap:36px; } .msheet__summary .mspecs__group { padding:20px; } }
 .msheet .mcompare tbody th[scope="row"] { min-width:200px; max-width:280px; }
+
+/* Body-dependent values: one line per body type (Задгай / Торон хаалттай / Битүү). */
+.msheet__body{display:block;}
+.msheet__body + .msheet__body{margin-top:6px;}
+.msheet__body b{display:block;font-size:12px;font-weight:600;color:var(--color-text-secondary);}

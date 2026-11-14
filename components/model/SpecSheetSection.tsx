@@ -1,8 +1,15 @@
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import type { SheetView } from "@/data/specSheet";
+import { bodyParts, type SheetView } from "@/data/specSheet";
 
 // The "Техникийн үзүүлэлт" section built from the structured spec sheet, laid out like the R5 page:
 // summary blocks → highlights → comparison of what differs → standard equipment chips → full table (collapsed).
+
+/** One cell; body-dependent values ("Задгай: … · Битүү: …") get one line per body type. */
+function Value({ value }: { value: string }) {
+  const parts = bodyParts(value || "–");
+  if (parts.length === 1 && !parts[0][0]) return <>{value || "–"}</>;
+  return <>{parts.map(([body, part]) => <span className="msheet__body" key={body}><b>{body}</b>{part}</span>)}</>;
+}
 
 export function SpecSheetSection({ view }: { view: SheetView | null }) {
   if (!view || view.summary.length === 0) {
@@ -52,7 +59,7 @@ export function SpecSheetSection({ view }: { view: SheetView | null }) {
                 <thead><tr><th scope="col">Тохиргоо</th>{view.configs.map((name, i) => <th scope="col" key={i}>{name}</th>)}</tr></thead>
                 <tbody>
                   {view.compare.map((row) => (
-                    <tr key={row.label}><th scope="row">{row.label}</th>{row.cells.map((cell, i) => <td key={i}>{cell}</td>)}</tr>
+                    <tr key={row.label}><th scope="row">{row.label}</th>{row.cells.map((cell, i) => <td key={i}><Value value={cell} /></td>)}</tr>
                   ))}
                 </tbody>
               </table>
@@ -86,8 +93,8 @@ export function SpecSheetSection({ view }: { view: SheetView | null }) {
                       <tr key={`${group.heading}-${i}`}>
                         <th scope="row">{row.label}</th>
                         {same && many
-                          ? <td colSpan={row.cells.length}>{row.cells[0] || "–"}</td>
-                          : row.cells.map((cell, j) => <td key={j}>{cell || "–"}</td>)}
+                          ? <td colSpan={row.cells.length}><Value value={row.cells[0]} /></td>
+                          : row.cells.map((cell, j) => <td key={j}><Value value={cell} /></td>)}
                       </tr>
                     );
                   })

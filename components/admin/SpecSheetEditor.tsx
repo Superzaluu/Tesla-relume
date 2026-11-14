@@ -50,7 +50,7 @@ export function SpecSheetEditor({ initial, suggestions, fuel }: Props) {
   const setExtras = (extras: ExtraRow[]) => setSheet((current) => ({ ...current, extras }));
 
   const grid = { gridTemplateColumns: `minmax(220px,260px) 56px repeat(${n}, minmax(150px,1fr))` };
-  const saved = JSON.stringify({ configs: sheet.configs, values: sheet.values, extras: sheet.extras, check: sheet.check ?? [] });
+  const saved = JSON.stringify({ configs: sheet.configs, values: sheet.values, extras: sheet.extras, check: sheet.check ?? [], source: sheet.source });
 
   return (
     <div className="space-y-5">
@@ -60,6 +60,12 @@ export function SpecSheetEditor({ initial, suggestions, fuel }: Props) {
         <p className="rounded-xl border border-[#f79009]/40 bg-[#fffaeb] px-4 py-3 text-small text-ink">
           Хуучин хүснэгтээс автоматаар хөрвүүлсэн. <strong>Шалгах</strong> гэсэн мөрүүдийн багана тохиргоотойгоо таарахгүй байсан тул
           утгыг нь нягталж засна уу. Хадгалмагц энэ форм сайтын эх сурвалж болно.
+        </p>
+      )}
+      {!initial.converted && initial.source && (
+        <p className="rounded-xl border border-line bg-[#f3f7f5] px-4 py-3 text-small text-ink">
+          Эх сурвалж: <strong>{initial.source}</strong>.
+          {(sheet.check ?? []).length > 0 && <> <strong>Шалгах</strong> гэсэн {(sheet.check ?? []).length} мөрийг орчуулга, утгаар нь нягтална уу.</>}
         </p>
       )}
       {missing.length > 0 && (
