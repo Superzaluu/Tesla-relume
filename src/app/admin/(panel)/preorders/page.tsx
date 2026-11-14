@@ -87,6 +87,14 @@ export default async function PreordersPage({ searchParams }: { searchParams: Pr
                     {row.byl_checkout_url && <a href={row.byl_checkout_url} target="_blank" rel="noreferrer" className="text-[#0f5a3a] hover:underline">Byl ↗</a>}
                   </p>
                 )}
+                {row.bonus_amount ? (
+                  <p className="m-0 mt-1 flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className="rounded-full bg-[#fde7c7] px-2 py-0.5 font-semibold text-[#8a4b00]">Бонустай {tugrik(row.bonus_amount)}</span>
+                    {row.deposit_amount && (
+                      <span className="text-ink">Нийт <strong>{tugrik((row.paid_amount ?? row.deposit_amount) + row.bonus_amount)}</strong> үнээс хасна</span>
+                    )}
+                  </p>
+                ) : null}
               </div>
               <p className="m-0 whitespace-pre-line text-small text-ink-secondary">{row.note || <span className="text-ink-muted">—</span>}</p>
               <form action={setPreorderStatus} className="flex items-center gap-2">

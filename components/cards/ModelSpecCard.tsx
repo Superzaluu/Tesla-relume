@@ -71,7 +71,8 @@ export function ModelSpecCard({ model }: { model: ModelCardData }) {
         </h3>
         {model.stats.length > 0 && (
           // Hierarchy: the first stat (range) is the one big green number; the other two are secondary.
-          <dl className="mt-5 grid grid-cols-[1.35fr_1fr_1fr] items-end divide-x divide-line rounded-xl border border-solid border-line bg-white px-4 py-4">
+          // Common Region: a tinted panel, not a second outline inside the card's own border (box in box).
+          <dl className="mt-5 grid grid-cols-[1.35fr_1fr_1fr] items-end divide-x divide-[#dbe6e0] rounded-xl bg-[#f3f7f5] px-4 py-4">
             {model.stats.map((stat, index) => (
               <div key={stat.label} className="flex min-w-0 flex-col px-3 first:pl-0 last:pr-0">
                 <dt className="mt-1.5 text-[11px] leading-snug text-ink-muted">{shortStatLabel(stat.label)}</dt>

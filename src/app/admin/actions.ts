@@ -258,6 +258,16 @@ export async function setHeroActive(form: FormData) {
 // ---------- Pre-orders ----------
 
 /** Move a pre-order to new / contacted / closed (rows are never deleted). */
+export async function setBonusStatus(form: FormData) {
+  const { supabase } = await requireAdmin();
+  const status = text(form, "status");
+  if (!status || !["new", "contacted", "used"].includes(status)) fail("/admin/bonus/", "Төлөв буруу байна.");
+  const { error } = await supabase.from("bonus_registrations").update({ status }).eq("id", text(form, "id") ?? "");
+  if (error) fail("/admin/bonus/", `Төлөв солиход алдаа гарлаа: ${error.message}`);
+  revalidatePath("/admin/bonus/");
+  redirect("/admin/bonus/");
+}
+
 export async function setPreorderStatus(form: FormData) {
   const { supabase } = await requireAdmin();
   const back = `/admin/preorders/${form.get("filter") ? `?status=${encodeURIComponent(String(form.get("filter")))}` : ""}`;

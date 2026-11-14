@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, type FormEvent } from "react";
+import { useActionState, useEffect, useState, type FormEvent } from "react";
+import { submitBonus, type BonusState } from "@/app/register/actions";
 import { SAVINGS_STORAGE_KEY, type SavedVehicle } from "@/data/savings";
 
 export type ModelGroup = { id: string; label: string; options: { value: string; label: string }[] };
@@ -7,13 +8,13 @@ export type ModelGroup = { id: string; label: string; options: { value: string; 
 const MAX_PER_GROUP = 2;
 
 // Bonus registration: prefilled from the savings calculator; the visitor may
-// pick up to two models, all from one category.
-// TODO: Илгээсэн мэдээллийг серверт (жишээ нь Supabase) хадгалах.
+// pick up to two models, all from one category. Saved to public.bonus_registrations (submitBonus).
 export function RegistrationForm({ groups }: { groups: ModelGroup[] }) {
   const [vehicle, setVehicle] = useState<SavedVehicle | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [error, setError] = useState("");
-  const [sent, setSent] = useState(false);
+  const [state, action, pending] = useActionState<BonusState, FormData>(submitBonus, {});
+  const sent = Boolean(state.ok);
 
   useEffect(() => {
     try { setVehicle(JSON.parse(sessionStorage.getItem(SAVINGS_STORAGE_KEY) ?? "null")); } catch { setVehicle(null); }
@@ -30,12 +31,11 @@ export function RegistrationForm({ groups }: { groups: ModelGroup[] }) {
     setSelected((list) => [...list, value]);
   };
 
+  // Client checks first; the server action checks again and saves.
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!event.currentTarget.reportValidity()) return;
-    if (selected.length === 0) { setError("Сонирхож буй дор хаяж нэг загвараа сонгоно уу."); return; }
+    if (!event.currentTarget.checkValidity()) return;
+    if (selected.length === 0) { event.preventDefault(); setError("Сонирхож буй дор хаяж нэг загвараа сонгоно уу."); return; }
     setError("");
-    setSent(true);
   };
 
   const field = (id: string, name: string, label: string, value = "", full = false) => (
@@ -46,7 +46,9 @@ export function RegistrationForm({ groups }: { groups: ModelGroup[] }) {
   );
 
   return (
-    <form className="registration-form" onSubmit={onSubmit}>
+    <form className="registration-form" action={action} onSubmit={onSubmit}>
+      {/* Honeypot: hidden from people, bots fill it. */}
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }} />
       <fieldset className="registration-form__fieldset">
         <legend>Тооцооллын мэдээлэл</legend>
         <div className="registration-form__grid">
@@ -85,9 +87,11 @@ export function RegistrationForm({ groups }: { groups: ModelGroup[] }) {
           })}
         </div>
       </fieldset>
-      <p className="registration-form__error" aria-live="polite">{error}</p>
-      <button className="btn btn--primary" type="submit" disabled={sent}>БҮРТГҮҮЛЖ БОНУС АВАХ</button>
-      <p className="registration-form__success" hidden={!sent}>Таны хүсэлтийг хүлээн авлаа. Манай баг тантай холбогдоно.</p>
+      <p className="registration-form__error" aria-live="polite">{error || state.error}</p>
+      <button className="btn btn--primary" type="submit" disabled={sent || pending}>{pending ? "ИЛГЭЭЖ БАЙНА…" : "БҮРТГҮҮЛЖ БОНУС АВАХ"}</button>
+      <p className="registration-form__success" hidden={!sent}>
+        Бүртгэл амжилттай. Урьдчилсан захиалга өгөхдөө энэ утасны дугаараа ашиглавал 100,000 ₮ бонус тань машины үнээс хасагдана. Манай баг тантай холбогдоно.
+      </p>
     </form>
   );
 }

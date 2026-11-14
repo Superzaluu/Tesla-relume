@@ -25,16 +25,19 @@ export function contactError(name: string, phone: string, note: string) {
  * Adds a row to public.preorders with the public key. Row Level Security lets visitors
  * insert a new request but never read one back, so nothing is returned.
  */
-export async function insertPreorder(row: Record<string, unknown>): Promise<boolean> {
+export const insertPreorder = (row: Record<string, unknown>) => insertPublic("preorders", row);
+
+/** Insert-only write with the public key (preorders, bonus_registrations). */
+export async function insertPublic(table: string, row: Record<string, unknown>): Promise<boolean> {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return false;
-  const res = await fetch(`${url}/rest/v1/preorders`, {
+  const res = await fetch(`${url}/rest/v1/${table}`, {
     method: "POST",
     headers: { apikey: key, "Content-Type": "application/json", Prefer: "return=minimal" },
     body: JSON.stringify(row),
     cache: "no-store"
   });
-  if (!res.ok) console.error("preorder insert failed", res.status, await res.text());
+  if (!res.ok) console.error(`${table} insert failed`, res.status, await res.text());
   return res.ok;
 }

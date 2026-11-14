@@ -27,6 +27,11 @@ export type DepositStatus = (typeof DEPOSIT_STATUSES)[number]["value"];
 /** Days within which a cancelled pre-order's deposit is refunded (shown on the form and in /legal/terms/). */
 export const DEPOSIT_REFUND_DAYS = 2;
 
+/** /register/ bonus; deducted from the final price by the dealer, never from the online deposit. */
+export const BONUS_AMOUNT = 100_000;
+
+export const tugrikText = (n: number) => `${String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
+
 export type PreorderRow = {
   id: string; created_at: string; model_slug: string; model_name: string; variant: "cargo" | "passenger" | null;
   name: string; last_name: string | null; phone: string; email: string | null; facebook: string | null;
@@ -36,6 +41,8 @@ export type PreorderRow = {
   vehicle_price: number | null; down_payment: number | null; term_months: number | null; monthly_payment: number | null;
   payment_status: DepositStatus; deposit_amount: number | null; byl_checkout_id: number | null; byl_checkout_url: string | null;
   paid_amount: number | null; paid_at: string | null;
+  /** Bonus from /register/ matched by phone; the dealer deducts it from the final price. */
+  bonus_amount: number | null;
 };
 
 /** One choice in the model list: a menu card (model + variant); deposit = online deposit in MNT, if any. */

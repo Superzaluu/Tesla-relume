@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DEPOSIT_REFUND_DAYS } from "@/data/preorder";
+import { DEPOSIT_REFUND_DAYS, tugrikText } from "@/data/preorder";
 import { getCheckout } from "@/lib/byl";
 import { markPaid } from "@/lib/deposits";
 import { serviceRest } from "@/lib/supabase-service";
@@ -10,13 +10,16 @@ import { serviceRest } from "@/lib/supabase-service";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Урьдчилгаа — Ruichi", robots: { index: false } };
 
-type Row = { id: string; model_name: string; payment_status: string; byl_checkout_id: number | null; byl_checkout_url: string | null; deposit_amount: number | null };
+type Row = {
+  id: string; model_name: string; payment_status: string; byl_checkout_id: number | null; byl_checkout_url: string | null;
+  deposit_amount: number | null; bonus_amount: number | null;
+};
 
-const money = (n: number) => `${String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
+const money = tugrikText;
 
 async function load(ref: string): Promise<{ row: Row; state: string } | null> {
   if (!/^[0-9a-f-]{36}$/i.test(ref)) return null;
-  const rows = await serviceRest<Row>("GET", `preorders?id=eq.${ref}&select=id,model_name,payment_status,byl_checkout_id,byl_checkout_url,deposit_amount`);
+  const rows = await serviceRest<Row>("GET", `preorders?id=eq.${ref}&select=id,model_name,payment_status,byl_checkout_id,byl_checkout_url,deposit_amount,bonus_amount`);
   const row = rows?.[0];
   if (!row) return null;
   if (row.payment_status === "paid" || !row.byl_checkout_id) return { row, state: row.payment_status };
@@ -49,6 +52,14 @@ export default async function PreorderSuccessPage({ searchParams }: { searchPara
           <span className="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-full bg-[#eaf3ee] text-[28px] text-[#0f5a3a]" aria-hidden="true">{view.icon}</span>
           <h1 className="text-[28px] font-bold tracking-tight text-ink">{view.title}</h1>
           <p className="mx-auto mt-2 max-w-[480px] text-regular text-ink-secondary">{view.text}</p>
+          {result?.row.deposit_amount && result.row.bonus_amount ? (
+            <dl className="mx-auto mt-5 grid max-w-[360px] grid-cols-[1fr_auto] gap-x-6 gap-y-1 rounded-lg bg-[#eaf3ee] px-4 py-3 text-left text-small text-[#123b2a]">
+              <dt>Урьдчилгаа</dt><dd className="m-0 text-right">{money(result.row.deposit_amount)}</dd>
+              <dt>Бонус</dt><dd className="m-0 text-right">{money(result.row.bonus_amount)}</dd>
+              <dt className="font-bold">Нийт (машины үнээс хасагдана)</dt>
+              <dd className="m-0 text-right font-bold">{money(result.row.deposit_amount + result.row.bonus_amount)}</dd>
+            </dl>
+          ) : null}
           {state === "paid" && (
             <p className="mx-auto mt-3 max-w-[480px] text-xs text-ink-muted">Захиалгаа цуцалбал урьдчилгааг {DEPOSIT_REFUND_DAYS} хоногийн дотор буцаан олгоно.</p>
           )}

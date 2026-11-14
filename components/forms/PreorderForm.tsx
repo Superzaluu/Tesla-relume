@@ -2,9 +2,18 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { submitPreorder, type PreorderState } from "@/app/preorder/actions";
-import { DEPOSIT_REFUND_DAYS, PAYMENTS, type PreorderModel } from "@/data/preorder";
+import { BONUS_AMOUNT, DEPOSIT_REFUND_DAYS, PAYMENTS, tugrikText as money, type PreorderModel } from "@/data/preorder";
 
-const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
+/** "Урьдчилгаа 1,000,000 + бонус 100,000 = нийт 1,100,000 ₮" — both are taken off the final price. */
+function CreditTotal({ deposit, bonus }: { deposit: number; bonus: number }) {
+  return (
+    <dl className="m-0 mt-2 grid grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-small">
+      <dt>Урьдчилгаа</dt><dd className="m-0 text-right">{money(deposit)}</dd>
+      <dt>Бонус</dt><dd className="m-0 text-right">{money(bonus)}</dd>
+      <dt className="font-bold">Нийт (машины үнээс хасагдана)</dt><dd className="m-0 text-right font-bold">{money(deposit + bonus)}</dd>
+    </dl>
+  );
+}
 
 const input =
   "w-full min-h-[46px] rounded-lg font-[inherit] border border-line bg-white px-3 py-2.5 text-regular text-ink outline-none transition focus:border-[#0f5a3a] focus:ring-2 focus:ring-[#0f5a3a]/15";
@@ -27,6 +36,12 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
         <p className="mx-auto mt-2 max-w-[440px] text-regular text-ink-secondary">
           {chosen ? `${chosen.name}-ийн` : "Таны"} урьдчилсан захиалгыг бүртгэлээ. Манай зөвлөх тантай утсаар холбогдож нөхцөлийг тохирно.
         </p>
+        {state.bonus ? (
+          <div className="mx-auto mt-4 max-w-[360px] rounded-lg bg-[#eaf3ee] px-4 py-3 text-left text-[#123b2a]">
+            <p className="m-0 text-small font-semibold">100,000 ₮ бонустай</p>
+            {chosen?.deposit ? <CreditTotal deposit={chosen.deposit} bonus={state.bonus} /> : <p className="m-0 mt-1 text-small">Бонус машины үнээс хасагдана.</p>}
+          </div>
+        ) : null}
         {state.paymentFailed && (
           <p className="mx-auto mt-3 max-w-[440px] rounded-lg bg-[#fff4d6] px-4 py-3 text-small text-[#8a5a00]">
             Төлбөрийн хуудсыг одоогоор нээж чадсангүй. Урьдчилгааг зөвлөх тантай холбогдохдоо хэрхэн төлөхийг хэлж өгнө.
@@ -130,6 +145,10 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
             <p className="m-0">
               <strong>Урьдчилгаа {money(chosen.deposit)}</strong> — захиалгаа баталгаажуулахын тулд Byl-ээр (QPay, карт, банкны шилжүүлэг) төлнө.
               Үлдэгдлийг дээр сонгосон хэлбэрээр төлнө.
+            </p>
+            <p className="m-0 mt-2 text-small">
+              <Link href="/register/" className="font-semibold underline">100,000 ₮ бонус</Link>-д бүртгүүлсэн бол (ижил утасны дугаараар) нийт{" "}
+              <strong>{money(chosen.deposit + BONUS_AMOUNT)}</strong> машины үнээс хасагдана.
             </p>
             <p className="m-0 mt-1 text-xs text-[#3c5a4b]">
               Захиалгаа цуцалбал урьдчилгааг {DEPOSIT_REFUND_DAYS} хоногийн дотор буцаан олгоно. <Link href="/legal/terms/" className="underline">Нөхцөл</Link>

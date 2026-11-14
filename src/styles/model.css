@@ -617,3 +617,24 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 .mpick__card-title{font-size:22px !important;font-weight:700;color:#0f5a3a;margin:0 0 8px !important;}
 .mcompare .is-picked,.mspec-table .is-picked{background:#eaf3ee;}
 @media (max-width:600px){.mpick__head{padding:16px;}.mpick__price{font-size:24px;}.mpick__head .btn{width:100%;}}
+
+/* ---------- Common Region pass (spec section) ---------- */
+/* Everything that changes with the chosen trim sits in one white card: price row on a tinted top
+   band, then key numbers, equipment and battery options. The trim pills sit right above it (closer
+   than before: 20px instead of 40px) because they control this card. */
+.mpick{gap:20px;}
+.mpick__panel{display:flex;flex-direction:column;gap:40px;padding-bottom:32px;overflow:hidden;border:1px solid #dce3ea;border-radius:16px;background:#fff;box-shadow:0 10px 30px rgb(15 35 56 / .07);}
+.mpick__panel > .mpick__head{padding:20px 32px;border:0;border-bottom:1px solid #e3ebe6;border-radius:0;background:#f6faf8;}
+.mpick__panel > .mkey,
+.mpick__panel > .mpick__cards{padding:0 32px;}
+@media (max-width:600px){
+  .mpick__panel{gap:32px;padding-bottom:24px;}
+  .mpick__panel > .mpick__head{padding:16px 20px;}
+  .mpick__panel > .mkey,
+  .mpick__panel > .mpick__cards{padding:0 20px;}
+}
+/* Both tables get the same bordered white region. The difference table used the page colour as its
+   background, so its rows blended into the section while the full table below was a white card. */
+.msheet .mcompare__scroll{border:1px solid #dce3ea;background:#fff;}
+.msheet .mcompare table,
+.msheet .mspec-table{border-radius:0;background:#fff;box-shadow:none;}

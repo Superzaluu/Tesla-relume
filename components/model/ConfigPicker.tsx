@@ -54,62 +54,66 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
         </div>
       )}
 
-      <div className="mpick__head">
-        <div>
-          <p className="mpick__name">{option.name}{body && bodies.length > 1 ? ` · ${body}` : ""}</p>
-          <p className="mpick__price">{option.price ? money(option.price) : "Үнэ лавлах"}</p>
-        </div>
-        <a className="btn btn--primary btn--wide" href={preorder}>{option.price ? "Урьдчилсан захиалга" : "Үнэ лавлах"}</a>
-      </div>
-
-      <div className="mkey">
-        <div>
-          <h3 className="h5 mkey__title">Гол үзүүлэлт</h3>
-          <ul className="mkey__list">
-            {specs.items.map((item) => (
-              <li key={item.label}>
-                <SpecIcon icon={item.icon} />
-                <span className="mkey__text">
-                  <span className="mkey__label">{item.label}</span>
-                  <strong>{item.href ? <a href={item.href}>{item.value}</a> : item.value}</strong>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {option.equipment.length > 0 && (
+      {/* Common Region: price, key numbers, equipment and battery options all change with the chosen
+          trim, so they share one card (the price used to sit in its own box, the lists outside it). */}
+      <div className="mpick__panel">
+        <div className="mpick__head">
           <div>
-            <h3 className="h5 mkey__title">Тоноглол</h3>
+            <p className="mpick__name">{option.name}{body && bodies.length > 1 ? ` · ${body}` : ""}</p>
+            <p className="mpick__price">{option.price ? money(option.price) : "Үнэ лавлах"}</p>
+          </div>
+          <a className="btn btn--primary btn--wide" href={preorder}>{option.price ? "Урьдчилсан захиалга" : "Үнэ лавлах"}</a>
+        </div>
+
+        <div className="mkey">
+          <div>
+            <h3 className="h5 mkey__title">Гол үзүүлэлт</h3>
             <ul className="mkey__list">
-              {option.equipment.map((item) => (
-                <li key={item.label} className={item.state === "none" ? "is-none" : undefined}>
-                  <SpecIcon icon={item.icon} off={item.state === "none"} />
+              {specs.items.map((item) => (
+                <li key={item.label}>
+                  <SpecIcon icon={item.icon} />
                   <span className="mkey__text">
-                    <span className="mkey__name">{item.label}</span>
-                    {item.state === "option" && <span className="mkey__note">Нэмэлт сонголтоор</span>}
-                    {item.state === "none" && <span className="sr-only"> — энэ иж бүрдэлд байхгүй</span>}
+                    <span className="mkey__label">{item.label}</span>
+                    <strong>{item.href ? <a href={item.href}>{item.value}</a> : item.value}</strong>
                   </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {option.equipment.length > 0 && (
+            <div>
+              <h3 className="h5 mkey__title">Тоноглол</h3>
+              <ul className="mkey__list">
+                {option.equipment.map((item) => (
+                  <li key={item.label} className={item.state === "none" ? "is-none" : undefined}>
+                    <SpecIcon icon={item.icon} off={item.state === "none"} />
+                    <span className="mkey__text">
+                      <span className="mkey__name">{item.label}</span>
+                      {item.state === "option" && <span className="mkey__note">Нэмэлт сонголтоор</span>}
+                      {item.state === "none" && <span className="sr-only"> — энэ иж бүрдэлд байхгүй</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {cards.length > 0 && (
+          <div className="mpick__cards">
+            <h3 className="h5">Батерейн сонголт</h3>
+            <ul>
+              {cards.map((card) => (
+                <li key={card.title}>
+                  <p className="mpick__card-title">{card.title}</p>
+                  {card.lines.map((line) => <p key={line.label}><span>{line.label}</span> {line.value}</p>)}
                 </li>
               ))}
             </ul>
           </div>
         )}
       </div>
-
-      {cards.length > 0 && (
-        <div className="mpick__cards">
-          <h3 className="h5">Батерейн сонголт</h3>
-          <ul>
-            {cards.map((card) => (
-              <li key={card.title}>
-                <p className="mpick__card-title">{card.title}</p>
-                {card.lines.map((line) => <p key={line.label}><span>{line.label}</span> {line.value}</p>)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

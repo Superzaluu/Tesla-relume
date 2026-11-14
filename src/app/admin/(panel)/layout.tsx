@@ -10,7 +10,8 @@ const links = [
   { href: "/admin/", label: "Хяналт" },
   { href: "/admin/cards/", label: "Машины карт" },
   { href: "/admin/hero/", label: "Hero слайд" },
-  { href: "/admin/preorders/", label: "Урьдчилсан захиалга" }
+  { href: "/admin/preorders/", label: "Урьдчилсан захиалга" },
+  { href: "/admin/bonus/", label: "Бонус бүртгэл" }
 ];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
