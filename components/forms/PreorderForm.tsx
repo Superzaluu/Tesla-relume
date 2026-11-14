@@ -2,7 +2,9 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { submitPreorder, type PreorderState } from "@/app/preorder/actions";
-import { PAYMENTS, type PreorderModel } from "@/data/preorder";
+import { DEPOSIT_REFUND_DAYS, PAYMENTS, type PreorderModel } from "@/data/preorder";
+
+const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
 
 const input =
   "w-full min-h-[46px] rounded-lg font-[inherit] border border-line bg-white px-3 py-2.5 text-regular text-ink outline-none transition focus:border-[#0f5a3a] focus:ring-2 focus:ring-[#0f5a3a]/15";
@@ -25,6 +27,11 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
         <p className="mx-auto mt-2 max-w-[440px] text-regular text-ink-secondary">
           {chosen ? `${chosen.name}-ийн` : "Таны"} урьдчилсан захиалгыг бүртгэлээ. Манай зөвлөх тантай утсаар холбогдож нөхцөлийг тохирно.
         </p>
+        {state.paymentFailed && (
+          <p className="mx-auto mt-3 max-w-[440px] rounded-lg bg-[#fff4d6] px-4 py-3 text-small text-[#8a5a00]">
+            Төлбөрийн хуудсыг одоогоор нээж чадсангүй. Урьдчилгааг зөвлөх тантай холбогдохдоо хэрхэн төлөхийг хэлж өгнө.
+          </p>
+        )}
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link className="btn btn--tint px-6" href="/">Нүүр хуудас</Link>
           <Link className="btn btn--primary px-6" href="/#models">Бусад загвар үзэх</Link>
@@ -70,12 +77,24 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
           </div>
 
           <div>
+            <label className={label} htmlFor="po-last-name">Овог</label>
+            <input id="po-last-name" name="last_name" autoComplete="family-name" required maxLength={80} className={input} />
+          </div>
+          <div>
             <label className={label} htmlFor="po-name">Нэр</label>
-            <input id="po-name" name="name" autoComplete="name" required minLength={2} maxLength={80} className={input} />
+            <input id="po-name" name="name" autoComplete="given-name" required minLength={2} maxLength={80} className={input} />
           </div>
           <div>
             <label className={label} htmlFor="po-phone">Утас</label>
             <input id="po-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required pattern="[0-9+ \-]{8,20}" placeholder="9911 2233" className={input} />
+          </div>
+          <div>
+            <label className={label} htmlFor="po-email">И-мэйл</label>
+            <input id="po-email" name="email" type="email" autoComplete="email" required maxLength={160} placeholder="name@example.mn" className={input} />
+          </div>
+          <div className="sm:col-span-2">
+            <label className={label} htmlFor="po-facebook">Facebook нэр <span className="font-normal text-ink-muted">(заавал биш)</span></label>
+            <input id="po-facebook" name="facebook" maxLength={120} placeholder="Facebook дээрх таны нэр" className={input} />
           </div>
 
           <fieldset className="m-0 min-w-0 border-0 p-0 sm:col-span-2">
@@ -106,13 +125,27 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
           </div>
         </div>
 
+        {chosen?.deposit && (
+          <div className="mt-5 rounded-lg border border-[#0f5a3a]/25 bg-[#eaf3ee] px-4 py-3 text-small text-[#123b2a]">
+            <p className="m-0">
+              <strong>Урьдчилгаа {money(chosen.deposit)}</strong> — захиалгаа баталгаажуулахын тулд Byl-ээр (QPay, карт, банкны шилжүүлэг) төлнө.
+              Үлдэгдлийг дээр сонгосон хэлбэрээр төлнө.
+            </p>
+            <p className="m-0 mt-1 text-xs text-[#3c5a4b]">
+              Захиалгаа цуцалбал урьдчилгааг {DEPOSIT_REFUND_DAYS} хоногийн дотор буцаан олгоно. <Link href="/legal/terms/" className="underline">Нөхцөл</Link>
+            </p>
+          </div>
+        )}
+
         {state.error && <p className="mt-4 rounded-lg bg-[#fdecec] px-4 py-3 text-small font-medium text-[#a32020]" role="alert">{state.error}</p>}
 
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <button className="btn btn--primary min-w-[220px] px-6" type="submit" disabled={pending}>
-            {pending ? "Илгээж байна…" : "Захиалга илгээх"}
+            {pending ? (chosen?.deposit ? "Төлбөрийн хуудас руу шилжиж байна…" : "Илгээж байна…") : chosen?.deposit ? `Урьдчилгаа төлөх · ${money(chosen.deposit)}` : "Захиалга илгээх"}
           </button>
-          <p className="m-0 text-xs text-ink-muted">Илгээсний дараа манай зөвлөх тантай утсаар холбогдоно.</p>
+          <p className="m-0 text-xs text-ink-muted">
+            {chosen?.deposit ? "Byl-ийн аюулгүй төлбөрийн хуудас руу шилжинэ. Төлсний дараа манай зөвлөх холбогдоно." : "Илгээсний дараа манай зөвлөх тантай утсаар холбогдоно."}
+          </p>
         </div>
       </form>
     </div>

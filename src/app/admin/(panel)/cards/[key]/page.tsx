@@ -115,6 +115,15 @@ export default async function EditCardPage({ params, searchParams }: {
           </div>
         </Panel>
 
+        <Panel title="Онлайн урьдчилгаа" description="Бөглөвөл урьдчилсан захиалгын маягт энэ дүнг Byl-ээр (QPay, карт, банкны шилжүүлэг) төлүүлнэ. Хоосон бол урьдчилгаагүй, зөвхөн хүсэлт илгээнэ.">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextInput
+              name="deposit_amount" label="Урьдчилгаа (₮)" value={model.deposit_amount ? String(model.deposit_amount) : ""}
+              placeholder="1000000" hint={shared > 1 ? `${model.name}-ийн бүх картад хамаарна.` : undefined}
+            />
+          </div>
+        </Panel>
+
         <Panel title="Хэмнэлтийн тооцоолуур" description="Энэ загварыг ямар ижил ангиллын шатахуунт машинтай харьцуулах вэ. Хэрэглэгч тооцоолуур дээр зарцуулалтыг өөрөө өөрчилж болно.">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput name="compare_name" label="Төстэй машин" value={model.compare_name} placeholder="Hyundai Porter II 2.5" />

@@ -29,6 +29,8 @@ export type Field = {
   summary?: boolean;
   /** Dealer minimum: a configuration for sale without it gets a warning in admin. */
   required?: boolean;
+  /** Dealer rule: a configuration without it ("●") is never shown on the site. */
+  mustHave?: boolean;
   /** Short name used when equipment rows are merged in the comparison table. */
   short?: string;
   /** One-line selling point; standard items with a pitch become the highlight list. */
@@ -37,7 +39,8 @@ export type Field = {
   hidden?: boolean;
 };
 
-export type SpecConfig = { name: string; sold: boolean };
+/** price: dealer price in ₮; missing → "Үнэ лавлах". */
+export type SpecConfig = { name: string; sold: boolean; price?: number };
 export type ExtraRow = { group: string; label: string; values: string[] };
 export type SpecSheet = {
   configs: SpecConfig[];
@@ -55,11 +58,15 @@ export type SpecSheet = {
 /** "Задгай: 5990×1880×2030 · Битүү: 5950×1880×2635" → [["Задгай", "5990×…"], ["Битүү", "5950×…"]]; plain values give [["", value]]. */
 export function bodyParts(value: string): [string, string][] {
   if (!value.includes(": ")) return [["", value]];
-  return value.split(" · ").map((part) => {
+  const parts = value.split(" · ").map((part): [string, string] => {
     const at = part.indexOf(": ");
     return at > 0 ? [part.slice(0, at), part.slice(at + 2)] : ["", part];
   });
+  // Only body types count as labels; "Атираат: 3600×…" is part of the value.
+  const isBody = (label: string) => label.split(/,\s*/).every((name) => BODY_TYPES.includes(name.toLowerCase()));
+  return parts.every(([label]) => label && isBody(label)) ? parts : [["", value]];
 }
+const BODY_TYPES = ["задгай", "торон хаалттай", "битүү"];
 
 export const DEALER_WARRANTY = "6 жил / 300,000 км";
 
@@ -159,7 +166,7 @@ export const FIELDS: Field[] = [
   mark("safety", "autohold", "Автомат зогсоол (AUTO HOLD)", ["auto hold", "автомат зогсоол"], { short: "AUTO HOLD", pitch: "Гэрлэн дохион дээр тоормос дарахгүйгээр зогсож байна." }),
   mark("safety", "tpms", "Дугуйн даралтын хяналт (TPMS)", ["дугуйн даралтын хяналт"], { short: "TPMS", pitch: "Дугуй бүрийн даралтыг бодит цагт хянана." }),
   f("safety", "airbags", "Агаарын дэр", "text", { aliases: ["агаарын дэр", "жолоочийн аюулгүйн дэр"] }),
-  mark("safety", "rear_camera", "Арын камер", ["буцах зураг", "урвуу видео"], { required: true }),
+  mark("safety", "rear_camera", "Арын камер", ["буцах зураг", "урвуу видео"], { required: true, mustHave: true }),
   mark("safety", "camera360", "360° камер", ["360° панорам зураг"], { short: "360° камер", pitch: "Машиныг тойрсон орчныг дээрээс нь харж, давчуу газар амархан зогсооно." }),
   mark("safety", "radar", "Зогсоолын радар", ["зогсоолын радар", "жолоодох/ухрах радар", "зогсоолын мэдрэгч", "ухрах радар"]),
   mark("safety", "aeb", "Яаралтай автомат тоормос (AEB)", ["идэвхтэй тоормос", "автомат яаралтай тоормос"], { short: "AEB", pitch: "Мөргөлдөх эрсдэлтэй үед машин өөрөө тоормослоно." }),
@@ -308,7 +315,8 @@ export function fromLegacy(rows: string[][]): SpecSheet {
   const withValues = (row: string[]) => row.slice(1).some((cell) => cell.trim());
   const headerIndex = Math.max(0, rows.findIndex((row) => HEADER_LABELS.includes(normalizeLabel(row[0] ?? "")) && withValues(row)));
   const header = rows[headerIndex] ?? [];
-  const configs: SpecConfig[] = header.slice(1).map((name, i) => ({ name: name.trim() || `Тохиргоо ${i + 1}`, sold: true }));
+  // Dealer rule: the lowest (first) configuration is never sold when there are others.
+  const configs: SpecConfig[] = header.slice(1).map((name, i, all) => ({ name: name.trim() || `Тохиргоо ${i + 1}`, sold: !(i === 0 && all.length > 1) }));
   if (configs.length === 0) configs.push({ name: "Стандарт", sold: true });
   const n = configs.length;
 
@@ -384,18 +392,82 @@ export function fromLegacy(rows: string[][]): SpecSheet {
 
 // ---------------------------------------------------------------- sheet → page
 
-export type SummaryGroup = { heading: string; rows: { label: string; value: string; href?: string }[] };
 export type CompareRow = { label: string; cells: string[] };
 export type ChipGroup = { heading: string; chips: string[] };
+/** One line of the short "Гол үзүүлэлт" list (icon key → components/model/SpecIcon). */
+export type KeySpec = { icon: string; label: string; value: string; href?: string };
+/** One line of the short "Тоноглол" list for one trim: standard, optional extra, or not available (struck through). */
+export type EquipItem = { icon: string; label: string; state: "yes" | "option" | "none" };
+/** One trim (иж бүрдэл) as shown in the spec section: its own key numbers and equipment. */
+export type PickerOption = {
+  /** Column in SheetView.configs / the comparison tables. */
+  col: number;
+  name: string;
+  trim: string;
+  cabin: string;
+  price?: number;
+  /** Key numbers, per body type ("" when the model has one body). */
+  specs: { body: string; items: KeySpec[] }[];
+  equipment: EquipItem[];
+};
+export type Picker = {
+  trims: string[];
+  cabins: string[];
+  bodies: string[];
+  options: PickerOption[];
+  /** Battery choices side by side (R5 / EC75 style), only when there are two or more. */
+  cards: { title: string; lines: { label: string; value: string }[] }[];
+};
 export type SheetView = {
   configs: string[];
-  summary: SummaryGroup[];
   compare: CompareRow[];
   chips: ChipGroup[];
   optional: string[];
-  highlights: { title: string; text: string }[];
   full: { heading: string; rows: CompareRow[] }[];
+  /** Number of rows behind "Бүх үзүүлэлтийг харах". */
+  total: number;
+  picker: Picker;
 };
+
+// Short lists shown before "Бүх үзүүлэлтийг харах" — in priority order, at most 10 each.
+const KEY_SPECS: { key: string; icon: string }[] = [
+  { key: "range", icon: "range" }, { key: "total_range", icon: "range" }, { key: "battery_kwh", icon: "battery" },
+  { key: "dc_time", icon: "charging" }, { key: "power", icon: "motor" }, { key: "payload", icon: "payload" },
+  { key: "size", icon: "dimension" }, { key: "cargo_size", icon: "cargo" }, { key: "seats", icon: "seats" },
+  { key: "drive", icon: "drive" }, { key: "tank", icon: "fuel" }
+];
+const KEY_EQUIPMENT: { key: string; icon: string }[] = [
+  { key: "rear_camera", icon: "camera" }, { key: "camera360", icon: "camera360" }, { key: "abs", icon: "shield" },
+  { key: "esc", icon: "steer" }, { key: "aeb", icon: "brake" }, { key: "acc", icon: "cruise" }, { key: "tpms", icon: "tire" },
+  { key: "v2l", icon: "plug" }, { key: "ac", icon: "snow" }, { key: "bluetooth", icon: "bluetooth" }, { key: "app", icon: "phone" },
+  { key: "ota", icon: "cloud" }, { key: "battery_heating", icon: "heat" }, { key: "regen", icon: "regen" },
+  { key: "ldw", icon: "lane" }, { key: "dms", icon: "eye" }
+];
+
+/** Configurations shown on the site: for sale and with every must-have item (rear camera) as standard. */
+export function onSite(sheet: SpecSheet, i: number) {
+  return sheet.configs[i]?.sold !== false && FIELDS.every((field) => !field.mustHave || markOf(sheet.values[field.key]?.[i] ?? "") === "●");
+}
+
+/** For admin: configurations hidden only because a must-have item is missing. */
+export function mustHaveMissing(sheet: SpecSheet): { config: string; label: string }[] {
+  const out: { config: string; label: string }[] = [];
+  sheet.configs.forEach((config, i) => {
+    if (!config.sold) return;
+    for (const field of FIELDS.filter((item) => item.mustHave)) {
+      if (markOf(sheet.values[field.key]?.[i] ?? "") !== "●") out.push({ config: config.name, label: field.label });
+    }
+  });
+  return out;
+}
+
+/** "Задгай, торон хаалттай: 115 · Битүү: 105" → the part for one body type ("Задгай" etc.). */
+export function valueForBody(value: string, body: string) {
+  const parts = bodyParts(value);
+  if (!body || (parts.length === 1 && !parts[0][0])) return value;
+  const hit = parts.find(([label]) => label.toLowerCase().split(/,\s*/).includes(body.toLowerCase()));
+  return (hit ?? parts[0])[1];
+}
 
 /** "52.16 (2C)" + "кВт·ц" → "52.16 кВт·ц (2C)": the unit goes right after the leading number. */
 function withUnit(value: string, unit?: string): string {
@@ -452,9 +524,19 @@ function aggregate(field: Field, list: string[]): string {
 }
 
 /** Everything the page needs, computed only from the configurations marked for sale. */
+/**
+ * Columns shown on the site. Normally the configurations passing onSite(); when none has the
+ * must-have items, only the highest configuration for sale ("High", the last column) is kept.
+ */
+export function siteColumns(sheet: SpecSheet): number[] {
+  const cols = sheet.configs.map((_, i) => (onSite(sheet, i) ? i : -1)).filter((i) => i >= 0);
+  if (cols.length) return cols;
+  const sold = sheet.configs.map((config, i) => (config.sold !== false ? i : -1)).filter((i) => i >= 0);
+  return sold.length ? [sold[sold.length - 1]] : [];
+}
+
 export function viewSheet(sheet: SpecSheet, fuel?: string): SheetView {
-  const sold = sheet.configs.map((config, i) => (config.sold ? i : -1)).filter((i) => i >= 0);
-  const cols = sold.length ? sold : sheet.configs.map((_, i) => i);
+  const cols = siteColumns(sheet);
   const groups = GROUPS.filter((group) => !group.fuelOnly || needsExtender(fuel));
   const visible = (field: Field) => !field.hidden && groups.some((group) => group.key === field.group);
   const pick = (field: Field) => cols.map((i) => {
@@ -462,20 +544,6 @@ export function viewSheet(sheet: SpecSheet, fuel?: string): SheetView {
     return checkValue(field, value)?.level === "error" ? "" : value;
   });
   const fields = FIELDS.filter(visible);
-
-  const summary: SummaryGroup[] = [];
-  for (const group of groups.filter((g) => g.key !== "general" && (g.part === "core" || g.key === "chassis"))) {
-    const rows: SummaryGroup["rows"] = fields.filter((field) => field.group === group.key && field.summary).map((field) => {
-      let label = field.label;
-      if (field.key === "range") {
-        const std = aggregate(FIELD.range_std, pick(FIELD.range_std));
-        if (std && !std.includes("/")) label = `${label} (${std})`;
-      }
-      return { label, value: aggregate(field, pick(field)) };
-    }).filter((row) => row.value);
-    if (group.key === "battery") rows.push({ label: "Батерейн баталгаа", value: DEALER_WARRANTY, href: "/warranty/" });
-    if (rows.length) summary.push({ heading: group.label === "Мотор" ? "Хүч" : group.label, rows });
-  }
 
   const compare: CompareRow[] = [];
   if (cols.length > 1) {
@@ -511,11 +579,6 @@ export function viewSheet(sheet: SpecSheet, fuel?: string): SheetView {
     if (list.length) chips.push({ heading: group.label, chips: list });
   }
 
-  const highlights = fields
-    .filter((field) => field.pitch && pick(field).every((value) => markOf(value) === "●"))
-    .slice(0, 6)
-    .map((field) => ({ title: field.label, text: field.pitch! }));
-
   const full = groups.map((group) => {
     const rows: CompareRow[] = fields.filter((field) => field.group === group.key && field.key !== "range_std").map((field) => ({
       label: field.unit && field.kind !== "dims" ? `${field.label} (${field.unit})` : field.kind === "dims" ? `${field.label} (${field.unit})` : field.label,
@@ -529,7 +592,79 @@ export function viewSheet(sheet: SpecSheet, fuel?: string): SheetView {
     return { heading: group.label, rows };
   }).filter((group) => group.rows.length);
 
-  return { configs: cols.map((i) => sheet.configs[i].name), summary, compare, chips, optional, highlights, full };
+  const total = full.reduce((sum, group) => sum + group.rows.length, 0);
+  return {
+    configs: cols.map((i) => sheet.configs[i].name), compare, chips, optional, full, total,
+    picker: buildPicker(sheet, cols, fuel, new Set(fields.map((field) => field.key)))
+  };
+}
+
+function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined, visible: Set<string>): Picker {
+  const value = (key: string, i: number) => {
+    const raw = sheet.values[key]?.[i] ?? "";
+    return FIELD[key] && checkValue(FIELD[key], raw)?.level === "error" ? "" : raw;
+  };
+  const extender = needsExtender(fuel);
+
+  const bodies: string[] = [];
+  for (const list of Object.values(sheet.values)) {
+    for (const i of cols) {
+      for (const [label] of bodyParts(list[i] ?? "")) {
+        for (const body of label ? label.split(/,\s*/) : []) {
+          const name = body.charAt(0).toUpperCase() + body.slice(1);
+          if (!bodies.includes(name)) bodies.push(name);
+        }
+      }
+    }
+  }
+
+  // Ten key numbers per trim and body: nine from KEY_SPECS that have a value, plus the dealer warranty.
+  const std = [...new Set(cols.map((i) => value("range_std", i)).filter(Boolean))];
+  const rangeLabel = `${extender ? "Цахилгаанаар" : "Туулах зай"}${std.length === 1 ? ` (${std[0]})` : ""}`;
+  const specs = (i: number) => (bodies.length ? bodies : [""]).map((body) => {
+    const items = KEY_SPECS.filter((item) => visible.has(item.key)).map((item): KeySpec => {
+      const field = FIELD[item.key];
+      const raw = valueForBody(value(item.key, i), body);
+      const shown = !raw || raw === "–" ? "" : item.key === "drive" ? DRIVE_LABEL[raw] ?? raw : withUnit(raw, field.unit);
+      return { icon: item.icon === "drive" ? (raw || "rwd").toLowerCase() : item.icon, label: item.key === "range" ? rangeLabel : field.label, value: shown };
+    }).filter((item) => item.value).slice(0, 9);
+    items.push({ icon: "shield", label: "Батерейн баталгаа", value: DEALER_WARRANTY, href: "/warranty/" });
+    return { body, items };
+  });
+
+  // The same ten equipment lines for every trim, so switching trims shows what comes and goes.
+  const equipKeys = KEY_EQUIPMENT.filter((item) => visible.has(item.key) && cols.some((i) => markOf(value(item.key, i)))).slice(0, 10);
+  const equipment = (i: number): EquipItem[] => equipKeys.map((item) => {
+    const mark = markOf(value(item.key, i));
+    return { icon: item.icon, label: FIELD[item.key].label, state: mark === "●" ? "yes" : mark === "○" ? "option" : "none" };
+  });
+
+  const options: PickerOption[] = cols.map((i, col) => {
+    const cabin = value("cabin", i);
+    const name = sheet.configs[i].name;
+    const trim = cabin && name.endsWith(` · ${cabin}`) ? name.slice(0, -` · ${cabin}`.length) : name;
+    return { col, name, trim, cabin, price: sheet.configs[i].price, specs: specs(i), equipment: equipment(i) };
+  });
+  const trims = [...new Set(options.map((option) => option.trim))];
+  const cabins = [...new Set(options.map((option) => option.cabin).filter(Boolean))];
+
+  const cards: Picker["cards"] = [];
+  const byBattery = new Map<string, number[]>();
+  for (const i of cols) {
+    const kwh = value("battery_kwh", i);
+    if (kwh) byBattery.set(kwh, [...(byBattery.get(kwh) ?? []), i]);
+  }
+  if (byBattery.size > 1) {
+    for (const [kwh, list] of [...byBattery].sort((x, y) => numbersIn(x[0])[0] - numbersIn(y[0])[0])) {
+      const lines = ["range", "dc_time", "power"].map((key) => ({
+        label: key === "range" ? "Туулах зай" : FIELD[key].label,
+        value: aggregate(FIELD[key], list.map((i) => value(key, i)))
+      })).filter((line) => line.value);
+      cards.push({ title: withUnit(kwh, FIELD.battery_kwh.unit), lines });
+    }
+  }
+
+  return { trims, cabins, bodies, options, cards };
 }
 
 /** Dealer minimum (`required`) missing on a configuration that is for sale. */
@@ -554,7 +689,10 @@ export function parseSheet(json: string): SpecSheet | null {
   const data = raw as Partial<SpecSheet>;
   const str = (value: unknown, max = 200) => (typeof value === "string" ? value.trim().slice(0, max) : "");
   const configs = (Array.isArray(data.configs) ? data.configs : []).slice(0, 16)
-    .map((config, i) => ({ name: str(config?.name, 80) || `Тохиргоо ${i + 1}`, sold: config?.sold !== false }));
+    .map((config, i) => {
+      const price = Number(String(config?.price ?? "").replace(/[^\d]/g, ""));
+      return { name: str(config?.name, 80) || `Тохиргоо ${i + 1}`, sold: config?.sold !== false, ...(price > 0 ? { price } : {}) };
+    });
   if (configs.length === 0) return null;
   const n = configs.length;
   const fit = (list: unknown) => Array.from({ length: n }, (_, i) => str(Array.isArray(list) ? list[i] : ""));

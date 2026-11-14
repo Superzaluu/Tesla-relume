@@ -23,6 +23,8 @@ export type ModelRow = {
   charge: string | null; seats: string | null; seats_passenger: string | null; payload: string | null; engine: string | null;
   stats: Stat[]; image_src: string | null; image_width: number | null; image_height: number | null;
   compare_name: string | null; compare_fuel: FuelCode | null; compare_consumption: number | null; ev_consumption: number | null;
+  /** Online pre-order deposit in MNT (Byl); null = none. */
+  deposit_amount?: number | null;
 };
 export type ListingRow = {
   key: string; category_id: string; model_slug: string; variant: Variant | null;
@@ -48,7 +50,14 @@ const getListingRows = cache(() =>
   select<ListingRow>("model_listings", "select=*&active=eq.true&order=sort,key")
 );
 
-export const listingThumb = (listing: Pick<ListingRow, "key" | "thumb">) => listing.thumb || `/assets/thumbs/${listing.key}.jpg`;
+// Card photos shipped in public/assets/thumbs; any other card without an uploaded photo shows "Coming soon".
+const THUMB_FILES = new Set([
+  "c3-cold", "c3", "c5-cng", "c5-drone", "c5-reev", "c5", "c5l", "c9", "ec31", "ec31l", "ec31s", "ec35", "ec75-cargo", "ec75-passenger",
+  "ec75pro-cargo", "ec75pro-passenger", "ed71s", "r5-cargo", "r5-passenger", "r5-service", "r5pro-cargo", "r5pro-passenger"
+]);
+export const COMING_SOON = "/assets/coming-soon.svg";
+export const listingThumb = (listing: Pick<ListingRow, "key" | "thumb">) =>
+  listing.thumb || (THUMB_FILES.has(listing.key) ? `/assets/thumbs/${listing.key}.jpg` : COMING_SOON);
 
 /** A cargo/passenger value as one string: "70" + "70–100" → "70–100", "7.7" + "6–14" → "7.7/6–14". */
 const flatten = (value: Stat["value"]): string => {
@@ -85,7 +94,7 @@ function standardPage(row: ModelRow, photo: string | undefined): Model["page"] {
     tagline: row.tagline ?? undefined,
     hero: {
       kind: "intro",
-      image: { src: row.image_src || photo || "/assets/brand-logo-transparent.png", width, height, alt: `${row.name} — ${row.description}` },
+      image: { src: row.image_src || photo || COMING_SOON, width, height, alt: `${row.name} — ${row.description}` },
       maxWidth: Math.min(1100, Math.round(width * 1.5))
     },
     stats: row.stats,

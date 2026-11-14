@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import { inputClass } from "@/components/admin/styles";
 import {
-  checkValue, FIELDS, GROUPS, MARK_LABEL, MARKS, markOf, missingRequired, needsExtender,
+  checkValue, FIELDS, GROUPS, MARK_LABEL, MARKS, markOf, missingRequired, mustHaveMissing, needsExtender, onSite, siteColumns,
   type ExtraRow, type Field, type Part, type SpecSheet
 } from "@/data/specSheet";
 
@@ -30,7 +30,14 @@ export function SpecSheetEditor({ initial, suggestions, fuel }: Props) {
   );
   const n = sheet.configs.length;
   const check = new Set(sheet.check ?? []);
-  const missing = useMemo(() => missingRequired(sheet), [sheet]);
+  const hidden = useMemo(() => mustHaveMissing(sheet), [sheet]);
+  // When no configuration passes, the site keeps only the highest one for sale.
+  const fallback = useMemo(() => {
+    const cols = siteColumns(sheet);
+    return cols.length === 1 && !onSite(sheet, cols[0]) ? cols[0] : undefined;
+  }, [sheet]);
+  // Must-have items are reported above as "hidden from the site", not again as "missing".
+  const missing = useMemo(() => missingRequired(sheet).filter((item) => !hidden.some((h) => h.config === item.config && h.label === item.label)), [sheet, hidden]);
   const extender = needsExtender(fuel);
 
   const touch = (key: string, next: Partial<SpecSheet>) =>
@@ -68,6 +75,16 @@ export function SpecSheetEditor({ initial, suggestions, fuel }: Props) {
           {(sheet.check ?? []).length > 0 && <> <strong>Шалгах</strong> гэсэн {(sheet.check ?? []).length} мөрийг орчуулга, утгаар нь нягтална уу.</>}
         </p>
       )}
+      {hidden.length > 0 && (
+        <p className="rounded-xl border border-[#d92d20]/40 bg-[#fef3f2] px-4 py-3 text-small text-ink">
+          {fallback !== undefined ? (
+            <><strong>Арын камертай иж бүрдэл байхгүй.</strong> Сайтад зөвхөн хамгийн дээд иж бүрдэл — <strong>{sheet.configs[fallback]?.name}</strong> — харагдана.</>
+          ) : (
+            <><strong>Сайтад харагдахгүй:</strong> {[...new Set(hidden.map((item) => item.config))].join(", ")} —
+            {" "}{[...new Set(hidden.map((item) => item.label.toLowerCase()))].join(", ")} стандартаар (●) байхгүй тул эдгээр тохиргоог сайтаас бүрэн хасна.</>
+          )}
+        </p>
+      )}
       {missing.length > 0 && (
         <div className="rounded-xl border border-[#f79009]/40 bg-[#fffaeb] px-4 py-3 text-small text-ink">
           <p className="m-0 font-semibold">Зарах тохиргоонд заавал байх тоноглол дутуу:</p>
@@ -89,6 +106,14 @@ export function SpecSheetEditor({ initial, suggestions, fuel }: Props) {
                 className={`${inputClass} w-48 py-1`} value={config.name} aria-label={`Тохиргоо ${i + 1}-ийн нэр`}
                 onChange={(e) => setConfigs(sheet.configs.map((item, j) => (j === i ? { ...item, name: e.target.value } : item)))}
               />
+              <input
+                className={`${inputClass} w-36 py-1`} inputMode="numeric" placeholder="Үнэ ₮ (заавал биш)" aria-label={`${config.name}-ийн үнэ, төгрөг`}
+                value={config.price ? String(config.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
+                onChange={(e) => {
+                  const price = Number(e.target.value.replace(/[^\d]/g, ""));
+                  setConfigs(sheet.configs.map((item, j) => (j === i ? { ...item, price: price > 0 ? price : undefined } : item)));
+                }}
+              />
               <label className="flex items-center gap-1 text-xs text-ink">
                 <input type="checkbox" checked={config.sold} onChange={(e) => setConfigs(sheet.configs.map((item, j) => (j === i ? { ...item, sold: e.target.checked } : item)))} />
                 Зарна
@@ -106,7 +131,9 @@ export function SpecSheetEditor({ initial, suggestions, fuel }: Props) {
             onClick={() => setConfigs([...sheet.configs, { name: `Тохиргоо ${n + 1}`, sold: true }], (list) => [...list, list[list.length - 1] ?? ""])}
           >+ Тохиргоо</button>
         </div>
-        <p className="mt-1 text-xs text-ink-muted">&quot;Зарна&quot;-г унтраасан тохиргоо сайтад харагдахгүй. Шинэ тохиргоо сүүлийн баганын утгыг хуулж авна.</p>
+        <p className="mt-1 text-xs text-ink-muted">
+          &quot;Зарна&quot;-г унтраасан тохиргоо сайтад харагдахгүй. Үнэ оруулаагүй бол сайтад &quot;Үнэ лавлах&quot; гэж гарна. Шинэ тохиргоо сүүлийн баганын утгыг хуулж авна.
+        </p>
       </div>
 
       {/* Tabs */}

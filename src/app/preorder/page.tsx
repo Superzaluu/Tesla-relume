@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PreorderForm } from "@/components/forms/PreorderForm";
 import { getNavigation } from "@/data/content";
 import { preorderModelValue, type PreorderModel } from "@/data/preorder";
+import { getDeposits } from "@/lib/deposits";
 
 export const metadata: Metadata = {
   title: "Урьдчилсан захиалга — Ruichi",
@@ -10,9 +11,11 @@ export const metadata: Metadata = {
 
 export default async function PreorderPage({ searchParams }: { searchParams: Promise<{ model?: string; variant?: string }> }) {
   const { model, variant } = await searchParams;
-  const models: PreorderModel[] = (await getNavigation()).flatMap((category) =>
+  const [navigation, deposits] = await Promise.all([getNavigation(), getDeposits()]);
+  const models: PreorderModel[] = navigation.flatMap((category) =>
     category.items.map((item) => ({
-      value: preorderModelValue(item.slug, item.variant), name: item.name, desc: item.desc, category: category.label, thumb: item.thumb
+      value: preorderModelValue(item.slug, item.variant), name: item.name, desc: item.desc, category: category.label, thumb: item.thumb,
+      deposit: deposits[item.slug]
     }))
   );
   // Card links carry the variant; links from a model page may not, so fall back to that model's first card.

@@ -92,7 +92,10 @@ const DRIVES = ["FWD", "RWD", "AWD"];
 function modelFields(form: FormData) {
   const quickType = text(form, "quick_type");
   const drive = text(form, "drive");
+  // "1,000,000" or "1000000 ₮" → 1000000; empty or too small → no online deposit.
+  const deposit = Number(String(text(form, "deposit_amount") ?? "").replace(/[^\d]/g, ""));
   return {
+    deposit_amount: deposit >= 1000 && deposit <= 100_000_000 ? deposit : null,
     name: text(form, "name"),
     description: text(form, "description"),
     tagline: text(form, "tagline"),

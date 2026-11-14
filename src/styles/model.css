@@ -558,23 +558,62 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 
 /* ---------- Structured spec sheet (SpecSheetSection) — R5 layout without the side image ---------- */
 .msheet { display:flex; flex-direction:column; gap:48px; }
-.msheet__summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:20px; }
-.msheet__summary .mspecs__group { padding:24px; border:1px solid #dce3ea; border-radius:16px; background:#fff; }
-.msheet__summary .mspecs__group a { color:#0f5a3a; text-decoration:underline; text-underline-offset:3px; }
-.msheet__title { margin:0 0 16px; }
 .msheet__chips { display:flex; flex-direction:column; gap:20px; }
 .msheet__chips .mchips { margin:0; }
-.msheet__full { border:1px solid #dce3ea; border-radius:16px; background:#fff; }
-.msheet__full > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:0 24px; cursor:pointer; font-weight:600; color:#0f5a3a; list-style:none; }
-.msheet__full > summary::-webkit-details-marker { display:none; }
-.msheet__full > summary::after { content:"+"; font-size:22px; line-height:1; }
-.msheet__full[open] > summary::after { content:"–"; }
-.msheet__full[open] > summary { border-bottom:1px solid #dce3ea; }
-.msheet__full .mspec-table { box-shadow:none; border-radius:0 0 16px 16px; }
-@media (max-width:767px) { .msheet { gap:36px; } .msheet__summary .mspecs__group { padding:20px; } }
+@media (max-width:767px) { .msheet { gap:36px; } }
+
+/* Short key lists (Airbnb "What this place offers"): icon + text, two columns, ten lines each. */
+.mkey { display:grid; gap:48px; }
+.mkey__title { margin:0 0 20px; }
+.mkey__list { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px 48px; margin:0; padding:0; list-style:none; }
+.mkey__list li { display:flex; align-items:center; gap:16px; min-height:40px; }
+.mkey__icon { flex:none; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; color:var(--color-text); }
+.mkey__icon .mkey__quick { width:28px; height:28px; }
+.mkey__icon.is-off { color:var(--color-text-secondary); opacity:.7; }
+.mkey__text { display:flex; flex-direction:column; min-width:0; }
+.mkey__label { font-size:13px; color:var(--color-text-secondary); }
+.mkey__text strong { font-size:17px; font-weight:600; color:var(--color-text); }
+.mkey__text strong a { color:#0f5a3a; text-decoration:underline; text-underline-offset:3px; }
+.mkey__name { font-size:17px; color:var(--color-text); }
+.mkey__note { font-size:13px; color:var(--color-text-secondary); }
+.mkey__list li.is-none .mkey__name { text-decoration:line-through; color:var(--color-text-secondary); }
+.mkey .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+@media (max-width:640px) { .mkey__list { grid-template-columns:1fr; gap:16px; } }
+
+/* "Бүх үзүүлэлтийг харах (N)" — the rest of the sheet, opened on demand. */
+.msheet__more > summary { display:inline-flex; align-items:center; gap:10px; min-height:52px; padding:0 24px; border:1px solid #c9d6cf; border-radius:12px; background:#fff; color:var(--color-text); font-weight:600; cursor:pointer; list-style:none; }
+.msheet__more > summary::-webkit-details-marker { display:none; }
+.msheet__more > summary::after { content:"⌄"; font-size:18px; line-height:1; transform:translateY(-3px); }
+.msheet__more[open] > summary::after { content:"⌃"; transform:translateY(3px); }
+.msheet__more > summary:hover { border-color:#0f5a3a; }
+.msheet__more-body { display:flex; flex-direction:column; gap:48px; margin-top:40px; }
+.msheet__more-body .h5 { margin:0 0 16px; }
 .msheet .mcompare tbody th[scope="row"] { min-width:200px; max-width:280px; }
 
 /* Body-dependent values: one line per body type (Задгай / Торон хаалттай / Битүү). */
 .msheet__body{display:block;}
 .msheet__body + .msheet__body{margin-top:6px;}
 .msheet__body b{display:block;font-size:12px;font-weight:600;color:var(--color-text-secondary);}
+
+/* Trim picker inside "Техникийн үзүүлэлт": pills, cab/body switches, price row, then the key lists. */
+.mpick{display:flex;flex-direction:column;gap:40px;}
+.mpick__controls{display:flex;flex-direction:column;align-items:flex-start;gap:16px;}
+.mpick__pills{display:flex;flex-wrap:wrap;gap:12px;}
+.mpick__pill{border:1px solid #c9d6cf;border-radius:999px;padding:10px 22px;background:#fff;color:var(--color-text);font:inherit;font-weight:600;cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+.mpick__pill:hover{border-color:#0f5a3a;}
+.mpick__pill[aria-pressed="true"]{background:#0f5a3a;border-color:#0f5a3a;color:#fff;}
+.mpick__seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:999px;background:#eaf3ee;}
+.mpick__seg button{border:0;border-radius:999px;padding:8px 16px;background:transparent;color:var(--color-text-secondary);font:inherit;font-size:14px;font-weight:600;cursor:pointer;}
+.mpick__seg button[aria-pressed="true"]{background:#fff;color:#0f2a1d;box-shadow:0 1px 3px rgb(15 35 56 / .12);}
+.mpick__seg button:disabled{opacity:.4;cursor:not-allowed;}
+.mpick__head{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:20px 24px;border:1px solid #dce3ea;border-radius:16px;background:#fff;}
+.mpick__name{margin:0;font-size:18px;font-weight:600;color:var(--color-text);}
+.mpick__price{margin:4px 0 0;font-size:28px;font-weight:700;color:#0f5a3a;}
+.mpick__cards{display:grid;gap:16px;}
+.mpick__cards ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:0;padding:0;list-style:none;}
+.mpick__cards li{padding:20px;border-radius:16px;background:#f3f7f5;}
+.mpick__cards li p{margin:4px 0 0;font-size:14px;}
+.mpick__cards li span{color:var(--color-text-secondary);}
+.mpick__card-title{font-size:22px !important;font-weight:700;color:#0f5a3a;margin:0 0 8px !important;}
+.mcompare .is-picked,.mspec-table .is-picked{background:#eaf3ee;}
+@media (max-width:600px){.mpick__head{padding:16px;}.mpick__price{font-size:24px;}.mpick__head .btn{width:100%;}}

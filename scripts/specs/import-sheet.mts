@@ -8,7 +8,7 @@
 // dictionary below; anything still in English is listed in `check` for the admin to review.
 // Prices (¥) and the manufacturer warranty are skipped: the dealer's terms apply.
 
-import { FIELD, GROUPS, checkValue, normalizeMark, type ExtraRow, type SpecSheet } from "../../src/data/specSheet.ts";
+import { FIELD, GROUPS, checkValue, normalizeMark, valueForBody, type ExtraRow, type SpecSheet } from "../../src/data/specSheet.ts";
 import { readFileSync, writeFileSync } from "node:fs";
 
 type Rule = { cn?: RegExp; en?: RegExp; key?: string; part?: string; extra?: string; group?: string; skip?: true };
@@ -52,7 +52,10 @@ const RULES: Rule[] = [
   { cn: /最大功率转速/, skip: true },
   { cn: /油箱|储气|气瓶/, key: "tank" },
   { cn: /总续航|综合续航/, key: "total_range" },
+  // C5 CNG's PDF labels this row "weighted fuel consumption" in Chinese, but the English label and values are electricity.
+  { en: /electricityconsumption/, key: "consumption" },
   { cn: /加权综合燃料/, extra: "Жигнэсэн түлшний зарцуулалт (л/100км)", group: "extender" },
+  { cn: /气耗/, extra: "Хийн зарцуулалт, батерей дууссан үед (кг/100км)", group: "extender" },
   { cn: /油耗|耗气/, key: "fuel_use" },
 
   { cn: /电池类型/, key: "battery_type" },
@@ -62,7 +65,8 @@ const RULES: Rule[] = [
   { cn: /耗电量|电耗/, key: "consumption" },
   { cn: /快充功能/, key: "dc" },
   { cn: /快充时间/, key: "dc_time" },
-  { cn: /快充.*类型|快充类型|^类型$/, skip: true },
+  { cn: /^快充类型$/, key: "charge_rate" },
+  { cn: /快充.*类型|^类型$/, skip: true },
   { cn: /慢充功率/, key: "ac_power" },
   { cn: /慢充时间/, key: "ac_time" },
   { cn: /驱动电机数/, extra: "Моторын тоо", group: "motor" },
@@ -150,7 +154,7 @@ const RULES: Rule[] = [
   { cn: /制动能量回馈|能量回收/, key: "regen" },
   { cn: /紧急制动报警/, key: "brake_alert" },
   { cn: /坡道识别/, extra: "Налуу таних, жин хянах", group: "safety" },
-  { cn: /胎压监测/, key: "tpms" },
+  { cn: /胎压/, key: "tpms" },
   { cn: /esc|车身稳定/, key: "esc" },
   { cn: /自动驻车/, key: "autohold" },
   { cn: /车道偏离预警/, key: "ldw" },
@@ -164,7 +168,21 @@ const RULES: Rule[] = [
 
 // English → Mongolian, applied in order to every text value.
 const DICT: [RegExp, string][] = [
+  [/^(\w+) \(lithium iron phosphate\)$/i, "LFP (лити төмрийн фосфат), $1"],
   [/lithium iron phosphate(?: \(LFP\))?/i, "LFP (лити төмрийн фосфат)"],
+  [/^2C Supercharge$/i, "2C хурдан цэнэглэлт"], [/^on-board DC$/i, "DC"],
+  [/^CNG range extender$/i, "CNG зай сунгагч (EREV)"], [/^pure electric$/i, "Цэвэр цахилгаан"],
+  [/\(?Corrugated separate cargo box with gantry\)?/i, "(атираат хашлагатай, кабины хамгаалалтын хүрээтэй)"],
+  [/\(Air deflector \+ single door on right \/ double doors on right\)/i, "(агаар чиглүүлэгчтэй, баруун талд 1 эсвэл 2 хаалгатай)"],
+  [/front discs?,? (?:and )?rear drums?/i, "Урд диск, хойд хүрд"],
+  [/^electric window lift$/i, "Цахилгаан цонх"], [/^manuel$/i, "Гар"],
+  [/^hand-held gearshift$/i, "Жолооны багана дээр"],
+  [/instrument integration/i, "багажны самбарт"],
+  [/^driver(?: seat)?$/i, "Жолооч"], [/^drive\/passenger$/i, "Жолооч, зорчигч"],
+  [/H[AV]{2}C \(electric air conditioning, integrated (?:water|air) heating(?: with)? PTC\s*controller\)?/i, "Цахилгаан агааржуулагч, PTC халаагууртай"],
+  [/(\d+(?:\+\d+)?)\s*(?:longitudinal )?leaf springs?\s*[,(]?\s*non-independent suspension(?:, with leaf\s*springs mounted on\s*top)?\)?/i, "$1 навчит пүрштэй, хамааралтай"],
+  [/driver(?:'s)? seat with manual (\d+)-way adjustment and split headrest/i, "Гар тохируулгатай, $1 чиглэл, тусдаа толгойн түшлэгтэй"],
+  [/passenger seat with height-adjustable armrest, cup holder, and\s*storage\s*(?:box|compartment),\s*folding backrest, flip-up seat\s*cushion, and split\s*headrest/i, "Гарын түшлэг, аяганы тавиур, хайрцагтай; түшлэг эвхэгдэж, суудал дээш өргөгдөнө"],
   [/two-in-one permanent magnet synchronous motor/i, "Байнгын соронзон синхрон мотор (2-in-1)"],
   [/permanent magnet synchronous(?: motor)?(?: \(PMSM\))?/i, "Байнгын соронзон синхрон мотор"],
   [/double wishbone independent suspension/i, "Давхар салаат гартай, бие даасан"],
@@ -203,14 +221,15 @@ const DICT: [RegExp, string][] = [
 ];
 
 const BODY: Record<string, string> = { flatbed: "Задгай", fence: "Торон хаалттай", box: "Битүү", "flatbed/fence": "Задгай, торон хаалттай" };
-const KEEP_LATIN = /\b(Type-C|LFP|PMSM|EPS|C-EPS|R-EPS|EPB|ABS|EBD|ESC|LED|LCD|USB|HD|MP3|PTC|DC|AC|EREV|V2L|OTA|SER\d+\w*|H\d+\w*|China|VI|B|LT|PR|R\d+)\b/g;
+const KEEP_LATIN = /\b(Ganfeng|CATL|Type-C|LFP|PMSM|EPS|C-EPS|R-EPS|EPB|ABS|EBD|ESC|LED|LCD|USB|HD|MP3|PTC|DC|AC|EREV|V2L|OTA|SER\d+\w*|H\d+\w*|China|VI|B|LT|PR|R\d+)\b/g;
 
-const CJK = /[　-〿㐀-鿿＀-￯]/;
+const CJK = /[㐀-鿿]/;
 const CJK_ALL = /[　-〿㐀-鿿＀-￯]+/g;
+const FULLWIDTH: Record<string, string> = { "（": "(", "）": ")", "：": ":", "，": ",", "；": ";", "／": "/", "　": " " };
 
 /** The English part of an "English\n中文" or "English/中文" cell. */
 function english(cell: string) {
-  const lines = (cell ?? "").replace(/(\d)\s*门/g, "$1 хаалга").split("\n").map((line) => line.trim()).filter(Boolean);
+  const lines = (cell ?? "").replace(/[（）：，；／　]/g, (ch) => FULLWIDTH[ch]).replace(/(\d)\s*门/g, "$1 хаалга").split("\n").map((line) => line.trim()).filter(Boolean);
   const latin = lines.filter((line) => !CJK.test(line));
   const picked = (latin.length ? latin : lines).map((line) => {
     const parts = line.split("/");
@@ -250,6 +269,8 @@ function asNumber(key: string, raw: string) {
   const value = english(raw);
   if (!value || /^(үгүй|no|[─—–-]+)$/i.test(value)) return "";
   if (key === "payload" && /^[\d.]+\s*t$/i.test(value)) return String(Math.round(parseFloat(value) * 1000));
+  // "58.24 (Supercharge)" → "58.24"; the note lives in its own row (charge type).
+  if (/^[\d.]+\s*\([^)]*\)$/.test(value)) return value.replace(/\s*\(.*$/, "");
   const m = value.match(/^([<>≤≥]?\s*[\d.,]+(?:\s*[-–\/~]\s*[\d.,]+)?)\s*[\p{L}/.%³°·]{0,8}$/u);
   return m ? m[1].replace(/\s+/g, "") : translate(value);
 }
@@ -263,7 +284,7 @@ function asText(key: string, raw: string) {
   if (key === "motor_layout") return /^rear/i.test(value) ? "Арын" : /^front/i.test(value) ? "Урд" : translate(value);
   if (key === "parking_brake") return /EPB/.test(value) ? "EPB (цахилгаан)" : translate(value);
   if (key === "size" || key === "cargo_size") {
-    return translate(value).replace(/(\d)\s*[*x×]\s*(?=\d)/gi, "$1×").replace(/(\d)\s*,\s*(?=\d)/g, "$1/").replace(/(\d)\s+(?=\d{3,5}×)/g, "$1; ");
+    return translate(value).replace(/(\d)\s*[*x×]\s*(?=\d)/gi, "$1×").replace(/:(?=\d)/g, ": ").replace(/(\d)\s*,\s*(?=\d)/g, "$1/").replace(/(\d)\s+(?=\d{3,5}×)/g, "$1; ");
   }
   if (key === "cabin") return translate(value).replace(/^(Нэг|Давхар) эгнээ.*/, "$1 эгнээ");
   return translate(value);
@@ -420,9 +441,34 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
   };
 }
 
+/**
+ * One sellable vehicle out of a tab: only the given cab ("Нэг эгнээ" / "Давхар эгнээ"), only the given
+ * body ("Задгай" / "Битүү"; other bodies such as "Торон хаалттай" disappear), and without the dropped trims.
+ */
+export function narrow(sheet: SpecSheet, { cab, body, drop = [], dropLowest = true }: { cab?: string; body?: string; drop?: string[]; dropLowest?: boolean }): SpecSheet {
+  const trimOf = (i: number) => (cab ? sheet.configs[i].name.replace(` · ${cab}`, "") : sheet.configs[i].name);
+  let keep = sheet.configs.map((_, i) => i).filter((i) => (!cab || sheet.values.cabin?.[i] === cab) && !drop.includes(trimOf(i)));
+  // Dealer rule (2026-11-14): the lowest trim (first column) is never sold, unless it is the only one.
+  if (dropLowest && keep.length > 1) keep = keep.slice(1);
+  const pick = (list: string[]) => keep.map((i) => (body ? valueForBody(list[i] ?? "", body) : list[i] ?? ""));
+  return {
+    configs: keep.map((i) => ({ ...sheet.configs[i], name: trimOf(i) })),
+    values: Object.fromEntries(Object.entries(sheet.values).map(([key, list]) => [key, pick(list)])),
+    extras: sheet.extras.map((row) => ({ ...row, values: pick(row.values) })),
+    check: sheet.check,
+    source: [sheet.source, cab, body].filter(Boolean).join(" · ")
+  };
+}
+
 if (process.argv[1]?.endsWith("import-sheet.mts")) {
-  const [input, tab, output] = process.argv.slice(2);
-  const { sheet, report } = importTab(JSON.parse(readFileSync(input, "utf8")), tab);
+  // node … import-sheet.mts <tab.json> "<tab>" <out.json> [--cab "Нэг эгнээ"] [--body "Задгай"] [--drop "Pioneer,…"] [--keep-lowest]
+  const [input, tab, output, ...flags] = process.argv.slice(2);
+  const flag = (name: string) => { const at = flags.indexOf(`--${name}`); return at >= 0 ? flags[at + 1] : undefined; };
+  const imported = importTab(JSON.parse(readFileSync(input, "utf8")), tab);
+  const sheet = narrow(imported.sheet, {
+    cab: flag("cab"), body: flag("body"), drop: flag("drop")?.split(",").map((item) => item.trim()), dropLowest: !flags.includes("--keep-lowest")
+  });
+  const report = imported.report;
   writeFileSync(output, JSON.stringify(sheet, null, 1));
   console.log(report.join("\n"));
   for (const key of sheet.check ?? []) console.log(`check ${key}: ${sheet.values[key].join(" | ")}`);

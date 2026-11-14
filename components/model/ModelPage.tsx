@@ -119,7 +119,7 @@ export function ModelPage({ model, category, specView }: { model: Model; categor
       <ActionBar model={model} />
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       <Gallery model={model} />
-      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} />}
+      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} preorder={preorderHref(model.slug)} />}
       <EndCta model={model} />
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>

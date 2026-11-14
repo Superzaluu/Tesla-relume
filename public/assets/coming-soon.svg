@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef5f1"/>
+      <stop offset="1" stop-color="#dfece5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <!-- Text sits in the upper half: on model pages the icon strip covers the bottom of the photo. -->
+  <text x="600" y="190" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="56" font-weight="700" fill="#0f5a3a">Coming soon</text>
+  <text x="600" y="240" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="28" fill="#4b6358">Зураг тун удахгүй</text>
+  <g fill="none" stroke="#0f5a3a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".28" transform="translate(600 400) scale(.8) translate(-600 -345)">
+    <path d="M380 420V250h300v170"/>
+    <path d="M680 300h90l60 70v50h-150"/>
+    <path d="M360 420h480"/>
+    <circle cx="450" cy="440" r="34"/>
+    <circle cx="760" cy="440" r="34"/>
+  </g>
+</svg>

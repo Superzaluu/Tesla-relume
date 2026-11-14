@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Notice } from "@/components/admin/AdminUi";
 import { tugrik } from "@/data/greenLoan";
-import { PAYMENTS, PREORDER_STATUSES, type PreorderRow, type PreorderStatus } from "@/data/preorder";
+import { DEPOSIT_STATUSES, PAYMENTS, PREORDER_STATUSES, type DepositStatus, type PreorderRow, type PreorderStatus } from "@/data/preorder";
 import { requireAdmin } from "@/lib/supabase-auth";
 import { setPreorderStatus } from "../../actions";
 
@@ -9,6 +9,13 @@ const STATUS_STYLE: Record<PreorderStatus, string> = {
   new: "bg-[#fff4d6] text-[#8a5a00]",
   contacted: "bg-[#e8f2ec] text-[#0f5a3a]",
   closed: "bg-[#f1f2f4] text-ink-muted"
+};
+const DEPOSIT_STYLE: Record<DepositStatus, string> = {
+  none: "bg-[#f1f2f4] text-ink-muted",
+  pending: "bg-[#fff4d6] text-[#8a5a00]",
+  verifying: "bg-[#e6f0ff] text-[#1d4ed8]",
+  paid: "bg-[#0f5a3a] text-white",
+  expired: "bg-[#f1f2f4] text-ink-muted"
 };
 const label = <T extends { value: string; label: string }>(list: readonly T[], value: string) => list.find((item) => item.value === value)?.label ?? value;
 const date = (iso: string) =>
@@ -31,7 +38,7 @@ export default async function PreordersPage({ searchParams }: { searchParams: Pr
   return (
     <>
       <h1 className="text-[32px] font-bold tracking-tight text-ink">Урьдчилсан захиалга</h1>
-      <p className="mb-6 mt-1 text-small text-ink-secondary">Сайтын /preorder/ болон /green-loan/ хуудаснаас ирсэн хүсэлтүүд. Холбогдсоныхоо дараа төлвийг нь солиорой.</p>
+      <p className="mb-6 mt-1 text-small text-ink-secondary">Сайтын /preorder/ болон /green-loan/ хуудаснаас ирсэн хүсэлтүүд. Холбогдсоныхоо дараа төлвийг нь солиорой. Онлайн урьдчилгааны төлөв Byl-ээс автоматаар шинэчлэгдэнэ. Цуцалсан захиалгын урьдчилгааг 2 хоногийн дотор буцаан шилжүүлнэ.</p>
       <Notice error={error} />
 
       <nav className="mb-5 flex flex-wrap gap-2">
@@ -69,8 +76,17 @@ export default async function PreordersPage({ searchParams }: { searchParams: Pr
                 )}
               </div>
               <div className="min-w-0">
-                <p className="truncate font-medium text-ink">{row.name}</p>
+                <p className="truncate font-medium text-ink">{[row.last_name, row.name].filter(Boolean).join(" ")}</p>
                 <a href={`tel:${row.phone.replace(/[^0-9+]/g, "")}`} className="text-small font-semibold text-[#0f5a3a] hover:underline">{row.phone}</a>
+                {row.email && <a href={`mailto:${row.email}`} className="block truncate text-xs text-ink-secondary hover:underline">{row.email}</a>}
+                {row.facebook && <p className="m-0 truncate text-xs text-ink-secondary">Facebook: {row.facebook}</p>}
+                {row.payment_status && row.payment_status !== "none" && (
+                  <p className="m-0 mt-1 flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className={`rounded-full px-2 py-0.5 font-semibold ${DEPOSIT_STYLE[row.payment_status]}`}>{label(DEPOSIT_STATUSES, row.payment_status)}</span>
+                    {row.deposit_amount && <span className="text-ink-secondary">{tugrik(row.paid_amount ?? row.deposit_amount)}</span>}
+                    {row.byl_checkout_url && <a href={row.byl_checkout_url} target="_blank" rel="noreferrer" className="text-[#0f5a3a] hover:underline">Byl ↗</a>}
+                  </p>
+                )}
               </div>
               <p className="m-0 whitespace-pre-line text-small text-ink-secondary">{row.note || <span className="text-ink-muted">—</span>}</p>
               <form action={setPreorderStatus} className="flex items-center gap-2">
