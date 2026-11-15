@@ -221,6 +221,25 @@ export const getCalculatorModels = cache(async (): Promise<CalcModel[]> => {
   );
 });
 
+// Local preview of the winter scene photos (2026-11-15) before the hero_slides rows are switched: the
+// database is shared with the live site, which must not point at files it has not deployed yet. Only active
+// when HERO_SCENE_PREVIEW=1 is set (in .env.local); remove once the rows use /assets/hero/winter/.
+const SCENE_PREVIEW: Record<string, { file: string; sky: string; alt: string }> = {
+  "r5pro-passenger": { file: "r5pro", sky: "#72a5de", alt: "R5 Pro фургонууд Чингис хаан олон улсын нисэх буудлын өмнө, өвөл" },
+  "ec75pro-cargo": { file: "ec75pro", sky: "#7dabda", alt: "EC75 Pro фургон Улаанбаатар хотын төвд, өвөл" },
+  "c5-reev": { file: "c5", sky: "#9ec2ea", alt: "C5 EREV задгай тэвштэй ачааны машин барилгын талбай дээр, өвөл" },
+  c3: { file: "c3", sky: "#85b5e6", alt: "C3 задгай тэвштэй ачааны машин барааны зах дээр, өвөл" },
+  ed71s: { file: "ed71s", sky: "#8fbbea", alt: "ED71S ачааны машин барилгын материалын зах дээр, өвөл" }
+};
+function previewScene(slide: HeroSlide, slug: string): HeroSlide {
+  const scene = process.env.HERO_SCENE_PREVIEW === "1" ? SCENE_PREVIEW[slug] : undefined;
+  if (!scene) return slide;
+  return {
+    ...slide, theme: "light", themeSm: "light", sky: scene.sky,
+    image: { src: `/assets/hero/winter/${scene.file}.jpg`, width: 2560, height: 1140, alt: scene.alt }
+  };
+}
+
 /** Homepage hero slides in `sort` order. Empty text fields fall back to the category, description and model page. */
 export const getHeroSlides = cache(async (): Promise<HeroSlide[]> => {
   const [rows, models] = await Promise.all([
@@ -232,7 +251,7 @@ export const getHeroSlides = cache(async (): Promise<HeroSlide[]> => {
       .filter((row) => models.has(row.model_slug))
       .map(async (row): Promise<HeroSlide> => {
         const model = models.get(row.model_slug)!;
-        return {
+        return previewScene({
           id: `hero-${row.model_slug}`,
           theme: row.theme,
           themeSm: row.theme_sm ?? undefined,
@@ -247,7 +266,7 @@ export const getHeroSlides = cache(async (): Promise<HeroSlide[]> => {
             src: row.image_src, width: row.image_width, height: row.image_height,
             alt: row.image_alt || `${model.name} — ${model.description}`, position: row.image_position || undefined
           }
-        };
+        }, row.model_slug);
       })
   );
 });

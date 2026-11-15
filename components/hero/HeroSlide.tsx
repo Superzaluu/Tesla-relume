@@ -14,12 +14,17 @@ type Props = {
 };
 
 /** One model slide: copy, actions and background photo. */
+// Scene photos (2026-11-15): 2560×1140 composites, the vehicle centred in the lower half and empty sky above
+// for the copy. They get their own crop rules (.hero--scene in site.css) so the vehicle is never cut off.
+const SCENE_RATIO = 2560 / 1140;
+
 export function HeroSlide({ slide, position, total, active, showImage }: Props) {
   const first = position === 0;
   const Heading = first ? "h1" : "h2";
+  const scene = Math.abs(slide.image.width / slide.image.height - SCENE_RATIO) < 0.02;
   return (
     <div
-      id={slide.id} className="hero hero__slide" data-theme={slide.theme} data-theme-sm={slide.themeSm}
+      id={slide.id} className={`hero hero__slide${scene ? " hero--scene" : ""}`} data-theme={slide.theme} data-theme-sm={slide.themeSm}
       style={{ "--color-hero-sky": slide.sky } as CSSProperties}
       role="group" aria-roledescription="slide" aria-label={`${position + 1} / ${total}: ${slide.model}`}
       aria-hidden={!active} inert={!active}

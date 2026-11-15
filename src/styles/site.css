@@ -1101,26 +1101,26 @@ body::before { content:""; position:fixed; z-index:-2; inset:0; background:radia
 .hero__slide[data-theme="light"]::after,
 .hero__slide[data-theme-sm="light"]::after { background:linear-gradient(90deg,rgb(3 7 22 / .82) 0%,rgb(3 7 22 / .48) 47%,rgb(3 7 22 / .12) 78%),linear-gradient(to top,rgb(3 7 22 / .65),transparent 54%); }
 .hero__slide[data-theme="light"] .btn--light { background:rgb(5 8 22 / .68); border-color:rgb(255 255 255 / .5); color:#fff; box-shadow:none; }
-.hero-carousel .hero { min-height:clamp(640px,100svh,980px); }.hero-carousel .hero__content { position:relative; z-index:3; min-height:100%; justify-content:center; padding-top:calc(var(--navbar-height) + 3rem); padding-bottom:6rem; }.hero-carousel .hero__bg { object-position:50% 50%; }.hero-carousel #hero-ec75 .hero__bg { object-position:50% 62%; }.hero-carousel #hero-ed71s .hero__bg { object-position:50% 42%; }
+.hero-carousel .hero { min-height:clamp(640px,100svh,980px); }.hero-carousel .hero__content { position:relative; z-index:3; min-height:100%; justify-content:center; padding-top:calc(var(--navbar-height) + 3rem); padding-bottom:6rem; }.hero-carousel .hero__bg { object-position:50% 50%; }.hero-carousel #hero-ec75 .hero__bg { object-position:50% 62%; }.hero-carousel #hero-ed71s:not(.hero--scene) .hero__bg { object-position:50% 42%; }
 .mhero .saving-calculator__trigger { position:absolute; z-index:4; top:auto; right:auto; bottom:28px; left:32px; border-color:rgb(255 255 255 / .5); background:rgb(5 8 22 / .66); color:#fff; backdrop-filter:blur(10px); }.mhero .saving-calculator__trigger:hover { background:var(--color-primary); color:#06101f; }
 @media (max-width:991px), (max-aspect-ratio:6/5) { .hero-carousel .hero__content { min-height:auto; justify-content:flex-start; padding-top:calc(var(--navbar-height) + 3rem); padding-bottom:2rem; }.hero-carousel .hero__bg { object-position:50% 50%; }.hero__slide[data-theme="light"]::after,.hero__slide[data-theme-sm="light"]::after { display:block; }.mhero .saving-calculator__trigger { bottom:16px; left:20px; } }
 
 /* Per-slide art direction: keep headline and controls away from the vehicles. */
 #hero-ec75 .hero__content { width:100%; max-width:1320px; }
 #hero-ec75 .h1 { max-width:1200px; font-size:clamp(40px,5.15vw,86px); }
-#hero-ed71s .hero__bg { object-position:50% 100% !important; }
+#hero-ed71s:not(.hero--scene) .hero__bg { object-position:50% 100% !important; }
 #hero-c5 .hero__content,
 #hero-c3 .hero__content { justify-content:flex-start; padding-top:calc(var(--navbar-height) + 8vh); padding-bottom:6rem; }
 #hero-c5 .hero__actions,
 #hero-c3 .hero__actions { margin-top:12px; }
-@media (max-width:991px), (max-aspect-ratio:6/5) { #hero-ec75 .hero__content { width:100%; } #hero-c5 .hero__content,#hero-c3 .hero__content { padding-top:calc(var(--navbar-height) + 2.5rem); padding-bottom:2rem; } #hero-ed71s .hero__bg { object-position:50% 100% !important; } }
+@media (max-width:991px), (max-aspect-ratio:6/5) { #hero-ec75 .hero__content { width:100%; } #hero-c5 .hero__content,#hero-c3 .hero__content { padding-top:calc(var(--navbar-height) + 2.5rem); padding-bottom:2rem; } #hero-ed71s:not(.hero--scene) .hero__bg { object-position:50% 100% !important; } }
 
 /* Desktop hero composition: shared action line at 2/5 of the visual field. */
 @media (min-width:992px) {
   .hero-carousel .hero__actions { position:absolute; top:40%; left:50%; z-index:4; width:max-content; margin:0; transform:translate(-50%,-50%); }
   #hero-ec75 .hero__bg { transform:translateY(-12%); }
   #hero-ec75 .h1 { position:absolute; right:0; bottom:2.25rem; left:0; z-index:3; max-width:none; padding:0 var(--padding-global); text-align:center; }
-  #hero-ed71s .hero__bg { object-position:50% 80% !important; }
+  #hero-ed71s:not(.hero--scene) .hero__bg { object-position:50% 80% !important; }
 }
 .hero-carousel.is-light .hero-carousel__arrow { color:#fff; border-color:rgb(255 255 255 / .42); background:rgb(5 8 22 / .64); }.hero-carousel.is-light .hero-carousel__arrow:hover { color:#071120; background:var(--color-primary); }
 
@@ -1767,4 +1767,23 @@ body::before { display:none; }
   .hero-carousel .hero__actions { margin-top:20px; }
   /* The EC75 rotating messages sat top-right, where the centred copy now is: move them above the strip. */
   .hero-carousel #hero-ec75 .hero__rotating-message { top:auto; bottom:84px; }
+}
+
+/* ---------- Scene photos (2026-11-15) ----------
+   Winter scenes per model (airport, city centre, building site, markets), 2560×1140: sky in the top ~45 % for
+   the copy, the vehicle between 47 % and 89 % of the height, tyres on one line. The hero keeps that 2.25:1
+   shape as far as the screen allows, so the photo is shown whole instead of cropped around the vehicle. */
+.hero-carousel .hero--scene::after { display:none; }   /* no white or dark wash: the sky is already calm */
+@media (min-width:992px) and (min-aspect-ratio:6/5) {
+  /* +40px: the copy block is ~270px tall whatever the width, the vehicle starts at 47 % of the height; on a
+     1280px laptop the plain 2.25:1 height put the roof right under the buttons. The extra height crops a
+     little empty road and sky at the sides instead. */
+  .hero-carousel .hero { height:clamp(580px, calc(100vw / 2.25 + 40px), 82svh); }
+  /* When the screen is wider than 2.25:1 the photo is cropped top and bottom: keep the tyres, lose sky. */
+  .hero-carousel .hero--scene .hero__bg { object-position:50% 85%; transform:none; }
+}
+@media (max-width:991px), (max-aspect-ratio:6/5) {
+  /* Phones: copy on the sky colour, then the photo at 16:10, which still shows the whole vehicle
+     (the 2.25:1 photo loses only empty road and sky at the sides). */
+  .hero-carousel .hero--scene .hero__bg { aspect-ratio:16 / 10; object-position:50% 80%; }
 }
