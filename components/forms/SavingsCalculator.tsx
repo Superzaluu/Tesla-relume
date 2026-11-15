@@ -16,6 +16,9 @@ export { SAVINGS_STORAGE_KEY, type SavedVehicle };
 
 const SavingsContext = createContext<(slug?: string) => void>(() => {});
 
+/** The calculator's open function, for buttons that are not the standard trigger (homepage cost section). */
+export const useOpenSavings = () => useContext(SavingsContext);
+
 /** Opens the calculator; on a model page pass its slug so that model is chosen. */
 export function SavingsTrigger({ model }: { model?: string }) {
   const open = useContext(SavingsContext);
@@ -271,7 +274,7 @@ export function SavingsProvider({ children, models, fuelPrices }: { children: Re
 }
 
 /** Today's fuel prices per company and the average used; the column of the chosen fuel is highlighted. */
-function FuelPriceTable({ fuelPrices, selected }: { fuelPrices: FuelPrices; selected: FuelCode }) {
+export function FuelPriceTable({ fuelPrices, selected }: { fuelPrices: FuelPrices; selected: FuelCode }) {
   const codes = Object.keys(FUEL_LABELS) as FuelCode[];
   const cell = (code: FuelCode) => `px-2 py-1.5 text-right tabular-nums ${code === selected ? "bg-[#eaf3ee] font-semibold text-[#0f5a3a]" : ""}`;
   const price = (value?: number) => (value ? new Intl.NumberFormat("en-US").format(value) : "—");
