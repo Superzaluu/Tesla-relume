@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { NavCategory } from "@/data/navigation";
 
-// Footer, variant B (user, 2026-11-15): a test-drive call to action on top (the button left the navbar, so
-// every page ends with a way to it), then four columns. Every model used to be listed here with its
-// description (~1,000px); the models are in the navbar menus, so the footer links the six categories to the
-// filtered homepage list instead (~420px).
+// Footer, variant B (user, 2026-11-15): four columns on deep green. The test-drive band that sat on top was
+// removed the same day (it repeated the test-drive form and the hero strip). Every model used to be listed
+// here with its description (~1,000px); the models are in the navbar menus, so the footer links the six
+// categories to the filtered homepage list instead (~330px). Test drive stays in the "Үйлчилгээ" column.
 // TODO: real phone number, opening hours, street address and social URLs (the icons still point to "#").
 
 const services = [
@@ -27,16 +27,6 @@ const link = "text-[#cfe2d8] no-underline hover:text-white hover:underline";
 export function SiteFooter({ navigation }: { navigation: NavCategory[] }) {
   return (
     <footer className="tw bg-[#083d28] text-[#dfeee6]">
-      <div className="bg-[#0f5a3a] px-global">
-        <div className="mx-auto flex max-w-[1376px] flex-wrap items-center justify-between gap-4 py-6">
-          <div>
-            <p className="m-0 text-[20px] font-bold tracking-tight text-white">Машинаа өөрөө туршаад үзээрэй</p>
-            <p className="m-0 text-small text-[#cfe7da]">Туршилтын жолоодлогод бүртгүүлэхэд хэдхэн минут</p>
-          </div>
-          <Link className="btn min-h-[44px] border-white bg-white px-6 text-[#0f5a3a] hover:bg-[#d9f7e5]" href="/#test-drive">Туршилтын жолоодлого</Link>
-        </div>
-      </div>
-
       <div className="px-global">
         <div className="mx-auto grid max-w-[1376px] gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>

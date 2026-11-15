@@ -29,10 +29,14 @@ function costs(model: CalcModel, kmPerDay: number, prices: FuelPrices["prices"])
 
 /** A result card: label, figure, note, and a bar whose height is value / max. */
 function Card({ tone, label, value, note, share }: { tone: "diesel" | "ruichi" | "saving"; label: string; value: string; note: string; share: number }) {
+  // Traffic-light colours (user's Figma, 2026-11-15): diesel red, Ruichi green, the saving yellow. Tinted
+  // cards with the strong colour on the bar and the label, so text keeps its contrast; the saving card is
+  // the solid one, as the figure the section is about. Each card is named in text, so red/green is never
+  // the only cue (they are close for red-green colour blindness).
   const styles = {
-    diesel: { box: "border-line bg-white", label: "text-ink-muted", value: "text-ink", note: "text-ink-muted", track: "bg-[#eef1ef]", bar: "bg-[#b3bbb6]" },
+    diesel: { box: "border-[#f3c4c4] bg-[#fdf2f2]", label: "text-[#b42318]", value: "text-ink", note: "text-ink-muted", track: "bg-[#f7dcdc]", bar: "bg-[#e5484d]" },
     ruichi: { box: "border-[#bcd7c7] bg-[#f3f9f5]", label: "text-[#0f5a3a]", value: "text-[#0f5a3a]", note: "text-ink-muted", track: "bg-[#e1efe6]", bar: "bg-[#1f8a57]" },
-    saving: { box: "border-[#0f5a3a] bg-[#0f5a3a]", label: "text-white/80", value: "text-white", note: "text-white/80", track: "bg-white/15", bar: "bg-white" }
+    saving: { box: "border-[#f0c53b] bg-[#ffd84d]", label: "text-[#6b4e00]", value: "text-ink", note: "text-[#5c4300]", track: "bg-white/50", bar: "bg-[#14213d]" }
   }[tone];
   return (
     <div className={`flex min-w-0 items-end justify-between gap-4 rounded-card border border-solid p-5 ${styles.box}`}>
@@ -73,9 +77,10 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
     <section className="section" aria-labelledby="savings-teaser">
       <div className="container">
         <div className="tw rounded-card border border-solid border-line bg-white p-5 shadow-[0_10px_30px_rgb(15_35_56/.06)] sm:p-8">
-          <p className="m-0 text-xs font-bold uppercase tracking-[.08em] text-[#147a48]">Бизнесийн ашиг</p>
+          <p className="m-0 text-xs font-bold uppercase tracking-[.08em] text-[#147a48]">Бизнесийн зардал хэмнэлт</p>
           <h2 id="savings-teaser" className="m-0 mt-2 text-[clamp(26px,3.2vw,40px)] font-bold leading-tight tracking-tight text-ink">
-            Түлшний зардлаа <span className="text-[#0f5a3a] tabular-nums">{percent}%</span> бууруулна
+            {/* The percentage in the saving card's yellow, darkened to stay readable on white (≈4.9:1). */}
+            Түлшний зардлаа <span className="text-[#a16207] tabular-nums">{percent}%</span> бууруулна
           </h2>
           <p className="m-0 mt-2 max-w-[62ch] text-regular text-ink-secondary">
             Өдөр бүр ажилладаг дизель машин болон {model.name}-ийн сар, жилийн зардлыг харьцуулаарай.
