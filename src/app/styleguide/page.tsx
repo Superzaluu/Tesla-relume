@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/Slider";
 import { StyleguideNav, TokenValue, TypeSample } from "@/components/styleguide/StyleguideLive";
 import { TestDriveForm } from "@/components/forms/TestDriveForm";
 import { VariantProvider, VariantToggle } from "@/components/model/Variant";
+import { T } from "@/components/model/VariantValues";
 import { ec75 } from "@/data/ec75";
 import { getModelCards, getSpecRows } from "@/data/content";
 import {
@@ -238,11 +239,15 @@ export default async function StyleguidePage() {
 
               <Label>Гол үзүүлэлт — .mstat</Label>
               <Demo>
-                <dl className="mstats__list">
-                  {ec75.page.stats.slice(0, 3).map((s, i) => (
-                    <div className="mstat" key={i}><dt className="mstat__label">{s.label as string}</dt><dd className="mstat__value">{s.value as string}<span>{s.unit as string}</span></dd></div>
-                  ))}
-                </dl>
+                {/* Stats can differ per variant ({ cargo, passenger }); T renders either kind, as on the model page.
+                    A plain cast to string broke the production build (object rendered as a React child). */}
+                <VariantProvider>
+                  <dl className="mstats__list">
+                    {ec75.page.stats.slice(0, 3).map((s, i) => (
+                      <div className="mstat" key={i}><dt className="mstat__label"><T v={s.label} /></dt><dd className="mstat__value"><T v={s.value} /><span><T v={s.unit} /></span></dd></div>
+                    ))}
+                  </dl>
+                </VariantProvider>
               </Demo>
 
               <Label>Шуурхай үзүүлэлт — QuickSpecs</Label>
