@@ -1,5 +1,5 @@
 import { HeroCarousel } from "@/components/hero/HeroCarousel";
-import { BenefitStrip, ChargerStats, GalleryMosaic, NumberBand, OrderSteps, TestDriveSection } from "@/components/home/HomeSections";
+import { ChargerStats, GalleryMosaic, NumberBand, OrderSteps, TestDriveSection } from "@/components/home/HomeSections";
 import { ModelGrid } from "@/components/cards/ModelGrid";
 import { buildRows } from "@/components/cards/modelFilters";
 import { TestDriveForm } from "@/components/forms/TestDriveForm";
@@ -21,8 +21,8 @@ export default async function HomePage() {
   return (
     <>
       <main>
+        {/* The carousel also renders the benefit strip, whose first item is the current slide's range. */}
         <HeroCarousel slides={heroSlides} />
-        <BenefitStrip />
         <ModelGrid cards={cards} categories={categories} />
         <NumberBand models={families} versions={cards.length} fastChargers={Number(CHARGERS[0].value)} />
         <OrderSteps />

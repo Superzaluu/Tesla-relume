@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { SpecIcon } from "@/components/model/SpecIcon";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
 import { VideoPoster } from "@/components/ui/VideoPoster";
@@ -35,36 +34,6 @@ export function CtaBlock({ title, text, action, image, figures, className = "" }
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * Four promises on a white strip that overlaps the bottom edge of the hero (reference: EVdriveX feature strip).
- * Replaces the spec panel that used to sit on the hero photo.
- */
-export function BenefitStrip() {
-  const items = [
-    { icon: "shield", title: "6 жил / 300,000 км", text: "Батерейн баталгаа", href: "/warranty/" },
-    { icon: "charging", title: "18 минут", text: "20–80% хурдан цэнэглэлт", href: "#chargers" },
-    { icon: "percent", title: "Ногоон зээл", text: "Урьдчилгаа 10%-аас", href: "/green-loan/" },
-    { icon: "snow", title: "−30°C", text: "Хүйтэнд туршсан", href: "#gallery" }
-  ];
-  return (
-    <div className="tw benefit-strip relative z-[15] px-global">
-      <ul className="m-0 mx-auto grid max-w-[1376px] list-none grid-cols-2 overflow-hidden rounded-card border border-solid border-line bg-white p-0 shadow-[0_14px_36px_rgb(15_35_56/.12)] lg:grid-cols-4">
-        {items.map((item, i) => (
-          <li key={item.title} className={`border-0 border-solid border-line ${i % 2 === 0 ? "border-r" : ""} ${i < 2 ? "border-b lg:border-b-0" : ""} lg:border-r lg:last:border-r-0`}>
-            <Link href={item.href} className="flex h-full items-center gap-3 px-4 py-4 hover:bg-[#f6faf8] sm:px-5">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-solid border-[#bcd7c7] bg-white text-[#0f5a3a]"><SpecIcon icon={item.icon} /></span>
-              <span className="min-w-0">
-                <span className="block text-[15px] font-bold leading-tight text-ink">{item.title}</span>
-                <span className="block text-small text-ink-muted">{item.text}</span>
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }
 

@@ -58,7 +58,7 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
     return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("click", onClick); };
   }, [openMenu]);
 
-  const hoverEnabled = () => window.matchMedia("(min-width: 1500px) and (hover: hover)").matches;
+  const hoverEnabled = () => window.matchMedia("(min-width: 1200px) and (hover: hover)").matches;
   const onEnter = (id: string) => {
     if (!hoverEnabled()) return;
     clearTimeout(hoverTimer.current);
@@ -112,17 +112,11 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
               </div>
             );
           })}
-          {/* On narrow phones the bar has no room for the button, so the link lives in the menu. */}
-          <Link className="navbar__menu-link" href="/green-loan/" onClick={closeAll}>Ногоон зээл</Link>
         </nav>
 
+        {/* "Ногоон зээл" and "Туршилтын жолоодлого" moved from here to the strip under the hero (user, 2026-11-15),
+            so the bar is the logo and the row of category dropdowns again; the toggle only shows below 1200px. */}
         <div className="navbar__actions">
-          <Link className="btn btn--nav btn--nav-ghost" href="/green-loan/" aria-current={pathname.startsWith("/green-loan") ? "page" : undefined}>Ногоон зээл</Link>
-          {/* The test-drive form lives on the homepage; "#test-drive" alone did nothing on other pages. */}
-          <Link className="btn btn--primary btn--nav" href="/#test-drive" aria-label="Туршилтын жолоодлого">
-            <span className="btn__label-long">Туршилтын жолоодлого</span>
-            <span className="btn__label-short">Турших</span>
-          </Link>
           <button
             className="navbar__toggle" type="button" aria-controls="nav-links" aria-expanded={mobileOpen}
             onClick={() => { setMobileOpen((value) => !value); if (mobileOpen) setOpenMenu(null); }}

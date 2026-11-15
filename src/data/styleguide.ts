@@ -83,7 +83,7 @@ export const quickIcons = [
   { file: "02_light_flatbed_truck.png", use: "Задгай тэвш — C5, C3, ED71S" },
   { file: "03_light_box_truck.png", use: "Амбаар — C9, EC31" },
   { file: "04_refrigerator_truck.png", use: "Хөргүүртэй — C3 Хөргүүртэй" },
-  { file: "05_flatbed_4door_truck.png", use: "4 хаалгатай тэвш — C5 CNG, C5 Бензин, C5 Дрон" },
+  { file: "05_flatbed_4door_truck.png", use: "4 хаалгатай тэвш — C5 CNG, C5 EREV, C5 Дрон" },
   { file: "06_FWD.svg", use: "Урд хөтлөгч (урд дугуй дүүрэн)" },
   { file: "07_AWD.svg", use: "Бүх дугуй хөтлөгч — шинэ загварт", future: true },
   { file: "08_RWD.svg", use: "Хойд хөтлөгч (хойд дугуй дүүрэн)" },
@@ -108,7 +108,7 @@ export const uiIcons = [
 export const pageSections = [
   { page: "Нүүр хуудас", href: "/", items: [
     ["HeroCarousel + HeroSlide", "Загвар бүрийн слайд, desktop дээр 640px хүртэл", "/"],
-    ["BenefitStrip", "Hero-ийн доод ирмэг дээрх 4 давуу тал", "/"],
+    ["BenefitStrip", "Hero-ийн доод ирмэг: тухайн слайдын туулах зай + 4 давуу тал + туршилтын жолоодлого", "/"],
     ["ModelGrid + ModelFamilyCard", "Шүүлтүүр, хэрэглээний 3 гүйдэг мөр, загварын гэр бүлийн карт", "/#models"],
     ["NumberBand", "Машинуудын эгнээний зураг, 4 тоо, урамшууллын тууз", "/"],
     ["OrderSteps", "Захиалах 4 алхам", "/"],

@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Баталгаат хугацаа �
 
 const terms = [
   { title: "6 ЖИЛ", models: "EC75, EC75 Pro, R5, R5 Pro, C3, C5", limit: "300,000 км хүртэл" },
-  { title: "6 ЖИЛ", models: "EC35II, EC31, EC31L, EC31S, C5 CNG, C5 Бензин, C5 Дрон", limit: "300,000 км хүртэл" },
+  { title: "6 ЖИЛ", models: "EC35II, EC31, EC31L, EC31S, C5 CNG, C5 EREV, C5 Дрон", limit: "300,000 км хүртэл" },
   { title: "ҮЗЛЭГ", models: "Тогтмол оношилгоо, ашиглалтын зааврын дагуух үйлчилгээг эрх бүхий төвд хийлгэнэ.", limit: "Нөхцөлтэй" }
 ];
 
