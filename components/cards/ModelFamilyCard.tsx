@@ -22,8 +22,11 @@ function chipLabel(member: ModelCardData, family: string) {
 
 function Tile({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
-    <div className="flex min-w-0 items-center gap-2 rounded-xl bg-[#f3f7f5] px-2.5 py-2.5">
-      <QuickIcon icon={icon} className="h-5 w-5 shrink-0 text-[#0f5a3a]" />
+    <div className="flex min-w-0 items-center gap-2 rounded-xl bg-[#f3f7f5] px-2 py-2">
+      {/* Framed icon: white circle with a thin green ring (user, 2026-11-15). */}
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-solid border-[#bcd7c7] bg-white text-[#0f5a3a] sm:h-9 sm:w-9">
+        <QuickIcon icon={icon} className="h-5 w-5" />
+      </span>
       <span className="min-w-0">
         <span className="block text-[10px] font-semibold uppercase tracking-wider text-ink-muted">{label}</span>
         {/* One line: tons and "415–420 км" fit the tile; anything longer is cut with an ellipsis, the title shows it. */}
@@ -43,7 +46,7 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
   const filtered = members.length < total;
 
   return (
-    <article className="flex w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-card border border-solid border-line bg-white shadow-[0_8px_24px_rgb(15_35_56/.08)] sm:w-[316px]">
+    <article className="flex w-[308px] shrink-0 snap-start flex-col overflow-hidden rounded-card border border-solid border-line bg-white shadow-[0_8px_24px_rgb(15_35_56/.08)] sm:w-[336px]">
       <Link href={lead.href} className="relative block aspect-[16/9] overflow-hidden bg-surface" tabIndex={-1} aria-hidden="true">
         <img src={lead.thumb} alt="" width={400} height={225} loading="lazy" className="h-full w-full object-cover" />
         {fuels.length > 0 && (

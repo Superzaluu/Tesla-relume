@@ -68,6 +68,9 @@ export function bodyParts(value: string): [string, string][] {
 }
 const BODY_TYPES = ["задгай", "торон хаалттай", "битүү", "хөргүүртэй"];
 
+/** Body type as shown on the site: the sheets say "Битүү", the dealer calls it "Амбаартай" (2026-11-15). */
+export const bodyLabel = (text: string) => text.replace(/битүү/gi, (word) => (word[0] === "Б" ? "Амбаартай" : "амбаартай"));
+
 export const DEALER_WARRANTY = "6 жил / 300,000 км";
 
 export const GROUPS: Group[] = [

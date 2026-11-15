@@ -96,7 +96,7 @@ export default async function EditCardPage({ params, searchParams }: {
           <div className="grid gap-4 sm:grid-cols-3">
             <Select name="quick_type" label="Машины төрөл (icon)" value={model.quick_type ?? ""} options={[
               ["", "— Харуулахгүй —"], ["van", "Фургон"], ["flatbed", "Задгай тэвш"], ["flatbed4", "Задгай тэвш, давхар кабин"],
-              ["box", "Битүү тэвш"], ["refrigerator", "Хөргүүртэй"]
+              ["box", "Амбаар"], ["refrigerator", "Хөргүүртэй"]
             ]} />
             <TextInput name="quick_label" label="Загвар (бичиг)" value={model.quick_label} placeholder="Ачааны фургон" />
             <Select name="drive" label="Хөтлөгч" value={model.drive ?? "RWD"} options={[["FWD", "FWD — урд дугуй"], ["RWD", "RWD — хойд дугуй"], ["AWD", "AWD — бүх дугуй"]]} />

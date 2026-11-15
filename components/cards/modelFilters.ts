@@ -118,7 +118,7 @@ export function sortCards(cards: ModelCardData[], sort: SortId) {
 
 export type RowId = "cargo" | "passenger" | "special";
 export const ROWS: { id: RowId; label: string; text: string; categories: string[] }[] = [
-  { id: "cargo", label: "Хотын хүргэлт ба хүнд ачаа", text: "Фургон, задгай болон битүү тэвштэй ачааны машин", categories: ["cargo-van", "flatbed", "box"] },
+  { id: "cargo", label: "Хотын хүргэлт ба хүнд ачаа", text: "Фургон, задгай тэвштэй болон амбаартай ачааны машин", categories: ["cargo-van", "flatbed", "box"] },
   { id: "passenger", label: "Зорчигч тээвэр", text: "Ажилчдын болон аяллын үйлчилгээний фургон", categories: ["passenger"] },
   { id: "special", label: "Хөргүүр болон тусгай зориулалтын", text: "Хүнс, эм тээвэр, явуулын засвар үйлчилгээ", categories: ["refrigerated", "special"] }
 ];
@@ -168,7 +168,8 @@ export function payloadText(values: ([number, number] | null)[]) {
   const min = Math.min(...known.map((v) => v[0])), max = Math.max(...known.map((v) => v[1]));
   if (min < 1000) return spanText(known, "кг");
   const t = (kg: number) => String(Math.round(kg / 100) / 10);
-  return `${min === max ? t(min) : `${t(min)}–${t(max)}`} т`;
+  // 1,060 and 1,100 kg both round to 1.1 t: show one figure, not "1.1–1.1 т".
+  return `${t(min) === t(max) ? t(max) : `${t(min)}–${t(max)}`} т`;
 }
 
 /** Selection ⇄ URL query (?category=flatbed,box&fuel=BEV), so a filtered view can be shared or bookmarked. */

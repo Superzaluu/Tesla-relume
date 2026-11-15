@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { HeroSlide as Slide } from "@/data/home";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
+import { QuickIcon, rangeValue } from "@/components/ui/QuickSpecs";
 
 type Props = {
   slide: Slide;
@@ -28,6 +29,16 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
         <p className="hero__eyebrow">{slide.eyebrow}</p>
         <Heading className="hero__model">{slide.model}</Heading>
         <p className="hero__subtitle">{slide.subtitle}</p>
+        {slide.quick?.range && (
+          // Range with its icon in a ring (user, 2026-11-15); the other facts are in the strip under the carousel.
+          <p className="hero__range">
+            <span className="hero__range-icon" aria-hidden="true"><QuickIcon icon="range" /></span>
+            <span>
+              <strong>{rangeValue(slide.quick)}</strong>
+              <small>{slide.quick.fuel === "BEV" ? "туулах зай" : "цахилгаанаар / нийт туулах зай"}</small>
+            </span>
+          </p>
+        )}
         {slide.messages && (
           <div className="hero__rotating-message" aria-live="polite">
             {slide.messages.map((message) => <p key={message}>{message}</p>)}

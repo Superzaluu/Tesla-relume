@@ -1763,6 +1763,18 @@ body::before { display:none; }
 @media (max-width: 991px), (max-aspect-ratio: 6/5) { .benefit-strip { margin-top: -16px; } }
 .hero-carousel .hero__quick-specs { display: none; }
 
+/* Hero range: framed icon + value under the subtitle (left-aligned like the rest of the copy). */
+.hero__range { display: inline-flex; align-items: center; gap: 10px; margin: 6px 0 0; padding: 6px 14px 6px 6px; border: 1px solid rgb(15 90 58 / .22); border-radius: 999px; background: rgb(255 255 255 / .92); color: #123b2a; box-shadow: 0 6px 18px rgb(15 35 56 / .1); }
+.hero__range-icon { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border: 1px solid #bcd7c7; border-radius: 50%; background: #fff; color: #0f5a3a; }
+.hero__range-icon .quick-icon { width: 24px; height: 24px; }
+.hero__range strong { display: block; font-size: 20px; font-weight: 700; line-height: 1.1; letter-spacing: -.02em; color: #0f5a3a; }
+.hero__range small { display: block; font-size: 12px; color: #567063; }
+@media (max-width: 991px), (max-aspect-ratio: 6/5) {
+  .hero__range { padding-right: 12px; }
+  .hero__range-icon { width: 34px; height: 34px; }
+  .hero__range strong { font-size: 17px; }
+}
+
 /* One card radius (--radius-card, 14px) for every card-like region; 16px panels sat next to 14px cards. */
 .hero__quick-specs { border-radius:var(--radius-card); }
 

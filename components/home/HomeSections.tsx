@@ -55,7 +55,7 @@ export function BenefitStrip() {
         {items.map((item, i) => (
           <li key={item.title} className={`border-0 border-solid border-line ${i % 2 === 0 ? "border-r" : ""} ${i < 2 ? "border-b lg:border-b-0" : ""} lg:border-r lg:last:border-r-0`}>
             <Link href={item.href} className="flex h-full items-center gap-3 px-4 py-4 hover:bg-[#f6faf8] sm:px-5">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#eaf3ee] text-[#0f5a3a]"><SpecIcon icon={item.icon} /></span>
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-solid border-[#bcd7c7] bg-white text-[#0f5a3a]"><SpecIcon icon={item.icon} /></span>
               <span className="min-w-0">
                 <span className="block text-[15px] font-bold leading-tight text-ink">{item.title}</span>
                 <span className="block text-small text-ink-muted">{item.text}</span>

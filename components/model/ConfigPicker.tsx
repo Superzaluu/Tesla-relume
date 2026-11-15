@@ -4,19 +4,19 @@
 // what the trim lacks is struck through). Switching trims swaps the lists in place.
 import { useEffect, useState } from "react";
 import { SpecIcon } from "@/components/model/SpecIcon";
-import type { Picker } from "@/data/specSheet";
+import { bodyLabel, type Picker } from "@/data/specSheet";
 
 const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
 /** Text in a fixed slot whose value has not been entered yet. */
 const MISSING = "Тодруулна уу";
 
-function Segmented({ label, items, value, onPick, available }: {
-  label: string; items: string[]; value: string; onPick: (item: string) => void; available: (item: string) => boolean;
+function Segmented({ label, items, value, onPick, available, show = (item) => item }: {
+  label: string; items: string[]; value: string; onPick: (item: string) => void; available: (item: string) => boolean; show?: (item: string) => string;
 }) {
   return (
     <div className="mpick__seg" role="group" aria-label={label}>
       {items.map((item) => (
-        <button key={item} type="button" aria-pressed={item === value} disabled={!available(item)} onClick={() => onPick(item)}>{item}</button>
+        <button key={item} type="button" aria-pressed={item === value} disabled={!available(item)} onClick={() => onPick(item)}>{show(item)}</button>
       ))}
     </div>
   );
@@ -52,7 +52,7 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
             </div>
           )}
           {cabins.length > 1 && <Segmented label="Бүхээг" items={cabins} value={option.cabin} onPick={pickCabin} available={(c) => options.some((item) => item.cabin === c)} />}
-          {bodies.length > 1 && <Segmented label="Их бие" items={bodies} value={body} onPick={setBody} available={() => true} />}
+          {bodies.length > 1 && <Segmented label="Их бие" items={bodies} value={body} onPick={setBody} available={() => true} show={bodyLabel} />}
         </div>
       )}
 
@@ -61,7 +61,7 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
       <div className="mpick__panel">
         <div className="mpick__head">
           <div>
-            <p className="mpick__name">{option.name}{body && bodies.length > 1 ? ` · ${body}` : ""}</p>
+            <p className="mpick__name">{option.name}{body && bodies.length > 1 ? ` · ${bodyLabel(body)}` : ""}</p>
             <p className="mpick__price">{option.price ? money(option.price) : "Үнэ лавлах"}</p>
           </div>
           <a className="btn btn--primary btn--wide" href={preorder}>{option.price ? "Урьдчилсан захиалга" : "Үнэ лавлах"}</a>

@@ -1,6 +1,6 @@
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ConfigPicker } from "@/components/model/ConfigPicker";
-import { bodyParts, type SheetView } from "@/data/specSheet";
+import { bodyLabel, bodyParts, type SheetView } from "@/data/specSheet";
 
 // One "Техникийн үзүүлэлт" section for specs and trims (they are the same information): trim pills,
 // price, ten key numbers and ten equipment lines for the chosen trim (ConfigPicker); everything else —
@@ -10,7 +10,7 @@ import { bodyParts, type SheetView } from "@/data/specSheet";
 function Value({ value }: { value: string }) {
   const parts = bodyParts(value || "–");
   if (parts.length === 1 && !parts[0][0]) return <>{value || "–"}</>;
-  return <>{parts.map(([body, part]) => <span className="msheet__body" key={body}><b>{body}</b>{part}</span>)}</>;
+  return <>{parts.map(([body, part]) => <span className="msheet__body" key={body}><b>{bodyLabel(body)}</b>{part}</span>)}</>;
 }
 
 export function SpecSheetSection({ view, preorder }: { view: SheetView | null; preorder: string }) {

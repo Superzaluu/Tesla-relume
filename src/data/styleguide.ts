@@ -81,7 +81,7 @@ export const shadows = [
 export const quickIcons = [
   { file: "01_van.png", use: "Фургон — EC75, R5, EC35II" },
   { file: "02_light_flatbed_truck.png", use: "Задгай тэвш — C5, C3, ED71S" },
-  { file: "03_light_box_truck.png", use: "Битүү тэвш — C9, EC31" },
+  { file: "03_light_box_truck.png", use: "Амбаар — C9, EC31" },
   { file: "04_refrigerator_truck.png", use: "Хөргүүртэй — C3 Хөргүүртэй" },
   { file: "05_flatbed_4door_truck.png", use: "4 хаалгатай тэвш — C5 CNG, C5 Бензин, C5 Дрон" },
   { file: "06_FWD.svg", use: "Урд хөтлөгч (урд дугуй дүүрэн)" },
