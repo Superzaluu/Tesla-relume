@@ -211,6 +211,7 @@ export const getCalculatorModels = cache(async (): Promise<CalcModel[]> => {
         fuel: toFuelType(row.fuel, row.engine),
         evConsumption: Number(row.ev_consumption) || DEFAULT_EV_CONSUMPTION,
         evRangeKm: evRange ? Number.parseFloat(evRange) || undefined : undefined,
+        rangeKm: Number.parseFloat((row.range ?? "").replace(/,/g, "")) || undefined,
         compare: {
           name: row.compare_name || "Ижил ангиллын дизель машин",
           fuel: row.compare_fuel ?? "dt",

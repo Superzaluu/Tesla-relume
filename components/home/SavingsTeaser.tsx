@@ -10,15 +10,17 @@ import { calculateSavings, ELECTRICITY_PRICE, EXTENDER_FUEL_USE, type CalcModel,
 // models and today's fuel prices as the full calculator, which "Дэлгэрэнгүй тооцоолох" opens.
 const MODELS = ["ec75pro-cargo", "r5pro-passenger", "c5-reev", "c3", "ed71s"];
 const DAYS = 26;
-const KM_MIN = 20, KM_MAX = 300, KM_START = 80;
-const STOPS = [
-  { km: 40, label: "Хот дотор" },
-  { km: 150, label: "Идэвхтэй түгээлт" },
-  { km: 300, label: "Хот хооронд" }
-];
+const KM_MIN = 20, KM_START = 80, STEP = 10;
+// The slider ends at the chosen model's range (user, 2026-11-15): 420 km for EC75 Pro / R5 Pro, 327 for C3,
+// 313 for ED71S; never above 500 (C5 EREV's 1,200 km total would make the useful part of the slider tiny).
+const KM_CAP = 500, KM_FALLBACK = 300;
+// Rounded down to the slider step so its end is reachable (327 → 320, 313 → 310).
+const maxKm = (model: CalcModel) => {
+  const limit = Math.min(KM_CAP, model.rangeKm ?? KM_FALLBACK);
+  return KM_MIN + Math.floor((limit - KM_MIN) / STEP) * STEP;
+};
 
 const tugrik = (v: number) => `${Math.round(v).toLocaleString("en-US")} ₮`;
-const stopLeft = (km: number) => `${((km - KM_MIN) / (KM_MAX - KM_MIN)) * 100}%`;
 
 function costs(model: CalcModel, kmPerDay: number, prices: FuelPrices["prices"]) {
   return calculateSavings({
@@ -63,12 +65,22 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
     [models]
   );
   const [index, setIndex] = useState(0);
-  const [kmPerDay, setKmPerDay] = useState(KM_START);
+  const [kmChosen, setKmPerDay] = useState(KM_START);
   const model = choices[index];
   if (!model) return null;
 
+  const kmMax = maxKm(model);
+  // Switching to a model with a shorter range keeps the chosen km within that range.
+  const kmPerDay = Math.min(kmChosen, kmMax);
+  const stopLeft = (km: number) => `${((km - KM_MIN) / (kmMax - KM_MIN)) * 100}%`;
+  const stops = [
+    { km: 40, label: "Хот дотор" },
+    { km: 150, label: "Идэвхтэй түгээлт" },
+    { km: kmMax, label: model.fuel === "BEV" ? "Нэг цэнэглэлтээр" : "Хот хооронд" }
+  ];
+
   const now = costs(model, kmPerDay, fuelPrices.prices);
-  const atMax = costs(model, KM_MAX, fuelPrices.prices);
+  const atMax = costs(model, kmMax, fuelPrices.prices);
   const saving = Math.max(0, now.saving);
   const percent = now.fuelCost > 0 ? Math.round((saving / now.fuelCost) * 100) : 0;
   const extender = model.fuel !== "BEV" && model.evRangeKm;
@@ -103,15 +115,15 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
               <output htmlFor="teaser-km" className="text-[24px] font-bold tabular-nums text-[#0f5a3a]">{kmPerDay} км</output>
             </div>
             <input
-              id="teaser-km" type="range" min={KM_MIN} max={KM_MAX} step={10} value={kmPerDay}
+              id="teaser-km" type="range" min={KM_MIN} max={kmMax} step={STEP} value={kmPerDay}
               onChange={(e) => setKmPerDay(Number(e.target.value))} className="mt-2 w-full accent-[#0f5a3a]"
             />
             {/* Stops at their own place on the slider; a click jumps there. */}
             <div className="relative mt-1 h-9 text-xs text-ink-muted">
-              {STOPS.map((stop, i) => (
+              {stops.map((stop, i) => (
                 <button
                   key={stop.km} type="button" onClick={() => setKmPerDay(stop.km)}
-                  className={`absolute top-0 cursor-pointer whitespace-nowrap border-0 bg-transparent p-0 font-[inherit] text-ink-muted hover:text-[#0f5a3a] ${i === 0 ? "text-left" : i === STOPS.length - 1 ? "-translate-x-full text-right" : "-translate-x-1/2 text-center"}`}
+                  className={`absolute top-0 cursor-pointer whitespace-nowrap border-0 bg-transparent p-0 font-[inherit] text-ink-muted hover:text-[#0f5a3a] ${i === 0 ? "text-left" : i === stops.length - 1 ? "-translate-x-full text-right" : "-translate-x-1/2 text-center"}`}
                   style={{ left: stopLeft(stop.km) }}
                 >
                   <span className="block font-semibold tabular-nums">{stop.km} км</span>

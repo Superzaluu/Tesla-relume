@@ -71,6 +71,8 @@ export type CalcModel = {
   evConsumption: number;
   /** Battery-only range for EREV/PHEV, km. */
   evRangeKm?: number;
+  /** Full range from the models table (BEV: one charge; EREV: battery + extender), km. */
+  rangeKm?: number;
   compare: { name: string; fuel: FuelCode; consumption: number };
 };
 
