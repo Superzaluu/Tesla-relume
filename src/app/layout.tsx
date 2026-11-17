@@ -8,6 +8,7 @@ import { SavingsProvider } from "@/components/forms/SavingsCalculator";
 import { SiteChromeProvider } from "@/components/layout/SiteChrome";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SpotlightTracker } from "@/components/ui/SpotlightTracker";
 import { getCalculatorModels, getNavigation } from "@/data/content";
 import { getFuelPrices } from "@/lib/fuelPrices";
 
@@ -31,6 +32,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <SiteFooter navigation={navigation} />
           </SavingsProvider>
         </SiteChromeProvider>
+        <SpotlightTracker />
+
       </body>
     </html>
   );

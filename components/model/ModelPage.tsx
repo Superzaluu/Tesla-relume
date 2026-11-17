@@ -6,7 +6,6 @@ import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
-import { SpotlightTracker } from "@/components/ui/SpotlightTracker";
 import { LoadingLink } from "@/components/ui/LoadingLink";
 import { SectionView } from "@/components/model/Blocks";
 import { Picture, T } from "@/components/model/VariantValues";
@@ -126,7 +125,6 @@ export function ModelPage({ model, category, specView }: { model: Model; categor
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>
       </section>
-      <SpotlightTracker />
     </main>
   );
 

@@ -5,6 +5,7 @@ import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { payloadKg, payloadText, rangeKm, seats, spanText, type Family } from "@/components/cards/modelFilters";
 import { QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
+import { CarShine, shineMask } from "@/components/ui/CarShine";
 
 // One card per model family (EC75 + EC75 Pro, the C5 versions…) in a sideways row of the homepage grid.
 // Two tiles give the family's range of the numbers buyers compare (as in "Battery options 45 / 55 kWh"),
@@ -45,11 +46,14 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
   const categories = [...new Set(members.map((m) => m.category))].join(" · ");
   const chips = allChips ? members : members.slice(0, SHOWN_CHIPS);
   const filtered = members.length < total;
+  const thumbMask = shineMask(lead.thumb);
 
   return (
     <article className="flex w-[308px] shrink-0 snap-start flex-col overflow-hidden rounded-card border border-solid border-line bg-white shadow-[0_8px_24px_rgb(15_35_56/.08)] sm:w-[336px]">
-      <Link href={lead.href} className="relative block aspect-[16/9] overflow-hidden bg-surface" tabIndex={-1} aria-hidden="true">
+      <Link href={lead.href} className="spotlight relative block aspect-[16/9] overflow-hidden bg-surface" tabIndex={-1} aria-hidden="true">
         <img src={lead.thumb} alt="" width={400} height={225} loading="lazy" className="h-full w-full object-cover" />
+        {/* Light on the vehicle only, following the mouse. */}
+        {thumbMask && <CarShine mask={thumbMask} />}
         {fuels.length > 0 && (
           <span className="pointer-events-none absolute left-2.5 top-2.5 inline-flex items-center gap-1.5 rounded-full bg-white/95 py-1 pl-1.5 pr-2.5 text-xs font-bold text-[#0f5a3a] shadow-[0_4px_12px_rgb(15_35_56/.14)]">
             <QuickIcon icon="fuel" className="h-4 w-4" />

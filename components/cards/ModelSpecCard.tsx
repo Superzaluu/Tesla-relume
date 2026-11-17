@@ -2,6 +2,7 @@ import Link from "next/link";
 import { hasEngine, type QuickSpecs } from "@/data/types";
 import { compactSize, countOnly, MISSING_SHORT, payloadValue, QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
+import { CarShine, shineMask } from "@/components/ui/CarShine";
 
 export type ModelCardData = {
   key: string;
@@ -53,12 +54,15 @@ export function ModelSpecCard({ model }: { model: ModelCardData }) {
     : [];
   // With an odd count the last item (size) takes the full row so the grid stays even.
   const wideLast = facts.length % 2 === 1;
+  const thumbMask = shineMask(model.thumb);
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-line bg-white shadow-[0_10px_30px_rgb(15_35_56/.09)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgb(15_35_56/.14)] motion-reduce:transition-none motion-reduce:hover:translate-y-0">
       <div className="relative">
-        <Link href={model.href} className="block aspect-[5/3] overflow-hidden bg-surface" tabIndex={-1} aria-hidden="true">
+        <Link href={model.href} className="spotlight relative block aspect-[5/3] overflow-hidden bg-surface" tabIndex={-1} aria-hidden="true">
           <img src={model.thumb} alt="" width={400} height={240} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
+          {/* Light on the vehicle only; scales with the photo on hover. */}
+          {thumbMask && <CarShine mask={thumbMask} className="transition duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />}
         </Link>
         {/* Emphasis by position: the fuel type sits where the eye lands first. */}
         {quick && (

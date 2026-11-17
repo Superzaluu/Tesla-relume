@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { HeroSlide as Slide } from "@/data/home";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
+import { CarShine, shineMask } from "@/components/ui/CarShine";
 
 type Props = {
   slide: Slide;
@@ -22,9 +23,10 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
   const first = position === 0;
   const Heading = first ? "h1" : "h2";
   const scene = Math.abs(slide.image.width / slide.image.height - SCENE_RATIO) < 0.02;
+  const mask = shineMask(slide.image.src);
   return (
     <div
-      id={slide.id} className={`hero hero__slide${scene ? " hero--scene" : ""}`} data-theme={slide.theme} data-theme-sm={slide.themeSm}
+      id={slide.id} className={`hero hero__slide spotlight${scene ? " hero--scene" : ""}`} data-theme={slide.theme} data-theme-sm={slide.themeSm}
       style={{ "--color-hero-sky": slide.sky } as CSSProperties}
       role="group" aria-roledescription="slide" aria-label={`${position + 1} / ${total}: ${slide.model}`}
       aria-hidden={!active} inert={!active}
@@ -50,6 +52,8 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
           fetchPriority={first ? "high" : undefined} decoding={first ? undefined : "async"}
         />
       )}
+      {/* Light on the vehicle only (its silhouette as a mask), following the mouse. */}
+      {showImage && mask && <CarShine mask={mask} followImage className="car-shine--hero" />}
       {/* The key facts (range first) are in the benefit strip under the carousel and on the model cards (2026-11-15). */}
     </div>
   );
