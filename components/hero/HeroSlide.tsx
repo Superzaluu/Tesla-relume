@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { HeroSlide as Slide } from "@/data/home";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
-import { CarShine, shineMask } from "@/components/ui/CarShine";
+import { CarShine, glintKey, shineMask } from "@/components/ui/CarShine";
+import { CAR_GLINTS } from "@/data/carGlints";
 
 type Props = {
   slide: Slide;
@@ -24,6 +25,8 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
   const Heading = first ? "h1" : "h2";
   const scene = Math.abs(slide.image.width / slide.image.height - SCENE_RATIO) < 0.02;
   const mask = shineMask(slide.image.src);
+  const key = glintKey(slide.image.src);
+  const glints = key ? CAR_GLINTS[key] : undefined;
   return (
     <div
       id={slide.id} className={`hero hero__slide spotlight${scene ? " hero--scene" : ""}`} data-theme={slide.theme} data-theme-sm={slide.themeSm}
@@ -53,7 +56,7 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
         />
       )}
       {/* Light on the vehicle only (its silhouette as a mask), following the mouse. */}
-      {showImage && mask && <CarShine mask={mask} followImage className="car-shine--hero" />}
+      {showImage && mask && <CarShine mask={mask} followImage glints={glints} className="car-shine--hero" />}
       {/* The key facts (range first) are in the benefit strip under the carousel and on the model cards (2026-11-15). */}
     </div>
   );

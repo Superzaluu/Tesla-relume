@@ -1825,6 +1825,52 @@ body::before { display:none; }
   .spotlight:hover > .car-shine::after { animation:none; }
 }
 
+/* Small star glints on the hero vehicles' headlight, rims, glass and logo (CAR_GLINTS). While the mouse is
+   over the slide they flash one after another (0.45 s apart), each for ~0.4 s of a 3.6 s cycle. Sizes
+   follow the drawn photo width (--stage-w), so they keep the same size relative to the vehicle. */
+.car-glints { position:absolute; inset:0; z-index:2; overflow:hidden; pointer-events:none; }
+.car-glints__stage { position:absolute; inset:0; }
+.car-glint {
+  --g:max(10px, calc(var(--stage-w, 1400px) * var(--g-ratio, .014)));
+  position:absolute;
+  width:var(--g);
+  height:var(--g);
+  margin:calc(var(--g) / -2) 0 0 calc(var(--g) / -2);
+  opacity:0;
+  transform:scale(0);
+  background:
+    radial-gradient(circle, #fff 0 9%, rgb(232 244 255 / .75) 17%, rgb(232 244 255 / 0) 42%),
+    linear-gradient(90deg, transparent, rgb(255 255 255 / .95) 50%, transparent) center / 100% 2px no-repeat,
+    linear-gradient(0deg, transparent, rgb(255 255 255 / .95) 50%, transparent) center / 2px 100% no-repeat;
+  filter:drop-shadow(0 0 3px rgb(190 225 255 / .9));
+}
+/* shorter diagonal rays */
+.car-glint::after {
+  content:"";
+  position:absolute;
+  inset:22%;
+  transform:rotate(45deg);
+  background:
+    linear-gradient(90deg, transparent, rgb(255 255 255 / .8) 50%, transparent) center / 100% 1.5px no-repeat,
+    linear-gradient(0deg, transparent, rgb(255 255 255 / .8) 50%, transparent) center / 1.5px 100% no-repeat;
+}
+.car-glint--light { --g-ratio:.016; }
+.car-glint--glass { --g-ratio:.019; }
+.car-glint--wheel { --g-ratio:.012; }
+.car-glint--logo  { --g-ratio:.010; }
+@media (hover:hover) and (pointer:fine) {
+  .spotlight:hover > .car-glints .car-glint { animation:car-glint 3.6s ease-in-out calc(.25s + var(--i) * .45s) infinite; }
+}
+@keyframes car-glint {
+  0%   { opacity:0; transform:scale(0) rotate(-35deg); }
+  5%   { opacity:1; transform:scale(1) rotate(0deg); }
+  12%  { opacity:0; transform:scale(.25) rotate(40deg); }
+  100% { opacity:0; transform:scale(0); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .spotlight:hover > .car-glints .car-glint { animation:none; }
+}
+
 /* ---------- Seamless loading button (LoadingLink: "Урьдчилсан захиалга", "Захиалах") ----------
    On click the button keeps its size and colour: the label slides up and fades out, the spinner with
    "Уншиж байна…" slides in from below in the same place, and a lighter band fills the button from left

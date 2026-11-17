@@ -28,7 +28,7 @@ export const CAR_GLINTS: Record<string, Glint[]> = {
     { part: "light", x: 36.0, y: 65.9 },
     { part: "glass", x: 37.9, y: 55.9 },
     { part: "wheel", x: 41.1, y: 80.2 },
-    { part: "logo", x: 29.1, y: 65.4 },
+    { part: "logo", x: 30.2, y: 65.4 },
     { part: "glass", x: 52.0, y: 55.2 },
     { part: "wheel", x: 64.2, y: 78.7 }
   ],
