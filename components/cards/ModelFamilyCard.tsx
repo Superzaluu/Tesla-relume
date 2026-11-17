@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { payloadKg, payloadText, rangeKm, seats, spanText, type Family } from "@/components/cards/modelFilters";
 import { QuickIcon } from "@/components/ui/QuickSpecs";
+import { LoadingLink } from "@/components/ui/LoadingLink";
 
 // One card per model family (EC75 + EC75 Pro, the C5 versions…) in a sideways row of the homepage grid.
 // Two tiles give the family's range of the numbers buyers compare (as in "Battery options 45 / 55 kWh"),
@@ -104,7 +105,7 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
 
         <div className="mt-auto flex gap-2 pt-1">
           <Link className="btn btn--tint min-h-[40px] flex-1 px-3" href={lead.href} aria-label={`${name} — дэлгэрэнгүй`}>Дэлгэрэнгүй</Link>
-          <Link className="btn btn--primary min-h-[40px] flex-1 px-3" href={lead.preorderHref} aria-label={`${lead.name} — урьдчилсан захиалга`}>Захиалах</Link>
+          <LoadingLink className="btn btn--primary min-h-[40px] flex-1 px-3" href={lead.preorderHref} aria-label={`${lead.name} — урьдчилсан захиалга`}>Захиалах</LoadingLink>
         </div>
       </div>
     </article>

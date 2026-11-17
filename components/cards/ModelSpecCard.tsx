@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { hasEngine, type QuickSpecs } from "@/data/types";
 import { compactSize, countOnly, MISSING_SHORT, payloadValue, QuickIcon } from "@/components/ui/QuickSpecs";
+import { LoadingLink } from "@/components/ui/LoadingLink";
 
 export type ModelCardData = {
   key: string;
@@ -108,11 +109,11 @@ export function ModelSpecCard({ model }: { model: ModelCardData }) {
         <div className="mt-auto flex flex-wrap gap-2 pt-6">
           {/* Main action filled, secondary tinted: different roles look different (Similarity). */}
           <Link className="btn btn--tint min-w-[160px] flex-1 px-4" href={model.href} aria-label={`${model.name} — дэлгэрэнгүй`}>Дэлгэрэнгүй</Link>
-          <Link className="btn btn--primary group/cta min-w-[160px] flex-1 gap-1.5 px-4" href={model.preorderHref} aria-label={`${model.name} — урьдчилсан захиалга`}>
+          <LoadingLink className="btn btn--primary group/cta min-w-[160px] flex-1 gap-1.5 px-4" href={model.preorderHref} aria-label={`${model.name} — урьдчилсан захиалга`}>
             Урьдчилсан захиалга
             {/* Motion, kept small: the arrow nudges on hover; off for reduced-motion users. */}
             <span aria-hidden="true" className="transition-transform duration-200 group-hover/cta:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover/cta:translate-x-0">→</span>
-          </Link>
+          </LoadingLink>
         </div>
       </div>
     </article>

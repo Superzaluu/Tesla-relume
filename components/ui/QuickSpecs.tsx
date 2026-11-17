@@ -72,7 +72,7 @@ function Item({ icon, label, value }: { icon: string; label: string; value: Reac
 export function QuickSpecs({ specs }: { specs: Specs }) {
   const motor = motorFact(specs);
   return (
-    <div className="hero__quick-specs" aria-label="Загварын шуурхай үзүүлэлтүүд">
+    <div className="hero__quick-specs spotlight" aria-label="Загварын шуурхай үзүүлэлтүүд">
       <Item icon="fuel" label="Түлш" value={specs.fuel} />
       <Item icon={(specs.drive || "RWD").toLowerCase()} label="Хөтлөгч" value={specs.drive} />
       <Item icon="range" label={specs.fuel === "BEV" ? "Туулах зай" : "Цахилгаанаар / нийт туулах зай"} value={rangeValue(specs)} />

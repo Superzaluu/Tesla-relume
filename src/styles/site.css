@@ -1787,3 +1787,54 @@ body::before { display:none; }
      (the 2.25:1 photo loses only empty road and sky at the sides). */
   .hero-carousel .hero--scene .hero__bg { aspect-ratio:16 / 10; object-position:50% 80%; }
 }
+
+/* ---------- Seamless loading button (LoadingLink: "Урьдчилсан захиалга", "Захиалах") ----------
+   On click the button keeps its size and colour: the label slides up and fades out, the spinner with
+   "Уншиж байна…" slides in from below in the same place, and a lighter band fills the button from left
+   to right over --loading-ms (2 s); the order page opens when it is full. */
+.btn-loading { position:relative; overflow:hidden; isolation:isolate; }
+.btn-loading__label,
+.btn-loading__status { transition:transform .45s cubic-bezier(.65, 0, .35, 1), opacity .3s ease; }
+.btn-loading__label { display:inline-flex; align-items:center; justify-content:center; gap:inherit; }
+.btn-loading__status {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  opacity:0;
+  transform:translateY(100%);
+  pointer-events:none;
+}
+.btn-loading__fill {
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(90deg, rgb(255 255 255 / .1), rgb(255 255 255 / .24));
+  transform:scaleX(0);
+  transform-origin:left center;
+}
+.btn-loading__spinner {
+  width:16px;
+  height:16px;
+  flex:none;
+  border:2px solid currentColor;
+  border-right-color:transparent;
+  border-radius:50%;
+  animation:btn-loading-spin .7s linear infinite;
+}
+.btn-loading.is-loading { cursor:progress; pointer-events:none; }
+.btn-loading.is-loading .btn-loading__label { opacity:0; transform:translateY(-100%); }
+.btn-loading.is-loading .btn-loading__status { opacity:1; transform:none; }
+.btn-loading.is-loading .btn-loading__fill { animation:btn-loading-fill var(--loading-ms, 2s) cubic-bezier(.4, 0, .2, 1) forwards; }
+@keyframes btn-loading-spin { to { transform:rotate(360deg); } }
+@keyframes btn-loading-fill { to { transform:scaleX(1); } }
+/* Reduced motion: no sliding or sweeping; the label simply swaps and the spinner turns slowly. */
+@media (prefers-reduced-motion:reduce) {
+  .btn-loading__label,
+  .btn-loading__status { transition:opacity .2s ease; transform:none; }
+  .btn-loading.is-loading .btn-loading__label { transform:none; }
+  .btn-loading.is-loading .btn-loading__fill { animation:none; }
+  .btn-loading__spinner { animation-duration:1.6s; }
+}

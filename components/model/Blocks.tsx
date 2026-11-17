@@ -102,7 +102,7 @@ function BlockView({ block }: { block: Block }) {
           </div>
           <div className="mchips">
             <p className="mchips__title">{block.chipsTitle}</p>
-            <ul>{block.chips.map((chip) => <li key={chip}>{chip}</li>)}</ul>
+            <ul className="spotlight">{block.chips.map((chip) => <li key={chip}>{chip}</li>)}</ul>
             {block.extra && <p className="mchips__title">{block.extra}</p>}
           </div>
         </>

@@ -4,6 +4,7 @@
 // what the trim lacks is struck through). Switching trims swaps the lists in place.
 import { useEffect, useState } from "react";
 import { SpecIcon } from "@/components/model/SpecIcon";
+import { LoadingLink } from "@/components/ui/LoadingLink";
 import { bodyLabel, type Picker } from "@/data/specSheet";
 
 const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
@@ -64,13 +65,13 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
             <p className="mpick__name">{option.name}{body && bodies.length > 1 ? ` · ${bodyLabel(body)}` : ""}</p>
             <p className="mpick__price">{option.price ? money(option.price) : "Үнэ лавлах"}</p>
           </div>
-          <a className="btn btn--primary btn--wide" href={preorder}>{option.price ? "Урьдчилсан захиалга" : "Үнэ лавлах"}</a>
+          <LoadingLink className="btn btn--primary btn--wide" href={preorder}>{option.price ? "Урьдчилсан захиалга" : "Үнэ лавлах"}</LoadingLink>
         </div>
 
         <div className="mkey">
           <div>
             <h3 className="h5 mkey__title">Гол үзүүлэлт</h3>
-            <ul className="mkey__list">
+            <ul className="mkey__list spotlight">
               {/* Fixed slots: a slot without a value keeps its place ("Тодруулна уу") so icons never shift. */}
               {specs.items.map((item) => (
                 <li key={item.label} className={item.value ? undefined : "is-missing"}>
@@ -89,7 +90,7 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
           {option.equipment.length > 0 && (
             <div>
               <h3 className="h5 mkey__title">Тоноглол</h3>
-              <ul className="mkey__list">
+              <ul className="mkey__list spotlight">
                 {option.equipment.map((item) => (
                   <li key={item.label} className={item.state === "none" ? "is-none" : item.state === "unknown" ? "is-missing" : undefined}>
                     <SpecIcon icon={item.icon} off={item.state === "none"} />

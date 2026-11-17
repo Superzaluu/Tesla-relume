@@ -664,3 +664,123 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 .mkey__list li.is-missing .mkey__icon{color:var(--color-text-secondary);opacity:.45;}
 .mkey__missing{font-size:15px;font-weight:500;color:var(--color-text-muted);}
 .mkey__list li.is-missing .mkey__name{color:var(--color-text-secondary);}
+
+/* ---------- Spotlight hover (SpotlightTracker writes --spot-x / --spot-y) ---------- */
+/* Mouse only: touch screens keep the plain look. */
+@media (hover:hover) and (pointer:fine) {
+  /* Safety chips: the chip under the mouse fills with a soft green glow centred on the pointer; while the
+     pointer is over the list, a ring of light also runs along the borders of the chips near it. */
+  .mchips .spotlight li {
+    position:relative;
+    isolation:isolate;
+    cursor:default;
+    transition:border-color .25s ease, color .25s ease, transform .25s ease;
+  }
+  .mchips .spotlight li::before,
+  .mchips .spotlight li::after {
+    content:"";
+    position:absolute;
+    border-radius:inherit;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  /* fill: under the text, above the white chip background */
+  .mchips .spotlight li::before {
+    inset:0;
+    z-index:-1;
+    background:radial-gradient(90px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgb(15 90 58 / .16), transparent 70%);
+  }
+  /* border light: a 1px ring over the chip's own border, cut out with a mask */
+  .mchips .spotlight li::after {
+    inset:-1px;
+    padding:1px;
+    background:radial-gradient(160px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgb(15 90 58 / .7), transparent 65%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  .mchips .spotlight:hover li::after { opacity:1; }
+  .mchips .spotlight li:hover::before { opacity:1; }
+  .mchips .spotlight li:hover { color:#0f2a1d; transform:translateY(-1px); }
+
+  /* Icon items (hero icon strip, "Гол үзүүлэлт" / "Тоноглол"): the item under the mouse gets a rounded
+     glow that follows the pointer, and its icon lifts and grows with a small overshoot, turning a
+     brighter green with a soft shadow. --pad-x/--pad-y: how far the glow reaches past the item, so the
+     light stays centred on the pointer. */
+  .hero__quick-specs.spotlight .hero__quick-spec,
+  .mkey__list.spotlight li { position:relative; isolation:isolate; cursor:default; --pad-x:6px; --pad-y:3px; }
+  .mkey__list.spotlight li { --pad-x:14px; --pad-y:8px; }
+  .hero__quick-specs.spotlight .hero__quick-spec::before,
+  .mkey__list.spotlight li::before {
+    content:"";
+    position:absolute;
+    inset:calc(var(--pad-y) * -1) calc(var(--pad-x) * -1);
+    z-index:-1;
+    border-radius:12px;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .3s ease;
+    background:
+      radial-gradient(120px circle at calc(var(--spot-x, 50%) + var(--pad-x)) calc(var(--spot-y, 50%) + var(--pad-y)), rgb(15 90 58 / .16), transparent 70%),
+      rgb(15 90 58 / .04);
+  }
+  .hero__quick-specs.spotlight .hero__quick-spec:hover::before,
+  .mkey__list.spotlight li:hover::before { opacity:1; }
+
+  .hero__quick-specs.spotlight .hero__quick-icon,
+  .mkey__list.spotlight .mkey__icon {
+    transition:transform .4s cubic-bezier(.34, 1.56, .64, 1), color .25s ease, filter .25s ease;
+  }
+  .hero__quick-specs.spotlight .hero__quick-spec:hover .hero__quick-icon,
+  .mkey__list.spotlight li:hover .mkey__icon {
+    transform:translateY(-2px) scale(1.15);
+    filter:drop-shadow(0 4px 6px rgb(15 90 58 / .28));
+  }
+  .hero__quick-specs.spotlight .hero__quick-spec:not(.is-missing):hover .hero__quick-icon,
+  .mkey__list.spotlight li:not(.is-missing):not(.is-none):hover .mkey__icon { color:#0b7a4b; }
+  .hero__quick-specs.spotlight .hero__quick-spec:not(.is-missing):hover strong,
+  .mkey__list.spotlight li:not(.is-missing):not(.is-none):hover .mkey__text strong,
+  .mkey__list.spotlight li:not(.is-missing):not(.is-none):hover .mkey__name { color:#0f5a3a; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .mchips .spotlight li:hover,
+  .hero__quick-specs.spotlight .hero__quick-spec:hover .hero__quick-icon,
+  .mkey__list.spotlight li:hover .mkey__icon { transform:none; }
+}
+
+/* ---------- Rhythm pass (2026-11-17) ---------- */
+/* One spacing scale for the model page instead of 13 different gaps:
+     16  heading → its own list / cards
+     32  title → content and block → block inside a section (--gap-section; 24 on phones)
+     40  group → group inside the trim card (32 on phones)
+     56  image ↔ copy in two-column blocks (24 when stacked)
+     64  section padding (--padding-section-large; 44 on phones)
+   Before: the spec section used 48 between title and content while every other section used 32; the
+   image/copy columns were 64, 56 or 48 apart depending on the block; the trim card had 48 between its
+   two lists but 40 above the battery cards, and its headings sat 20 or 16 above their content. */
+.msheet,
+.msheet__more-body { gap:var(--gap-section); }
+.mpick__panel,
+.mkey { gap:40px; }
+.mkey__title { margin-bottom:16px; }
+.mfeature,
+.mfeature--reverse,
+.adas,
+.mspecs { column-gap:56px; }
+/* End CTA: text → photo 32, photo → buttons 24; without a photo text → buttons is 24 (was 16, tighter
+   than title → text). */
+.mend__image { margin:16px 0 0; }
+.mend__actions { margin-top:8px; }
+/* Footnotes started flush against the tinted end section's bottom edge (top padding 0). */
+.mnotes { padding-top:32px; }
+@media (max-width:991px) {
+  .mfeature,
+  .mfeature--reverse,
+  .adas,
+  .mspecs { gap:24px; }
+  .mpick__panel,
+  .mkey { gap:32px; }
+  .msheet__more-body { margin-top:16px; }
+  .mnotes { padding-top:24px; padding-bottom:40px; }
+}

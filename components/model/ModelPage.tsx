@@ -6,6 +6,8 @@ import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
+import { SpotlightTracker } from "@/components/ui/SpotlightTracker";
+import { LoadingLink } from "@/components/ui/LoadingLink";
 import { SectionView } from "@/components/model/Blocks";
 import { Picture, T } from "@/components/model/VariantValues";
 import { VariantProvider, VariantSection, VariantToggle } from "@/components/model/Variant";
@@ -25,7 +27,7 @@ function Hero({ model, category }: { model: Model; category?: string }) {
           <p className="mintro__desc">{model.desc}</p>
           {tagline && <p className="mintro__tagline">{tagline}</p>}
           <div className="actions mintro__actions">
-            <a className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</a>
+            <LoadingLink className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</LoadingLink>
           </div>
         </div>
         <div className="mintro__hero-frame">
@@ -47,7 +49,7 @@ function Hero({ model, category }: { model: Model; category?: string }) {
         <p className="hero__subtitle"><T v={hero.subtitle} /></p>
         {model.page.variants && <VariantToggle onPhoto />}
         <div className="actions mhero__actions">
-          <a className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</a>
+          <LoadingLink className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</LoadingLink>
         </div>
       </div>
       <Picture image={hero.image} className="hero__bg" eager />
@@ -100,7 +102,7 @@ function EndCta({ model }: { model: Model }) {
         <p className="text-medium">{end.text}</p>
         {end.image && <Picture image={end.image} className="mend__image" />}
         <div className="actions mend__actions">
-          <a className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</a>
+          <LoadingLink className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</LoadingLink>
           <a className="btn btn--secondary btn--wide" href={end.secondary.href}>{end.secondary.label}</a>
         </div>
       </div>
@@ -124,6 +126,7 @@ export function ModelPage({ model, category, specView }: { model: Model; categor
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>
       </section>
+      <SpotlightTracker />
     </main>
   );
 
