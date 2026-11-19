@@ -56,7 +56,7 @@ export function PollCard({ choices }: { choices: string[] }) {
           ))}
         </div>
       </div>
-      <VideoPoster className="poll-card__media" src="/assets/ec75-cold-test_MN_dubbed.mp4" label="EC75 −30°C хүйтний туршилтын видео тоглуулах">
+      <VideoPoster className="poll-card__media" src="/assets/EC75_cold_test_MN_sub_v5.mp4" label="EC75 −30°C хүйтний туршилтын видео тоглуулах">
         <img className="poll-card__image" src="/assets/ec75-cold-poster.jpg" alt="" loading="lazy" />
         <span className="poll-card__overlay" />
         <img className="poll-card__play" src="/assets/play-button.svg" width={64} height={64} alt="" />

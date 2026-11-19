@@ -153,7 +153,7 @@ export function GalleryMosaic({ images }: { images: string[] }) {
       <div className="container container--gap-80">
         <SectionTitle title="Зураг ба видео" text="EC75-ыг −30°C хүйтэнд туршсан бичлэг, загваруудын зураг." />
         <div className="tw grid grid-cols-2 gap-3 md:grid-cols-[2fr_1fr_1fr] md:grid-rows-[220px_220px]">
-          <VideoPoster className={`${tile} col-span-2 aspect-video md:col-span-1 md:row-span-2 md:aspect-auto`} src="/assets/ec75-cold-test_MN_dubbed.mp4" label="EC75 −30°C хүйтний туршилтын видео тоглуулах">
+          <VideoPoster className={`${tile} col-span-2 aspect-video md:col-span-1 md:row-span-2 md:aspect-auto`} src="/assets/EC75_cold_test_MN_sub_v5.mp4" label="EC75 −30°C хүйтний туршилтын видео тоглуулах">
             <img className="absolute inset-0 h-full w-full object-cover" src="/assets/ec75-cold-poster.jpg" alt="" loading="lazy" />
             <span className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
             <img className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2" src="/assets/play-button.svg" width={64} height={64} alt="" />
