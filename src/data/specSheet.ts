@@ -2,7 +2,7 @@
 //
 // Every model uses the same fixed list of rows (FIELDS). Admins only type values, one per
 // configuration, so labels and units never drift. The page then derives, as on the R5 page:
-//  - summary blocks (Хэмжээ, Хүч, Зай ба цэнэглэлт…) with ranges across configurations,
+//  - summary blocks (Хэмжээ, Хүч, Батерей ба цэнэглэлт…) with ranges across configurations,
 //  - a comparison table with only the rows that differ between configurations,
 //  - "Бүх хувилбарт стандартаар" chips for equipment every configuration has,
 //  - a collapsed full table.
@@ -13,7 +13,8 @@
 export type Part = "core" | "equipment";
 export type FieldKind = "number" | "text" | "dims" | "mark" | "select";
 
-export type Group = { key: string; label: string; part: Part; fuelOnly?: boolean };
+/** `aliases`: old headings that still appear in imported tables (fromLegacy). */
+export type Group = { key: string; label: string; part: Part; fuelOnly?: boolean; aliases?: string[] };
 export type Field = {
   key: string;
   label: string;
@@ -37,6 +38,8 @@ export type Field = {
   pitch?: string;
   /** Imported but never shown on the site (China-only items such as ETC toll tags). */
   hidden?: boolean;
+  /** One-line explanation of a term, under the label in the admin form and in the site's spec tables. */
+  hint?: string;
 };
 
 /** price: dealer price in ₮; missing → "Үнэ лавлах". */
@@ -77,7 +80,8 @@ export const GROUPS: Group[] = [
   { key: "general", label: "Ерөнхий", part: "core" },
   { key: "dims", label: "Хэмжээ ба жин", part: "core" },
   { key: "motor", label: "Мотор", part: "core" },
-  { key: "battery", label: "Зай ба цэнэглэлт", part: "core" },
+  // "Зай" read as both range and battery; renamed 2026-11-20 after the manufacturer PDF check.
+  { key: "battery", label: "Батерей ба цэнэглэлт", part: "core", aliases: ["Зай ба цэнэглэлт"] },
   { key: "extender", label: "Зай сунгагч", part: "core", fuelOnly: true },
   { key: "chassis", label: "Явах эд анги", part: "equipment" },
   { key: "safety", label: "Аюулгүй байдал", part: "equipment" },
@@ -102,7 +106,7 @@ export const FIELDS: Field[] = [
   // ---- Хэмжээ ба жин
   f("dims", "size", "Урт × өргөн × өндөр", "dims", { unit: "мм", aliases: ["ерөнхий хэмжээс", "урт×өргөн×өндөр"], summary: true }),
   f("dims", "wheelbase", "Тэнхлэг хоорондын зай", "number", { unit: "мм", aliases: ["тэнхлэг хоорондын зай"], range: [2000, 5000], summary: true }),
-  f("dims", "track", "Урд / хойд мөр", "text", { unit: "мм", aliases: ["урд/арын тэнхлэг хоорондын зай", "урд болон хойд тэнхлэг хоорондын зай"] }),
+  f("dims", "track", "Урд / хойд дугуй хоорондын зай", "text", { unit: "мм", aliases: ["урд / хойд мөр", "урд/арын тэнхлэг хоорондын зай", "урд болон хойд тэнхлэг хоорондын зай"] }),
   f("dims", "cargo_size", "Тэвш / ачааны хайрцаг", "text", { unit: "мм", aliases: ["тэвшний хэмжээ"], summary: true }),
   f("dims", "cargo_volume", "Ачааны багтаамж", "number", { unit: "м³", aliases: ["ачааны хайрцаг ачааны хэмжээ", "ачааны хэмжээ", "контейнер ачааны хэмжээ"], range: [1, 40], summary: true }),
   f("dims", "side_doors", "Ачааны хажуугийн хаалга", "text", { aliases: ["тэвшний хажуугийн хаалга", "хайрцагны хажуугийн хаалга"] }),
@@ -110,7 +114,7 @@ export const FIELDS: Field[] = [
   f("dims", "curb_weight", "Өөрийн жин", "number", { unit: "кг", aliases: ["өөрийн жин"], range: [700, 6000] }),
   f("dims", "gross_weight", "Нийт жин", "number", { unit: "кг", aliases: ["нийт масс", "нийт жин"], range: [1200, 9000] }),
   f("dims", "payload", "Даац", "number", { unit: "кг", aliases: ["ачааллын нэрлэсэн жин", "даац"], range: [200, 6000], summary: true }),
-  f("dims", "approach", "Ойртох / хөдлөх өнцөг", "text", { unit: "°", aliases: ["ойртох өнцөг"] }),
+  f("dims", "approach", "Ойртох / холдох өнцөг", "text", { unit: "°", aliases: ["ойртох / хөдлөх өнцөг", "ойртох өнцөг"] }),
   f("dims", "rear_door", "Арын хаалга", "text", { aliases: ["арын хаалга онгойлгох хэлбэр", "ачааны хаалга нээх маягт", "ачааны хаалгыг нээх горим"] }),
   f("dims", "cargo_floor", "Ачааны шал", "text", { aliases: ["ачааны шал", "ачааны тасалгааны шал"] }),
 
@@ -118,17 +122,17 @@ export const FIELDS: Field[] = [
   f("motor", "motor_type", "Моторын төрөл", "text", { aliases: ["моторын төрөл", "мотор төрөл", "мотор"], summary: true }),
   f("motor", "motor_layout", "Моторын байрлал", "select", { aliases: ["моторын зохион байгуулалт"], options: ["Урд", "Арын"] }),
   f("motor", "drive", "Хөтлөгч", "select", { aliases: ["хөтлөгчийн төрөл", "хөтлөгчийн хэлбэр", "жолооны горим"], options: ["FWD", "RWD", "AWD"], summary: true }),
-  f("motor", "power", "Моторын хүч", "number", { unit: "кВт", aliases: ["оргил хүч", "хамгийн их хүч", "моторын нийт хүч", "хамгийн их цэвэр хүч"], range: [20, 300], summary: true }),
+  f("motor", "power", "Моторын оргил хүч", "number", { unit: "кВт", aliases: ["моторын хүч", "оргил хүч", "хамгийн их хүч", "моторын нийт хүч", "хамгийн их цэвэр хүч"], range: [20, 300], summary: true }),
   f("motor", "torque", "Эргэх момент", "number", { unit: "Н·м", aliases: ["оргил эргэлт", "хамгийн их эргэлт", "хөдөлгүүрийн нийт эргэлт", "хамгийн их цэвэр эргэлт"], range: [50, 1000], summary: true }),
   f("motor", "top_speed", "Дээд хурд", "number", { unit: "км/ц", aliases: ["хамгийн дээд хурд", "хамгийн их хурд"], range: [50, 200], summary: true }),
   f("motor", "gear_ratio", "Хурдны харьцаа", "number", { aliases: ["дамжуулах тэнхлэгийн хурдны харьцаа"], range: [3, 20] }),
 
-  // ---- Зай ба цэнэглэлт
+  // ---- Батерей ба цэнэглэлт
   f("battery", "battery_type", "Батерейн төрөл", "text", { aliases: ["зайны төрөл", "цахилгаан батерей"], options: ["LFP (лити төмрийн фосфат)"], summary: true }),
-  f("battery", "battery_kwh", "Батерейн багтаамж", "number", { unit: "кВт·ц", aliases: ["зайны хүчин чадал", "зайны багтаамж"], range: [10, 150], summary: true }),
+  f("battery", "battery_kwh", "Батерейн багтаамж", "number", { unit: "кВт·ц", aliases: ["батерейн багтаамж", "зайн багтаамж", "зайны хүчин чадал", "зайны багтаамж"], range: [10, 150], summary: true }),
   f("battery", "range", "Туулах зай", "number", {
     unit: "км", range: [50, 800], summary: true,
-    aliases: ["cltc цэвэр цахилгаан явах зай", "цэнэглэлтийн зай", "үйл ажиллагааны миль", "cltc аялалын хүрээ", "nedc цэвэр цахилгаан явах зай", "wltc цэвэр цахилгаан явах зай", "chtc-lt ажлын явах зай"]
+    aliases: ["туулах зай", "cltc цэвэр цахилгаан явах зай", "цэнэглэлтийн зай", "үйл ажиллагааны миль", "cltc аялалын хүрээ", "nedc цэвэр цахилгаан явах зай", "wltc цэвэр цахилгаан явах зай", "chtc-lt ажлын явах зай"]
   }),
   f("battery", "range_std", "Туулах зайн стандарт", "select", { options: ["CLTC", "NEDC", "WLTC", "CHTC"] }),
   f("battery", "consumption", "Эрчим хүчний зарцуулалт", "number", { unit: "кВт·ц/100км", aliases: ["cltc эрчим хүчний хэрэглээ", "nedc жигнэсэн иж бүрэн эрчим хүчний хэрэглээ"], range: [8, 40] }),
@@ -136,7 +140,11 @@ export const FIELDS: Field[] = [
   f("battery", "ac_time", "Удаан цэнэглэлт", "number", { unit: "цаг", aliases: ["20%100% удаан цэнэглэх хугацаа", "0%100% удаан цэнэглэх хугацаа"], range: [2, 20] }),
   f("battery", "ac_power", "Удаан цэнэглэх чадал", "number", { unit: "кВт", aliases: ["удаан цэнэглэх хүч", "машинд суурилуулсан хувьсах гүйдлийн цэнэглэлт"], range: [1, 22] }),
   mark("battery", "dc", "Хурдан (DC) цэнэглэлт", ["хурдан цэнэглэх функц", "dc хурдан цэнэглэгч"], { short: "DC цэнэглэлт" }),
-  f("battery", "charge_rate", "Цэнэглэх хурд", "text", { aliases: ["хурдан цэнэглэх хурд", "хурдан цэнэглэх төрөл", "цэнэглэх хурд", "цэнэглэх төрөл"] }),
+  // "2C" is a ratio, not a speed: charging power = 2 × battery capacity.
+  f("battery", "charge_rate", "Цэнэглэх чадлын харьцаа (C-rate)", "text", {
+    aliases: ["хурдан цэнэглэх хурд", "хурдан цэнэглэх төрөл", "цэнэглэх хурд", "цэнэглэх төрөл"],
+    hint: "2C — батерейн багтаамжаас 2 дахин их чадлаар цэнэглэнэ"
+  }),
   f("battery", "battery_cooling", "Батерейн хөргөлт", "text", { aliases: ["зай хөргөх хэлбэр"], options: ["Шингэн хөргөлт", "Агаар хөргөлт"] }),
   mark("battery", "battery_heating", "Батерей халаах", ["батерейг халаах функц", "зайны системийн дулааны удирдлага"], { pitch: "Хүйтэнд батерейг халааж, цэнэглэлт болон зайг хадгална." }),
   mark("battery", "v2l", "V2L — гадагш цахилгаан өгөх", ["v2l", "v2l гадаад цэнэгийн функц"], { short: "V2L", pitch: "Машины зайгаас гадны багаж, төхөөрөмжөө тэжээнэ." }),
@@ -348,7 +356,7 @@ export function fromLegacy(rows: string[][]): SpecSheet {
     if (!withValues(row)) {
       // Group heading. Long "headings" are really values that lost their row; keep them for review.
       inColors = /өнгө/i.test(label);
-      const g = GROUPS.find((item) => normalizeLabel(item.label) === normalizeLabel(label));
+      const g = GROUPS.find((item) => [item.label, ...(item.aliases ?? [])].some((name) => normalizeLabel(name) === normalizeLabel(label)));
       if (g) group = g.key;
       if (label.length > 40) extras.push({ group, label: "Тайлбар", values: Array(n).fill(label) });
       return;
@@ -373,7 +381,7 @@ export function fromLegacy(rows: string[][]): SpecSheet {
     values[field.key] = spreadCells.map((cell) => cleanValue(field, cell));
     if (!ok) check.add(field.key);
     if (field.key === "range") {
-      const std = label.match(STANDARD)?.[1]?.toUpperCase() ?? (/цэнэглэлтийн зай|үйл ажиллагааны/i.test(label) ? "CLTC" : "");
+      const std = label.match(STANDARD)?.[1]?.toUpperCase() ?? (/туулах зай|цэнэглэлтийн зай|үйл ажиллагааны/i.test(label) ? "CLTC" : "");
       if (std) values.range_std = Array(n).fill(std);
     }
   });
@@ -399,7 +407,7 @@ export function fromLegacy(rows: string[][]): SpecSheet {
 
 // ---------------------------------------------------------------- sheet → page
 
-export type CompareRow = { label: string; cells: string[] };
+export type CompareRow = { label: string; cells: string[]; hint?: string };
 export type ChipGroup = { heading: string; chips: string[] };
 /** One line of the short "Гол үзүүлэлт" list (icon key → components/model/SpecIcon). Empty `value` = not entered yet ("Тодруулна уу"). */
 export type KeySpec = { icon: string; label: string; value: string; href?: string };
@@ -595,7 +603,7 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
         merged.set(signature, next);
         compare.push(next);
       } else {
-        compare.push({ label: field.label, cells: shown });
+        compare.push({ label: field.label, cells: shown, hint: field.hint });
       }
     }
   }
@@ -615,7 +623,8 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
   const full = groups.map((group) => {
     const rows: CompareRow[] = fields.filter((field) => field.group === group.key && field.key !== "range_std").map((field) => ({
       label: field.unit && field.kind !== "dims" ? `${field.label} (${field.unit})` : field.kind === "dims" ? `${field.label} (${field.unit})` : field.label,
-      cells: pick(field).map((value) => value || "")
+      cells: pick(field).map((value) => value || ""),
+      hint: field.hint
     })).filter((row) => row.cells.some(Boolean));
     for (const extra of sheet.extras.filter((row) => row.group === group.key)) {
       const cells = cols.map((i) => extra.values[i] ?? "");

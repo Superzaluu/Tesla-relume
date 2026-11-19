@@ -77,7 +77,7 @@ export function QuickSpecs({ specs }: { specs: Specs }) {
       <Item icon={(specs.drive || "RWD").toLowerCase()} label="Хөтлөгч" value={specs.drive} />
       <Item icon="range" label={specs.fuel === "BEV" ? "Туулах зай" : "Цахилгаанаар / нийт туулах зай"} value={rangeValue(specs)} />
       <Item icon="charging" label="Хурдан цэнэглэлт" value={chargeValue(specs)} />
-      <Item icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын хүч" : "Моторын хүч / хөдөлгүүр"} value={motor.value} />
+      <Item icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын оргил хүч" : "Моторын оргил хүч / хөдөлгүүр"} value={motor.value} />
       <Item icon="dimension" label="Хэмжээ" value={compactSize(specs.size)} />
       <Item icon="doors" label={specs.doorLabel ?? "Хаалганы тоо"} value={countOnly(specs.doors)} />
       <Item

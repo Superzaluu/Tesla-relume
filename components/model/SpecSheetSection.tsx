@@ -13,6 +13,9 @@ function Value({ value }: { value: string }) {
   return <>{parts.map(([body, part]) => <span className="msheet__body" key={body}><b>{bodyLabel(body)}</b>{part}</span>)}</>;
 }
 
+/** Short explanation of a term under the row label (FIELDS[].hint), e.g. what "2C" means. */
+const RowHint = ({ hint }: { hint?: string }) => (hint ? <small className="msheet__hint">{hint}</small> : null);
+
 export function SpecSheetSection({ view, preorder }: { view: SheetView | null; preorder: string }) {
   if (!view || view.picker.options.length === 0) {
     return (
@@ -43,7 +46,7 @@ export function SpecSheetSection({ view, preorder }: { view: SheetView | null; p
                     <thead><tr><th scope="col">Иж бүрдэл</th>{view.configs.map((name, i) => <th scope="col" key={i} data-col={i}>{name}</th>)}</tr></thead>
                     <tbody>
                       {view.compare.map((row) => (
-                        <tr key={row.label}><th scope="row">{row.label}</th>{row.cells.map((cell, i) => <td key={i} data-col={i}><Value value={cell} /></td>)}</tr>
+                        <tr key={row.label}><th scope="row">{row.label}<RowHint hint={row.hint} /></th>{row.cells.map((cell, i) => <td key={i} data-col={i}><Value value={cell} /></td>)}</tr>
                       ))}
                     </tbody>
                   </table>
@@ -75,7 +78,7 @@ export function SpecSheetSection({ view, preorder }: { view: SheetView | null; p
                         const same = row.cells.every((cell) => cell === row.cells[0]);
                         return (
                           <tr key={`${group.heading}-${i}`}>
-                            <th scope="row">{row.label}</th>
+                            <th scope="row">{row.label}<RowHint hint={row.hint} /></th>
                             {same && many
                               ? <td colSpan={row.cells.length}><Value value={row.cells[0]} /></td>
                               : row.cells.map((cell, j) => <td key={j} data-col={j}><Value value={cell} /></td>)}

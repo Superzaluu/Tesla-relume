@@ -80,7 +80,7 @@ const flatten = (value: Stat["value"]): string => {
   if (cargo === passenger || cargo.includes(passenger)) return cargo;
   return passenger.includes(cargo) ? passenger : `${cargo}/${passenger}`;
 };
-/** "130 кВт" from the first key stat whose label matches, e.g. "Моторын хүч". */
+/** "130 кВт" from the first key stat whose label matches, e.g. "Моторын оргил хүч". */
 const statText = (stats: Stat[], label: RegExp) => {
   const stat = stats.find((item) => label.test(flatten(item.label)));
   return stat ? `${flatten(stat.value)} ${flatten(stat.unit)}`.trim() : undefined;
@@ -95,7 +95,7 @@ export const toQuick = (row: ModelRow): QuickSpecs | undefined =>
         seatsPassenger: row.seats_passenger || undefined,
         // The spec sheet wins; the hand-entered field is only for models without a sheet (EC31, EC75, R5…).
         payload: sheetPayload(row) ?? row.payload ?? "", engine: row.engine || undefined,
-        power: statText(row.stats, /моторын хүч/i),
+        power: statText(row.stats, /моторын (оргил )?хүч/i), // new label "Моторын оргил хүч" and the old "Моторын хүч"
         fastCharge: statText(row.stats, /хурдан цэнэглэлт/i),
         evRange: statText(row.stats, /цахилгаанаар/i)
       }

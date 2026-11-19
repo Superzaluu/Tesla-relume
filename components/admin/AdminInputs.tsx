@@ -85,7 +85,7 @@ export function StatsEditor({ initial, variants }: { initial: StatDraft[]; varia
             <div className="grid grid-cols-[1fr_1fr_2fr] gap-2">
               <input className={inputClass} placeholder="Утга (430)" value={row.value} onChange={(e) => update(i, "value", e.target.value)} />
               <input className={inputClass} placeholder="Нэгж (км)" value={row.unit} onChange={(e) => update(i, "unit", e.target.value)} />
-              <input className={inputClass} placeholder="Тайлбар (Цэнэглэлтийн зай)" value={row.label} onChange={(e) => update(i, "label", e.target.value)} />
+              <input className={inputClass} placeholder="Тайлбар (Туулах зай)" value={row.label} onChange={(e) => update(i, "label", e.target.value)} />
             </div>
             {variants && (
               <div className="mt-2 grid grid-cols-[1fr_1fr_2fr] gap-2">

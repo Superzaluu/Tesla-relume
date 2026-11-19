@@ -22,8 +22,12 @@ export type ModelCardData = {
 };
 
 // The card has room for one-line stat labels only; the model page keeps the full wording.
+// Old labels ("Цэнэглэлтийн зай", "Зайн багтаамж") stay until migration 0010 has renamed them in the database.
 const SHORT_LABELS: [RegExp, string][] = [
-  [/^Цэнэглэлтийн зай/, "Зай"], // "Цэнэглэлтийн зай (CLTC)" → "Зай (CLTC)"
+  [/^Туулах зай/, "Зай"], // "Туулах зай (CLTC)" → "Зай (CLTC)"
+  [/^Цэнэглэлтийн зай/, "Зай"],
+  [/^Батерейн багтаамж/, "Батерей"],
+  [/^Моторын оргил хүч/, "Оргил хүч"],
   [/^Хурдан цэнэглэлт.*/, "Цэнэглэлт"], // "Хурдан цэнэглэлт 20–80%" → "Цэнэглэлт" (20–80% stays on the model page)
   [/^Нийт явах зай/, "Нийт зай"],
   [/^Ажлын явах зай/, "Ажлын зай"],

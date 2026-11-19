@@ -133,7 +133,7 @@ export default async function EditCardPage({ params, searchParams }: {
           </div>
         </Panel>
 
-        <Panel title="Гол үзүүлэлт" description="Эхний 3 нь зөвхөн нүүр хуудасны картад харагдана. &quot;Моторын хүч&quot;, &quot;Хурдан цэнэглэлт&quot;, &quot;Цэвэр цахилгаанаар&quot; гэсэн мөрүүдийн утгыг загварын хуудасны icon мөр ашиглана.">
+        <Panel title="Гол үзүүлэлт" description="Эхний 3 нь зөвхөн нүүр хуудасны картад харагдана. &quot;Моторын оргил хүч&quot;, &quot;Хурдан цэнэглэлт&quot;, &quot;Цэвэр цахилгаанаар&quot; гэсэн мөрүүдийн утгыг загварын хуудасны icon мөр ашиглана.">
           <StatsEditor initial={model.stats.map(toDraft)} variants={variants} />
         </Panel>
 
