@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { HeroSlide as Slide } from "@/data/home";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
-import { CarShine, glintKey, shineMask } from "@/components/ui/CarShine";
+import { CarShine } from "@/components/ui/CarShine";
+import { glintKey, shineMask } from "@/components/ui/shineMask";
 import { CAR_GLINTS, CAR_SHEENS } from "@/data/carGlints";
 
 type Props = {

@@ -3,18 +3,7 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import type { Glint, Sheen } from "@/data/carGlints";
 
-/**
- * Vehicle silhouette for a photo, if one was made: /assets/hero/winter/ec75pro.jpg →
- * /assets/hero/winter/shine/ec75pro.png. The PNGs are white with the vehicle as alpha, cut out of each
- * photo by AI background removal (2026-11-17; same size ratio as the photo). Other photos get no shine.
- */
-export function shineMask(src: string): string | null {
-  const match = /^\/assets\/(hero\/winter|thumbs)\/([\w-]+)\.jpg$/.exec(src);
-  return match ? `/assets/${match[1]}/shine/${match[2]}.png` : null;
-}
-
-/** Key for CAR_GLINTS: "/assets/hero/winter/c5.jpg" → "hero/winter/c5". */
-export const glintKey = (src: string) => /^\/assets\/(hero\/winter\/[\w-]+)\.jpg$/.exec(src)?.[1] ?? null;
+// shineMask() and glintKey() are in ./shineMask.ts so server components can call them.
 
 /** One object-position value ("85%", "12px", "center") → offset in px for `free` px of crop. */
 function offset(value: string | undefined, free: number) {

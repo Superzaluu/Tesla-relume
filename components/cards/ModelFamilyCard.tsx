@@ -5,7 +5,8 @@ import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { payloadKg, payloadText, rangeKm, seats, spanText, type Family } from "@/components/cards/modelFilters";
 import { QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
-import { CarShine, shineMask } from "@/components/ui/CarShine";
+import { CarShine } from "@/components/ui/CarShine";
+import { shineMask } from "@/components/ui/shineMask";
 
 // One card per model family (EC75 + EC75 Pro, the C5 versions…) in a sideways row of the homepage grid.
 // Two tiles give the family's range of the numbers buyers compare (as in "Battery options 45 / 55 kWh"),

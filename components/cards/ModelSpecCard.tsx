@@ -2,7 +2,8 @@ import Link from "next/link";
 import { hasEngine, type QuickSpecs } from "@/data/types";
 import { compactSize, countOnly, MISSING_SHORT, payloadValue, QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
-import { CarShine, shineMask } from "@/components/ui/CarShine";
+import { CarShine } from "@/components/ui/CarShine";
+import { shineMask } from "@/components/ui/shineMask";
 
 export type ModelCardData = {
   key: string;
