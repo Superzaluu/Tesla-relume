@@ -62,7 +62,7 @@ export const ec75: Model = {
       ] },
       { id: "winter", tone: "surface", blocks: [{
         type: "feature",
-        video: { src: "/assets/ec75-cold-test.mp4", label: "EC75 −30°C хүйтний туршилтын видео тоглуулах", poster: { src: "/assets/ec75-cold-poster.jpg", width: 960, height: 408, alt: "" } },
+        video: { src: "/assets/ec75-cold-test_MN_dubbed.mp4", label: "EC75 −30°C хүйтний туршилтын видео тоглуулах", poster: { src: "/assets/ec75-cold-poster.jpg", width: 960, height: 408, alt: "" } },
         tagline: "Өвөлд бэлэн", title: "−30°C хүйтэнд туршсан",
         text: "Цас, мөстэй замд EC75-ыг −30°C хүйтэнд туршсан бичлэгийг үзээрэй. Шингэн хөргөлттэй зай температурыг тогтвортой барина."
       }] },
