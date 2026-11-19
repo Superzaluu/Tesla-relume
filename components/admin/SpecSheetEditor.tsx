@@ -169,6 +169,7 @@ export function SpecSheetEditor({ initial, suggestions, fuel }: Props) {
                         {field.label}{field.unit ? <span className="text-ink-muted"> ({field.unit})</span> : null}
                         {field.required && <span className="ml-1 text-xs text-[#b54708]" title="Зарах тохиргоонд заавал байх">★</span>}
                         {field.hidden && <span className="ml-1 text-xs text-ink-muted">· сайтад харагдахгүй</span>}
+                        {field.hint && <span className="block text-xs text-ink-muted">{field.hint}</span>}
                         {check.has(field.key) && (
                           <button type="button" className="ml-2 rounded bg-[#fffaeb] px-1.5 text-xs font-semibold text-[#b54708]" title="Багана таарахгүй байсан. Шалгаад дарна уу." onClick={() => touch(field.key, {})}>Шалгах ✓</button>
                         )}
