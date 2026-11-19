@@ -82,6 +82,8 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
       <div className="navbar__container">
         <Link className="navbar__logo logo" href="/" aria-label="Нүүр хуудас">
           <img src="/assets/brand-logo-transparent.png" width={57} height={36} alt="Ruichi" />
+          {/* Gold glint across the logo shape on hover (site.css, "Logo shine"). */}
+          <span className="logo-shine" aria-hidden="true" />
         </Link>
 
         <nav className={`navbar__links${mobileOpen ? " is-open" : ""}`} id="nav-links" aria-label="Загварууд">

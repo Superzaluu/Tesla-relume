@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import type { HeroSlide as Slide } from "@/data/home";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 import { CarShine, glintKey, shineMask } from "@/components/ui/CarShine";
-import { CAR_GLINTS } from "@/data/carGlints";
+import { CAR_GLINTS, CAR_SHEENS } from "@/data/carGlints";
 
 type Props = {
   slide: Slide;
@@ -27,6 +27,7 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
   const mask = shineMask(slide.image.src);
   const key = glintKey(slide.image.src);
   const glints = key ? CAR_GLINTS[key] : undefined;
+  const sheens = key ? CAR_SHEENS[key] : undefined;
   return (
     <div
       id={slide.id} className={`hero hero__slide spotlight${scene ? " hero--scene" : ""}`} data-theme={slide.theme} data-theme-sm={slide.themeSm}
@@ -36,7 +37,8 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
     >
       <div className="hero__content">
         {/* No category line above the name: the photo already shows the body type (user, 2026-11-15). */}
-        <Heading className="hero__model">{slide.model}</Heading>
+        {/* data-text: a copy of the name for the light band that sweeps across it on hover (site.css). */}
+        <Heading className="hero__model hero__model--shine" data-text={slide.model}>{slide.model}</Heading>
         <p className="hero__subtitle">{slide.subtitle}</p>
         {slide.messages && (
           <div className="hero__rotating-message" aria-live="polite">
@@ -56,7 +58,7 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
         />
       )}
       {/* Light on the vehicle only (its silhouette as a mask), following the mouse. */}
-      {showImage && mask && <CarShine mask={mask} followImage glints={glints} className="car-shine--hero" />}
+      {showImage && mask && <CarShine mask={mask} followImage glints={glints} sheens={sheens} className="car-shine--hero" />}
       {/* The key facts (range first) are in the benefit strip under the carousel and on the model cards (2026-11-15). */}
     </div>
   );

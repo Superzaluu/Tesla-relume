@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
-import type { Glint } from "@/data/carGlints";
+import type { Glint, Sheen } from "@/data/carGlints";
 
 /**
  * Vehicle silhouette for a photo, if one was made: /assets/hero/winter/ec75pro.jpg →
@@ -36,8 +36,10 @@ function offset(value: string | undefined, free: number) {
  * `glints`: small star flashes on the headlight, rims, glass and logo (points in % of the full photo).
  * They sit on a "stage" the size of the whole photo as object-fit: cover draws it, so a point stays on
  * its part however the photo is cropped. Needs `followImage`.
+ *
+ * `sheens`: a light band that sweeps across the model-name plate and the front emblem, on the same stage.
  */
-export function CarShine({ mask, followImage = false, glints, className = "" }: { mask: string; followImage?: boolean; glints?: Glint[]; className?: string }) {
+export function CarShine({ mask, followImage = false, glints = [], sheens = [], className = "" }: { mask: string; followImage?: boolean; glints?: Glint[]; sheens?: Sheen[]; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const glintRef = useRef<HTMLSpanElement>(null);
 
@@ -80,9 +82,15 @@ export function CarShine({ mask, followImage = false, glints, className = "" }: 
   return (
     <>
       <span ref={ref} className={`car-shine ${className}`} style={{ "--car-mask": `url("${mask}")` } as CSSProperties} aria-hidden="true" />
-      {followImage && glints && glints.length > 0 && (
+      {followImage && (glints.length > 0 || sheens.length > 0) && (
         <span ref={glintRef} className="car-glints" aria-hidden="true">
           <span className="car-glints__stage">
+            {sheens.map((sheen, i) => (
+              <span
+                key={`s${i}`} className={`car-sheen car-sheen--${sheen.part}`}
+                style={{ left: `${sheen.x}%`, top: `${sheen.y}%`, width: `${sheen.w}%`, height: sheen.h ? `${sheen.h}%` : undefined, "--i": i } as CSSProperties}
+              />
+            ))}
             {glints.map((glint, i) => (
               <span
                 key={i} className={`car-glint car-glint--${glint.part}`}
