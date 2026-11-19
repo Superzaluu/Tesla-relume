@@ -9,6 +9,7 @@ import { SiteChromeProvider } from "@/components/layout/SiteChrome";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SpotlightTracker } from "@/components/ui/SpotlightTracker";
+import { CalScript } from "@/components/ui/CalTestDrive";
 import { getCalculatorModels, getNavigation } from "@/data/content";
 import { getFuelPrices } from "@/lib/fuelPrices";
 
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </SavingsProvider>
         </SiteChromeProvider>
         <SpotlightTracker />
+        <CalScript />
 
       </body>
     </html>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { SpecIcon } from "@/components/model/SpecIcon";
 import { QuickIcon } from "@/components/ui/QuickSpecs";
+import { calTestDrive } from "@/components/ui/CalTestDrive";
 
 export type StripRange = { value: string; text: string; href: string };
 
@@ -13,21 +14,27 @@ const BENEFITS = [
 ];
 
 // From 1280px all six sit in one row (~225px each), so padding, icon and text get a little smaller there.
-function Item({ href, icon, title, text, action = false }: { href: string; icon: ReactNode; title: string; text?: string; action?: boolean }) {
-  return (
-    <li className={action ? "bg-[#0f5a3a]" : "bg-white"}>
-      <Link
-        href={href}
-        className={`flex h-full items-center gap-3 px-4 py-4 sm:px-5 xl:gap-2.5 xl:px-3.5 ${action ? "text-white hover:bg-[#083d28]" : "hover:bg-[#f6faf8]"}`}
-      >
-        <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border border-solid xl:h-10 xl:w-10 ${action ? "border-white/40 bg-white/10 text-white" : "border-[#bcd7c7] bg-white text-[#0f5a3a]"}`}>
+// The action item (test drive) is a <button> that opens the Cal.com booking popup instead of a link.
+function Item({ href, icon, title, text, action = false }: { href?: string; icon: ReactNode; title: string; text?: string; action?: boolean }) {
+  const className = `flex h-full items-center gap-3 px-4 py-4 sm:px-5 xl:gap-2.5 xl:px-3.5 ${action ? "text-white hover:bg-[#083d28]" : "hover:bg-[#f6faf8]"}`;
+  const body = (
+    <>
+      <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border border-solid xl:h-10 xl:w-10 ${action ? "border-white/40 bg-white/10 text-white" : "border-[#bcd7c7] bg-white text-[#0f5a3a]"}`}>
           {icon}
         </span>
         <span className="min-w-0">
           <span className={`block text-[15px] font-bold leading-tight xl:text-[14px] ${action ? "text-white" : "text-ink"}`}>{title}</span>
           {text && <span className={`block truncate text-small xl:text-[13px] ${action ? "text-white/80" : "text-ink-muted"}`}>{text}</span>}
         </span>
-      </Link>
+    </>
+  );
+  return (
+    <li className={action ? "bg-[#0f5a3a]" : "bg-white"}>
+      {href ? (
+        <Link href={href} className={className}>{body}</Link>
+      ) : (
+        <button type="button" {...calTestDrive} className={`${className} w-full cursor-pointer border-0 bg-transparent text-left font-[inherit]`}>{body}</button>
+      )}
     </li>
   );
 }
@@ -48,8 +55,8 @@ export function BenefitStrip({ range }: { range?: StripRange }) {
         {BENEFITS.map((item) => (
           <Item key={item.title} href={item.href} icon={<SpecIcon icon={item.icon} />} title={item.title} text={item.text} />
         ))}
-        {/* The form lives on the homepage; "/#test-drive" works from the strip as it did from the navbar. */}
-        <Item href="/#test-drive" icon={<SpecIcon icon="steer" />} title="Туршилтын жолоодлого" action />
+        {/* Opens the Cal.com test-drive calendar (user, 2026-11-19); the homepage form stays as a fallback. */}
+        <Item icon={<SpecIcon icon="steer" />} title="Туршилтын жолоодлого" action />
       </ul>
     </div>
   );

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { NavCategory } from "@/data/navigation";
+import { calTestDrive } from "@/components/ui/CalTestDrive";
 
 // Footer, variant B (user, 2026-11-15): four columns on deep green. The test-drive band that sat on top was
 // removed the same day (it repeated the test-drive form and the hero strip). Every model used to be listed
@@ -61,7 +62,15 @@ export function SiteFooter({ navigation }: { navigation: NavCategory[] }) {
           <nav aria-label="Үйлчилгээ">
             <h2 className={heading}>Үйлчилгээ</h2>
             <ul className={list}>
-              {services.map((item) => <li key={item.label}><Link className={link} href={item.href}>{item.label}</Link></li>)}
+              {services.map((item) => (
+                <li key={item.label}>
+                  {item.href === "/#test-drive" ? (
+                    <button type="button" {...calTestDrive} className={`${link} cursor-pointer border-0 bg-transparent p-0 text-left font-[inherit] text-small`}>{item.label}</button>
+                  ) : (
+                    <Link className={link} href={item.href}>{item.label}</Link>
+                  )}
+                </li>
+              ))}
             </ul>
           </nav>
 
