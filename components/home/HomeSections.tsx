@@ -4,6 +4,8 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
 import { VideoPoster } from "@/components/ui/VideoPoster";
 import { DEPOSIT_REFUND_DAYS } from "@/data/preorder";
+import { CHARGER_SOURCE, CHARGER_STATIONS, UB_CHARGER_COUNTS, chargerDataMonth } from "@/data/chargers";
+import { ChargerMap } from "@/components/home/ChargerMap";
 
 /** Text + image call-to-action block. No longer on the homepage (replaced by NumberBand); kept for other pages. */
 export function CtaBlock({ title, text, action, image, figures, className = "" }: {
@@ -41,11 +43,11 @@ export function CtaBlock({ title, text, action, image, figures, className = "" }
  * The model line-up photo with four key numbers under it and a thin promotion bar (reference: Electric Drive
  * Store stats band). Replaces the separate promotion and warranty blocks.
  */
-export function NumberBand({ models, versions, fastChargers }: { models: number; versions: number; fastChargers: number }) {
+export function NumberBand({ models, versions }: { models: number; versions: number }) {
   const figures = [
     { value: String(models), label: `загвар, ${versions} хувилбар`, href: "#models" },
     { value: "6 жил", label: "300,000 км батерейн баталгаа", href: "/warranty/" },
-    { value: String(fastChargers), label: "хурдан цэнэглэгч, Улаанбаатар", href: "#chargers" },
+    { value: String(UB_CHARGER_COUNTS.dc), label: "хурдан цэнэглэх цэг, Улаанбаатар", href: "#chargers" },
     { value: "10%", label: "урьдчилгаатай ногоон зээл", href: "/green-loan/" }
   ];
   return (
@@ -104,10 +106,15 @@ export function OrderSteps() {
   );
 }
 
-const MAPS_SEARCH = "https://www.google.com/maps/search/EV+charging+station+Ulaanbaatar";
-
-/** Charger counts and the map side by side in one row (was a stats card plus a 560 px map below it). */
-export function ChargerStats({ stats }: { stats: { value: string; label: string }[] }) {
+/**
+ * Charger counts and the map side by side in one row. Real stations from evmashin.com (src/data/chargers.ts,
+ * user 2026-11-20) instead of the made-up "50 / 5" and a generic Google search map.
+ */
+export function ChargerStats() {
+  const stats = [
+    { value: String(UB_CHARGER_COUNTS.dc), label: "Хурдан (DC) цэнэглэх цэг" },
+    { value: String(UB_CHARGER_COUNTS.ac), label: "Энгийн (AC) цэнэглэх цэг" }
+  ];
   return (
     <section className="section" id="chargers">
       <div className="container">
@@ -115,7 +122,7 @@ export function ChargerStats({ stats }: { stats: { value: string; label: string 
           <div className="flex flex-col gap-5 rounded-card border border-solid border-line bg-white p-6 lg:p-8">
             <div>
               <h2 className="h2 m-0">Цэнэглэгчийн байршил</h2>
-              <p className="text-medium m-0 mt-2">Таны ойролцоох цэнэглэх газрууд</p>
+              <p className="text-medium m-0 mt-2">Улаанбаатар орчмын {UB_CHARGER_COUNTS.places} байршилд нийтийн цэнэглэгч ажиллаж байна.</p>
             </div>
             <dl className="m-0 flex flex-wrap gap-8">
               {stats.map((stat) => (
@@ -125,15 +132,20 @@ export function ChargerStats({ stats }: { stats: { value: string; label: string 
                 </div>
               ))}
             </dl>
-            <div className="mt-auto">
-              <a className="btn btn--tint min-h-[42px] px-5" href={MAPS_SEARCH} target="_blank" rel="noopener">Google Maps-д нээх</a>
+            <p className="m-0 flex flex-wrap gap-x-4 gap-y-1 text-small text-ink-muted">
+              <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#0f8a52]" aria-hidden="true" />DC хурдан</span>
+              <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-[#2f6fb2]" aria-hidden="true" />Зөвхөн AC</span>
+            </p>
+            <div className="mt-auto flex flex-col gap-2">
+              <a className="btn btn--tint min-h-[42px] self-start px-5" href={CHARGER_SOURCE.url} target="_blank" rel="noopener">Сул цэнэглэгч харах</a>
+              <p className="m-0 text-xs text-ink-muted">
+                Эх сурвалж: <a className="text-ink-muted underline" href={CHARGER_SOURCE.url} target="_blank" rel="noopener">{CHARGER_SOURCE.name}</a>, {chargerDataMonth()}-ын байдлаар.
+                Цэнэглэгчийн шууд төлөвийг тэндээс харна.
+              </p>
             </div>
           </div>
-          <div className="charger-map h-[320px] overflow-hidden rounded-card border border-solid border-line lg:h-auto lg:min-h-[340px]" id="charger-map">
-            <iframe
-              src="https://www.google.com/maps?q=EV+charging+station,+Ulaanbaatar&z=12&output=embed" className="block h-full w-full border-0"
-              title="Улаанбаатар дахь цэнэглэх станцуудын газрын зураг" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen
-            />
+          <div className="charger-map relative z-0 h-[360px] overflow-hidden rounded-card border border-solid border-line lg:h-auto lg:min-h-[400px]" id="charger-map">
+            <ChargerMap stations={CHARGER_STATIONS} center={[47.913, 106.917]} />
           </div>
         </div>
       </div>
