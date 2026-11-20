@@ -120,10 +120,12 @@ export const FIELDS: Field[] = [
 
   // ---- Мотор
   f("motor", "motor_type", "Моторын төрөл", "text", { aliases: ["моторын төрөл", "мотор төрөл", "мотор"], summary: true }),
-  f("motor", "motor_layout", "Моторын байрлал", "select", { aliases: ["моторын зохион байгуулалт"], options: ["Урд", "Арын"] }),
-  f("motor", "drive", "Хөтлөгч", "select", { aliases: ["хөтлөгчийн төрөл", "хөтлөгчийн хэлбэр", "жолооны горим"], options: ["FWD", "RWD", "AWD"], summary: true }),
-  f("motor", "power", "Моторын оргил хүч", "number", { unit: "кВт", aliases: ["моторын хүч", "оргил хүч", "хамгийн их хүч", "моторын нийт хүч", "хамгийн их цэвэр хүч"], range: [20, 300], summary: true }),
-  f("motor", "torque", "Эргэх момент", "number", { unit: "Н·м", aliases: ["оргил эргэлт", "хамгийн их эргэлт", "хөдөлгүүрийн нийт эргэлт", "хамгийн их цэвэр эргэлт"], range: [50, 1000], summary: true }),
+  f("motor", "motor_layout", "Моторын байрлал", "select", { aliases: ["моторын байрлал", "моторын зохион байгуулалт"], options: ["Урд", "Арын"] }),
+  f("motor", "drive", "Хөтлөгч", "select", { aliases: ["хөтлөгч", "хөтлөгчийн төрөл", "хөтлөгчийн хэлбэр", "жолооны горим"], options: ["FWD", "RWD", "AWD"], summary: true }),
+  // "Хамгийн их (цэвэр) хүч / эргэлт" in the old tables is the range extender's engine (最大净功率), listed
+  // before the motor: as motor aliases they gave C5 Drone 70 kW / 130 Н·м instead of 110 / 260. Now engine_power.
+  f("motor", "power", "Моторын оргил хүч", "number", { unit: "кВт", aliases: ["моторын хүч", "оргил хүч", "моторын нийт хүч"], range: [20, 300], summary: true }),
+  f("motor", "torque", "Эргэх момент", "number", { unit: "Н·м", aliases: ["оргил эргэлт", "хөдөлгүүрийн нийт эргэлт", "моторын нийт эргэх момент"], range: [50, 1000], summary: true }),
   f("motor", "top_speed", "Дээд хурд", "number", { unit: "км/ц", aliases: ["хамгийн дээд хурд", "хамгийн их хурд"], range: [50, 200], summary: true }),
   f("motor", "gear_ratio", "Хурдны харьцаа", "number", { aliases: ["дамжуулах тэнхлэгийн хурдны харьцаа"], range: [3, 20] }),
 
@@ -132,7 +134,7 @@ export const FIELDS: Field[] = [
   f("battery", "battery_kwh", "Батерейн багтаамж", "number", { unit: "кВт·ц", aliases: ["батерейн багтаамж", "зайн багтаамж", "зайны хүчин чадал", "зайны багтаамж"], range: [10, 150], summary: true }),
   f("battery", "range", "Туулах зай", "number", {
     unit: "км", range: [50, 800], summary: true,
-    aliases: ["туулах зай", "cltc цэвэр цахилгаан явах зай", "цэнэглэлтийн зай", "үйл ажиллагааны миль", "cltc аялалын хүрээ", "nedc цэвэр цахилгаан явах зай", "wltc цэвэр цахилгаан явах зай", "chtc-lt ажлын явах зай"]
+    aliases: ["туулах зай", "туулах зай, км", "cltc цэвэр цахилгаан явах зай", "цэнэглэлтийн зай", "үйл ажиллагааны миль", "cltc аялалын хүрээ", "nedc цэвэр цахилгаан явах зай", "wltc цэвэр цахилгаан явах зай", "chtc-lt ажлын явах зай"]
   }),
   f("battery", "range_std", "Туулах зайн стандарт", "select", { options: ["CLTC", "NEDC", "WLTC", "CHTC"] }),
   f("battery", "consumption", "Эрчим хүчний зарцуулалт", "number", { unit: "кВт·ц/100км", aliases: ["cltc эрчим хүчний хэрэглээ", "nedc жигнэсэн иж бүрэн эрчим хүчний хэрэглээ"], range: [8, 40] }),
@@ -151,6 +153,7 @@ export const FIELDS: Field[] = [
 
   // ---- Зай сунгагч (EREV / PHEV / CNG)
   f("extender", "engine_model", "Зай сунгагч", "text", { aliases: ["хамрах хүрээ өргөтгөгч", "хөдөлгүүр", "хөдөлгүүрийн загвар"], summary: true }),
+  f("extender", "engine_power", "Зай сунгагчийн хүч / момент", "text", { aliases: ["хамгийн их цэвэр хүч", "хамгийн их хүч"] }),
   f("extender", "displacement", "Хөдөлгүүрийн багтаамж", "number", { unit: "л", aliases: ["шилжилт"], range: [0.5, 3] }),
   f("extender", "tank", "Сав", "number", { unit: "л", aliases: ["шатахууны сав", "хийн хадгалах сав"], range: [10, 400], summary: true }),
   f("extender", "total_range", "Нийт туулах зай", "number", { unit: "км", aliases: ["nedc аялалын нийт хүрээ"], range: [200, 2000], summary: true }),
@@ -163,7 +166,7 @@ export const FIELDS: Field[] = [
   // ---- Явах эд анги
   f("chassis", "front_susp", "Урд түдгэлзүүр", "text", { aliases: ["урд түдгэлзүүлэлтийн төрөл", "урд болон хойд түдгэлзүүлэлтийн төрлүүд"], summary: true }),
   f("chassis", "rear_susp", "Хойд түдгэлзүүр", "text", { aliases: ["арын түдгэлзүүлэлтийн төрөл"], summary: true }),
-  f("chassis", "steering", "Жолооны хүч өгөгч", "text", { aliases: ["удирдах систем", "туслах төрөл"], options: ["EPS (цахилгаан)", "C-EPS"], required: true, summary: true }),
+  f("chassis", "steering", "Жолооны хүч өгөгч", "text", { aliases: ["жолооны хүч өгөгч", "удирдах систем", "туслах төрөл"], options: ["EPS (цахилгаан)", "C-EPS"], required: true, summary: true }),
   f("chassis", "brakes", "Тоормос", "text", { aliases: ["тоормосны хэлбэр", "тоормосны төрөл", "урд тоормосны төрлүүд"], summary: true }),
   f("chassis", "parking_brake", "Зогсоолын тоормос", "text", { aliases: ["зогсоолын тоормосны төрөл"] }),
   f("chassis", "tyres", "Дугуй", "text", { aliases: ["дугуйн техникийн үзүүлэлтүүд", "дугуй", "урд дугуйны техникийн үзүүлэлтүүд"], summary: true }),
@@ -172,7 +175,7 @@ export const FIELDS: Field[] = [
   mark("chassis", "regen", "Энерги сэргээх тоормос", ["тоормосны энергийн санал хүсэлт", "тоормосны энергийн хариу", "гулсах энергийн санал хүсэлт"], { pitch: "Тоормослох, налууд уруудах үед батерейгаа цэнэглэнэ." }),
 
   // ---- Аюулгүй байдал
-  mark("safety", "abs", "ABS + EBD", ["abs+ebd", "abs цоожны эсрэг", "түгжихээс хамгаалах тоормосны систем", "тоормосны хүчний хуваарилалт"], { required: true }),
+  mark("safety", "abs", "ABS + EBD", ["abs+ebd", "abs", "abs цоожны эсрэг", "түгжихээс хамгаалах тоормосны систем", "тоормосны хүчний хуваарилалт"], { required: true }),
   mark("safety", "esc", "Тогтвортой байдлын систем (ESC)", ["биеийн тогтвортой байдлын систем", "биеийн электрон тогтвортой байдлын систем", "цахим тогтвортой байдлын систем"], { short: "ESC", pitch: "Огцом эргэлт, хальтиргаатай замд гулгахаас сэргийлнэ." }),
   mark("safety", "tcs", "Зүтгүүрийн хяналт (TCS)", ["зүтгүүрийн хяналт"], { short: "TCS" }),
   mark("safety", "hill", "Ууланд хөдлөх туслах", ["ууланд өгсөх тусламж", "ууланд эхлэхэд туслах"]),
@@ -226,7 +229,7 @@ export const FIELDS: Field[] = [
   f("comfort", "passenger_seat", "Зорчигчийн суудал", "text", { aliases: ["зорчигчийн суудал", "зорчигчийн суудал тохируулах маягт"] }),
   f("comfort", "windows", "Цахилгаан цонх", "text", { aliases: ["цонх өргөх", "бүтэн машины шил", "бүхэл бүтэн машины шил", "бүрэн хаалганы шил", "хаалганы шил", "шилэн өргөгч", "урд/арын цахилгаан цонх"] }),
   f("comfort", "mirrors", "Гадна толины тохируулга", "text", { aliases: ["гадна арын толин тусгалыг тохируулах маягт"] }),
-  f("comfort", "speakers", "Чанга яригч", "number", { aliases: ["илтгэгчид", "илтгэгч", "илтгэгчдийн тоо"], range: [1, 12] }),
+  f("comfort", "speakers", "Чанга яригч", "number", { aliases: ["чанга яригчийн тоо", "илтгэгчид", "илтгэгч", "илтгэгчдийн тоо"], range: [1, 12] }),
   mark("comfort", "12v", "Ухаалаг 12V цэнэглэлт", ["ухаалаг 12v цэнэглэгч"], { pitch: "Туслах аккумляторыг автоматаар цэнэглэнэ." }),
   mark("comfort", "etc", "ETC төлбөр хураагч", ["etc", "цахим төлбөр хураах", "зогсолтгүй төлбөр хураах систем"], { hidden: true }),
 
@@ -322,7 +325,8 @@ export function checkValue(field: Field, value: string): Check {
 
 // ---------------------------------------------------------------- old tables → sheet
 
-const HEADER_LABELS = ["тохиргооныхувилбар", "тохиргоо", "төсөл"];
+// "Төсөл" was renamed "Хувилбар" in the old tables by migration 0012.
+const HEADER_LABELS = ["тохиргооныхувилбар", "тохиргоо", "төсөл", "хувилбар"];
 const STANDARD = /(cltc|nedc|wltc|chtc)/i;
 
 /** Converts an old free-form table. Rows whose columns don't match the configurations are flagged in `check`. */

@@ -8,8 +8,11 @@ import { LoadingLink } from "@/components/ui/LoadingLink";
 import { bodyLabel, type Picker } from "@/data/specSheet";
 
 const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
-/** Text in a fixed slot whose value has not been entered yet. */
-const MISSING = "Тодруулна уу";
+/**
+ * A fixed key-number slot without a value shows a dash: visitors should not read "Тодруулна уу" (ask us)
+ * on every gap (user, 2026-11-20). The admin form still says "Тодруулна уу" so the gaps get filled.
+ */
+const MISSING = "—";
 
 function Segmented({ label, items, value, onPick, available, show = (item) => item }: {
   label: string; items: string[]; value: string; onPick: (item: string) => void; available: (item: string) => boolean; show?: (item: string) => string;
@@ -40,6 +43,8 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
   }, [option.col]);
 
   const specs = option.specs.find((item) => item.body === body) ?? option.specs[0];
+  // Equipment not entered yet is left out; only standard, optional and "not available" lines are shown.
+  const equipment = option.equipment.filter((item) => item.state !== "unknown");
 
   return (
     <div className="mpick">
@@ -72,7 +77,7 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
           <div>
             <h3 className="h5 mkey__title">Гол үзүүлэлт</h3>
             <ul className="mkey__list spotlight">
-              {/* Fixed slots: a slot without a value keeps its place ("Тодруулна уу") so icons never shift. */}
+              {/* Fixed slots: a slot without a value keeps its place ("—") so icons never shift. */}
               {specs.items.map((item) => (
                 <li key={item.label} className={item.value ? undefined : "is-missing"}>
                   <SpecIcon icon={item.icon} />
@@ -87,17 +92,16 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
             </ul>
           </div>
 
-          {option.equipment.length > 0 && (
+          {equipment.length > 0 && (
             <div>
               <h3 className="h5 mkey__title">Тоноглол</h3>
               <ul className="mkey__list spotlight">
-                {option.equipment.map((item) => (
-                  <li key={item.label} className={item.state === "none" ? "is-none" : item.state === "unknown" ? "is-missing" : undefined}>
+                {equipment.map((item) => (
+                  <li key={item.label} className={item.state === "none" ? "is-none" : undefined}>
                     <SpecIcon icon={item.icon} off={item.state === "none"} />
                     <span className="mkey__text">
                       <span className="mkey__name">{item.label}</span>
                       {item.state === "option" && <span className="mkey__note">Нэмэлт сонголтоор</span>}
-                      {item.state === "unknown" && <span className="mkey__missing">{MISSING}</span>}
                       {item.state === "none" && <span className="sr-only"> — энэ иж бүрдэлд байхгүй</span>}
                     </span>
                   </li>

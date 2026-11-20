@@ -85,8 +85,9 @@ const RULES: Rule[] = [
   { cn: /总续航|综合续航/, key: "total_range" },
   // C5 CNG's PDF labels this row "weighted fuel consumption" in Chinese, but the English label and values are electricity.
   { en: /electricityconsumption/, key: "consumption" },
-  { cn: /加权综合燃料/, extra: "Жигнэсэн түлшний зарцуулалт (л/100км)", group: "extender" },
-  { cn: /气耗/, extra: "Хийн зарцуулалт, батерей дууссан үед (кг/100км)", group: "extender" },
+  // Labels as in migration 0012 (manufacturer PDF check, 2026-11-20).
+  { cn: /加权综合燃料/, extra: "NEDC дундаж түлшний зарцуулалт (л/100км)", group: "extender" },
+  { cn: /气耗/, extra: "Хийн зарцуулалт (бага цэнэгтэй үед) (кг/100км)", group: "extender" },
   { cn: /油耗|耗气/, key: "fuel_use" },
 
   { cn: /电池类型/, key: "battery_type" },
@@ -580,6 +581,17 @@ export function importTab(rows: string[][], tab: string, today = new Date().toIS
   if (noEngine && !values.torque && engineTorque >= 0 && extras[engineTorque].values.some((v) => /\d/.test(v))) {
     values.torque = extras[engineTorque].values;
     extras.splice(engineTorque, 1);
+  }
+
+  // Range extender: engine power and torque in one field, "70 кВт / 130 Н·м" (engine_power, migration 0012).
+  const enginePower = extras.findIndex((e) => e.label.startsWith("Хөдөлгүүрийн чадал"));
+  const engineNm = extras.findIndex((e) => e.label.startsWith("Хөдөлгүүрийн эргэх момент"));
+  if (!noEngine && !values.engine_power && enginePower >= 0 && extras[enginePower].values.some((v) => /\d/.test(v))) {
+    values.engine_power = extras[enginePower].values.map((kw, i) => {
+      const nm = engineNm >= 0 ? extras[engineNm].values[i] ?? "" : "";
+      return [kw && `${kw} кВт`, /\d/.test(nm) && `${nm} Н·м`].filter(Boolean).join(" / ");
+    });
+    for (const at of [enginePower, engineNm].filter((i) => i >= 0).sort((a, b) => b - a)) extras.splice(at, 1);
   }
 
   // Some tabs only describe the AC control ("Manual air conditioning"): that means the car has AC.
