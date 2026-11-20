@@ -31,7 +31,7 @@ export function SiteFooter({ navigation }: { navigation: NavCategory[] }) {
       <div className="px-global">
         <div className="mx-auto grid max-w-[1376px] gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <Link href="/" aria-label="Нүүр хуудас" className="mb-3 inline-block">
+            <Link href="/" aria-label="Нүүр хуудас" className="site-footer__logo mb-3 inline-block">
               <img src="/assets/brand-logo-transparent.png" width={57} height={36} alt="" className="block brightness-0 invert" />
             </Link>
             <p className="m-0 mb-4 max-w-[34ch] text-small text-[#cfe2d8]">Цахилгаан ачааны болон зорчигчийн машин. −30°C-т туршсан, 6 жил / 300,000 км батерейн баталгаатай.</p>

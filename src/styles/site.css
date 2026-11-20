@@ -1955,6 +1955,27 @@ body::before { display:none; }
   body:has(.hero__slide:hover) .logo-shine { animation:none; }
 }
 
+/* Platinum logo: keep the original transparent PNG as a mask, but paint the
+   visible mark with metallic silver instead of a flat white filter. */
+.navbar__logo::before,
+.site-footer__logo::before {
+  content:"";
+  position:absolute;
+  inset:50% auto auto 0;
+  width:52px;
+  aspect-ratio:57 / 36;
+  transform:translateY(-50%);
+  -webkit-mask:url("/assets/brand-logo-transparent.png") center / contain no-repeat;
+  mask:url("/assets/brand-logo-transparent.png") center / contain no-repeat;
+  background:linear-gradient(135deg, #89949a 0%, #f8fbfc 24%, #b6c0c5 46%, #ffffff 63%, #8d989e 100%);
+  filter:drop-shadow(0 1px 1px rgb(4 27 18 / .35));
+}
+.navbar__logo img,
+.site-footer__logo img { opacity:0; }
+.navbar__logo .logo-shine { z-index:1; }
+.site-footer__logo { position:relative; width:57px; height:36px; }
+.site-footer__logo::before { top:50%; }
+
 /* ---------- Seamless loading button (LoadingLink: "Урьдчилсан захиалга", "Захиалах") ----------
    On click the button keeps its size and colour: the label slides up and fades out, the spinner with
    "Уншиж байна…" slides in from below in the same place, and a lighter band fills the button from left
