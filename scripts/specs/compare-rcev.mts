@@ -40,9 +40,12 @@ for (const page of pages) {
   const rows = grid(await response.text());
   const sheet = ours[slug];
   console.log(`\n## ${page} → ${slug}${sheet?.configs?.length ? "" : " (манайд хүснэгтгүй)"}`);
+  // EC75 / R5 keep cargo and passenger in one sheet: compare each page only with its own side's columns.
+  const side = /HYB$/.test(page) && !/PRO/.test(page) ? "Ачааны · " : /KYB$/.test(page) && !/PRO/.test(page) ? "Зорчигчийн · " : "";
+  const cols = (sheet?.configs ?? []).map((config, i) => (!side || config.name.startsWith(side) ? i : -1)).filter((i) => i >= 0);
   for (const [key, label] of KEYS) {
     const theirs = rows.filter((row) => label.test(row[0])).flatMap((row) => row.slice(1)).join(" ");
-    const mine = (sheet?.values?.[key] ?? []).filter(Boolean).join(" | ");
+    const mine = cols.map((i) => sheet?.values?.[key]?.[i] ?? "").filter((v) => v && v !== "–").join(" | ");
     if (!theirs || !mine) continue;
     const missing = nums(mine).filter((n) => !nums(theirs).includes(n));
     if (missing.length === 0) continue;
