@@ -3,15 +3,31 @@
 // model gets the same section types built from its spec sheet, so the text never says more than the sheet.
 // Only what the sheet marks or fills in is mentioned; an empty value drops the sentence, card or section.
 //
-// Photos: each section has a fixed slot. A slot listed in STORY_IMAGES uses
-// public/assets/models/<slug>/story/<slot>.jpg (1200 × 720); any other slot shows the "Coming soon" picture.
+// Photos: each section has a fixed slot. STORY_IMAGES maps a model's slots to files (1200 × 720 JPEG,
+// public/assets/models/<family>/story/); any other slot shows the "Coming soon" picture.
 import type { Card, Fact, Img, Section } from "./types";
 import { aggregate, FIELD, markOf, siteColumns, type SlotSet, type SpecSheet } from "./specSheet";
 
 const COMING_SOON = "/assets/coming-soon.svg";
 
-/** Photo slots that already have a file, per model slug. Add the slot here after copying the photo. */
-export const STORY_IMAGES: Record<string, string[]> = {};
+/** Every listed slot of a family's photo folder, plus the cargo photo for this body. */
+const family = (dir: string, slots: Slot[], cargo?: string): Partial<Record<Slot, string>> => ({
+  ...Object.fromEntries(slots.map((slot) => [slot, `/assets/models/${dir}/story/${slot}.jpg`])),
+  ...(cargo ? { cargo: `/assets/models/${dir}/story/${cargo}.jpg` } : {})
+});
+
+// C5 (user approved 2026-11-20): cropped from the rc-ev.com «车型概览» posters, which C5 EV, CNG and EREV share.
+// The cargo photo follows the body: single-cab flatbed, double-cab flatbed, or box.
+const C5: Slot[] = ["cabin", "chassis", "brakes", "battery", "charging", "adas-acc", "adas-ica", "adas-aeb", "adas-ldw", "adas-ldp",
+  "adas-isa", "adas-hma", "safety-camera360", "safety-esc", "safety-tpms", "interior-screen", "interior-seats"];
+
+/** Photo files per model slug and slot. Add a model here after copying its photos. */
+export const STORY_IMAGES: Record<string, Partial<Record<Slot, string>>> = {
+  c5: family("c5", C5, "cargo"), "c5-cng": family("c5", C5, "cargo"), "c5-reev": family("c5", C5, "cargo"),
+  "c5-cng-crew": family("c5", C5, "cargo-crew"), "c5-reev-crew": family("c5", C5, "cargo-crew"), "c5-drone": family("c5", C5, "cargo-crew"),
+  "c5-box": family("c5", C5, "cargo-box"), "c5-cng-box": family("c5", C5, "cargo-box"), "c5-reev-box": family("c5", C5, "cargo-box"),
+  "c5-cng-crew-box": family("c5", C5, "cargo-box"), "c5-reev-crew-box": family("c5", C5, "cargo-box")
+};
 
 export const STORY_SLOTS = ["cargo", "rear-door", "side-door", "floor", "cabin", "chassis", "brakes", "tyres", "battery", "charging",
   "adas-acc", "adas-ica", "adas-aeb", "adas-fcw", "adas-ldw", "adas-ldp", "adas-isa", "adas-dms", "adas-hma",
@@ -74,9 +90,12 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     const marks = raw(key).map(markOf);
     return marks.every((mark) => mark === "●") ? "all" : marks.some((mark) => mark === "●") ? "some" : "";
   };
-  const image = (slot: Slot, alt: string): Img => (STORY_IMAGES[slug]?.includes(slot)
-    ? { src: `/assets/models/${slug}/story/${slot}.jpg`, width: 1200, height: 720, alt: `${name} — ${alt}` }
-    : { src: COMING_SOON, width: 1200, height: 720, alt: `${name} — ${alt} (зураг удахгүй нэмэгдэнэ)` });
+  const image = (slot: Slot, alt: string): Img => {
+    const file = STORY_IMAGES[slug]?.[slot];
+    return file
+      ? { src: file, width: 1200, height: 720, alt: `${name} — ${alt}` }
+      : { src: COMING_SOON, width: 1200, height: 720, alt: `${name} — ${alt} (зураг удахгүй нэмэгдэнэ)` };
+  };
   const facts = (list: [string, string][]): Fact[] => list.filter(([, value]) => value).slice(0, 3).map(([label, value]) => ({ label, value }));
   // Marks inside a sentence read as words: "2 хаалга / ○ 4 хаалга" → "2 хаалга / нэмэлт сонголтоор 4 хаалга".
   const words_ = (text: string) => text.replace(/○\s*/g, "нэмэлт сонголтоор ").replace(/●\s*/g, "");
@@ -180,7 +199,9 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   }
 
   // 6. Safety: picture cards for the main systems, the rest as chips (standard on every trim only).
-  const safetyCards = SAFETY_CARDS.filter((item) => has(item.key) === "all").map((item) => card(item.slot, item.title, item.text, item.tag));
+  // As in ADAS: a system on some trims only still gets its card, marked "Зарим иж бүрдэлд".
+  const safetyCards = SAFETY_CARDS.filter((item) => has(item.key))
+    .map((item) => card(item.slot, item.title, `${item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, item.tag));
   const cardKeys = new Set(SAFETY_CARDS.map((item) => item.key));
   const chips = Object.values(FIELD).filter((field) => field.group === "safety" && field.kind === "mark" && !field.hidden && !cardKeys.has(field.key) && has(field.key) === "all")
     .map((field) => field.short ?? plain(field.label));
