@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ModelPage } from "@/components/model/ModelPage";
-import { getCategory, getModel, getModelCards, getModelSlugs, getSpecView } from "@/data/content";
+import { getCategory, getModel, getModelCards, getModelSlugs, getSpecSheet } from "@/data/content";
 import { models } from "@/data/models";
-import { slotSetFor } from "@/data/specSheet";
+import { slotSetFor, viewSheet } from "@/data/specSheet";
+import { buildStory } from "@/data/story";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -24,12 +25,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-  const model = await getModel(slug);
-  if (!model) notFound();
+  const found = await getModel(slug);
+  if (!found) notFound();
   const category = await getCategory(slug);
   // The category picks the three category-specific key slots (CATEGORY_SLOTS in specSheet.ts).
-  const slotSet = slotSetFor(category?.id, model.quick?.type);
-  const specView = model.page.specTable !== undefined ? await getSpecView(slug, model.quick?.fuel, slotSet) : null;
+  const slotSet = slotSetFor(category?.id, found.quick?.type);
+  const sheet = await getSpecSheet(slug);
+
+  // One standard for every page (user, 2026-11-20): picture sections + the B′ spec section.
+  // EC75 / R5 keep their hand-written sections; once their sheet is in Supabase, the sheet's spec
+  // section replaces their own "specs" block. Every other model gets sections built from its sheet.
+  let page = found.page;
+  if (sheet && page.sections) {
+    page = { ...page, specTable: true, sections: page.sections.filter((section) => section.id !== "specs") };
+  } else if (sheet && page.specTable !== false) {
+    const story = buildStory(sheet, found.name, slug, found.quick?.fuel, slotSet, page.notes.length);
+    page = { ...page, specTable: true, sections: story.sections, notes: [...page.notes, ...story.notes] };
+  }
+  const model = { ...found, page };
+  const specView = page.specTable && sheet ? viewSheet(sheet, model.quick?.fuel, slotSet) : null;
+
   // "Төстэй загварууд": up to four other cards from the same menu category.
   const { cards } = await getModelCards();
   const similar = category ? cards.filter((card) => card.categoryId === category.id && card.slug !== slug).slice(0, 4) : [];

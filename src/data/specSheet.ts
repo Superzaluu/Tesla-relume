@@ -598,7 +598,7 @@ function dimsRange(list: string[]): string | null {
   }).join("×");
 }
 
-function aggregate(field: Field, list: string[]): string {
+export function aggregate(field: Field, list: string[]): string {
   if (field.key === "drive") list = list.map((value) => DRIVE_LABEL[value] ?? value);
   const unique = [...new Set(list.filter((value) => value && value !== "–"))];
   if (unique.length === 0) return "";
@@ -658,7 +658,7 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
     for (const field of fields) {
       if (field.key === "range_std") continue;
       const cells = pick(field);
-      const shown = cells.map((value) => (field.kind === "mark" ? value || "–" : withUnit(value, field.unit) || "–"));
+      const shown = cells.map((value) => (field.kind === "mark" ? value || "–" : withUnit(field.key === "drive" ? DRIVE_LABEL[value] ?? value : value, field.unit) || "–"));
       // Marks differ only when the sign differs; "● LED" vs "● галоген" is a note, not a difference.
       if (new Set(field.kind === "mark" ? shown.map((value) => markOf(value) || value) : shown).size < 2) continue;
       if (field.kind === "mark") {
@@ -690,7 +690,8 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
   const full = groups.map((group) => {
     const rows: CompareRow[] = fields.filter((field) => field.group === group.key && field.key !== "range_std").map((field) => ({
       label: field.unit && field.kind !== "dims" ? `${field.label} (${field.unit})` : field.kind === "dims" ? `${field.label} (${field.unit})` : field.label,
-      cells: pick(field).map((value) => value || ""),
+      // Drive is stored as FWD / RWD / AWD; people read "Хойд дугуйн хөтлөгч (RWD)".
+      cells: pick(field).map((value) => (field.key === "drive" ? DRIVE_LABEL[value] ?? value : value) || ""),
       hint: field.hint
     })).filter((row) => row.cells.some(Boolean));
     for (const extra of sheet.extras.filter((row) => row.group === group.key)) {
