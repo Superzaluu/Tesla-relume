@@ -1,6 +1,6 @@
 -- Technical tables after checking against the manufacturer PDF (2026.11.12). Stage 3 of fix/spec-naming-2026-11.
 --   A. models.specs (structured sheet, imported from Google Sheet «Ruichi specs»): value fixes and the new
---      engine_power field («Зай сунгагчийн хүч / момент»). The same changes must be made in the Sheet,
+--      engine_power field («Зай сунгагчийн чадал / момент»). The same changes must be made in the Sheet,
 --      or the next import brings the old values back (list in the PR / chat, 2026-11-20).
 --   B. models.spec (old machine-translated tables) of EC31, EC31L and C5 Drone: labels and a few values
 --      in plain Mongolian, rows that mean nothing for an electric car removed.
@@ -45,7 +45,7 @@ $$;
 update public.models set specs =
   pg_temp.put_extra(
     pg_temp.set_value(pg_temp.set_value(pg_temp.set_value(pg_temp.set_value(specs,
-      'rear_susp', '7+6 навчит пүрштэй, хамааралтай'),
+      'rear_susp', 'Хамаарах тэнхлэг, 7+6 нумтай'),
       'ac_power', '6.6'),
       'ac_time', '8.6–18.2'),
       'dc_time', ''),
@@ -128,8 +128,17 @@ create or replace function pg_temp.fix_legacy(spec jsonb) returns jsonb language
          case
            when v in ('хойд дугуйгаар хөтлөгчтэй', 'Арын хөдөлгүүрийн хойд хөтөч', 'Арын хөдөлгүүрийн хойд дугуйгаар хөтлөгчтэй') then 'Хойд дугуйгаар (RWD)'
            when v = 'Хэвтээ' and old_label in ('Моторын зохион байгуулалт', 'Мотор зохион байгуулалт') then 'Хөндлөн'
-           when v = 'Бөмбөрийн тоормос'                            then 'Хүрдэн тоормос'
-           when v = 'Уртааш навчны пүршний бие даасан бус суспенз' then 'Уртааш навчит пүрштэй, хамааралтай'
+           -- Naming standard (2026-11-20): тэнхлэг, нум, барабан тоормос, abbreviation + English + Mongolian.
+           when v = 'Бөмбөрийн тоормос'                            then 'Барабан тоормос'
+           when v in ('Дискэн тоормос', 'Диск тоормос')            then 'Диск тоормос'
+           when v = 'Урд диск ба хойд хүрд'                        then 'Урд диск, хойд барабан'
+           when v = 'Уртааш навчны пүршний бие даасан бус суспенз' then 'Хамаарах тэнхлэг, уртааш нумтай'
+           when v = '5+2 уртааш навчны булаг, бие даасан бус суспенз, дээд навчны булаг' then 'Хамаарах тэнхлэг, 5+2 уртааш нумтай'
+           when v = 'MacPherson бие даасан түдгэлзүүлэлт'          then 'Үл хамаарах тэнхлэг, Макферсон'
+           when v = 'Давхар салаа бие даасан түдгэлзүүлэлт'        then 'Үл хамаарах тэнхлэг, давхар салаат гартай'
+           when v = 'Цахим туслах (EPS)'                           then 'EPS (Electric Power Steering, цахилгаан хүч өгөгч)'
+           when v = 'ABSi+wheel EPB'                               then 'EPB (Electric Parking Brake, цахилгаан зогсоолын тоормос)'
+           when v = 'Лити төмрийн фосфат'                          then 'LFP (Lithium Iron Phosphate, литийн төмрийн фосфат)'
            when v = '●Гарын авлага'                                then '● Гар удирдлагатай'
            when v = 'I төрлийн анхдагч'                            then 'Pioneer I'
            else v

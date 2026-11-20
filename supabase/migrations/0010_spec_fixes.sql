@@ -17,7 +17,9 @@ create temporary table stat_label_renames (old text primary key, new text not nu
 insert into stat_label_renames values
   ('Цэнэглэлтийн зай (CLTC)', 'Туулах зай (CLTC)'),
   ('Зайн багтаамж',           'Батерейн багтаамж'),
-  ('Моторын хүч',             'Моторын оргил хүч');
+  -- кВт is power: «чадал» (naming standard, 2026-11-20).
+  ('Моторын хүч',             'Моторын оргил чадал'),
+  ('Моторын оргил хүч',       'Моторын оргил чадал');
 
 update public.models m
 set stats = (

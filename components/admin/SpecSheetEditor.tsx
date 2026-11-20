@@ -258,7 +258,7 @@ function Cell({ field, value, suggestions, onChange }: { field: Field; value: st
       <select className={`${inputClass}${cellBorder(problem?.level)}`} value={value} onChange={(e) => onChange(e.target.value)} title={problem?.text}>
         <option value="">—</option>
         {!field.options.includes(value) && value && <option value={value}>⚠ {value}</option>}
-        {field.options.map((option) => <option key={option} value={option}>{option}</option>)}
+        {field.options.map((option) => <option key={option} value={option}>{field.optionLabels?.[option] ?? option}</option>)}
       </select>
     );
   }

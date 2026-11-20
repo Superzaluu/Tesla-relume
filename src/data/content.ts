@@ -91,7 +91,7 @@ const flatten = (value: Stat["value"]): string => {
   if (cargo === passenger || cargo.includes(passenger)) return cargo;
   return passenger.includes(cargo) ? passenger : `${cargo}/${passenger}`;
 };
-/** "130 кВт" from the first key stat whose label matches, e.g. "Моторын оргил хүч". */
+/** "130 кВт" from the first key stat whose label matches, e.g. "Моторын оргил чадал". */
 const statText = (stats: Stat[], label: RegExp) => {
   const stat = stats.find((item) => label.test(flatten(item.label)));
   return stat ? `${flatten(stat.value)} ${flatten(stat.unit)}`.trim() : undefined;
@@ -111,8 +111,8 @@ export function toQuick(row: ModelRow): QuickSpecs | undefined {
     doorLabel: row.door_label || undefined, charge: row.charge ?? "", seats: row.seats ?? "",
     seatsPassenger: row.seats_passenger || undefined,
     payload: sheetPayload(row) ?? row.payload ?? "", engine: row.engine || undefined,
-    // Key stats: new label "Моторын оргил хүч" and the old "Моторын хүч".
-    power: sheetSpan(row.sheet_power, "кВт") ?? statText(row.stats, /моторын (оргил )?хүч/i),
+    // Key stats: the standard label "Моторын оргил чадал" and the older "Моторын оргил хүч" / "Моторын хүч".
+    power: sheetSpan(row.sheet_power, "кВт") ?? statText(row.stats, /моторын (оргил )?(хүч|чадал)/i),
     fastCharge: sheetSpan(row.sheet_dc, "мин") ?? statText(row.stats, /хурдан цэнэглэлт/i),
     evRange: (fuel !== "BEV" ? sheetRange : undefined) ?? statText(row.stats, /цахилгаанаар/i)
   };

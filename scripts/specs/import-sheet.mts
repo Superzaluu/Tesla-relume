@@ -198,20 +198,26 @@ const RULES: Rule[] = [
   { cn: /集成式巡航/, key: "ica" }
 ];
 
+// Naming standard (2026-11-20): abbreviation + English full name + Mongolian; suspension is «тэнхлэг»,
+// leaf springs «нум», drum brakes «барабан». Must match the options in src/data/specSheet.ts.
+const LFP = "LFP (Lithium Iron Phosphate, литийн төмрийн фосфат)";
+const EPS = "EPS (Electric Power Steering, цахилгаан хүч өгөгч)";
+const EPB = "EPB (Electric Parking Brake, цахилгаан зогсоолын тоормос)";
+
 // English → Mongolian, applied in order to every text value.
 const DICT: [RegExp, string][] = [
   // ---- 2026-11-15 tabs (C9, C5L EV, ED71S, EC31S, EC35II, C3); specific phrases first
   [/permanent magnet \/ synchronization/i, "Байнгын соронзон синхрон мотор"],
-  [/lithium iron phosphate battery/i, "LFP (лити төмрийн фосфат)"],
+  [/lithium iron phosphate battery/i, LFP],
   [/^postposition$/i, "Арын"], [/^transverse$/i, "Хөндлөн"],
   [/^(?:load-bearing(?: type)?|monocoque)$/i, "Даацын их бие"],
-  [/(\d+(?:\+\d+)?)-leaf (?:longitudinal )?(?:leaf )?springs?,? non-independent suspension(?:, spring top-mounted)?/i, "$1 навчит пүрштэй, хамааралтай"],
-  [/five-leaf springs \(non-independent suspension, with lower leaf springs\)/i, "5 навчит пүрштэй, хамааралтай"],
-  [/leaf springs are not independent suspension|leaf spring rigid axle \(non-independent suspension\)/i, "Навчит пүрштэй, хамааралтай"],
-  [/mc ?pherson strut suspension/i, "Макферсон, бие даасан"],
-  [/^disc$/i, "диск"], [/^drum$/i, "хүрд"], [/\s*brakes$/i, ""],
+  [/(\d+(?:\+\d+)?)-leaf (?:longitudinal )?(?:leaf )?springs?,? non-independent suspension(?:, spring top-mounted)?/i, "Хамаарах тэнхлэг, $1 нумтай"],
+  [/five-leaf springs \(non-independent suspension, with lower leaf springs\)/i, "Хамаарах тэнхлэг, 5 нумтай"],
+  [/leaf springs are not independent suspension|leaf spring rigid axle \(non-independent suspension\)/i, "Хамаарах тэнхлэг, нумтай"],
+  [/mc ?pherson strut suspension/i, "Үл хамаарах тэнхлэг, Макферсон"],
+  [/^disc$/i, "диск"], [/^drum$/i, "барабан"], [/\s*brakes$/i, ""],
   [/mechanical handbrake \(rear axle wheel-side braking\)|^mechanical$/i, "Механик гар тоормос"],
-  [/^electric power steering$/i, "EPS (цахилгаан)"],
+  [/^electric power steering$/i, EPS],
   [/^steel wheels?(?: rim)?(?: \(silver\))?$/i, "Ган обуд"],
   [/^(?:electric power window|power windows)$/i, "Цахилгаан цонх"], [/^(?:former|front)$/i, "Урд"],
   [/^manual lens adjustment$/i, "Гар"],
@@ -242,10 +248,10 @@ const DICT: [RegExp, string][] = [
   [/^single sun visor$/i, "Жолоочийн"], [/^single motor$/i, "1"],
   [/^steel$/i, "Ган обуд"], [/^white\/silvery$/i, "Цагаан, мөнгөлөг"], [/front reading (?:light|lamp)$/i, "Урд"],
   // ---- EC75 P/C, R5 P/C tabs
-  [/^(?:longitudinal )?leaf spring non-independent suspension$/i, "Навчит пүрштэй, хамааралтай"],
-  [/mc ?pherson independent suspension/i, "Макферсон, бие даасан"],
+  [/^(?:longitudinal )?leaf spring non-independent suspension$/i, "Хамаарах тэнхлэг, нумтай"],
+  [/mc ?pherson independent suspension/i, "Үл хамаарах тэнхлэг, Макферсон"],
   [/^front and rear disc(?: brakes)?$/i, "Урд, хойд диск"],
-  [/^electronic (?:assist \(EPS\)|power EPS)$/i, "EPS (цахилгаан)"], [/^electric parking brake$/i, "EPB (цахилгаан)"],
+  [/^electronic (?:assist \(EPS\)|power EPS)$/i, EPS], [/^electric parking brake$/i, EPB],
   [/^full size$/i, "Бүтэн хэмжээтэй"],
   [/^front:?\s*[─—–-]\s*\/$/i, "Хойд"], [/^front:?\s*[─—–-]\s*\/\s*(?:rear|back):?\s*●$/i, "Хойд"], [/^front:?\s*●\s*\/\s*(?:rear|back):?\s*●$/i, "Урд, хойд"],
   [/^main:?\s*[—–-]?\s*\/\s*auxiliary:?\s*[—–-]?$/i, "–"], [/^main\s*●\s*\/\s*(?:auxiliary|secondary)\s*●$/i, "Жолооч, зорчигч"],
@@ -266,29 +272,29 @@ const DICT: [RegExp, string][] = [
   [/^column-mounted gear shifter$/i, "8.8 инч LCD, арын камерын дүрстэй"],
   [/(\d+)-inch central control color HD\s*screen, car Bluetooth call, USB audio input, FM radio\s*\(supports MP3\/WMA\)/i, "$1 инч төв дэлгэц, Bluetooth дуудлага, USB, FM радио"],
   [/^manual air conditioning$/i, "Гар удирдлагатай"], [/^● ?manual$/i, "Гар удирдлагатай"],
-  [/^(\w+) \(lithium iron phosphate\)$/i, "LFP (лити төмрийн фосфат), $1"],
-  [/lithium iron phosphate(?: \(LFP\))?/i, "LFP (лити төмрийн фосфат)"],
+  [/^(\w+) \(lithium iron phosphate\)$/i, `${LFP}, $1`],
+  [/(?<!\()lithium iron phosphate(?: \(LFP\))?/i, LFP],
   [/^2C Supercharge$/i, "2C хурдан цэнэглэлт"], [/^on-board DC$/i, "DC"],
   [/^CNG range extender$/i, "CNG зай сунгагч (EREV)"], [/^pure electric$/i, "Цэвэр цахилгаан"],
   [/\(?Corrugated separate cargo box with gantry\)?/i, "(атираат хашлагатай, кабины хамгаалалтын хүрээтэй)"],
   [/\(Air deflector \+ single door on right \/ double doors on right\)/i, "(агаар чиглүүлэгчтэй, баруун талд 1 эсвэл 2 хаалгатай)"],
-  [/front discs?,? (?:and )?rear drums?/i, "Урд диск, хойд хүрд"],
+  [/front discs?,? (?:and )?rear drums?/i, "Урд диск, хойд барабан"],
   [/^electric window lift$/i, "Цахилгаан цонх"], [/^manuel$/i, "Гар"],
   [/^hand-held gearshift$/i, "Жолооны багана дээр"],
   [/instrument integration/i, "багажны самбарт"],
   [/^driver(?: seat)?$/i, "Жолооч"], [/^drive\/passenger$/i, "Жолооч, зорчигч"],
   [/H[AV]{2}C \(electric air conditioning, integrated (?:water|air) heating(?: with)? PTC\s*controller\)?/i, "Цахилгаан агааржуулагч, PTC халаагууртай"],
-  [/(\d+(?:\+\d+)?)\s*(?:longitudinal )?leaf springs?\s*[,(]?\s*non-independent suspension(?:, with leaf\s*springs mounted on\s*top)?\)?/i, "$1 навчит пүрштэй, хамааралтай"],
+  [/(\d+(?:\+\d+)?)\s*(?:longitudinal )?leaf springs?\s*[,(]?\s*non-independent suspension(?:, with leaf\s*springs mounted on\s*top)?\)?/i, "Хамаарах тэнхлэг, $1 нумтай"],
   [/driver(?:'s)? seat with manual (\d+)-way adjustment and split headrest/i, "Гар тохируулгатай, $1 чиглэл, тусдаа толгойн түшлэгтэй"],
   [/passenger seat with height-adjustable armrest, cup holder, and\s*storage\s*(?:box|compartment),\s*folding backrest, flip-up seat\s*cushion, and split\s*headrest/i, "Гарын түшлэг, аяганы тавиур, хайрцагтай; түшлэг эвхэгдэж, суудал дээш өргөгдөнө"],
   [/two-in-one permanent magnet synchronous motor/i, "Байнгын соронзон синхрон мотор (2-in-1)"],
   [/permanent magnet synchronous(?: motor)?(?: \(PMSM\))?/i, "Байнгын соронзон синхрон мотор"],
-  [/double wishbone independent suspension/i, "Давхар салаат гартай, бие даасан"],
-  [/macpherson independent suspension/i, "Макферсон, бие даасан"],
-  [/(\d+(?:\+\d+)?)(?: |-)?(?:piece )?(?:longitudinal )?leaf springs?,? non-independent suspension(?:, with leaf\s*springs mounted on top)?/i, "$1 навчит пүрштэй, хамааралтай"],
-  [/front disc and rear drum/i, "Урд диск, хойд хүрд"],
-  [/^disc brake$/i, "диск"], [/^drum brake$/i, "хүрд"],
-  [/electric power steering \(EPS\)/i, "EPS (цахилгаан)"],
+  [/double wishbone independent suspension/i, "Үл хамаарах тэнхлэг, давхар салаат гартай"],
+  [/macpherson independent suspension/i, "Үл хамаарах тэнхлэг, Макферсон"],
+  [/(\d+(?:\+\d+)?)(?: |-)?(?:piece )?(?:longitudinal )?leaf springs?,? non-independent suspension(?:, with leaf\s*springs mounted on top)?/i, "Хамаарах тэнхлэг, $1 нумтай"],
+  [/front disc and rear drum/i, "Урд диск, хойд барабан"],
+  [/^disc brake$/i, "диск"], [/^drum brake$/i, "барабан"],
+  [/electric power steering \(EPS\)/i, EPS],
   [/^steel wheels?$/i, "Ган обуд"], [/^alumin(?:i)?um(?: alloy)? wheels?$/i, "Хайлшин обуд"],
   [/electric lifting glass/i, "Цахилгаан цонх"],
   [/^manual$/i, "Гар"], [/^electric$/i, "Цахилгаан"], [/\(electric\)/i, "(цахилгаан)"],
@@ -321,7 +327,7 @@ const DICT: [RegExp, string][] = [
 const BODY: Record<string, string> = {
   flatbed: "Задгай", fence: "Торон хаалттай", box: "Битүү", "flatbed/fence": "Задгай, торон хаалттай", refrigerated: "Хөргүүртэй"
 };
-const KEEP_LATIN = /\b(Ganfeng|CATL|Type-C|LFP|PMSM|EPS|C-EPS|R-EPS|EPB|ABS|EBD|ESC|LED|LCD|USB|HD|MP3|PTC|DC|AC|EREV|V2L|OTA|SER\d+\w*|H\d+\w*|China|VI|B|LT|PR|R\d+)\b/g;
+const KEEP_LATIN = /\b(Lithium|Iron|Phosphate|Electric|Power|Steering|Parking|Brake|Ganfeng|CATL|Type-C|LFP|PMSM|EPS|C-EPS|R-EPS|EPB|ABS|EBD|ESC|LED|LCD|USB|HD|MP3|PTC|DC|AC|EREV|V2L|OTA|SER\d+\w*|H\d+\w*|China|VI|B|LT|PR|R\d+)\b/g;
 
 const CJK = /[㐀-鿿]/;
 const CJK_ALL = /[　-〿㐀-鿿＀-￯]+/g;
@@ -402,14 +408,14 @@ function asNumber(key: string, raw: string) {
 function asText(key: string, raw: string) {
   const value = english(raw);
   // A cell only in Chinese ("磷酸铁锂") loses everything in english().
-  if (!value && /磷酸铁锂/.test(raw ?? "")) return "LFP (лити төмрийн фосфат)";
+  if (!value && /磷酸铁锂/.test(raw ?? "")) return LFP;
   if (!value || /^(үгүй|no|[─—–-]+)$/i.test(value)) return value ? "–" : "";
   if (/^(тийм|support|yes)$/i.test(value)) return key === "airbags" ? "Жолоочийн" : "Байгаа";
   if (/^●/.test(value)) return translate(value.replace(/^●\s*[(（]?/, "").replace(/[)）]$/, "")) || "Байгаа";
   if (key === "drive") return /all|4wd|awd/i.test(value) ? "AWD" : /front-wheel|fwd|front front/i.test(value) || /前驱/.test(raw ?? "") ? "FWD" : /rear-wheel|rwd/i.test(value) || /后驱/.test(raw ?? "") ? "RWD" : value;
   // The Chinese 前置/后置 is reliable; the English is sometimes another row's text ("Liquid cooling", "Pre").
   if (key === "motor_layout") return /前置/.test(raw ?? "") || /^(front|pre)\b/i.test(value) ? "Урд" : /后置/.test(raw ?? "") || /^rear/i.test(value) ? "Арын" : translate(value);
-  if (key === "parking_brake") return /EPB/.test(value) ? "EPB (цахилгаан)" : translate(value);
+  if (key === "parking_brake") return /EPB/.test(value) ? EPB : translate(value);
   if (key === "size" || key === "cargo_size") {
     return translate(value).replace(/(\d)\s*[*x×]\s*(?=\d)/gi, "$1×").replace(/:(?=\d)/g, ": ").replace(/(\d)\s*,\s*(?=\d)/g, "$1/").replace(/(\d)\s+(?=\d{3,5}×)/g, "$1; ");
   }
