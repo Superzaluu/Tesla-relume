@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
-import { payloadKg, payloadText, rangeKm, seats, spanText, type Family } from "@/components/cards/modelFilters";
+import { payloadKg, payloadText, rangeTile, seats, spanText, type Family } from "@/components/cards/modelFilters";
 import { QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
 import { CarShine } from "@/components/ui/CarShine";
@@ -80,7 +80,7 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
           {passengers
             ? <Tile icon="seats" label="Суудал" value={spanText(members.map(seats), "")} />
             : <Tile icon="payload" label="Даац" value={payloadText(members.map(payloadKg))} />}
-          <Tile icon="range" label="Туулах зай" value={spanText(members.map(rangeKm), "км")} />
+          <Tile icon="range" {...rangeTile(members)} />
         </div>
 
         {members.length > 1 && (

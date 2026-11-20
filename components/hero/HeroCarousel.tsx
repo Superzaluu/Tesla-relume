@@ -95,7 +95,7 @@ export function HeroCarousel({ slides }: { slides: SlideData[] }) {
     ? {
         value: rangeValue(slide.quick),
         // The model name is right above in the hero; repeating it cut the EREV text on phones.
-        text: slide.quick.fuel === "BEV" ? "Туулах зай" : "Цахилгаан / нийт зай",
+        text: slide.quick.fuel === "BEV" ? "Туулах зай" : "Нийт / цахилгаанаар",
         href: slide.href
       }
     : undefined;

@@ -471,8 +471,13 @@ const SLOTS_BEFORE: Slot[] = [
 ];
 const SLOTS_AFTER: Slot[] = [{ key: "size", icon: "dimension", label: "Гадна хэмжээ" }, { key: "drive", icon: "drive" }];
 
-/** The model's slot set: its menu category, or (for a model without a menu card) a guess from its body type. */
+/**
+ * The model's slot set: its menu category, or (for a model without a menu card) a guess from its body type.
+ * Since 2026-11-20 one menu category «Хөргүүртэй болон тусгай зориулалтын» (id "refrigerated") also holds the
+ * special builds (R5 service, C5 drone); only a refrigerator body gets the cooling slots.
+ */
 export function slotSetFor(categoryId?: string, bodyType?: string): SlotSet {
+  if (categoryId === "refrigerated" && bodyType !== "refrigerator") return "special";
   if (categoryId && categoryId in CATEGORY_SLOTS) return categoryId as SlotSet;
   const byBody: Record<string, SlotSet> = { van: "cargo-van", flatbed: "flatbed", flatbed4: "flatbed", box: "box", refrigerator: "refrigerated" };
   return byBody[bodyType ?? ""] ?? "special";
@@ -671,11 +676,13 @@ function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined,
   const specs = (i: number) => (bodies.length ? bodies : [""]).map((body) => {
     const items = slots.map((slot): KeySpec => {
       if (slot.key === "range") {
-        // Range extender: battery-only and total range in one slot, "70 / 1200 км" (as in the hero icon strip).
+        // Range extender: total and battery-only range in one slot, "1200 / 70 км" (total first, as on the
+        // cards and in the hero icon strip; user, 2026-11-20).
         const ev = shown("range", i, body);
         const total = extender ? shown("total_range", i, body) : "";
-        const label = `${extender ? (total ? "Цахилгаанаар / нийт" : "Цахилгаанаар") : "Туулах зай"}${std.length === 1 ? ` (${std[0]})` : ""}`;
-        const both = ev && total ? `${ev.replace(/\s*км$/, "")} / ${total}` : ev || (total ? `– / ${total}` : "");
+        const kind = !extender ? "Туулах зай" : total && ev ? "Нийт / цахилгаанаар" : total ? "Нийт туулах зай" : "Цахилгаанаар";
+        const label = `${kind}${std.length === 1 ? ` (${std[0]})` : ""}`;
+        const both = ev && total ? `${total.replace(/\s*км$/, "")} / ${ev}` : total || ev;
         return { icon: "range", label, value: both };
       }
       const raw = valueForBody(value(slot.key, i), body);

@@ -24,10 +24,10 @@ export const payloadValue = (payload: string) => (/^тохируулгаас х�
 
 const kmNumber = (value: string) => value.replace(/\s*км.*$/i, "").trim();
 
-/** EREV/PHEV: battery-only / total range, "115/1200 км". BEV (or no battery-only figure): the range as is. */
+/** EREV/PHEV: total / battery-only range, "1200 / 115 км" (total first, as on the cards; user, 2026-11-20). BEV (or no battery-only figure): the range as is. */
 export const rangeValue = (specs: Specs) =>
   specs.fuel !== "BEV" && specs.evRange && !/ev/i.test(specs.range) && specs.range
-    ? `${kmNumber(specs.evRange)}/${kmNumber(specs.range)} км`
+    ? `${kmNumber(specs.range)} / ${kmNumber(specs.evRange)} км`
     : specs.range;
 
 /** Fast-charge time: the key stat when there is one ("18 мин"), otherwise the icon field without its "DC -" prefix. */
@@ -75,7 +75,7 @@ export function QuickSpecs({ specs }: { specs: Specs }) {
     <div className="hero__quick-specs spotlight" aria-label="Загварын шуурхай үзүүлэлтүүд">
       <Item icon="fuel" label="Түлш" value={specs.fuel} />
       <Item icon={(specs.drive || "RWD").toLowerCase()} label="Хөтлөгч" value={specs.drive} />
-      <Item icon="range" label={specs.fuel === "BEV" ? "Туулах зай" : "Цахилгаанаар / нийт туулах зай"} value={rangeValue(specs)} />
+      <Item icon="range" label={specs.fuel === "BEV" ? "Туулах зай" : "Нийт / цахилгаанаар туулах зай"} value={rangeValue(specs)} />
       <Item icon="charging" label="Хурдан цэнэглэлт" value={chargeValue(specs)} />
       <Item icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын оргил хүч" : "Моторын оргил хүч / хөдөлгүүр"} value={motor.value} />
       <Item icon="dimension" label="Хэмжээ" value={compactSize(specs.size)} />

@@ -27,11 +27,25 @@ export function payloadKg(card: ModelCardData): [number, number] | null {
 }
 /** Seats: "6–14 суудал" → [6, 14]. */
 export const seats = (card: ModelCardData) => span(numbers(card.quick?.seats));
-/** Range in km, the highest figure of the hero value ("415–420 км" → 420). */
+/** Range in km, the highest figure of the hero value ("415–420 км" → 420). For a range extender: the total range. */
 export const rangeKm = (card: ModelCardData) => {
   const max = span(numbers(card.quick?.range))?.[1];
   return max === undefined ? null : ([max, max] as [number, number]);
 };
+/** Electric-only range of a range-extender model ("Цэвэр цахилгаанаар" key stat), else null. */
+const evRangeKm = (card: ModelCardData) => (card.quick?.fuel !== "BEV" ? span(numbers(card.quick?.evRange)) : null);
+
+/**
+ * Range tile on the homepage cards. Electric: "415–420 км". Range extender: total and electric-only
+ * range, "1,200 / 115 км" (user, 2026-11-20). CNG cards that only know the electric range ("70 км EV") keep one figure.
+ */
+export function rangeTile(cards: ModelCardData[]): { label: string; value: string } {
+  const total = spanText(cards.map(rangeKm), "");
+  const ev = cards.every((card) => evRangeKm(card)) ? spanText(cards.map(evRangeKm), "") : "";
+  return total && ev && ev !== total
+    ? { label: "Нийт / цахилгаанаар", value: `${total} / ${ev} км` }
+    : { label: "Туулах зай", value: spanText(cards.map(rangeKm), "км") };
+}
 
 const FUEL_LABEL: Record<string, string> = { BEV: "Цэвэр цахилгаан", EREV: "Зай сунгагчтай", PHEV: "Хайбрид" };
 const DRIVE_LABEL: Record<string, string> = { FWD: "Урд (FWD)", RWD: "Хойд (RWD)", AWD: "Бүх дугуй (AWD)" };
@@ -94,40 +108,49 @@ export const optionCount = (cards: ModelCardData[], groups: Group[], selection: 
   cards.filter((card) => passes(card, groups, selection, group.id) && option.test(card)).length;
 
 export type SortId = "recommended" | "range" | "payload" | "name";
+// Default order (user, 2026-11-20): in every row the longest range first (a range extender counts with its
+// total range); equal ranges keep the admin «Дараалал» order, since the sort is stable. "range" is the same
+// order and stays only so old links with ?sort=range keep working.
 export const SORTS: { id: SortId; label: string }[] = [
-  { id: "recommended", label: "Санал болгох" },
-  { id: "range", label: "Туулах зай: ихээс бага" },
+  { id: "recommended", label: "Туулах зай: ихээс бага" },
   { id: "payload", label: "Даац: ихээс бага" },
   { id: "name", label: "Нэрээр (А–Я)" }
 ];
 
 export function sortCards(cards: ModelCardData[], sort: SortId) {
   const by = (value: (card: ModelCardData) => number) => [...cards].sort((a, b) => value(b) - value(a));
-  if (sort === "range") return by((card) => rangeKm(card)?.[1] ?? -1);
   if (sort === "payload") return by((card) => payloadKg(card)?.[1] ?? -1);
   if (sort === "name") return [...cards].sort((a, b) => a.name.localeCompare(b.name, "mn"));
-  return cards;
+  return by((card) => rangeKm(card)?.[1] ?? -1);
 }
 
 // ---------------------------------------------------------------- rows and families
 //
-// The grid shows three sideways-scrolling rows by use (cargo / passengers / refrigerated + special) and,
-// in each row, one card per model family: the versions of one vehicle (EC75 and EC75 Pro, the twelve C5s…)
+// The grid shows five sideways-scrolling rows by use (the menu categories, see ROWS) and,
+// in each row, one card per model family: the versions of one vehicle (EC75 and EC75 Pro, R5 and R5 Pro)
 // share a card instead of filling the page with near-identical cards. A version still counts on its own
 // for the filters: a family card shows when at least one of its versions matches.
 
-export type RowId = "cargo" | "passenger" | "special";
+// Five rows, the same as the menu categories and in the same order (user, 2026-11-20). "special" is kept in
+// the last row for cards still filed under the old «Тусгай зориулалтын машин» category.
+export type RowId = "city" | "box" | "flatbed" | "passenger" | "special";
 export const ROWS: { id: RowId; label: string; text: string; categories: string[] }[] = [
-  { id: "cargo", label: "Хотын хүргэлт ба хүнд ачаа", text: "Фургон, задгай тэвштэй болон амбаартай ачааны машин", categories: ["cargo-van", "flatbed", "box"] },
+  { id: "city", label: "Хотын хүргэлт", text: "Хотын ачаа хүргэлтийн фургон", categories: ["cargo-van"] },
+  { id: "box", label: "Амбаартай машин", text: "Ачааг бороо, тоосноос хамгаалах хаалттай амбаартай", categories: ["box"] },
+  { id: "flatbed", label: "Задгай тэвштэй машин", text: "Барилгын материал, том оврын ачаанд", categories: ["flatbed"] },
   { id: "passenger", label: "Зорчигч тээвэр", text: "Ажилчдын болон аяллын үйлчилгээний фургон", categories: ["passenger"] },
-  { id: "special", label: "Хөргүүр болон тусгай зориулалтын", text: "Хүнс, эм тээвэр, явуулын засвар үйлчилгээ", categories: ["refrigerated", "special"] }
+  { id: "special", label: "Хөргүүртэй болон тусгай зориулалтын", text: "Хүнс, эм тээвэр, явуулын засвар үйлчилгээ", categories: ["refrigerated", "special"] }
 ];
-const rowOf = (card: ModelCardData): RowId => ROWS.find((row) => row.categories.includes(card.categoryId))?.id ?? "cargo";
+const rowOf = (card: ModelCardData): RowId => ROWS.find((row) => row.categories.includes(card.categoryId))?.id ?? "city";
 
-/** Family of a model page: its versions share one card. Models not listed here are a family of their own. */
+/**
+ * Family of a model page: its versions share one card. Models not listed here are a family of their own.
+ * EC31 / EC31L / EC31S and the C5 versions (EV, CNG, EREV, single or double cab) each have their own card
+ * (user, 2026-11-20); only EC75 and R5 still group their versions.
+ */
 const FAMILIES: [RegExp, string][] = [
-  [/^r5-service$/, ""], [/^c5-drone$/, ""], [/^c3-cold$/, ""], // special builds keep their own card
-  [/^ec75/, "EC75"], [/^r5/, "R5"], [/^c5l/, "C5L"], [/^c5/, "C5"], [/^ec31/, "EC31"]
+  [/^r5-service$/, ""], // special build keeps its own card
+  [/^ec75/, "EC75"], [/^r5/, "R5"]
 ];
 export const familyName = (card: ModelCardData) => FAMILIES.find(([pattern]) => pattern.test(card.slug))?.[1] || card.name;
 
