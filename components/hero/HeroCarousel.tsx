@@ -4,7 +4,7 @@ import type { HeroSlide as SlideData } from "@/data/home";
 import { HeroSlide } from "@/components/hero/HeroSlide";
 import { BenefitStrip } from "@/components/home/BenefitStrip";
 import { useSiteChrome } from "@/components/layout/SiteChrome";
-import { rangeValue } from "@/components/ui/QuickSpecs";
+import { rangeLabel, rangeValue } from "@/components/ui/QuickSpecs";
 
 const DELAY = 7000;
 const STACKED = "(max-width: 991px), (max-aspect-ratio: 6/5)";
@@ -95,7 +95,7 @@ export function HeroCarousel({ slides }: { slides: SlideData[] }) {
     ? {
         value: rangeValue(slide.quick),
         // The model name is right above in the hero; repeating it cut the EREV text on phones.
-        text: slide.quick.fuel === "BEV" ? "Туулах зай" : "Нийт / цахилгаанаар",
+        text: rangeLabel(slide.quick, true),
         href: slide.href
       }
     : undefined;

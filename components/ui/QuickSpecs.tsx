@@ -24,11 +24,21 @@ export const payloadValue = (payload: string) => (/^тохируулгаас х�
 
 const kmNumber = (value: string) => value.replace(/\s*км.*$/i, "").trim();
 
+/** What the range figure is: electric car, total + battery-only, battery-only ("70 км EV", CNG) or total only. */
+export const rangeKind = (specs: Specs): "bev" | "both" | "ev" | "total" =>
+  specs.fuel === "BEV" ? "bev"
+  : specs.evRange && specs.range && !/ev/i.test(specs.range) ? "both"
+  : /ev/i.test(specs.range) || (!specs.range && specs.evRange) ? "ev"
+  : "total";
+
 /** EREV/PHEV: total / battery-only range, "1200 / 115 км" (total first, as on the cards; user, 2026-11-20). BEV (or no battery-only figure): the range as is. */
 export const rangeValue = (specs: Specs) =>
-  specs.fuel !== "BEV" && specs.evRange && !/ev/i.test(specs.range) && specs.range
-    ? `${kmNumber(specs.range)} / ${kmNumber(specs.evRange)} км`
-    : specs.range;
+  rangeKind(specs) === "both" ? `${kmNumber(specs.range)} / ${kmNumber(specs.evRange ?? "")} км` : specs.range || specs.evRange || "";
+
+const RANGE_LABEL = { bev: "Туулах зай", both: "Нийт / цахилгаанаар туулах зай", ev: "Цахилгаанаар туулах зай", total: "Нийт туулах зай" };
+/** Label for rangeValue(): long form for the icon strip, short form for the strip under the homepage hero. */
+export const rangeLabel = (specs: Specs, short = false) =>
+  short ? { bev: "Туулах зай", both: "Нийт / цахилгаанаар", ev: "Цахилгаанаар", total: "Нийт туулах зай" }[rangeKind(specs)] : RANGE_LABEL[rangeKind(specs)];
 
 /** Fast-charge time: the key stat when there is one ("18 мин"), otherwise the icon field without its "DC -" prefix. */
 export const chargeValue = (specs: Specs) => specs.fastCharge ?? specs.charge.replace(/^\s*(AC\/DC|DC|AC)\s*[-–]\s*/i, "").trim();
@@ -75,7 +85,7 @@ export function QuickSpecs({ specs }: { specs: Specs }) {
     <div className="hero__quick-specs spotlight" aria-label="Загварын шуурхай үзүүлэлтүүд">
       <Item icon="fuel" label="Түлш" value={specs.fuel} />
       <Item icon={(specs.drive || "RWD").toLowerCase()} label="Хөтлөгч" value={specs.drive} />
-      <Item icon="range" label={specs.fuel === "BEV" ? "Туулах зай" : "Нийт / цахилгаанаар туулах зай"} value={rangeValue(specs)} />
+      <Item icon="range" label={rangeLabel(specs)} value={rangeValue(specs)} />
       <Item icon="charging" label="Хурдан цэнэглэлт" value={chargeValue(specs)} />
       <Item icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын оргил хүч" : "Моторын оргил хүч / хөдөлгүүр"} value={motor.value} />
       <Item icon="dimension" label="Хэмжээ" value={compactSize(specs.size)} />

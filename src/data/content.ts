@@ -27,6 +27,11 @@ export type ModelRow = {
   deposit_amount?: number | null;
   /** Payload per configuration from the spec sheet (models.specs → values.payload, kg); preferred over `payload`. */
   sheet_payload?: string[] | null;
+  /** Same for fast charging (min), electric range, total range (km) and motor power (kW): preferred over the card fields. */
+  sheet_dc?: string[] | null;
+  sheet_range?: string[] | null;
+  sheet_total?: string[] | null;
+  sheet_power?: string[] | null;
 };
 export type ListingRow = {
   key: string; category_id: string; model_slug: string; variant: Variant | null;
@@ -46,20 +51,26 @@ export const MODEL_COLUMNS =
 
 const getCategoryRows = cache(() => select<CategoryRow>("categories", "select=id,label,sort&order=sort,id"));
 const getModelRows = cache(async () =>
-  new Map((await select<ModelRow>("models", `select=${MODEL_COLUMNS},sheet_payload:specs->values->payload`)).map((row) => [row.slug, row]))
+  new Map((await select<ModelRow>("models", `select=${MODEL_COLUMNS},${SHEET_COLUMNS}`)).map((row) => [row.slug, row]))
 );
+const SHEET_COLUMNS = [
+  "sheet_payload:specs->values->payload", "sheet_dc:specs->values->dc_time", "sheet_range:specs->values->range",
+  "sheet_total:specs->values->total_range", "sheet_power:specs->values->power"
+].join(",");
 
 /**
- * Payload for the card and hero strip from the spec sheet, so the two never disagree:
- * ["3000", "3000"] → "3,000 кг", ["1500–2000"] → "1,500–2,000 кг". Undefined when the sheet has none.
+ * A number from the spec sheet for the card and hero strip, so they never disagree with the table below
+ * (4.2, user 2026-11-20): ["3000", "3000"] + "кг" → "3,000 кг", ["1500–2000"] → "1,500–2,000 кг".
+ * Undefined when the sheet has no figure, so the hand-entered card field is used instead.
  */
-function sheetPayload(row: ModelRow): string | undefined {
-  const kg = (row.sheet_payload ?? []).flatMap((value) => (value.match(/\d+(?:[.,]\d+)?/g) ?? []).map((n) => Number(n.replace(",", "."))));
-  if (kg.length === 0) return undefined;
+function sheetSpan(values: string[] | null | undefined, unit: string): string | undefined {
+  const nums = (values ?? []).flatMap((value) => (value.match(/\d+(?:[.,]\d+)?/g) ?? []).map((n) => Number(n.replace(",", "."))));
+  if (nums.length === 0) return undefined;
   const fmt = (n: number) => n.toLocaleString("en-US");
-  const [min, max] = [Math.min(...kg), Math.max(...kg)];
-  return `${min === max ? fmt(min) : `${fmt(min)}–${fmt(max)}`} кг`;
+  const [min, max] = [Math.min(...nums), Math.max(...nums)];
+  return `${min === max ? fmt(min) : `${fmt(min)}–${fmt(max)}`} ${unit}`;
 }
+const sheetPayload = (row: ModelRow) => sheetSpan(row.sheet_payload, "кг");
 const getListingRows = cache(() =>
   select<ListingRow>("model_listings", "select=*&active=eq.true&order=sort,key")
 );
@@ -86,20 +97,26 @@ const statText = (stats: Stat[], label: RegExp) => {
   return stat ? `${flatten(stat.value)} ${flatten(stat.unit)}`.trim() : undefined;
 };
 
-export const toQuick = (row: ModelRow): QuickSpecs | undefined =>
-  row.quick_type
-    ? {
-        type: row.quick_type, label: row.quick_label ?? "", drive: row.drive ?? "RWD",
-        fuel: toFuelType(row.fuel, row.engine), size: row.size ?? "", range: row.range ?? "", doors: row.doors ?? "",
-        doorLabel: row.door_label || undefined, charge: row.charge ?? "", seats: row.seats ?? "",
-        seatsPassenger: row.seats_passenger || undefined,
-        // The spec sheet wins; the hand-entered field is only for models without a sheet (EC31, EC75, R5…).
-        payload: sheetPayload(row) ?? row.payload ?? "", engine: row.engine || undefined,
-        power: statText(row.stats, /моторын (оргил )?хүч/i), // new label "Моторын оргил хүч" and the old "Моторын хүч"
-        fastCharge: statText(row.stats, /хурдан цэнэглэлт/i),
-        evRange: statText(row.stats, /цахилгаанаар/i)
-      }
-    : undefined;
+export function toQuick(row: ModelRow): QuickSpecs | undefined {
+  if (!row.quick_type) return undefined;
+  const fuel = toFuelType(row.fuel, row.engine);
+  // The spec sheet wins; the hand-entered fields are only for models without a sheet (EC31, EC75, R5…).
+  // Range extender: the sheet's "range" is the electric-only range, "total_range" the range with the extender.
+  const sheetRange = sheetSpan(row.sheet_range, "км");
+  const sheetTotal = fuel !== "BEV" ? sheetSpan(row.sheet_total, "км") : undefined;
+  return {
+    type: row.quick_type, label: row.quick_label ?? "", drive: row.drive ?? "RWD",
+    fuel, size: row.size ?? "", doors: row.doors ?? "",
+    range: (fuel === "BEV" ? sheetRange : sheetTotal) ?? row.range ?? "",
+    doorLabel: row.door_label || undefined, charge: row.charge ?? "", seats: row.seats ?? "",
+    seatsPassenger: row.seats_passenger || undefined,
+    payload: sheetPayload(row) ?? row.payload ?? "", engine: row.engine || undefined,
+    // Key stats: new label "Моторын оргил хүч" and the old "Моторын хүч".
+    power: sheetSpan(row.sheet_power, "кВт") ?? statText(row.stats, /моторын (оргил )?хүч/i),
+    fastCharge: sheetSpan(row.sheet_dc, "мин") ?? statText(row.stats, /хурдан цэнэглэлт/i),
+    evRange: (fuel !== "BEV" ? sheetRange : undefined) ?? statText(row.stats, /цахилгаанаар/i)
+  };
+}
 
 /** Standard page for a model added in /admin (no hand-made page in code). */
 function standardPage(row: ModelRow, photo: string | undefined): Model["page"] {
