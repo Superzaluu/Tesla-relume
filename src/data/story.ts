@@ -29,6 +29,23 @@ export const STORY_IMAGES: Record<string, Partial<Record<Slot, string>>> = {
   "c5-cng-crew-box": family("c5", C5, "cargo-box"), "c5-reev-crew-box": family("c5", C5, "cargo-box")
 };
 
+/**
+ * Captions that go with a family's photos (rc-ev.com poster captions in our words). `text` replaces the card text;
+ * "{v}" in it is the value from the spec sheet. "battery-note" is added to the battery paragraph.
+ */
+type Caption = { title?: string; text: string };
+const C5_TEXT: Partial<Record<Slot | "battery-note", Caption>> = {
+  cabin: { title: "Тэгш шалтай кабин", text: "{v}. Кабины шал урдаасаа хойш тэгш, нэг болон давхар кабин аль аль нь өргөн." },
+  chassis: { title: "Рам ба хойд тэнхлэг", text: "{v}. 2 уртааш, 12 хөндлөн бат бөх ган рам, 3 тонны хойд тэнхлэг — хөнгөн ачааны машины түвшний бүтэц." },
+  brakes: { title: "Тоормос", text: "{v}. Цахилгаан удирдлагатай EHB тоормос, агааржуулалттай диск: тоормос миллисекундэд хариу өгнө." },
+  "interior-screen": { title: "Дэлгэц ба багажны самбар", text: "{v}. Хэвтээ үргэлжилсэн самбар, гол мэдээлэл нэг харцанд." },
+  "interior-seats": { title: "Өргөн кабин, суудал", text: "{v}. 1.8 м өргөн тэгш кабин, үргэлжилсэн суудал." },
+  "adas-acc": { text: "0–95 км/ц хурдны бүх мужид урд машиныг дагаж, хурд болон зайгаа барина." },
+  "battery-note": { text: "3 давхар дулааны хамгаалалттай, −30°C-аас 65°C хүртэл дулааны удирдлагатай." }
+};
+export const STORY_TEXT: Record<string, Partial<Record<Slot | "battery-note", Caption>>> =
+  Object.fromEntries(Object.keys(STORY_IMAGES).filter((slug) => slug.startsWith("c5")).map((slug) => [slug, C5_TEXT]));
+
 export const STORY_SLOTS = ["cargo", "rear-door", "side-door", "floor", "cabin", "chassis", "brakes", "tyres", "battery", "charging",
   "adas-acc", "adas-ica", "adas-aeb", "adas-fcw", "adas-ldw", "adas-ldp", "adas-isa", "adas-dms", "adas-hma",
   "safety-esc", "safety-autohold", "safety-tpms", "safety-camera360", "interior-cluster", "interior-screen", "interior-seats", "interior-ac", "interior-start"] as const;
@@ -99,7 +116,17 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   const facts = (list: [string, string][]): Fact[] => list.filter(([, value]) => value).slice(0, 3).map(([label, value]) => ({ label, value }));
   // Marks inside a sentence read as words: "2 хаалга / ○ 4 хаалга" → "2 хаалга / нэмэлт сонголтоор 4 хаалга".
   const words_ = (text: string) => text.replace(/○\s*/g, "нэмэлт сонголтоор ").replace(/●\s*/g, "");
-  const card = (slot: Slot, title: string, text: string, tag?: string): Card => ({ image: image(slot, title), title, text: sentence(words_(text)), tag });
+  const captions = STORY_TEXT[slug] ?? {};
+  const card = (slot: Slot, title: string, text: string, tag?: string): Card => {
+    const caption = captions[slot];
+    const heading = caption?.title ?? title;
+    const body = caption ? caption.text.replace(/\{v\}\.?\s*/, text ? `${words_(text).replace(/\.$/, "")}. ` : "") : words_(text);
+    return { image: image(slot, heading), title: heading, text: sentence(body), tag };
+  };
+  // A model with its own photo set shows only cards that have a photo; the rest stay in the spec section.
+  // Models without photos keep the "Coming soon" cards as placeholders.
+  const photoSet = Boolean(STORY_IMAGES[slug]);
+  const pictured = (img: Img) => !photoSet || img.src !== COMING_SOON;
 
   const sections: Section[] = [];
   const notes: string[] = [];
@@ -133,7 +160,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     val("rear_susp") && card("chassis", "Хойд тэнхлэг", val("rear_susp")),
     val("brakes") && card("brakes", "Тоормос", val("brakes")),
     val("tyres") && card("tyres", "Дугуй", val("tyres"))
-  ].filter((item): item is Card => Boolean(item)).slice(0, 4);
+  ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).slice(0, 4);
   if (workCards.length >= 3) {
     sections.push({ tone: "tight", blocks: [
       { type: "title", title: "Ажилд зориулсан бүтэц", text: "Өдөр тутмын ажилд зориулсан хийц." },
@@ -152,7 +179,8 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   const batteryText = [
     kwh && `${kwh} багтаамжтай${coolText ? `, ${coolText}` : ""}${chem ? ` ${chem}` : ""} батерей`,
     power && (driveText ? `${power} оргил чадалтай мотор ${driveText}` : `моторын оргил чадал ${power}`),
-    extender && engine && `${plain(engine)} зай сунгагч батерейг замдаа цэнэглэж${total ? `, нийт ${total} явна` : " явна"}`
+    extender && engine && `${plain(engine)} зай сунгагч батерейг замдаа цэнэглэж${total ? `, нийт ${total} явна` : " явна"}`,
+    kwh && captions["battery-note"]?.text
   ].filter(Boolean).map((text) => sentence(text as string)).join(" ");
   const stds = [...new Set(raw("range_std").filter(Boolean))];
   const rangeLabel = `${extender ? "Цахилгаанаар" : "Туулах зай"}${stds.length === 1 ? ` (${stds[0]})` : ""}`;
@@ -188,8 +216,9 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   const adas = ADAS.filter((item) => has(item.key) && !(item.key === "fcw" && has("aeb")))
     .map((item) => ({
       id: item.key, name: item.name, code: item.key === "aeb" && has("fcw") ? "AEB · FCW" : item.code,
-      text: `${item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, image: image(item.slot, `${item.name} (${item.code})`)
-    }));
+      text: `${captions[item.slot]?.text ?? item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, image: image(item.slot, `${item.name} (${item.code})`)
+    }))
+    .filter((item) => pictured(item.image));
   if (adas.length >= 2) {
     notes.push(ADAS_NOTE);
     sections.push({ id: "assist", blocks: [
@@ -200,9 +229,12 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
 
   // 6. Safety: picture cards for the main systems, the rest as chips (standard on every trim only).
   // As in ADAS: a system on some trims only still gets its card, marked "Зарим иж бүрдэлд".
-  const safetyCards = SAFETY_CARDS.filter((item) => has(item.key))
-    .map((item) => card(item.slot, item.title, `${item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, item.tag));
-  const cardKeys = new Set(SAFETY_CARDS.map((item) => item.key));
+  const safetyItems = SAFETY_CARDS.filter((item) => has(item.key))
+    .map((item) => ({ key: item.key, card: card(item.slot, item.title, `${item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, item.tag) }))
+    .filter((item) => pictured(item.card.image));
+  const safetyCards = safetyItems.map((item) => item.card);
+  // A system without a card (no photo) is listed with the chips instead.
+  const cardKeys = new Set(safetyItems.map((item) => item.key));
   const chips = Object.values(FIELD).filter((field) => field.group === "safety" && field.kind === "mark" && !field.hidden && !cardKeys.has(field.key) && has(field.key) === "all")
     .map((field) => field.short ?? plain(field.label));
   if (safetyCards.length > 0 || chips.length >= 3) {
@@ -219,7 +251,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     val("seat_material") && card("interior-seats", "Суудал", val("seat_material")),
     has("ac") && card("interior-ac", "Агааржуулагч", val("ac_control") || "Стандартаар"),
     val("start") && card("interior-start", "Асаалт", val("start"))
-  ].filter((item): item is Card => Boolean(item)).slice(0, 4);
+  ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).slice(0, 4);
   const connected = CONNECTED.filter((item) => has(item.key)).map(({ title, text }) => ({ title, text: `${text}${has(CONNECTED.find((c) => c.title === title)!.key) === "some" ? " Зарим иж бүрдэлд." : ""}` }));
   if (interior.length >= 2 || connected.length >= 2) {
     sections.push({ id: "interior", blocks: [
