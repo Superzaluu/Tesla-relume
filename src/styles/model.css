@@ -807,3 +807,70 @@ main:has(.mnav) section[id], main:has(.mnav) #equipment { scroll-margin-top:calc
   .msheet__more-body { margin-top:16px; }
   .mnotes { padding-top:24px; padding-bottom:40px; }
 }
+
+/* ---------- B′ layout (user's Figma, 2026-11-20) ---------- */
+/* Menu bar: section links on the left, "Туршилтын жолоодлого" on the right. */
+.mnav__inner { display:flex; align-items:center; gap:12px; max-width:1376px; margin:0 auto; padding:0 var(--padding-global); }
+.mnav__inner .mnav__list { flex:1; min-width:0; max-width:none; margin:0; padding:0; }
+.mnav__cta { flex:none; min-height:38px; padding:8px 16px; font-size:14px; box-shadow:none; }
+@media (max-width:767px) { .mnav__cta { display:none; } }
+
+/* Spec section order: trim cards → standard chips → test-drive band → spec cards. */
+.mpick { gap:40px; }
+.mpick__trims { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); max-width:980px; overflow:hidden; border:1px solid #dce3ea; border-radius:var(--radius-card); background:#fff; }
+.mpick__trim { display:flex; flex-direction:column; gap:8px; margin:0; padding:20px 22px; border:0; border-right:1px solid #e3ebe6; background:#fff; color:var(--color-text); font:inherit; text-align:left; }
+.mpick__trim:last-child { border-right:0; }
+button.mpick__trim { cursor:pointer; transition:background .15s, box-shadow .15s; }
+button.mpick__trim:hover { background:#f6faf8; }
+.mpick__trim[aria-pressed="true"], .mpick__trim[aria-current="true"] { position:relative; z-index:1; background:#f6faf8; box-shadow:inset 0 0 0 2px var(--color-primary); border-radius:var(--radius-card); }
+.mpick__trim-name { font-size:17px; font-weight:700; }
+.mpick__trim-note { font-size:14px; line-height:1.45; color:var(--color-text-secondary); }
+.mpick__trim-price { margin-top:auto; font-size:20px; font-weight:700; color:var(--color-primary); }
+@media (max-width:600px) { .mpick__trim { border-right:0; border-bottom:1px solid #e3ebe6; } .mpick__trim:last-child { border-bottom:0; } }
+
+.mpick__std .h5 { margin:0 0 14px; }
+.mpick__chips { display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0; list-style:none; }
+.mpick__chips li { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:4px 14px 4px 10px; border:1px solid #dce3ea; border-radius:999px; background:#fff; font-size:14px; line-height:1.3; color:var(--color-text); }
+.mpick__chips li::before { content:""; flex:none; width:16px; height:16px; background:var(--color-primary); -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center / contain no-repeat; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center / contain no-repeat; }
+
+.mpick__band { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px; padding:32px 36px; border-radius:var(--radius-card); background:#10241a; color:#fff; }
+.mpick__band-title { margin:0; font-size:24px; font-weight:700; line-height:1.25; }
+.mpick__band-text { margin:6px 0 0; font-size:15px; color:#c9d6cf; }
+.mpick__band-actions { display:flex; flex-wrap:wrap; gap:10px; }
+.mpick__band-primary { border:1px solid #fff; background:#fff; color:#10241a; box-shadow:none; }
+.mpick__band-primary:hover { background:#eaf3ee; color:#10241a; }
+.mpick__band-secondary { border:1px solid #6b8578; background:transparent; color:#fff; box-shadow:none; }
+.mpick__band-secondary:hover { border-color:#fff; color:#fff; }
+@media (max-width:600px) { .mpick__band { padding:24px 20px; } .mpick__band-actions, .mpick__band-actions .btn { width:100%; } }
+
+.mpick__specs { display:flex; flex-direction:column; gap:24px; }
+.mpick__specs-title { margin:0; }
+.mpick__specs-sub { margin:-16px 0 0; font-size:14px; color:var(--color-text-muted); }
+.mpick__key { grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:16px 32px; padding:24px; border:1px solid #dce3ea; border-radius:var(--radius-card); background:#fff; }
+
+/* Every spec group as a card: label left, value right; long groups open the rest on demand. */
+.mgroups { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px; align-items:start; }
+@media (max-width:1100px) { .mgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+@media (max-width:680px) { .mgroups { grid-template-columns:1fr; } }
+.mgroup { padding:18px 20px; border:1px solid #dce3ea; border-radius:var(--radius-card); background:#fff; }
+.mgroup__title { margin:0 0 8px; font-size:16px; font-weight:700; }
+.mgroup__list { margin:0; }
+.mgroup__row { display:flex; justify-content:space-between; gap:16px; padding:9px 0; border-top:1px solid #eef2f0; font-size:14px; }
+.mgroup__row dt { color:var(--color-text-secondary); }
+.mgroup__row dd { margin:0; max-width:55%; text-align:right; font-weight:600; color:var(--color-text); overflow-wrap:anywhere; }
+.mgroup__more > summary { padding:10px 0 2px; border-top:1px solid #eef2f0; color:var(--color-primary); font-size:14px; font-weight:600; cursor:pointer; list-style:none; }
+.mgroup__more > summary::-webkit-details-marker { display:none; }
+.mgroup__more[open] > summary { display:none; }
+
+/* "Төстэй загварууд". */
+.msimilar { display:flex; flex-direction:column; gap:20px; }
+.msimilar .h3 { margin:0; }
+.msimilar__list { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:16px; margin:0; padding:0; list-style:none; }
+.msimilar__card { display:flex; flex-direction:column; height:100%; overflow:hidden; border-radius:var(--radius-card); background:#f3f7f5; color:var(--color-text); text-decoration:none; transition:background .15s; }
+.msimilar__card:hover { background:#eaf3ee; }
+.msimilar__card img { width:100%; height:auto; aspect-ratio:5 / 3; object-fit:cover; }
+.msimilar__text { display:flex; flex-direction:column; gap:2px; padding:16px 18px 18px; }
+.msimilar__value { font-size:20px; font-weight:700; }
+.msimilar__value small { font-size:13px; font-weight:500; color:var(--color-text-muted); }
+.msimilar__label { font-size:13px; color:var(--color-text-muted); }
+.msimilar__name { margin-top:6px; font-size:16px; font-weight:700; }

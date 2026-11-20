@@ -481,6 +481,10 @@ export type PickerOption = {
   /** Key numbers, per body type ("" when the model has one body). */
   specs: { body: string; items: KeySpec[] }[];
   equipment: EquipItem[];
+  /** "Энэ иж бүрдэлд стандартаар": every equipment item marked ● for this trim (short names). */
+  standard: string[];
+  /** Up to three items this trim has as standard and some other trim lacks (trim card summary). */
+  highlights: string[];
 };
 export type Picker = {
   trims: string[];
@@ -698,11 +702,31 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
   }).filter((group) => group.rows.length);
 
   const total = full.reduce((sum, group) => sum + group.rows.length, 0);
+
+  // Per trim: its standard equipment (chips) and what sets it apart from the other trims (trim card).
+  const equipmentGroups = new Set(groups.filter((group) => group.part === "equipment").map((group) => group.key));
+  const marks = fields.filter((field) => field.kind === "mark" && equipmentGroups.has(field.group))
+    .map((field) => ({ name: chipName(field), marks: pick(field).map(markOf) }));
+  const picker = buildPicker(sheet, cols, fuel, slotSet);
+  picker.options = picker.options.map((option) => ({
+    ...option,
+    standard: marks.filter((item) => item.marks[option.col] === "●").map((item) => item.name),
+    // Rarest first: an item only this trim has (360° camera) beats one two trims share.
+    highlights: marks.filter((item) => item.marks[option.col] === "●" && item.marks.some((mark) => mark !== "●"))
+      .map((item, order) => ({ item, order, count: item.marks.filter((mark) => mark === "●").length }))
+      .sort((a, b) => a.count - b.count || a.order - b.order).slice(0, 3).map(({ item }) => item.name)
+  }));
+
   return {
     configs: cols.map((i) => sheet.configs[i].name), compare, chips, optional, full, total,
-    picker: buildPicker(sheet, cols, fuel, slotSet),
+    picker,
     winter: winterFacts(sheet, cols)
   };
+}
+
+/** Chip text: the short name, or the label without its "(English full name)" part — "AEB", "ISOFIX". */
+function chipName(field: Field) {
+  return field.short ?? field.label.replace(/\s*\([^)]*\)/g, "").trim();
 }
 
 /** Battery heating over the shown trims, and whether any shown value mentions a PTC heater (no field for it yet). */
@@ -774,7 +798,8 @@ function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined,
     const cabin = value("cabin", i);
     const name = sheet.configs[i].name;
     const trim = cabin && name.endsWith(` · ${cabin}`) ? name.slice(0, -` · ${cabin}`.length) : name;
-    return { col, name, trim, cabin, price: sheet.configs[i].price, specs: specs(i), equipment: equipment(i) };
+    // standard / highlights are filled in by viewSheet, which knows the visible equipment fields.
+    return { col, name, trim, cabin, price: sheet.configs[i].price, specs: specs(i), equipment: equipment(i), standard: [], highlights: [] };
   });
   const trims = [...new Set(options.map((option) => option.trim))];
   const cabins = [...new Set(options.map((option) => option.cabin).filter(Boolean))];

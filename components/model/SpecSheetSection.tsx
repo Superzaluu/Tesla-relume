@@ -1,22 +1,12 @@
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { ConfigPicker } from "@/components/model/ConfigPicker";
-import { bodyLabel, bodyParts, type SheetView } from "@/data/specSheet";
+import { ConfigPicker, RowHint, Value } from "@/components/model/ConfigPicker";
+import type { SheetView } from "@/data/specSheet";
 
-// One "Техникийн үзүүлэлт" section for specs and trims (they are the same information): trim pills,
-// price, ten key numbers and ten equipment lines for the chosen trim (ConfigPicker); everything else —
-// what differs between trims, standard equipment and the full table — opens below on demand.
+// One "Техникийн үзүүлэлт" section for specs and trims (they are the same information), B′ layout
+// (user's Figma, 2026-11-20): trim cards, the chosen trim's standard equipment, a test-drive band and
+// every spec group as a card (ConfigPicker). With several trims, a table of only the differences opens below.
 
-/** One cell; body-dependent values ("Задгай: … · Битүү: …") get one line per body type. */
-function Value({ value }: { value: string }) {
-  const parts = bodyParts(value || "–");
-  if (parts.length === 1 && !parts[0][0]) return <>{value || "–"}</>;
-  return <>{parts.map(([body, part]) => <span className="msheet__body" key={body}><b>{bodyLabel(body)}</b>{part}</span>)}</>;
-}
-
-/** Short explanation of a term under the row label (FIELDS[].hint), e.g. what "2C" means. */
-const RowHint = ({ hint }: { hint?: string }) => (hint ? <small className="msheet__hint">{hint}</small> : null);
-
-export function SpecSheetSection({ view, preorder }: { view: SheetView | null; preorder: string }) {
+export function SpecSheetSection({ view, model, preorder }: { view: SheetView | null; model: string; preorder: string }) {
   if (!view || view.picker.options.length === 0) {
     return (
       <section className="section section--surface" id="specs">
@@ -30,21 +20,20 @@ export function SpecSheetSection({ view, preorder }: { view: SheetView | null; p
       <div className="container msheet">
         <div>
           <SectionTitle
-            title="Техникийн үзүүлэлт"
-            text={many ? `Монголд нийлүүлэгдэх ${view.configs.length} иж бүрдэл. Иж бүрдлээ сонгоход үзүүлэлт, тоноглол нь солигдоно.` : "Монголд нийлүүлэгдэх иж бүрдлийн үзүүлэлт."}
+            title={many ? "Иж бүрдлээ сонгоно уу" : "Иж бүрдэл"}
+            text={many ? `Монголд нийлүүлэгдэх ${view.configs.length} иж бүрдэл. Сонгосон иж бүрдлийн тоноглол, үзүүлэлт доор харагдана.` : "Монголд нийлүүлэгдэх иж бүрдлийн тоноглол, үзүүлэлт."}
           />
           {/* When the numbers were last checked (user, 2026-11-20). Update the date after the next check. */}
           <p className="msheet__checked">Үзүүлэлтийг 2026.11-д үйлдвэрлэгчийн хүснэгтээс шалгасан.</p>
         </div>
 
-        <ConfigPicker picker={view.picker} preorder={preorder} />
+        <ConfigPicker view={view} model={model} preorder={preorder} />
 
-        <details className="msheet__more">
-          <summary>Бүх үзүүлэлтийг харах ({view.total})</summary>
-          <div className="msheet__more-body">
-            {many && view.compare.length > 0 && (
+        {many && view.compare.length > 0 && (
+          <details className="msheet__more">
+            <summary>Иж бүрдлүүдийг харьцуулах ({view.compare.length} ялгаа)</summary>
+            <div className="msheet__more-body">
               <div className="mcompare">
-                <h3 className="h5">Иж бүрдлийн ялгаа</h3>
                 <div className="mcompare__scroll">
                   <table>
                     <thead><tr><th scope="col">Иж бүрдэл</th>{view.configs.map((name, i) => <th scope="col" key={i} data-col={i}>{name}</th>)}</tr></thead>
@@ -56,46 +45,10 @@ export function SpecSheetSection({ view, preorder }: { view: SheetView | null; p
                   </table>
                 </div>
               </div>
-            )}
-
-            {view.chips.length > 0 && (
-              <div className="msheet__chips">
-                {view.chips.map((group) => (
-                  <div className="mchips" key={group.heading}>
-                    <p className="mchips__title">{group.heading}{many ? " · бүх иж бүрдэлд стандартаар" : ""}</p>
-                    <ul>{group.chips.map((chip) => <li key={chip}>{chip}</li>)}</ul>
-                  </div>
-                ))}
-                {view.optional.length > 0 && <p className="mchips__title">Нэмэлт сонголтоор: {view.optional.join(", ")}</p>}
-              </div>
-            )}
-
-            <div>
-              <h3 className="h5">Бүрэн хүснэгт</h3>
-              <div className="mcompare__scroll">
-                <table className="mspec-table">
-                  <tbody>
-                    <tr className="is-head"><th scope="row">Иж бүрдэл</th>{view.configs.map((name, i) => <td key={i} data-col={i}>{name}</td>)}</tr>
-                    {view.full.flatMap((group) => [
-                      <tr className="is-group" key={`g-${group.heading}`}><th colSpan={view.configs.length + 1} scope="colgroup">{group.heading}</th></tr>,
-                      ...group.rows.map((row, i) => {
-                        const same = row.cells.every((cell) => cell === row.cells[0]);
-                        return (
-                          <tr key={`${group.heading}-${i}`}>
-                            <th scope="row">{row.label}<RowHint hint={row.hint} /></th>
-                            {same && many
-                              ? <td colSpan={row.cells.length}><Value value={row.cells[0]} /></td>
-                              : row.cells.map((cell, j) => <td key={j} data-col={j}><Value value={cell} /></td>)}
-                          </tr>
-                        );
-                      })
-                    ])}
-                  </tbody>
-                </table>
-              </div>
+              {view.optional.length > 0 && <p className="mchips__title">Нэмэлт сонголтоор: {view.optional.join(", ")}</p>}
             </div>
-          </div>
-        </details>
+          </details>
+        )}
       </div>
     </section>
   );

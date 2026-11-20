@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ModelPage } from "@/components/model/ModelPage";
-import { getCategory, getModel, getModelSlugs, getSpecView } from "@/data/content";
+import { getCategory, getModel, getModelCards, getModelSlugs, getSpecView } from "@/data/content";
 import { models } from "@/data/models";
 import { slotSetFor } from "@/data/specSheet";
 
@@ -30,5 +30,8 @@ export default async function Page({ params }: Props) {
   // The category picks the three category-specific key slots (CATEGORY_SLOTS in specSheet.ts).
   const slotSet = slotSetFor(category?.id, model.quick?.type);
   const specView = model.page.specTable !== undefined ? await getSpecView(slug, model.quick?.fuel, slotSet) : null;
-  return <ModelPage model={model} category={category?.label} specView={specView} />;
+  // "Төстэй загварууд": up to four other cards from the same menu category.
+  const { cards } = await getModelCards();
+  const similar = category ? cards.filter((card) => card.categoryId === category.id && card.slug !== slug).slice(0, 4) : [];
+  return <ModelPage model={model} category={category?.label} specView={specView} similar={similar} />;
 }

@@ -1,6 +1,7 @@
 import type { Model } from "@/data/types";
 import { greenLoanHref, preorderHref } from "@/data/models";
 import type { SheetView } from "@/data/specSheet";
+import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { SpecSheetSection } from "@/components/model/SpecSheetSection";
 import { ModelNav, type NavItem } from "@/components/model/ModelNav";
 import { WinterSection } from "@/components/model/WinterSection";
@@ -94,6 +95,35 @@ function Gallery({ model }: { model: Model }) {
   );
 }
 
+/** B′ "Төстэй загварууд": other models of the same menu category, key number first. */
+function Similar({ cards }: { cards: ModelCardData[] }) {
+  if (cards.length === 0) return null;
+  return (
+    <section className="section" id="similar">
+      <div className="container msimilar">
+        <h2 className="h3">Төстэй загварууд</h2>
+        <ul className="msimilar__list">
+          {cards.map((card) => {
+            const stat = card.stats[0];
+            return (
+              <li key={card.key}>
+                <a className="msimilar__card" href={card.href}>
+                  <img src={card.thumb} alt="" width={400} height={240} loading="lazy" />
+                  <span className="msimilar__text">
+                    {stat && <span className="msimilar__value">{stat.value}<small> {stat.unit}</small></span>}
+                    {stat && <span className="msimilar__label">{stat.label}</span>}
+                    <span className="msimilar__name">{card.name}</span>
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function EndCta({ model }: { model: Model }) {
   const { end } = model.page;
   return (
@@ -111,7 +141,7 @@ function EndCta({ model }: { model: Model }) {
   );
 }
 
-export function ModelPage({ model, category, specView }: { model: Model; category?: string; specView?: SheetView | null }) {
+export function ModelPage({ model, category, specView, similar = [] }: { model: Model; category?: string; specView?: SheetView | null; similar?: ModelCardData[] }) {
   const { page } = model;
   const preload = page.hero.kind === "photo" && typeof page.hero.image.src === "object"
     ? [page.hero.image.src.cargo, page.hero.image.src.passenger] : undefined;
@@ -119,14 +149,17 @@ export function ModelPage({ model, category, specView }: { model: Model; categor
   // In-page menu (4.1): only the sections this model has. EC75 / R5 have hand-made sections in code
   // ("specs", and "assist" / "safety" for the equipment) instead of the spec sheet.
   const own = new Set((page.sections ?? []).map((section) => section.id).filter(Boolean));
-  const hasEquipment = Boolean(specView?.picker.options.some((option) => option.equipment.some((item) => item.state !== "unknown")));
+  // "equipment" is the chosen trim's standard-equipment chips inside the spec section (ConfigPicker).
+  const hasEquipment = page.specTable !== undefined && Boolean(specView?.picker.options.some((option) => option.standard.length > 0));
   const equipmentId = hasEquipment ? "equipment" : own.has("assist") ? "assist" : own.has("safety") ? "safety" : undefined;
+  const showWinter = Boolean(specView) && !own.has("winter");
   const nav: NavItem[] = [
     { id: "overview", label: "Тойм" },
-    ...((page.gallery ?? []).length > 0 ? [{ id: "gallery", label: "Зураг" }] : []),
     ...(page.specTable !== undefined || own.has("specs") ? [{ id: "specs", label: "Үзүүлэлт" }] : []),
     ...(equipmentId ? [{ id: equipmentId, label: "Тоноглол" }] : []),
-    { id: "finance", label: "Зээл / Хэмнэлт" }
+    ...((page.gallery ?? []).length > 0 ? [{ id: "gallery", label: "Зураг" }] : []),
+    ...(showWinter || own.has("winter") ? [{ id: "winter", label: "Өвлийн нөхцөлд" }] : []),
+    { id: "finance", label: "Санхүүжилт" }
   ];
 
   const content = (
@@ -135,10 +168,12 @@ export function ModelPage({ model, category, specView }: { model: Model; categor
       <ModelNav items={nav} />
       <ActionBar model={model} />
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
+      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} model={model.name} preorder={preorderHref(model.slug)} />}
+      {/* B′ menu order: Үзүүлэлт → Тоноглол → Зураг → Өвлийн нөхцөлд. */}
       <Gallery model={model} />
-      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} preorder={preorderHref(model.slug)} />}
       {/* 4.4: models with their own winter section in code (EC75) keep it instead. */}
-      {specView && !own.has("winter") && <WinterSection winter={specView.winter} />}
+      {showWinter && <WinterSection winter={specView!.winter} />}
+      <Similar cards={similar} />
       <EndCta model={model} />
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>
