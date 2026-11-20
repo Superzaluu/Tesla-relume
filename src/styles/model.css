@@ -595,6 +595,9 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 .msheet__body + .msheet__body{margin-top:6px;}
 .msheet__body b{display:block;font-size:12px;font-weight:600;color:var(--color-text-secondary);}
 
+/* "Үзүүлэлтийг … шалгасан" line under the spec section title. */
+.msheet__checked{margin:10px 0 0;font-size:13px;line-height:1.4;color:var(--color-text-muted);}
+
 /* Term explanation under a row label (FIELDS[].hint), e.g. "2C — …". */
 .msheet__hint{display:block;margin-top:2px;font-size:12px;font-weight:400;line-height:1.35;color:var(--color-text-muted);}
 

@@ -28,10 +28,14 @@ export function SpecSheetSection({ view, preorder }: { view: SheetView | null; p
   return (
     <section className="section section--surface" id="specs">
       <div className="container msheet">
-        <SectionTitle
-          title="Техникийн үзүүлэлт"
-          text={many ? `Монголд нийлүүлэгдэх ${view.configs.length} иж бүрдэл. Иж бүрдлээ сонгоход үзүүлэлт, тоноглол нь солигдоно.` : "Монголд нийлүүлэгдэх иж бүрдлийн үзүүлэлт."}
-        />
+        <div>
+          <SectionTitle
+            title="Техникийн үзүүлэлт"
+            text={many ? `Монголд нийлүүлэгдэх ${view.configs.length} иж бүрдэл. Иж бүрдлээ сонгоход үзүүлэлт, тоноглол нь солигдоно.` : "Монголд нийлүүлэгдэх иж бүрдлийн үзүүлэлт."}
+          />
+          {/* When the numbers were last checked (user, 2026-11-20). Update the date after the next check. */}
+          <p className="msheet__checked">Үзүүлэлтийг 2026.11-д үйлдвэрлэгчийн хүснэгтээс шалгасан.</p>
+        </div>
 
         <ConfigPicker picker={view.picker} preorder={preorder} />
 
