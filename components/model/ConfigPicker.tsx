@@ -93,7 +93,7 @@ export function ConfigPicker({ picker, preorder }: { picker: Picker; preorder: s
           </div>
 
           {equipment.length > 0 && (
-            <div>
+            <div id="equipment" className="mkey__equipment">
               <h3 className="h5 mkey__title">Тоноглол</h3>
               <ul className="mkey__list spotlight">
                 {equipment.map((item) => (

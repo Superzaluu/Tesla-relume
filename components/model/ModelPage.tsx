@@ -2,6 +2,7 @@ import type { Model } from "@/data/types";
 import { greenLoanHref, preorderHref } from "@/data/models";
 import type { SheetView } from "@/data/specSheet";
 import { SpecSheetSection } from "@/components/model/SpecSheetSection";
+import { ModelNav, type NavItem } from "@/components/model/ModelNav";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -64,7 +65,7 @@ function Hero({ model, category }: { model: Model; category?: string }) {
  */
 function ActionBar({ model }: { model: Model }) {
   return (
-    <section className="mstats mstats--actions" aria-label="Үйлдэл">
+    <section className="mstats mstats--actions" id="finance" aria-label="Зээл ба хэмнэлт">
       <div className="mstats__inner">
         <div className="actions mstats__actions">
           <SavingsTrigger model={model.slug} />
@@ -79,7 +80,7 @@ function Gallery({ model }: { model: Model }) {
   const images = model.page.gallery ?? [];
   if (images.length === 0) return null;
   return (
-    <section className="section">
+    <section className="section" id="gallery">
       <div className="container container--gap-80">
         <SectionTitle tagline="Загварын танилцуулга" title="Гадна ба дотор орчин" text="Тухайн загварын гадна хийц, ажлын тасалгаа болон жолоодлогын орчинтой танилцаарай." />
         <Slider>
@@ -114,9 +115,23 @@ export function ModelPage({ model, category, specView }: { model: Model; categor
   const preload = page.hero.kind === "photo" && typeof page.hero.image.src === "object"
     ? [page.hero.image.src.cargo, page.hero.image.src.passenger] : undefined;
 
+  // In-page menu (4.1): only the sections this model has. EC75 / R5 have hand-made sections in code
+  // ("specs", and "assist" / "safety" for the equipment) instead of the spec sheet.
+  const own = new Set((page.sections ?? []).map((section) => section.id).filter(Boolean));
+  const hasEquipment = Boolean(specView?.picker.options.some((option) => option.equipment.some((item) => item.state !== "unknown")));
+  const equipmentId = hasEquipment ? "equipment" : own.has("assist") ? "assist" : own.has("safety") ? "safety" : undefined;
+  const nav: NavItem[] = [
+    { id: "overview", label: "Тойм" },
+    ...((page.gallery ?? []).length > 0 ? [{ id: "gallery", label: "Зураг" }] : []),
+    ...(page.specTable !== undefined || own.has("specs") ? [{ id: "specs", label: "Үзүүлэлт" }] : []),
+    ...(equipmentId ? [{ id: equipmentId, label: "Тоноглол" }] : []),
+    { id: "finance", label: "Зээл / Хэмнэлт" }
+  ];
+
   const content = (
-    <main>
+    <main id="overview">
       <Hero model={model} category={category} />
+      <ModelNav items={nav} />
       <ActionBar model={model} />
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       <Gallery model={model} />
