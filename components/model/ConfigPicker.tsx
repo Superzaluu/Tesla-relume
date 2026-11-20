@@ -1,20 +1,13 @@
 "use client";
-// "Техникийн үзүүлэлт" body, B′ layout (user's Figma, 2026-11-20): trim cards with price → the chosen
-// trim's standard equipment as chips → test-drive band → key numbers and every spec group as cards.
+// "Техникийн үзүүлэлт" body, B′ layout (user's Figma, 2026-11-20): trim cards with price (best trim first) →
+// all equipment by group, marked for the chosen trim → every spec group as a card, its key numbers first with an icon.
 // Everything below the trim cards follows the chosen trim (and cab / body when the model has several).
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { SpecIcon } from "@/components/model/SpecIcon";
-import { LoadingLink } from "@/components/ui/LoadingLink";
-import { calTestDrive } from "@/components/ui/CalTestDrive";
 import { useVariant } from "@/components/model/Variant";
-import { bodyLabel, bodyParts, type SheetView } from "@/data/specSheet";
+import { bodyLabel, bodyParts, markOf, type SheetView } from "@/data/specSheet";
 
 const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
-/**
- * A fixed key-number slot without a value shows a dash: visitors should not read "Тодруулна уу" (ask us)
- * on every gap (user, 2026-11-20). The admin form still says "Тодруулна уу" so the gaps get filled.
- */
-const MISSING = "—";
 /** Rows a spec card shows before its own "Бүгдийг харах". */
 const CARD_ROWS = 6;
 
@@ -42,15 +35,52 @@ function Segmented({ label, items, value, onPick, available, show = (item) => it
 
 type Row = SheetView["full"][number]["rows"][number];
 
-function SpecCard({ heading, rows, col }: { heading: string; rows: Row[]; col: number }) {
+/**
+ * Equipment mark as a check in a circle before the label (user, 2026-11-20), coloured like the equipment chips:
+ * ✓ filled green = standard, ○ green ring = optional extra, – grey dashed = not in this trim.
+ */
+const MARK_STATE = { "●": ["is-on", "стандарт"], "○": ["is-option", "нэмэлт сонголтоор"] } as Record<string, [string, string]>;
+function MarkCheck({ cell }: { cell: string }) {
+  const [state, text] = MARK_STATE[markOf(cell)] ?? ["is-off", "байхгүй"];
+  return <span className={`mcheck ${state}`} role="img" aria-label={text} />;
+}
+/** The words after the mark ("● багажны самбарт" → "багажны самбарт"); the check already says the rest. */
+const markNote = (cell: string) => cell.replace(/^\s*[●○–-]\s*/, "");
+
+/** "drive" follows the trim's own value: FWD / RWD / AWD icon. */
+const rowIcon = (icon: string, cell: string) => (icon !== "drive" ? icon : /AWD/i.test(cell) ? "awd" : /FWD/i.test(cell) ? "fwd" : "rwd");
+
+/**
+ * `from`: the trim shown before the last switch. A row whose value differs from it flashes once; its key
+ * includes the column so the flash replays on every switch.
+ */
+function SpecCard({ heading, rows, col, from }: { heading: string; rows: Row[]; col: number; from: number | null }) {
   const shown = rows.filter((row) => row.cells[col]);
   if (shown.length === 0) return null;
-  const line = (row: Row) => (
-    <div className="mgroup__row" key={row.label}>
-      <dt>{row.label}<RowHint hint={row.hint} /></dt>
-      <dd><Value value={row.cells[col]} /></dd>
+  // Key-number rows (icon) come first and are set a little stronger; the rest are plain label / value lines.
+  const line = (row: Row) => {
+    const changed = from !== null && (row.cells[from] ?? "") !== row.cells[col];
+    return (
+    <div
+      className={`mgroup__row${row.icon ? " is-key" : ""}${changed ? " is-changed" : ""}`}
+      key={changed ? `${row.label}-${col}` : row.label}
+      id={row.key ? `spec-${row.key}` : undefined}
+    >
+      <dt>
+        {row.icon && <SpecIcon icon={rowIcon(row.icon, row.cells[col])} />}
+        {row.mark && <MarkCheck cell={row.cells[col]} />}
+        <span>
+          {row.label}
+          {/* A mark's note ("Цахилгаан агааржуулагч, PTC халаагууртай") goes under the label, so the label and
+              hint keep the card's full width instead of a squeezed column. */}
+          {row.mark && markNote(row.cells[col]) && <b className="mgroup__note">{markNote(row.cells[col])}</b>}
+          <RowHint hint={row.hint} />
+        </span>
+      </dt>
+      {!row.mark && <dd>{row.href ? <a href={row.href}>{row.cells[col]}</a> : <Value value={row.cells[col]} />}</dd>}
     </div>
-  );
+    );
+  };
   return (
     <div className="mgroup">
       <h4 className="mgroup__title">{heading}</h4>
@@ -66,12 +96,31 @@ function SpecCard({ heading, rows, col }: { heading: string; rows: Row[]; col: n
 }
 
 /**
+ * Equipment chip → its row in the spec cards below, where the hint explains it (user, 2026-11-20). Opens the
+ * card's "Бүгдийг харах" when the row is folded away, centres the row and flashes it once.
+ */
+function showSpecRow(event: MouseEvent<HTMLAnchorElement>, key: string) {
+  const row = document.getElementById(`spec-${key}`);
+  if (!row) return;
+  event.preventDefault();
+  const folded = row.closest("details");
+  if (folded) folded.open = true;
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  row.scrollIntoView({ block: "center", behavior: smooth ? "smooth" : "auto" });
+  row.classList.remove("is-target");
+  void row.offsetWidth;
+  row.classList.add("is-target");
+  window.setTimeout(() => row.classList.remove("is-target"), 2200);
+  // No history.replaceState here: Next's router answers it with a re-render that closed the card again.
+}
+
+/**
  * EC75 / R5 keep cargo and passenger trims in one sheet, named «Ачааны · …» / «Зорчигчийн · …» (migration 0014).
  * The page shows the side picked in the hero switch (VariantProvider) and the names without the prefix.
  */
 const SIDE = { cargo: "Ачааны · ", passenger: "Зорчигчийн · " } as const;
 
-export function ConfigPicker({ view, model, preorder }: { view: SheetView; model: string; preorder: string }) {
+export function ConfigPicker({ view }: { view: SheetView }) {
   const variant = useVariant();
   const sided = view.picker.options.some((option) => option.name.startsWith(SIDE.cargo) || option.name.startsWith(SIDE.passenger));
   const ownSide = sided ? view.picker.options.filter((option) => option.name.startsWith(SIDE[variant])) : view.picker.options;
@@ -97,8 +146,14 @@ export function ConfigPicker({ view, model, preorder }: { view: SheetView; model
     document.querySelectorAll<HTMLElement>("[data-col]").forEach((el) => el.classList.toggle("is-picked", el.dataset.col === String(option.col)));
   }, [option.col]);
 
-  const specs = option.specs.find((item) => item.body === body) ?? option.specs[0];
+  // The trim shown before the last switch: equipment chips and spec values that differ from it get a short
+  // pulse / flash. Null on first render, so nothing animates on page load.
+  const [shown, setShown] = useState({ col: option.col, from: null as number | null });
+  if (shown.col !== option.col) setShown({ col: option.col, from: shown.col });
+  const from = shown.from;
+
   const many = trims.length > 1;
+  const col = option.col;
 
   return (
     <div className="mpick">
@@ -125,44 +180,71 @@ export function ConfigPicker({ view, model, preorder }: { view: SheetView; model
         </div>
       )}
 
-      {/* 2. Standard equipment of the chosen trim. */}
-      {option.standard.length > 0 && (
+      {/* 2. Equipment (user, 2026-11-20): every item any trim has, by group with a count. Items stay in place
+          when the trim changes; only their state flips: ✓ green = in this trim, ○ = optional extra, – white =
+          not in this trim. Items that differ between trims come first in each group. */}
+      {view.equipment.length > 0 && (
         <div id="equipment" className="mpick__std">
-          <h3 className="h5">{many ? "Энэ иж бүрдэлд стандартаар" : "Стандарт тоноглол"}</h3>
-          <ul className="mpick__chips">{option.standard.map((name) => <li key={name}>{name}</li>)}</ul>
+          <div className="mequip__head">
+            <h3 className="h5">Тоноглол</h3>
+            {many && (
+              <p className="mequip__legend">
+                <span><i className="is-on" aria-hidden="true" />Энэ иж бүрдэлд</span>
+                <span><i className="is-option" aria-hidden="true" />Нэмэлт сонголтоор</span>
+                <span><i className="is-off" aria-hidden="true" />Байхгүй</span>
+              </p>
+            )}
+          </div>
+          <div className="mequip">
+            {view.equipment.map((group) => {
+              const on = group.items.filter((item) => item.marks[col] === "●").length;
+              return (
+                <div className="mequip__group" key={group.heading}>
+                  <h4 className="mequip__title">
+                    {group.heading}
+                    <span className="mequip__count" aria-label={`${group.items.length}-аас ${on}`}>
+                      {on}/{group.items.length}
+                      <span className="mequip__bar" aria-hidden="true"><i style={{ width: `${(on / group.items.length) * 100}%` }} /></span>
+                    </span>
+                  </h4>
+                  <ul className="mpick__chips mequip__chips">
+                    {group.items.map((item) => {
+                      const mark = item.marks[col];
+                      const state = mark === "●" ? "is-on" : mark === "○" ? "is-option" : "is-off";
+                      const flipped = from !== null && item.marks[from] !== mark;
+                      return (
+                        <li
+                          key={flipped ? `${item.name}-${col}` : item.name}
+                          className={`${state}${flipped ? " is-flipped" : ""}`}
+                        >
+                          <a
+                            href={`#spec-${item.key}`}
+                            onClick={(event) => showSpecRow(event, item.key)}
+                            aria-label={`${item.name}: ${mark === "●" ? "стандарт" : mark === "○" ? "нэмэлт сонголтоор" : "байхгүй"}. Тайлбар руу очих`}
+                          >
+                            {item.name}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* 3. Test-drive band. */}
-      <div className="mpick__band">
-        <div>
-          <p className="mpick__band-title">{model}-г туршаад үзээрэй</p>
-          <p className="mpick__band-text">Туршилтын жолоодлого 20,000₮ · Батерейн баталгаа 6 жил / 300,000 км</p>
-        </div>
-        <div className="mpick__band-actions">
-          <button type="button" className="btn mpick__band-primary" {...calTestDrive}>Цаг захиалах</button>
-          <LoadingLink className="btn mpick__band-secondary" href={preorder}>{option.price ? "Урьдчилсан захиалга" : "Үнэ лавлах"}</LoadingLink>
-        </div>
-      </div>
-
-      {/* 4. Key numbers (fixed slots), battery choices, then every spec group as a card. */}
+      {/* 3. Battery choices, then every spec group as a card; the key numbers are the icon rows at the top of
+          each card (the separate key-number list repeated them; user, 2026-11-20). */}
       <div className="mpick__specs">
         <h3 className="h3 mpick__specs-title">Техник үзүүлэлт</h3>
-        <p className="mpick__specs-sub">{option.name}{body && bodies.length > 1 ? ` · ${bodyLabel(body)}` : ""} · ● стандарт · ○ нэмэлт сонголтоор · – байхгүй</p>
-        <ul className="mkey__list mpick__key spotlight">
-          {/* Fixed slots: a slot without a value keeps its place ("—") so icons never shift. */}
-          {specs.items.map((item) => (
-            <li key={item.label} className={item.value ? undefined : "is-missing"}>
-              <SpecIcon icon={item.icon} />
-              <span className="mkey__text">
-                <span className="mkey__label">{item.label}</span>
-                {item.value
-                  ? <strong>{item.href ? <a href={item.href}>{item.value}</a> : item.value}</strong>
-                  : <span className="mkey__missing">{MISSING}</span>}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <p className="mpick__specs-sub">
+          {option.name}{body && bodies.length > 1 ? ` · ${bodyLabel(body)}` : ""}
+          <span className="mcheck-legend"><span className="mcheck is-on" aria-hidden="true" />стандарт</span>
+          <span className="mcheck-legend"><span className="mcheck is-option" aria-hidden="true" />нэмэлт сонголтоор</span>
+          <span className="mcheck-legend"><span className="mcheck is-off" aria-hidden="true" />байхгүй</span>
+        </p>
 
         {cards.length > 0 && (
           <div className="mpick__cards">
@@ -179,7 +261,7 @@ export function ConfigPicker({ view, model, preorder }: { view: SheetView; model
         )}
 
         <div className="mgroups">
-          {view.full.map((group) => <SpecCard key={group.heading} heading={group.heading} rows={group.rows} col={option.col} />)}
+          {view.full.map((group) => <SpecCard key={group.heading} heading={group.heading} rows={group.rows} col={col} from={from} />)}
         </div>
       </div>
     </div>

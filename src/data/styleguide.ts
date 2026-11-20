@@ -125,8 +125,7 @@ export const pageSections = [
     ["AdasTabs", "Жолоочийн туслах функц", "/models/ec75/#assist"],
     ["Safety", "Аюулгүй байдлын карт + chip", "/models/ec75/#safety"],
     ["SpecGroups", "Хувилбартай үзүүлэлт + харьцуулалт", "/models/r5/#specs"],
-    ["SpecTable", "Дэлгэрэнгүй техникийн хүснэгт", "/models/c5/#specs"],
-    ["EndCta", "Төгсгөлийн уриалга", "/models/ec75/#test-drive"]
+    ["SpecTable", "Дэлгэрэнгүй техникийн хүснэгт", "/models/c5/#specs"]
   ] },
   { page: "Бусад", href: "/register/", items: [
     ["RegistrationForm", "Бонус бүртгэл", "/register/"],

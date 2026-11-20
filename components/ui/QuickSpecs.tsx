@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { T } from "@/components/model/VariantValues";
-import { hasEngine, type QuickSpecs as Specs } from "@/data/types";
+import { hasEngine, type Peek, type PeekKey, type QuickSpecs as Specs } from "@/data/types";
+import { QuickPeek } from "@/components/ui/QuickPeek";
 
 const ICONS: Record<string, string> = {
   van: "01_van.png", flatbed: "02_light_flatbed_truck.png", box: "03_light_box_truck.png", refrigerator: "04_refrigerator_truck.png",
@@ -60,18 +61,26 @@ export function QuickIcon({ icon, className = "" }: { icon: string; className?: 
   return <span className={`quick-icon ${className}`} style={{ "--icon": `url("${quickIconSrc(icon)}")` } as CSSProperties} aria-hidden="true" />;
 }
 
+const SLOTS = 9;
+
 // The icon and value say what each item is (Prägnanz); the label is kept for screen readers only.
-function Item({ icon, label, value }: { icon: string; label: string; value: ReactNode }) {
+// With a peek the item opens a photo preview of its section and links to it (QuickPeek).
+function Item({ icon, label, value, peek, index }: { icon: string; label: string; value: ReactNode; peek?: Peek; index: number }) {
   const missing = value === "" || value === undefined || value === null;
-  return (
-    <span className={`hero__quick-spec${missing ? " is-missing" : ""}`}>
+  const className = `hero__quick-spec${missing ? " is-missing" : ""}`;
+  const content = (
+    <>
       <span className="hero__quick-icon"><QuickIcon icon={icon} /></span>
       <span>
         <small className="sr-only">{label}: </small>
         {missing ? <strong aria-label="тодруулна уу">{MISSING_SHORT}</strong> : <strong>{value}</strong>}
       </span>
-    </span>
+    </>
   );
+  if (!peek || missing) return <span className={className}>{content}</span>;
+  // The first and last two cards line up with the strip's edge so they stay inside the photo.
+  const align = index < 2 ? "start" : index >= SLOTS - 2 ? "end" : "center";
+  return <QuickPeek peek={peek} align={align} className={className}>{content}</QuickPeek>;
 }
 
 /**
@@ -79,22 +88,22 @@ function Item({ icon, label, value }: { icon: string; label: string; value: Reac
  * place for these facts (the separate stats row was removed); battery capacity, top speed etc. stay in the spec table.
  * Nine fixed slots in a fixed order on every model; a fact not entered yet shows "—" in its slot.
  */
-export function QuickSpecs({ specs }: { specs: Specs }) {
+export function QuickSpecs({ specs, peeks = {} }: { specs: Specs; peeks?: Partial<Record<PeekKey, Peek>> }) {
   const motor = motorFact(specs);
   return (
     <div className="hero__quick-specs spotlight" aria-label="Загварын шуурхай үзүүлэлтүүд">
-      <Item icon="fuel" label="Түлш" value={specs.fuel} />
-      <Item icon={(specs.drive || "RWD").toLowerCase()} label="Хөтлөгч" value={specs.drive} />
-      <Item icon="range" label={rangeLabel(specs)} value={rangeValue(specs)} />
-      <Item icon="charging" label="Хурдан цэнэглэлт" value={chargeValue(specs)} />
-      <Item icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын оргил чадал" : "Моторын оргил чадал / хөдөлгүүр"} value={motor.value} />
-      <Item icon="dimension" label="Хэмжээ" value={compactSize(specs.size)} />
-      <Item icon="doors" label={specs.doorLabel ?? "Хаалганы тоо"} value={countOnly(specs.doors)} />
+      <Item index={0} peek={peeks.fuel} icon="fuel" label="Түлш" value={specs.fuel} />
+      <Item index={1} peek={peeks.drive} icon={(specs.drive || "RWD").toLowerCase()} label="Хөтлөгч" value={specs.drive} />
+      <Item index={2} peek={peeks.range} icon="range" label={rangeLabel(specs)} value={rangeValue(specs)} />
+      <Item index={3} peek={peeks.charging} icon="charging" label="Хурдан цэнэглэлт" value={chargeValue(specs)} />
+      <Item index={4} peek={peeks.motor} icon={motor.icon} label={specs.fuel === "BEV" ? "Моторын оргил чадал" : "Моторын оргил чадал / хөдөлгүүр"} value={motor.value} />
+      <Item index={5} peek={peeks.dimension} icon="dimension" label="Хэмжээ" value={compactSize(specs.size)} />
+      <Item index={6} peek={peeks.doors} icon="doors" label={specs.doorLabel ?? "Хаалганы тоо"} value={countOnly(specs.doors)} />
       <Item
-        icon="seats" label="Суудлын тоо"
+        index={7} peek={peeks.seats} icon="seats" label="Суудлын тоо"
         value={specs.seatsPassenger ? <T v={{ cargo: countOnly(specs.seats), passenger: countOnly(specs.seatsPassenger) }} /> : countOnly(specs.seats)}
       />
-      <Item icon="payload" label="Даац" value={payloadValue(specs.payload)} />
+      <Item index={8} peek={peeks.payload} icon="payload" label="Даац" value={payloadValue(specs.payload)} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { CHASSIS, CONNECTED } from "./ec75";
+import { CHASSIS } from "./ec75";
 import type { Card, Img, Model } from "./types";
 
 const img = (file: string, width: number, height: number, alt: string): Img => ({ src: `/assets/r5/${file}`, width, height, alt });
@@ -86,21 +86,18 @@ export const r5: Model = {
       ] },
       { id: "safety", tone: "surface", blocks: [
         { type: "title", tagline: "Аюулгүй байдал", title: "Зам дээр тогтвортой" },
-        { type: "safety", chipsTitle: "Бүх хувилбарт стандартаар",
+        { type: "safety",
           items: [
             card("safety-esc.jpg", 450, "Тогтвортой байдлын систем", "Огцом эргэлт, хальтиргаатай замд гулгахаас сэргийлнэ.", "Саад тойрч буй R5-ууд — ESC", "ESC"),
             card("safety-autohold.jpg", 450, "Тоормос автоматаар барих", "Гэрлэн дохион дээр тоормос дарахгүйгээр зогсож байна.", "AUTO HOLD-оор зогсож буй R5", "AUTO HOLD"),
             card("safety-tpms.jpg", 450, "Дугуйн даралтын хяналт", "Дугуй бүрийн даралтыг бодит цагт хянана.", "R5-ын дугуйн даралтын хяналт", "TPMS")
-          ],
-          chips: ["ABS + EBD", "Өгсүүрт хөдлөх туслах", "EPB цахим гар тоормос", "Арын зогсоолын радар", "Яаралтай тоормосны дохио", "Явган зорчигчид өгөх дуут дохио", "Цэнэглэх үеийн түгжээ"],
-          extra: "Дээд хувилбарт нэмэлтээр: 360° камер, жолоочийн ядаргааны хяналт (DMS), агаарын дэр, мөргөлдөхөд өндөр хүчдэлийг таслах хамгаалалт" }
+          ] }
       ] },
       { id: "interior", blocks: [
         { type: "feature", image: img("cockpit.jpg", 800, 533, "R5-ын кабин, төв дэлгэц"),
           tagline: "Кабин", title: "Ухаалаг кабин",
           text: "8.8 инчийн LCD багажны самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Beyond II иж бүрдэлд 15.6 инчийн төв дэлгэц, дуут удирдлага, утасгүй цэнэглэгч нэмэгдэнэ.",
-          facts: [{ label: "Багажны самбар", value: "8.8\"" }, { label: "Төв дэлгэц", value: "15.6\"" }, { label: "Түдгэлзүүлэлт", value: "MacPherson" }] },
-        { type: "connected", items: CONNECTED() }
+          facts: [{ label: "Багажны самбар", value: "8.8\"" }, { label: "Төв дэлгэц", value: "15.6\"" }, { label: "Түдгэлзүүлэлт", value: "MacPherson" }] }
       ] },
       { id: "specs", tone: "surface", blocks: [{
         type: "specGroups", title: "R5-ын үзүүлэлт",

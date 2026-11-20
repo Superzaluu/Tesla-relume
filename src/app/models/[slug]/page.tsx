@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ModelPage } from "@/components/model/ModelPage";
-import { getCategory, getModel, getModelCards, getModelSlugs, getSpecSheet } from "@/data/content";
+import { getCalculatorModel, getCategory, getModel, getModelCards, getModelSlugs, getSpecSheet } from "@/data/content";
 import { models } from "@/data/models";
 import { slotSetFor, viewSheet } from "@/data/specSheet";
 import { buildStory } from "@/data/story";
@@ -40,13 +40,13 @@ export default async function Page({ params }: Props) {
     page = { ...page, specTable: true, sections: page.sections.filter((section) => section.id !== "specs") };
   } else if (sheet && page.specTable !== false) {
     const story = buildStory(sheet, found.name, slug, found.quick?.fuel, slotSet, page.notes.length);
-    page = { ...page, specTable: true, sections: story.sections, notes: [...page.notes, ...story.notes] };
+    page = { ...page, specTable: true, sections: story.sections, notes: [...page.notes, ...story.notes], peeks: story.peeks };
   }
   const model = { ...found, page };
   const specView = page.specTable && sheet ? viewSheet(sheet, model.quick?.fuel, slotSet) : null;
 
   // "Төстэй загварууд": up to four other cards from the same menu category.
-  const { cards } = await getModelCards();
+  const [{ cards }, calc] = await Promise.all([getModelCards(), getCalculatorModel(slug)]);
   const similar = category ? cards.filter((card) => card.categoryId === category.id && card.slug !== slug).slice(0, 4) : [];
-  return <ModelPage model={model} category={category?.label} specView={specView} similar={similar} />;
+  return <ModelPage model={model} category={category?.label} specView={specView} similar={similar} calc={calc} />;
 }

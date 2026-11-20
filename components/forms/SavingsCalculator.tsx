@@ -14,10 +14,15 @@ import {
 
 export { SAVINGS_STORAGE_KEY, type SavedVehicle };
 
-const SavingsContext = createContext<(slug?: string) => void>(() => {});
+/** Opens the calculator on a model: by slug, or `extra` for a model page whose model is not in the menu (C9). */
+const SavingsContext = createContext<(slug?: string, extra?: CalcModel) => void>(() => {});
 
 /** The calculator's open function, for buttons that are not the standard trigger (homepage cost section). */
 export const useOpenSavings = () => useContext(SavingsContext);
+
+/** The calculator's models and today's fuel prices, for the quick fuel-cost window on model pages. */
+const SavingsDataContext = createContext<{ models: CalcModel[]; fuelPrices: FuelPrices } | null>(null);
+export const useSavingsData = () => useContext(SavingsDataContext);
 
 /** Opens the calculator; on a model page pass its slug so that model is chosen. */
 export function SavingsTrigger({ model }: { model?: string }) {
@@ -36,7 +41,13 @@ const num = (value: string, fallback = 0) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
-export function SavingsProvider({ children, models, fuelPrices }: { children: ReactNode; models: CalcModel[]; fuelPrices: FuelPrices }) {
+export function SavingsProvider({ children, models: menuModels, fuelPrices }: { children: ReactNode; models: CalcModel[]; fuelPrices: FuelPrices }) {
+  // A model page's own model that is not in the menu (C9) joins the list once its page opens the calculator.
+  const [extra, setExtra] = useState<CalcModel | null>(null);
+  const models = useMemo(
+    () => (extra && !menuModels.some((item) => item.value === extra.value) ? [...menuModels, extra] : menuModels),
+    [menuModels, extra]
+  );
   const [open, setOpen] = useState(false);
   const [modelValue, setModelValue] = useState(models[0]?.value ?? "");
   const [compareFuel, setCompareFuel] = useState<FuelCode>(models[0]?.compare.fuel ?? "dt");
@@ -58,8 +69,8 @@ export function SavingsProvider({ children, models, fuelPrices }: { children: Re
   const picked = COMPARE_VEHICLES.find((vehicle) => vehicle.id === compareChoice);
   const compareName = compareChoice === "custom" ? customName.trim() || "Өөрийн машин" : picked?.name ?? model?.compare.name ?? "";
 
-  const choose = (value: string) => {
-    const next = models.find((item) => item.value === value);
+  const choose = (value: string, known?: CalcModel) => {
+    const next = known ?? models.find((item) => item.value === value);
     setModelValue(value);
     // Only the automatic comparison follows the Ruichi model; a car the visitor picked stays.
     if (next && compareChoice === "similar") { setCompareFuel(next.compare.fuel); setConsumption(String(next.compare.consumption)); }
@@ -71,10 +82,11 @@ export function SavingsProvider({ children, models, fuelPrices }: { children: Re
     if (choice === "similar" && model) { setCompareFuel(model.compare.fuel); setConsumption(String(model.compare.consumption)); }
   };
 
-  const show = (slug?: string) => {
+  const show = (slug?: string, own?: CalcModel) => {
     lastFocus.current = document.activeElement as HTMLElement | null;
-    const match = slug ? models.find((item) => item.slug === slug) : undefined;
-    if (match) choose(match.value);
+    const match = (slug ? models.find((item) => item.slug === slug) : undefined) ?? own;
+    if (own && match === own) setExtra(own);
+    if (match) choose(match.value, match);
     setOpen(true);
   };
   const close = () => {
@@ -108,8 +120,10 @@ export function SavingsProvider({ children, models, fuelPrices }: { children: Re
   };
 
   const categories = [...new Set(models.map((item) => item.category))];
+  const data = useMemo(() => ({ models: menuModels, fuelPrices }), [menuModels, fuelPrices]);
 
   return (
+    <SavingsDataContext.Provider value={data}>
     <SavingsContext.Provider value={show}>
       {children}
       <div className="savings-modal" hidden={!open}>
@@ -270,6 +284,7 @@ export function SavingsProvider({ children, models, fuelPrices }: { children: Re
         </section>
       </div>
     </SavingsContext.Provider>
+    </SavingsDataContext.Provider>
   );
 }
 

@@ -59,14 +59,33 @@ function Card({ tone, label, value, note, share }: { tone: "diesel" | "ruichi" |
 }
 
 export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fuelPrices: FuelPrices }) {
+  return (
+    <section className="section" aria-labelledby="savings-teaser">
+      <div className="container">
+        <div className="tw rounded-card border border-solid border-line bg-white p-5 shadow-[0_10px_30px_rgb(15_35_56/.06)] sm:p-8">
+          <SavingsPanel models={models} fuelPrices={fuelPrices} idPrefix="teaser" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The section's content, also shown as a window from «Хэмнэлтийн тооцоолуур» on model pages (user, 2026-11-20).
+ * `own`: the one model to calculate for (the model page's own model; user, 2026-11-20), with no model chips.
+ * `onDetail` runs before "Дэлгэрэнгүй тооцоолох" opens the full calculator (the window closes itself there).
+ */
+export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail }: {
+  models: CalcModel[]; fuelPrices: FuelPrices; idPrefix: string; own?: CalcModel; onDetail?: () => void;
+}) {
   const openCalculator = useOpenSavings();
   const choices = useMemo(
-    () => MODELS.map((slug) => models.find((m) => m.slug === slug)).filter((m): m is CalcModel => Boolean(m)),
-    [models]
+    () => (own ? [own] : MODELS.map((slug) => models.find((m) => m.slug === slug)).filter((m): m is CalcModel => Boolean(m))),
+    [models, own]
   );
   const [index, setIndex] = useState(0);
   const [kmChosen, setKmPerDay] = useState(KM_START);
-  const model = choices[index];
+  const model = choices[index] ?? choices[0];
   if (!model) return null;
 
   const kmMax = maxKm(model);
@@ -85,12 +104,11 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
   const percent = now.fuelCost > 0 ? Math.round((saving / now.fuelCost) * 100) : 0;
   const extender = model.fuel !== "BEV" && model.evRangeKm;
 
+  const km = `${idPrefix}-km`;
   return (
-    <section className="section" aria-labelledby="savings-teaser">
-      <div className="container">
-        <div className="tw rounded-card border border-solid border-line bg-white p-5 shadow-[0_10px_30px_rgb(15_35_56/.06)] sm:p-8">
+        <>
           <p className="m-0 text-xs font-bold uppercase tracking-[.08em] text-[#147a48]">Бизнесийн зардал хэмнэлт</p>
-          <h2 id="savings-teaser" className="m-0 mt-2 text-[clamp(26px,3.2vw,40px)] font-bold leading-tight tracking-tight text-ink">
+          <h2 id={`${idPrefix === "teaser" ? "savings-teaser" : `${idPrefix}-title`}`} className="m-0 mt-2 text-[clamp(26px,3.2vw,40px)] font-bold leading-tight tracking-tight text-ink">
             {/* The percentage in the saving card's yellow, darkened to stay readable on white (≈4.9:1). */}
             Түлшний зардлаа <span className="text-[#a16207] tabular-nums">{percent}%</span> бууруулна
           </h2>
@@ -98,7 +116,7 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
             Өдөр бүр ажилладаг дизель машин болон {model.name}-ийн сар, жилийн зардлыг харьцуулаарай.
           </p>
 
-          <div className="mt-5 flex flex-wrap gap-1.5" role="group" aria-label="Загвар">
+          {choices.length > 1 && <div className="mt-5 flex flex-wrap gap-1.5" role="group" aria-label="Загвар">
             {choices.map((m, i) => (
               <button
                 key={m.value} type="button" aria-pressed={i === index} onClick={() => setIndex(i)}
@@ -107,15 +125,15 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
                 {m.name}
               </button>
             ))}
-          </div>
+          </div>}
 
           <div className="mt-5 rounded-card border border-solid border-line bg-[#fafcfb] px-5 pb-4 pt-4">
             <div className="flex items-baseline justify-between gap-3">
-              <label htmlFor="teaser-km" className="text-small font-semibold text-ink-secondary">Өдөрт явах дундаж зай</label>
-              <output htmlFor="teaser-km" className="text-[24px] font-bold tabular-nums text-[#0f5a3a]">{kmPerDay} км</output>
+              <label htmlFor={km} className="text-small font-semibold text-ink-secondary">Өдөрт явах дундаж зай</label>
+              <output htmlFor={km} className="text-[24px] font-bold tabular-nums text-[#0f5a3a]">{kmPerDay} км</output>
             </div>
             <input
-              id="teaser-km" type="range" min={KM_MIN} max={kmMax} step={STEP} value={kmPerDay}
+              id={km} type="range" min={KM_MIN} max={kmMax} step={STEP} value={kmPerDay}
               onChange={(e) => setKmPerDay(Number(e.target.value))} className="mt-2 w-full accent-[#0f5a3a]"
             />
             {/* Stops at their own place on the slider; a click jumps there. */}
@@ -154,14 +172,12 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
               ({fuelPrices.source === "benzin.mn" ? `benzin.mn, ${fuelPrices.asOf}` : `${fuelPrices.asOf}-ны үнэ`}). {model.name}: {model.evConsumption} кВт·ц/100 км,
               цахилгаан {ELECTRICITY_PRICE}₮/кВт·ц{extender ? `, өдөрт ${model.evRangeKm} км-ээс илүүд бензин ${EXTENDER_FUEL_USE} л/100 км` : ""}. Зөвхөн түлш, цэнэгийн зардал.
             </p>
-            <button type="button" className="btn btn--primary min-h-[42px] px-5" onClick={() => openCalculator(model.slug)}>Дэлгэрэнгүй тооцоолох</button>
+            <button type="button" className="btn btn--primary min-h-[42px] px-5" onClick={() => { onDetail?.(); openCalculator(model.slug, own); }}>Дэлгэрэнгүй тооцоолох</button>
           </div>
           <details className="mt-3 text-small">
             <summary className="cursor-pointer font-semibold text-[#0f5a3a]">Өнөөдрийн шатахууны үнэ</summary>
             <FuelPriceTable fuelPrices={fuelPrices} selected={model.compare.fuel} />
           </details>
-        </div>
-      </div>
-    </section>
+        </>
   );
 }

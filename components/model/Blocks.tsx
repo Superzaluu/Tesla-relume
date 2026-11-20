@@ -2,7 +2,6 @@ import type { Block, Section, TableRow } from "@/data/types";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
 import { VideoPoster } from "@/components/ui/VideoPoster";
-import { AdasTabs } from "@/components/model/AdasTabs";
 import { Facts, Picture, T } from "@/components/model/VariantValues";
 import { VariantToggle } from "@/components/model/Variant";
 
@@ -56,7 +55,7 @@ function BlockView({ block }: { block: Block }) {
       return (
         <Slider>
           {block.items.map((card) => (
-            <figure className="mcard" key={card.title}>
+            <figure className="mcard" key={card.title} id={card.id}>
               <Picture image={card.image} />
               <figcaption><h3>{card.title}</h3><p>{card.text}</p></figcaption>
             </figure>
@@ -88,27 +87,37 @@ function BlockView({ block }: { block: Block }) {
         </div>
       );
     case "adas":
-      return <AdasTabs items={block.items} />;
+      // Same picture cards as the safety section: every photo visible at once, no tabs to discover.
+      return (
+        <div className="msafety">
+          {block.items.map((item) => (
+            <figure className="mcard mcard--grid" key={item.id}>
+              <Picture image={item.image} />
+              <figcaption><h3>{item.name} <span>{item.code}</span></h3><p>{item.text}</p></figcaption>
+            </figure>
+          ))}
+        </div>
+      );
     case "safety":
       return (
         <>
           <div className="msafety">
             {block.items.map((card) => (
-              <figure className="mcard mcard--grid" key={card.title}>
+              <figure className="mcard mcard--grid" key={card.title} id={card.id}>
                 <Picture image={card.image} />
                 <figcaption><h3>{card.title} <span>{card.tag}</span></h3><p>{card.text}</p></figcaption>
               </figure>
             ))}
           </div>
-          <div className="mchips">
-            <p className="mchips__title">{block.chipsTitle}</p>
-            <ul className="spotlight">{block.chips.map((chip) => <li key={chip}>{chip}</li>)}</ul>
-            {block.extra && <p className="mchips__title">{block.extra}</p>}
-          </div>
+          {block.chips && block.chips.length > 0 && (
+            <div className="mchips">
+              <p className="mchips__title">{block.chipsTitle}</p>
+              <ul className="spotlight">{block.chips.map((chip) => <li key={chip}>{chip}</li>)}</ul>
+              {block.extra && <p className="mchips__title">{block.extra}</p>}
+            </div>
+          )}
         </>
       );
-    case "connected":
-      return <ul className="mconnected">{block.items.map((item) => <li key={item.title}><h3>{item.title}</h3><p>{item.text}</p></li>)}</ul>;
     case "specGroups":
       return (
         <>

@@ -56,7 +56,13 @@ export type QuickSpecs = {
   evRange?: string;
 };
 
-export type Card = { image: Img; title: string; text: string; tag?: string };
+/** `id`: anchor for a hero icon's preview card to jump to (story cards only). */
+export type Card = { image: Img; title: string; text: string; tag?: string; id?: string };
+
+/** Hero icon strip slots that can show a photo preview of their section. */
+export type PeekKey = "fuel" | "drive" | "range" | "charging" | "motor" | "dimension" | "doors" | "seats" | "payload";
+/** Photo preview over a hero icon: the photo and words of the page section it links to. */
+export type Peek = { src: string; title: string; text: string; href: string };
 
 export type TableRow = { head: string; cells: { text: V<string>; span?: number }[] };
 
@@ -78,8 +84,8 @@ export type Block =
   | { type: "columns"; items: { value: string; title: string; text: string }[] }
   | { type: "table"; title: string; columns: string[]; columnNotes?: Record<number, number>; rows: TableRow[]; className?: string }
   | { type: "adas"; items: { id: string; name: string; code: string; text: string; image: Img }[] }
-  | { type: "safety"; items: Card[]; chipsTitle: string; chips: string[]; extra?: string }
-  | { type: "connected"; items: { title: string; text: string }[] }
+  // chips / extra: no longer used on model pages (user, 2026-11-20: they repeated the «Тоноглол» chips).
+  | { type: "safety"; items: Card[]; chipsTitle?: string; chips?: string[]; extra?: string }
   | {
       type: "specGroups";
       title: string;
@@ -110,6 +116,8 @@ export type ModelPage = {
   gallery?: Img[];
   /** Show the "Техникийн үзүүлэлт" section; its rows come from Supabase (table spec_rows). */
   specTable?: boolean;
+  /** Hero icon → photo preview of the section below (built from the story sections; none on EC75 / R5). */
+  peeks?: Partial<Record<PeekKey, Peek>>;
   end: EndCta;
   notes: string[];
 };

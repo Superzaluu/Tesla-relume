@@ -5,7 +5,7 @@
 //
 // Photos: each section has a fixed slot. STORY_IMAGES maps a model's slots to files (1200 × 720 JPEG,
 // public/assets/models/<family>/story/); any other slot shows the "Coming soon" picture.
-import type { Card, Fact, Img, Section } from "./types";
+import type { Card, Fact, Img, Peek, PeekKey, Section } from "./types";
 import { aggregate, FIELD, markOf, siteColumns, type SlotSet, type SpecSheet } from "./specSheet";
 
 const COMING_SOON = "/assets/coming-soon.svg";
@@ -81,14 +81,6 @@ const SAFETY_CARDS: { key: string; slot: Slot; title: string; tag: string; text:
   { key: "camera360", slot: "safety-camera360", title: "360° камер", tag: "360°", text: "Машиныг тойрсон орчныг дээрээс нь харж, давчуу газар амархан зогсооно." }
 ];
 
-const CONNECTED: { key: string; title: string; text: string }[] = [
-  { key: "app", title: "Апп-аар удирдах", text: "Утаснаасаа машинаа алсаас удирдана." },
-  { key: "ota", title: "Алсын шинэчлэлт (OTA)", text: "Програм хангамж утасгүй шинэчлэгдэнэ." },
-  { key: "connected", title: "Интернэт холболт", text: "Машины мэдээлэл үргэлж гарт тань." },
-  { key: "bluetooth", title: "Bluetooth", text: "Утсаа холбож дуудлага, хөгжмөө удирдана." },
-  { key: "12v", title: "Ухаалаг 12V цэнэглэлт", text: "Туслах аккумляторыг автоматаар цэнэглэнэ." }
-];
-
 const DRIVE_TEXT: Record<string, string> = { FWD: "урд дугуйг хөтөлнө", RWD: "хойд дугуйг хөтөлнө", AWD: "бүх дугуйг хөтөлнө" };
 
 const sentence = (text: string) => (text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}${/[.!?]$/.test(text) ? "" : "."}` : "");
@@ -96,10 +88,61 @@ const thousands = (text: string) => text.replace(/\d{4,}/g, (n) => Number(n).toL
 /** "LFP (Lithium Iron Phosphate, литийн төмрийн фосфат)" → "LFP"; the explanation goes into the sentence. */
 const plain = (text: string) => text.replace(/\s*\([^)]*\)/g, "").trim();
 
+// Hero icon → the story photos it previews, best first (user, 2026-11-20: variant B «Урьдчилан харах»).
+// C5 has no motor or door photo of its own, so those fall back to the battery and cabin photos.
+const PEEK_SLOTS: Record<PeekKey, Slot[]> = {
+  fuel: ["battery"], drive: ["chassis"], range: ["battery"], charging: ["charging", "battery"], motor: ["battery"],
+  dimension: ["cargo"], doors: ["cabin", "side-door", "rear-door"], seats: ["interior-seats", "cabin"], payload: ["cargo", "chassis"]
+};
+
+const firstSentence = (text: string) => text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
+const str = (value: unknown) => (typeof value === "string" ? value : "");
+
+/**
+ * Photo previews for the hero icons, taken from the sections actually on the page: a photo that is
+ * not shown below gets no preview. Story cards get an id here so a preview can jump to the card itself.
+ */
+function collectPeeks(sections: Section[], slug: string): Partial<Record<PeekKey, Peek>> {
+  const files = STORY_IMAGES[slug];
+  if (!files) return {};
+  const slotOf = new Map(Object.entries(files).map(([slot, file]) => [file as string, slot as Slot]));
+  const found = new Map<Slot, Peek>();
+  const add = (src: unknown, peek: () => Omit<Peek, "src">) => {
+    const slot = slotOf.get(str(src));
+    if (slot && !found.has(slot)) found.set(slot, { src: str(src), ...peek() });
+    return slot;
+  };
+  for (const section of sections) {
+    const heading = section.blocks.find((block) => block.type === "title");
+    const sectionTitle = heading?.type === "title" ? heading.title : "";
+    for (const block of section.blocks) {
+      if (block.type === "feature" && block.image && section.id) {
+        add(block.image.src, () => ({ title: str(block.title), text: firstSentence(str(block.text)), href: `#${section.id}` }));
+      } else if (block.type === "wideImage" && section.id) {
+        const columns = section.blocks.find((other) => other.type === "columns");
+        add(block.image.src, () => ({ title: sectionTitle, text: columns?.type === "columns" ? columns.items[0]?.text ?? "" : "", href: `#${section.id}` }));
+      } else if (block.type === "cards" || block.type === "safety") {
+        for (const card of block.items) {
+          const slot = slotOf.get(str(card.image.src));
+          if (!slot) continue;
+          card.id = `story-${slot}`;
+          add(card.image.src, () => ({ title: card.title, text: firstSentence(card.text), href: `#story-${slot}` }));
+        }
+      }
+    }
+  }
+  const peeks: Partial<Record<PeekKey, Peek>> = {};
+  for (const [key, slots] of Object.entries(PEEK_SLOTS) as [PeekKey, Slot[]][]) {
+    const slot = slots.find((candidate) => found.has(candidate));
+    if (slot) peeks[key] = found.get(slot);
+  }
+  return peeks;
+}
+
 export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: string | undefined, slotSet: SlotSet, noteCount: number):
-  { sections: Section[]; notes: string[] } {
+  { sections: Section[]; notes: string[]; peeks: Partial<Record<PeekKey, Peek>> } {
   const cols = siteColumns(sheet);
-  if (cols.length === 0) return { sections: [], notes: [] };
+  if (cols.length === 0) return { sections: [], notes: [], peeks: {} };
   const raw = (key: string) => cols.map((i) => sheet.values[key]?.[i] ?? "");
   const val = (key: string) => (FIELD[key] ? aggregate(FIELD[key], raw(key)) : "");
   /** "all": standard on every trim shown, "some": on some of them, "": nowhere. */
@@ -227,24 +270,21 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     ] });
   }
 
-  // 6. Safety: picture cards for the main systems, the rest as chips (standard on every trim only).
-  // As in ADAS: a system on some trims only still gets its card, marked "Зарим иж бүрдэлд".
-  const safetyItems = SAFETY_CARDS.filter((item) => has(item.key))
-    .map((item) => ({ key: item.key, card: card(item.slot, item.title, `${item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, item.tag) }))
-    .filter((item) => pictured(item.card.image));
-  const safetyCards = safetyItems.map((item) => item.card);
-  // A system without a card (no photo) is listed with the chips instead.
-  const cardKeys = new Set(safetyItems.map((item) => item.key));
-  const chips = Object.values(FIELD).filter((field) => field.group === "safety" && field.kind === "mark" && !field.hidden && !cardKeys.has(field.key) && has(field.key) === "all")
-    .map((field) => field.short ?? plain(field.label));
-  if (safetyCards.length > 0 || chips.length >= 3) {
+  // 6. Safety: picture cards for the main systems. As in ADAS: a system on some trims only still gets its
+  // card, marked "Зарим иж бүрдэлд". The other systems are in the «Тоноглол» chips of the spec section; the
+  // "Бүх иж бүрдэлд стандартаар" chips that used to follow the cards repeated them (user, 2026-11-20).
+  const safetyCards = SAFETY_CARDS.filter((item) => has(item.key))
+    .map((item) => card(item.slot, item.title, `${item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, item.tag))
+    .filter((item) => pictured(item.image));
+  if (safetyCards.length > 0) {
     sections.push({ id: "safety", tone: "surface", blocks: [
       { type: "title", tagline: "Аюулгүй байдал", title: "Зам дээр тогтвортой" },
-      { type: "safety", items: safetyCards, chipsTitle: cols.length > 1 ? "Бүх иж бүрдэлд стандартаар" : "Стандартаар", chips }
+      { type: "safety", items: safetyCards }
     ] });
   }
 
-  // 7. Cabin: picture cards for what the sheet fills in, then the connected features.
+  // 7. Cabin: picture cards for what the sheet fills in. The connected features (app, OTA, internet, Bluetooth,
+  // 12V) that used to follow are «Тоноглол» chips in the spec section (user, 2026-11-20: they repeated them).
   const interior = [
     val("cluster") && card("interior-cluster", "Багажны самбар", val("cluster")),
     val("screen") && card("interior-screen", "Төв дэлгэц, аудио", val("screen")),
@@ -252,14 +292,12 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     has("ac") && card("interior-ac", "Агааржуулагч", val("ac_control") || "Стандартаар"),
     val("start") && card("interior-start", "Асаалт", val("start"))
   ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).slice(0, 4);
-  const connected = CONNECTED.filter((item) => has(item.key)).map(({ title, text }) => ({ title, text: `${text}${has(CONNECTED.find((c) => c.title === title)!.key) === "some" ? " Зарим иж бүрдэлд." : ""}` }));
-  if (interior.length >= 2 || connected.length >= 2) {
+  if (interior.length >= 2) {
     sections.push({ id: "interior", blocks: [
       { type: "title", tagline: "Кабин", title: "Жолоочид зориулсан кабин", text: "Энгийн, ойлгомжтой удирдлага бүхий кабин." },
-      ...(interior.length >= 2 ? [{ type: "cards" as const, items: interior }] : []),
-      ...(connected.length >= 2 ? [{ type: "connected" as const, items: connected }] : [])
+      { type: "cards", items: interior }
     ] });
   }
 
-  return { sections, notes };
+  return { sections, notes, peeks: collectPeeks(sections, slug) };
 }

@@ -5,13 +5,14 @@
 import { useEffect, useState } from "react";
 import { calTestDrive } from "@/components/ui/CalTestDrive";
 
-export type NavItem = { id: string; label: string };
+/** `href`: a link to another page (e.g. «Ногоон зээл») instead of a section of this one. */
+export type NavItem = { id: string; label: string; href?: string };
 
 export function ModelNav({ items }: { items: NavItem[] }) {
   const [current, setCurrent] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
-    const targets = items.map((item) => document.getElementById(item.id)).filter((el): el is HTMLElement => Boolean(el));
+    const targets = items.filter((item) => !item.href).map((item) => document.getElementById(item.id)).filter((el): el is HTMLElement => Boolean(el));
     if (targets.length === 0) return;
     // A section counts as "in view" when it crosses a line just under the two sticky bars.
     const observer = new IntersectionObserver(
@@ -32,7 +33,9 @@ export function ModelNav({ items }: { items: NavItem[] }) {
         <ul className="mnav__list">
           {items.map((item) => (
             <li key={item.id}>
-              <a href={`#${item.id}`} aria-current={item.id === current ? "true" : undefined} onClick={() => setCurrent(item.id)}>{item.label}</a>
+              {item.href
+                ? <a className="mnav__out" href={item.href}>{item.label}</a>
+                : <a href={`#${item.id}`} aria-current={item.id === current ? "true" : undefined} onClick={() => setCurrent(item.id)}>{item.label}</a>}
             </li>
           ))}
         </ul>

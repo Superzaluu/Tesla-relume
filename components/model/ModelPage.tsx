@@ -1,4 +1,5 @@
 import type { Model } from "@/data/types";
+import type { CalcModel } from "@/data/savings";
 import { greenLoanHref, preorderHref } from "@/data/models";
 import type { SheetView } from "@/data/specSheet";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
@@ -6,7 +7,7 @@ import { SpecSheetSection } from "@/components/model/SpecSheetSection";
 import { ModelNav, type NavItem } from "@/components/model/ModelNav";
 import { WinterSection } from "@/components/model/WinterSection";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
-import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
+import { FloatingSavings } from "@/components/model/FloatingSavings";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
 import { LoadingLink } from "@/components/ui/LoadingLink";
@@ -37,7 +38,7 @@ function Hero({ model, category }: { model: Model; category?: string }) {
             className="mintro__image" src={hero.image.src as string} width={hero.image.width} height={hero.image.height}
             style={{ maxWidth: hero.maxWidth }} alt={hero.image.alt as string} fetchPriority="high"
           />
-          {model.quick && <QuickSpecs specs={model.quick} />}
+          {model.quick && <QuickSpecs specs={model.quick} peeks={model.page.peeks} />}
         </div>
       </section>
     );
@@ -55,23 +56,21 @@ function Hero({ model, category }: { model: Model; category?: string }) {
         </div>
       </div>
       <Picture image={hero.image} className="hero__bg" eager />
-      {model.quick && <QuickSpecs specs={model.quick} />}
+      {model.quick && <QuickSpecs specs={model.quick} peeks={model.page.peeks} />}
     </VariantSection>
   );
 }
 
 /**
- * Action bar under the hero. The key numbers that used to sit here are in the hero icon strip
- * (range, charging, motor) or in the spec table. "Урьдчилсан захиалга" is in the hero just above
- * (and again at the end of the page), so here only the money questions remain.
+ * Action bar under the hero: «Хэмнэлтийн тооцоолуур» only. "Урьдчилсан захиалга" is in the hero just above;
+ * «Ногоон зээл» moved into the in-page menu (user, 2026-11-20).
  */
-function ActionBar({ model }: { model: Model }) {
+function ActionBar({ calc }: { calc?: CalcModel }) {
   return (
-    <section className="mstats mstats--actions" id="finance" aria-label="Зээл ба хэмнэлт">
+    <section className="mstats mstats--actions" id="finance" aria-label="Хэмнэлтийн тооцоолуур">
       <div className="mstats__inner">
         <div className="actions mstats__actions">
-          <SavingsTrigger model={model.slug} />
-          <a className="btn btn--tint btn--wide" href={greenLoanHref(model.slug)}>Ногоон зээл</a>
+          <FloatingSavings calc={calc} />
         </div>
       </div>
     </section>
@@ -124,24 +123,11 @@ function Similar({ cards }: { cards: ModelCardData[] }) {
   );
 }
 
-function EndCta({ model }: { model: Model }) {
-  const { end } = model.page;
-  return (
-    <section className="section mend" id="test-drive">
-      <div className="container mend__inner">
-        <h2 className="h2">{end.title}</h2>
-        <p className="text-medium">{end.text}</p>
-        {end.image && <Picture image={end.image} className="mend__image" />}
-        <div className="actions mend__actions">
-          <LoadingLink className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</LoadingLink>
-          <a className="btn btn--secondary btn--wide" href={end.secondary.href}>{end.secondary.label}</a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function ModelPage({ model, category, specView, similar = [] }: { model: Model; category?: string; specView?: SheetView | null; similar?: ModelCardData[] }) {
+export function ModelPage({ model, category, specView, similar = [], calc }: {
+  model: Model; category?: string; specView?: SheetView | null; similar?: ModelCardData[];
+  /** This model's savings-calculator entry (also for a model not in the menu). */
+  calc?: CalcModel;
+}) {
   const { page } = model;
   const preload = page.hero.kind === "photo" && typeof page.hero.image.src === "object"
     ? [page.hero.image.src.cargo, page.hero.image.src.passenger] : undefined;
@@ -154,27 +140,29 @@ export function ModelPage({ model, category, specView, similar = [] }: { model: 
   const equipmentId = hasEquipment ? "equipment" : own.has("assist") ? "assist" : own.has("safety") ? "safety" : undefined;
   const showWinter = Boolean(specView) && !own.has("winter");
   const nav: NavItem[] = [
-    { id: "overview", label: "Тойм" },
+    // "Тойм" → "Эхлэл", and «Ногоон зээл» (its own page) instead of "Санхүүжилт" (user, 2026-11-20).
+    { id: "overview", label: "Эхлэл" },
     ...(page.specTable !== undefined || own.has("specs") ? [{ id: "specs", label: "Үзүүлэлт" }] : []),
     ...(equipmentId ? [{ id: equipmentId, label: "Тоноглол" }] : []),
     ...((page.gallery ?? []).length > 0 ? [{ id: "gallery", label: "Зураг" }] : []),
     ...(showWinter || own.has("winter") ? [{ id: "winter", label: "Өвлийн нөхцөлд" }] : []),
-    { id: "finance", label: "Санхүүжилт" }
+    { id: "green-loan", label: "Ногоон зээл", href: greenLoanHref(model.slug) }
   ];
 
   const content = (
     <main id="overview">
       <Hero model={model} category={category} />
       <ModelNav items={nav} />
-      <ActionBar model={model} />
+      <ActionBar calc={calc} />
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
-      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} model={model.name} preorder={preorderHref(model.slug)} />}
+      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} />}
       {/* B′ menu order: Үзүүлэлт → Тоноглол → Зураг → Өвлийн нөхцөлд. */}
       <Gallery model={model} />
       {/* 4.4: models with their own winter section in code (EC75) keep it instead. */}
       {showWinter && <WinterSection winter={specView!.winter} />}
       <Similar cards={similar} />
-      <EndCta model={model} />
+      {/* The closing «Туршаад үзэх үү?» block was removed (user, 2026-11-20): "Урьдчилсан захиалга" is in the
+          hero and «Ногоон зээл» in the bar under it. */}
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>
       </section>

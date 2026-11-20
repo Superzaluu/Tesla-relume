@@ -201,8 +201,8 @@ export const FIELDS: Field[] = [
   f("chassis", "parking_brake", "Зогсоолын тоормос", "text", { aliases: ["зогсоолын тоормосны төрөл"] }),
   f("chassis", "tyres", "Дугуй", "text", { aliases: ["дугуйн техникийн үзүүлэлтүүд", "дугуй", "урд дугуйны техникийн үзүүлэлтүүд"], summary: true }),
   f("chassis", "rims", "Обуд", "text", { aliases: ["обуд"], options: ["Ган обуд", "Хайлшин обуд"] }),
-  mark("chassis", "spare", "Нөөц дугуй", ["запас дугуй", "нөөц дугуй"]),
-  mark("chassis", "regen", "Эрчим хүч сэргээх тоормос", ["тоормосны энергийн санал хүсэлт", "тоормосны энергийн хариу", "гулсах энергийн санал хүсэлт", "энерги сэргээх тоормос", "эрчим хүч сэргээх тоормос"], { pitch: "Тоормослох, налууд уруудах үед батерейгаа цэнэглэнэ." }),
+  mark("chassis", "spare", "Нөөц дугуй", ["запас дугуй", "нөөц дугуй"], { hint: "Дугуй хагарах, цоорох үед сольж явах нэмэлт дугуй." }),
+  mark("chassis", "regen", "Эрчим хүч сэргээх тоормос", ["тоормосны энергийн санал хүсэлт", "тоормосны энергийн хариу", "гулсах энергийн санал хүсэлт", "энерги сэргээх тоормос", "эрчим хүч сэргээх тоормос"], { pitch: "Тоормослох, налууд уруудах үед батерейгаа цэнэглэнэ.", hint: "Тоормослох, налууд уруудах үед мотор генератор болж, хөдөлгөөний энергийг батерей руу буцааж цэнэглэнэ. Тоормосны элэгдлийг ч багасгана." }),
 
   // ---- Аюулгүй байдал
   mark("safety", "abs", "ABS (Anti-lock Braking System) + EBD (Electronic Brakeforce Distribution)", ["abs+ebd", "abs", "abs цоожны эсрэг", "түгжихээс хамгаалах тоормосны систем", "тоормосны хүчний хуваарилалт"], {
@@ -223,9 +223,9 @@ export const FIELDS: Field[] = [
     short: "TPMS", pitch: "Дугуй бүрийн даралтыг бодит цагт хянана.", hint: "Дугуйн даралтын хяналт. Даралт буурахад анхааруулна."
   }),
   f("safety", "airbags", "Агаарын дэр", "text", { aliases: ["агаарын дэр", "жолоочийн аюулгүйн дэр"] }),
-  mark("safety", "rear_camera", "Арын камер", ["буцах зураг", "урвуу видео"], { required: true, mustHave: true }),
-  mark("safety", "camera360", "360° камер", ["360° панорам зураг"], { short: "360° камер", pitch: "Машиныг тойрсон орчныг дээрээс нь харж, давчуу газар амархан зогсооно." }),
-  mark("safety", "radar", "Зогсоолын радар", ["зогсоолын радар", "жолоодох/ухрах радар", "зогсоолын мэдрэгч", "ухрах радар"]),
+  mark("safety", "rear_camera", "Арын камер", ["буцах зураг", "урвуу видео"], { required: true, mustHave: true, hint: "Ухрахад машины ард байгааг дэлгэцэд харуулна." }),
+  mark("safety", "camera360", "360° камер", ["360° панорам зураг"], { short: "360° камер", pitch: "Машиныг тойрсон орчныг дээрээс нь харж, давчуу газар амархан зогсооно.", hint: "Машины эргэн тойрны камеруудын дүрсийг нэгтгэж дээрээс харсан мэт харуулна. Давчуу газар зогсоол хийх, саад тойроход тусална." }),
+  mark("safety", "radar", "Зогсоолын радар", ["зогсоолын радар", "жолоодох/ухрах радар", "зогсоолын мэдрэгч", "ухрах радар"], { hint: "Ухрах, зогсоол хийх үед ойрын саадыг мэдэрч, ойртох тусам дохиог хурдасгана." }),
   mark("adas", "aeb", "AEB (Autonomous Emergency Braking)", ["идэвхтэй тоормос", "автомат яаралтай тоормос", "яаралтай автомат тоормос", "aeb"], {
     short: "AEB", pitch: "Мөргөлдөх эрсдэлтэй үед машин өөрөө тоормослоно.", hint: "Яаралтай автомат тоормос. Урд саад, машинтай мөргөлдөх эрсдэлтэй үед өөрөө тоормослоно." }),
   mark("adas", "fcw", "FCW (Forward Collision Warning)", ["урагш мөргөлдөх анхааруулга", "мөргөлдөх анхааруулга", "fcw"], {
@@ -246,36 +246,36 @@ export const FIELDS: Field[] = [
     short: "EDR", hint: "Осол бүртгэгч. Ослын өмнөх болон үеийн хурд, тоормосны мэдээллийг хадгална." }),
   mark("safety", "pedestrian", "AVAS (Acoustic Vehicle Alerting System)", ["бага хурдтай явган хүний санамж", "явган зорчигчид өгөх дуут дохио", "avas"], {
     short: "AVAS", hint: "Явган зорчигчид өгөх дуут дохио. Цахилгаан машин чимээгүй тул бага хурдтай явахад дуу гаргана." }),
-  mark("safety", "brake_alert", "Яаралтай тоормосны дохио", ["яаралтай тоормосны дохиолол"]),
-  mark("safety", "belt_alert", "Суудлын бүсний сануулга", ["суудлын бүс зүүгээгүй сануулга", "суудлын бүс зүүсэн сануулагч төхөөрөмж"]),
-  mark("safety", "crash_cutoff", "Мөргөлдөхөд өндөр хүчдэлийг таслах", ["мөргөлдөөнөөс хамгаалах хамгаалалт", "өндөр хүчдэлийн аюулгүй байдлын хяналт", "мөргөлдөхөд цахилгаан тасалгах", "мөргөлдөхөд өндөр хүчдэлийг таслах"]),
+  mark("safety", "brake_alert", "Яаралтай тоормосны дохио", ["яаралтай тоормосны дохиолол"], { hint: "Огцом тоормослоход тоормосны гэрэл анивчиж, ард яваа жолоочид анхааруулна." }),
+  mark("safety", "belt_alert", "Суудлын бүсний сануулга", ["суудлын бүс зүүгээгүй сануулга", "суудлын бүс зүүсэн сануулагч төхөөрөмж"], { hint: "Суудлын бүсээ зүүгээгүй үед дуут дохио, дэлгэцээр сануулна." }),
+  mark("safety", "crash_cutoff", "Мөргөлдөхөд өндөр хүчдэлийг таслах", ["мөргөлдөөнөөс хамгаалах хамгаалалт", "өндөр хүчдэлийн аюулгүй байдлын хяналт", "мөргөлдөхөд цахилгаан тасалгах", "мөргөлдөхөд өндөр хүчдэлийг таслах"], { hint: "Мөргөлдөөн мэдэрмэгц өндөр хүчдэлийн батерейн хэлхээг автоматаар салгаж, цахилгаанд цохиулах, гал гарахаас сэргийлнэ." }),
   mark("safety", "isofix", "ISOFIX", ["хүүхдийн суудлын интерфейс", "хүүхдийн суудлын бэхэлгээ", "isofix"], {
     short: "ISOFIX", hint: "Хүүхдийн суудлыг их биед шууд бэхлэх олон улсын стандарт бэхэлгээ." }),
-  mark("safety", "charge_lock", "Цэнэглэх үеийн түгжээ", ["цэнэглэх түгжээ", "цэнэглэдэг электрон цоож"]),
-  mark("safety", "central_lock", "Төв түгжээ, алсын түлхүүр", ["төв түгжээ+алсын удирдлагатай түлхүүр", "төв түгжээ+алсын удирдлагын түлхүүр", "машины төв түгжээ", "алсын түлхүүр"], { required: true }),
+  mark("safety", "charge_lock", "Цэнэглэх үеийн түгжээ", ["цэнэглэх түгжээ", "цэнэглэдэг электрон цоож"], { hint: "Цэнэглэж байх үед цэнэглэгчийн залгуурыг түгжиж, бусад хүн сугалахаас хамгаална." }),
+  mark("safety", "central_lock", "Төв түгжээ, алсын түлхүүр", ["төв түгжээ+алсын удирдлагатай түлхүүр", "төв түгжээ+алсын удирдлагын түлхүүр", "машины төв түгжээ", "алсын түлхүүр"], { required: true, hint: "Бүх хаалгыг нэг товчоор, алсын түлхүүрээр түгжиж, нээнэ." }),
 
   // ---- Тохилог ба ухаалаг
-  mark("comfort", "ac", "Агааржуулагч", ["агааржуулагч"], { required: true }),
+  mark("comfort", "ac", "Агааржуулагч", ["агааржуулагч"], { required: true, hint: "Бүхээгийн агаарыг сэрүүцүүлж, чийгийг бууруулна. Цонхны манан арилгахад ч тусална." }),
   f("comfort", "ac_control", "Агааржуулагчийн удирдлага", "text", { aliases: ["агааржуулагчийн температурыг хянах арга", "агааржуулагчийн температурын хяналтын горим"] }),
   f("comfort", "cluster", "Багажны самбар", "text", { aliases: ["багажны кластер", "хосолсон хэрэгсэл", "багажны хослол"] }),
   f("comfort", "screen", "Төв дэлгэц, аудио", "text", { aliases: ["аудио-визуал систем", "автомашины аудио, видео систем", "аудио болон видео систем"] }),
-  mark("comfort", "radio", "Радио, MP3", ["mp3", "радио", "радио (mp3-тэй)"]),
-  mark("comfort", "bluetooth", "Bluetooth", ["bluetooth", "машины bluetooth утас"], { pitch: "Утсаа холбож дуудлага, хөгжмөө удирдана." }),
+  mark("comfort", "radio", "Радио, MP3", ["mp3", "радио", "радио (mp3-тэй)"], { hint: "Радио сонсож, MP3 хөгжим тоглуулна." }),
+  mark("comfort", "bluetooth", "Bluetooth", ["bluetooth", "машины bluetooth утас"], { pitch: "Утсаа холбож дуудлага, хөгжмөө удирдана.", hint: "Утсаа утасгүй холбож, гар чөлөөтэй ярих, хөгжим тоглуулна." }),
   f("comfort", "usb", "USB / Type-C", "text", { aliases: ["usb интерфейс", "type-c/usb интерфейс", "төрөл-c интерфейс", "type-c интерфейс", "usb/type-c интерфейс"] }),
-  mark("comfort", "wireless", "Утасгүй цэнэглэгч", ["гар утас утасгүй цэнэглэгч"]),
-  mark("comfort", "voice", "Дуут удирдлага", ["дуут удирдлага"]),
+  mark("comfort", "wireless", "Утасгүй цэнэглэгч", ["гар утас утасгүй цэнэглэгч"], { hint: "Утсаа тавиур дээр тавихад утасгүйгээр цэнэглэнэ." }),
+  mark("comfort", "voice", "Дуут удирдлага", ["дуут удирдлага"], { hint: "Дуу хоолойгоор тушаал өгч, мультимедиа, утас зэргийг гараа жолооноос салгалгүй удирдана." }),
   mark("comfort", "ota", "OTA (Over-the-Air)", ["алсын шинэчлэлт", "алсын ota", "зайнаас шинэчлэх", "ota"], {
     short: "OTA", pitch: "Програм хангамж утасгүй шинэчлэгдэнэ.", hint: "Алсын шинэчлэлт. Програм хангамжийг интернэтээр шинэчилнэ." }),
-  mark("comfort", "app", "Апп-аар удирдах", ["гар утасны app", "app алсын удирдлага", "алсын хяналт", "алсын удирдлага"], { short: "Апп", pitch: "Утаснаасаа машинаа алсаас удирдана." }),
-  mark("comfort", "connected", "Интернэт холболт", ["тээврийн хэрэгслийн интернет", "холбогдсон машин", "интернэт холболт"], { pitch: "Машины мэдээлэл үргэлж гарт тань." }),
+  mark("comfort", "app", "Апп-аар удирдах", ["гар утасны app", "app алсын удирдлага", "алсын хяналт", "алсын удирдлага"], { short: "Апп", pitch: "Утаснаасаа машинаа алсаас удирдана.", hint: "Утасны аппаар машины байдлыг харж, зарим үйлдлийг алсаас удирдана." }),
+  mark("comfort", "connected", "Интернэт холболт", ["тээврийн хэрэгслийн интернет", "холбогдсон машин", "интернэт холболт"], { pitch: "Машины мэдээлэл үргэлж гарт тань.", hint: "Машин өөрийн интернэт холболттой тул апп, алсын шинэчлэлт, онлайн үйлчилгээ ажиллана." }),
   f("comfort", "start", "Асаалт", "text", { aliases: ["эхлэх маягт", "эхлэх горим"] }),
   f("comfort", "gear_selector", "Хурдны бариул", "text", { aliases: ["ээлжийн удирдлагын механизм"] }),
   f("comfort", "wipers", "Арчигч", "text", { aliases: ["арчигч"] }),
   f("comfort", "inner_mirror", "Дотор толь", "text", { aliases: ["дотор арын толь"] }),
   f("comfort", "outer_mirror", "Гадна толь", "text", { aliases: ["гадна арын толь"] }),
-  mark("comfort", "mf_wheel", "Олон үйлдэлт жолооны хүрд", ["олон үйлдэлт жолооны хүрд"]),
-  mark("comfort", "wheel_adjust", "Жолооны хүрдний тохируулга", ["жолооны хүрд нь дээш доош тохируулагддаг", "жолооны хүрд тохируулах боломжтой"]),
-  mark("comfort", "cruise", "Круиз контрол", ["cruise control"]),
+  mark("comfort", "mf_wheel", "Олон үйлдэлт жолооны хүрд", ["олон үйлдэлт жолооны хүрд"], { hint: "Жолооны хүрдэн дээрх товчоор дуу, утас зэргийг гараа салгалгүй удирдана." }),
+  mark("comfort", "wheel_adjust", "Жолооны хүрдний тохируулга", ["жолооны хүрд нь дээш доош тохируулагддаг", "жолооны хүрд тохируулах боломжтой"], { hint: "Жолооны хүрдийг жолоочийн биед тааруулж дээш доош тохируулна." }),
+  mark("comfort", "cruise", "Круиз контрол", ["cruise control"], { hint: "Хурд барих систем. Тогтоосон хурдыг хурдасгуур даралгүйгээр барина." }),
   f("comfort", "drive_modes", "Жолоодлогын горим", "text", { aliases: ["жолооны горимын сонголт", "эрчим хүчний горимын сонголт"] }),
   f("comfort", "seat_material", "Суудлын материал", "text", { aliases: ["суудлын материал"], options: ["Даавуу", "Арьс", "Арьс + даавуу"] }),
   f("comfort", "driver_seat", "Жолоочийн суудал", "text", { aliases: ["жолоочийн суудал тохируулах үндсэн маягт", "жолоочийн суудал", "жолоочийн суудал тохируулах маягт", "жолоочийн үндсэн суудал"] }),
@@ -283,18 +283,18 @@ export const FIELDS: Field[] = [
   f("comfort", "windows", "Цахилгаан цонх", "text", { aliases: ["цонх өргөх", "бүтэн машины шил", "бүхэл бүтэн машины шил", "бүрэн хаалганы шил", "хаалганы шил", "шилэн өргөгч", "урд/арын цахилгаан цонх"] }),
   f("comfort", "mirrors", "Гадна толины тохируулга", "text", { aliases: ["гадна арын толин тусгалыг тохируулах маягт"] }),
   f("comfort", "speakers", "Чанга яригч", "number", { aliases: ["чанга яригчийн тоо", "илтгэгчид", "илтгэгч", "илтгэгчдийн тоо"], range: [1, 12] }),
-  mark("comfort", "12v", "Ухаалаг 12V цэнэглэлт", ["ухаалаг 12v цэнэглэгч"], { pitch: "Туслах аккумляторыг автоматаар цэнэглэнэ." }),
+  mark("comfort", "12v", "Ухаалаг 12V цэнэглэлт", ["ухаалаг 12v цэнэглэгч"], { pitch: "Туслах аккумляторыг автоматаар цэнэглэнэ.", hint: "12V туслах аккумляторыг үндсэн батерейгаас автоматаар цэнэглэж, удаан зогсоход суулгахаас сэргийлнэ." }),
   mark("comfort", "etc", "ETC (Electronic Toll Collection) төлбөр хураагч", ["etc", "цахим төлбөр хураах", "зогсолтгүй төлбөр хураах систем", "etc төлбөр хураагч"], { hidden: true }),
 
   // ---- Гэрэлтүүлэг
   f("lights", "headlights", "Урд гэрэл", "text", { aliases: ["урд талын хосолсон гэрэл", "урд гэрэл", "урд хосолсон гэрэл"], options: ["Галоген", "LED"] }),
-  mark("lights", "auto_lights", "Автомат гэрэл", ["гэрэл автоматаар асдаг"]),
-  mark("lights", "hma", "Ухаалаг холын гэрэл (HMA)", ["ухаалаг холын болон бага туяа", "дасан зохицох урт ба бага туяа"], { short: "HMA" }),
-  mark("lights", "drl", "Өдрийн гэрэл", ["өдрийн цагаар ажилладаг гэрэл"]),
-  mark("lights", "fog", "Манангийн гэрэл", ["арын манангийн гэрэл", "урд талын манангийн гэрэл"]),
-  mark("lights", "light_height", "Гэрлийн өндрийн тохируулга", ["гэрлийн өндрийг тохируулах боломжтой", "урд хосолсон гэрлийн өндрийн тохируулга"]),
-  mark("lights", "brake_light", "Дээд тоормосны гэрэл", ["өндөрт суурилуулсан зогсолтын гэрэл", "өндөр суурилуулсан зогсоох гэрэл", "дээд зогсоох гэрэл", "дээд тоормосны гэрэл"]),
-  mark("lights", "reading", "Унших гэрэл", ["урд унших гэрэл", "урд уншилтын гэрэл", "унших гэрэл (урд/дунд/арын)"]),
+  mark("lights", "auto_lights", "Автомат гэрэл", ["гэрэл автоматаар асдаг"], { hint: "Харанхуй болох, хонгилд ороход урд гэрэл өөрөө асна." }),
+  mark("lights", "hma", "Ухаалаг холын гэрэл (HMA)", ["ухаалаг холын болон бага туяа", "дасан зохицох урт ба бага туяа"], { short: "HMA", hint: "Эсрэг ирж буй болон урд яваа машиныг таньж, холын гэрлийг автоматаар ойрын болгоно." }),
+  mark("lights", "drl", "Өдрийн гэрэл", ["өдрийн цагаар ажилладаг гэрэл"], { hint: "Өдрийн цагаар машиныг бусдад тод харагдуулна." }),
+  mark("lights", "fog", "Манангийн гэрэл", ["арын манангийн гэрэл", "урд талын манангийн гэрэл"], { hint: "Манан, цас, бороонд машиныг бусдад харагдуулж, замаа харахад тусална." }),
+  mark("lights", "light_height", "Гэрлийн өндрийн тохируулга", ["гэрлийн өндрийг тохируулах боломжтой", "урд хосолсон гэрлийн өндрийн тохируулга"], { hint: "Ачаатай үед гэрлийн тусгалыг доошлуулж, эсрэг ирж буй жолоочийг гялбуулахгүй." }),
+  mark("lights", "brake_light", "Дээд тоормосны гэрэл", ["өндөрт суурилуулсан зогсолтын гэрэл", "өндөр суурилуулсан зогсоох гэрэл", "дээд зогсоох гэрэл", "дээд тоормосны гэрэл"], { hint: "Арын дээд хэсэгт байрлах нэмэлт тоормосны гэрэл. Ард яваа жолоочид тод харагдана." }),
+  mark("lights", "reading", "Унших гэрэл", ["урд унших гэрэл", "урд уншилтын гэрэл", "унших гэрэл (урд/дунд/арын)"], { hint: "Бүхээгт унших, юм хайхад зориулсан жижиг гэрэл." }),
   f("lights", "cargo_light", "Ачааны тасалгааны гэрэл", "text", { aliases: ["ачааны тасалгааны гэрэлтүүлэг"] }),
 
   // ---- Өнгө
@@ -464,7 +464,9 @@ export function fromLegacy(rows: string[][]): SpecSheet {
 
 // ---------------------------------------------------------------- sheet → page
 
-export type CompareRow = { label: string; cells: string[]; hint?: string };
+/** `icon`: a key-number row (SpecIcon key; "drive" = the cell's own FWD/RWD/AWD icon), shown first in its group card. */
+/** `mark`: an equipment row whose cells are ● / ○ / – (with an optional note), drawn as a check before the label. */
+export type CompareRow = { label: string; cells: string[]; hint?: string; icon?: string; href?: string; key?: string; mark?: boolean };
 export type ChipGroup = { heading: string; chips: string[] };
 /** One line of the short "Гол үзүүлэлт" list (icon key → components/model/SpecIcon). Empty `value` = not entered yet ("Тодруулна уу"). */
 export type KeySpec = { icon: string; label: string; value: string; href?: string };
@@ -502,6 +504,8 @@ export type SheetView = {
   full: { heading: string; rows: CompareRow[] }[];
   /** Number of rows behind "Бүх үзүүлэлтийг харах". */
   total: number;
+  /** Every equipment item by group with its mark per trim ("●" / "○" / "–"); differing items first. */
+  equipment: { heading: string; items: { key: string; name: string; marks: string[] }[] }[];
   picker: Picker;
   /** "Өвлийн нөхцөлд" block (4.4): battery heating over the trims on the site; PTC cabin heater only when a value names it. */
   winter: { heating: "yes" | "some" | "option" | "none" | "unknown"; ptc: boolean };
@@ -642,8 +646,28 @@ export function siteColumns(sheet: SpecSheet): number[] {
   return sold.length ? [sold[sold.length - 1]] : [];
 }
 
+/**
+ * Text fields shown as an equipment chip too (user, 2026-11-20): EC75 / R5 listed «EPB цахим гар тоормос» among
+ * their safety chips, but EPB lives in the «Зогсоолын тоормос» text, so the «Тоноглол» chips lacked it.
+ */
+const CHIP_FROM_TEXT: Record<string, { name: string; test: RegExp }> = {
+  parking_brake: { name: "EPB цахилгаан гар тоормос", test: /\bEPB\b/i },
+  // EC75 / R5 listed «66W Type-C» with the connected features; the port count stays in the spec row.
+  usb: { name: "USB / Type-C", test: /USB|Type-?C/i }
+};
+
+/** Equipment marks ("●" etc.) of every equipment field, for ranking trims. */
+const EQUIPMENT_MARKS = () => FIELDS.filter((field) => field.kind === "mark" && GROUPS.find((group) => group.key === field.group)?.part === "equipment");
+
 export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "special"): SheetView {
-  const cols = siteColumns(sheet);
+  // Best trim first (user, 2026-11-20): most standard equipment, then the higher price, then the sheet's order.
+  // Every list below (trim buttons, comparison columns, the default pick) follows this column order.
+  const equipmentFields = EQUIPMENT_MARKS();
+  const score = (i: number) => equipmentFields.filter((field) => markOf(sheet.values[field.key]?.[i] ?? "") === "●").length;
+  const cols = siteColumns(sheet)
+    .map((i, order) => ({ i, order, score: score(i), price: sheet.configs[i].price ?? 0 }))
+    .sort((a, b) => b.score - a.score || b.price - a.price || a.order - b.order)
+    .map(({ i }) => i);
   const groups = GROUPS.filter((group) => !group.fuelOnly || needsExtender(fuel));
   const visible = (field: Field) => !field.hidden && groups.some((group) => group.key === field.group);
   const pick = (field: Field) => cols.map((i) => {
@@ -687,19 +711,28 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
     if (list.length) chips.push({ heading: group.label, chips: list });
   }
 
+  // Key-number rows (the fixed slots, see CATEGORY_SLOTS) carry their icon and come first in their group,
+  // so the group cards hold the key numbers too; the separate key-number list above them was the same
+  // facts twice (user, 2026-11-20). An extender's total range gets the range icon as well.
+  const keyIcon = new Map<string, string>([...SLOTS_BEFORE, ...CATEGORY_SLOTS[slotSet], ...SLOTS_AFTER].map((slot) => [slot.key, slot.icon]));
+  if (needsExtender(fuel)) keyIcon.set("total_range", "range");
   const full = groups.map((group) => {
     const rows: CompareRow[] = fields.filter((field) => field.group === group.key && field.key !== "range_std").map((field) => ({
       label: field.unit && field.kind !== "dims" ? `${field.label} (${field.unit})` : field.kind === "dims" ? `${field.label} (${field.unit})` : field.label,
       // Drive is stored as FWD / RWD / AWD; people read "Хойд дугуйн хөтлөгч (RWD)".
       cells: pick(field).map((value) => (field.key === "drive" ? DRIVE_LABEL[value] ?? value : value) || ""),
-      hint: field.hint
+      hint: field.hint,
+      icon: keyIcon.get(field.key),
+      key: field.key,
+      mark: field.kind === "mark" || undefined
     })).filter((row) => row.cells.some(Boolean));
     for (const extra of sheet.extras.filter((row) => row.group === group.key)) {
       const cells = cols.map((i) => extra.values[i] ?? "");
       if (cells.some(Boolean)) rows.push({ label: extra.label, cells });
     }
-    if (group.key === "battery") rows.push({ label: "Батерейн баталгаа", cells: cols.map(() => DEALER_WARRANTY) });
-    return { heading: group.label, rows };
+    if (group.key === "battery") rows.push({ label: "Батерейн баталгаа", cells: cols.map(() => DEALER_WARRANTY), icon: "shield", href: "/warranty/" });
+    // Stable sort: key rows first, each part keeps the sheet's order.
+    return { heading: group.label, rows: [...rows.filter((row) => row.icon), ...rows.filter((row) => !row.icon)] };
   }).filter((group) => group.rows.length);
 
   const total = full.reduce((sum, group) => sum + group.rows.length, 0);
@@ -718,8 +751,24 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
       .sort((a, b) => a.count - b.count || a.order - b.order).slice(0, 3).map(({ item }) => item.name)
   }));
 
+  // Every equipment item any shown trim has (● or ○), by group; per item one mark per trim. Items that differ
+  // between trims come first in their group, so switching trims changes the top of each group.
+  // A few text fields name a feature people look for as a chip: the chip is ● where the value names it.
+  const derived = fields.flatMap((field) => {
+    const chip = CHIP_FROM_TEXT[field.key];
+    return chip ? [{ group: field.group, key: field.key, name: chip.name, marks: pick(field).map((value) => (chip.test.test(value) ? "●" : "–")) }] : [];
+  });
+  const equipment = groups.filter((group) => group.part === "equipment").map((group) => {
+    const items = fields.filter((field) => field.group === group.key && field.kind === "mark")
+      .map((field) => ({ key: field.key, name: chipName(field), marks: pick(field).map((value) => markOf(value) || "–") }))
+      .concat(derived.filter((item) => item.group === group.key).map(({ key, name, marks }) => ({ key, name, marks })))
+      .filter((item) => item.marks.some((mark) => mark === "●" || mark === "○"));
+    const varies = (item: { marks: string[] }) => new Set(item.marks).size > 1;
+    return { heading: group.label, items: [...items.filter(varies), ...items.filter((item) => !varies(item))] };
+  }).filter((group) => group.items.length);
+
   return {
-    configs: cols.map((i) => sheet.configs[i].name), compare, chips, optional, full, total,
+    configs: cols.map((i) => sheet.configs[i].name), compare, chips, optional, full, total, equipment,
     picker,
     winter: winterFacts(sheet, cols)
   };

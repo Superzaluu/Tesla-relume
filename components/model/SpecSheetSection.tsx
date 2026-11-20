@@ -3,10 +3,10 @@ import { ConfigPicker, RowHint, Value } from "@/components/model/ConfigPicker";
 import type { SheetView } from "@/data/specSheet";
 
 // One "Техникийн үзүүлэлт" section for specs and trims (they are the same information), B′ layout
-// (user's Figma, 2026-11-20): trim cards, the chosen trim's standard equipment, a test-drive band and
+// (user's Figma, 2026-11-20): trim cards, the chosen trim's standard equipment and
 // every spec group as a card (ConfigPicker). With several trims, a table of only the differences opens below.
 
-export function SpecSheetSection({ view, model, preorder }: { view: SheetView | null; model: string; preorder: string }) {
+export function SpecSheetSection({ view }: { view: SheetView | null }) {
   if (!view || view.picker.options.length === 0) {
     return (
       <section className="section section--surface" id="specs">
@@ -27,7 +27,7 @@ export function SpecSheetSection({ view, model, preorder }: { view: SheetView | 
           <p className="msheet__checked">Үзүүлэлтийг 2026.11-д үйлдвэрлэгчийн хүснэгтээс шалгасан.</p>
         </div>
 
-        <ConfigPicker view={view} model={model} preorder={preorder} />
+        <ConfigPicker view={view} />
 
         {many && view.compare.length > 0 && (
           <details className="msheet__more">

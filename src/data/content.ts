@@ -216,28 +216,43 @@ export const getModelCards = cache(async (): Promise<{ cards: ModelCardData[]; c
   return { cards, categories: navigation.map(({ id, label }) => ({ id, label })) };
 });
 
+/** One calculator entry from a model row. */
+function toCalcModel(row: ModelRow, value: string, name: string, category: string): CalcModel {
+  const evRange = statText(row.stats, /цахилгаанаар/i);
+  return {
+    value, slug: row.slug, name, category,
+    fuel: toFuelType(row.fuel, row.engine),
+    evConsumption: Number(row.ev_consumption) || DEFAULT_EV_CONSUMPTION,
+    evRangeKm: evRange ? Number.parseFloat(evRange) || undefined : undefined,
+    rangeKm: Number.parseFloat((row.range ?? "").replace(/,/g, "")) || undefined,
+    compare: {
+      name: row.compare_name || "Ижил ангиллын дизель машин",
+      fuel: row.compare_fuel ?? "dt",
+      consumption: Number(row.compare_consumption) || 11
+    }
+  };
+}
+
 /** Every menu card for the savings calculator, with the combustion vehicle it is compared to. */
 export const getCalculatorModels = cache(async (): Promise<CalcModel[]> => {
   const [navigation, rows] = await Promise.all([getNavigation(), getModelRows()]);
   return navigation.flatMap((category) =>
     category.items.flatMap((item) => {
       const row = rows.get(item.slug);
-      if (!row) return [];
-      const evRange = statText(row.stats, /цахилгаанаар/i);
-      return [{
-        value: `${item.slug}|${item.variant ?? ""}`, slug: item.slug, name: item.name, category: category.label,
-        fuel: toFuelType(row.fuel, row.engine),
-        evConsumption: Number(row.ev_consumption) || DEFAULT_EV_CONSUMPTION,
-        evRangeKm: evRange ? Number.parseFloat(evRange) || undefined : undefined,
-        rangeKm: Number.parseFloat((row.range ?? "").replace(/,/g, "")) || undefined,
-        compare: {
-          name: row.compare_name || "Ижил ангиллын дизель машин",
-          fuel: row.compare_fuel ?? "dt",
-          consumption: Number(row.compare_consumption) || 11
-        }
-      }];
+      return row ? [toCalcModel(row, `${item.slug}|${item.variant ?? ""}`, item.name, category.label)] : [];
     })
   );
+});
+
+/**
+ * The calculator entry for one model page (its quick fuel-cost window counts for this model only): its menu
+ * entry, or, for a model not in the menu (C9), one built from its own row.
+ */
+export const getCalculatorModel = cache(async (slug: string): Promise<CalcModel | undefined> => {
+  const listed = (await getCalculatorModels()).find((model) => model.slug === slug);
+  if (listed) return listed;
+  const row = (await getModelRows()).get(slug);
+  return row ? toCalcModel(row, `${slug}|`, row.name, "Бусад") : undefined;
 });
 
 /** Homepage hero slides in `sort` order. Empty text fields fall back to the category, description and model page. */

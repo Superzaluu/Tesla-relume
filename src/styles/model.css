@@ -15,6 +15,9 @@ main section[id] { scroll-margin-top: var(--navbar-height); }
 .mnav a:hover { color:#0f5a3a; }
 .mnav a:focus-visible { outline:2px solid #0f5a3a; outline-offset:-2px; border-radius:4px; }
 .mnav a[aria-current="true"] { border-bottom-color:#0f5a3a; color:#0f5a3a; }
+/* «Ногоон зээл» (its own page) in the menu: always brand green (user, 2026-11-20). */
+.mnav a.mnav__out { color:#0f5a3a; }
+.mnav a.mnav__out:hover { color:#0b4a2e; text-decoration:underline; text-underline-offset:4px; }
 /* Anchored sections stop under both bars (navbar + this menu, ~48px). */
 main:has(.mnav) section[id], main:has(.mnav) #equipment { scroll-margin-top:calc(var(--navbar-height) + 56px); }
 @media (prefers-reduced-motion:no-preference) { html:has(.mnav) { scroll-behavior:smooth; } }
@@ -322,24 +325,6 @@ main:has(.mnav) section[id], main:has(.mnav) #equipment { scroll-margin-top:calc
   color: var(--color-text-secondary);
 }
 
-/* ---------- Connected features ---------- */
-.mconnected {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0 32px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.mconnected li {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 20px 0;
-  border-top: 1px solid var(--color-border);
-}
-.mconnected h3 { margin: 0; font-size: 16px; font-weight: 500; }
-.mconnected p { font-size: var(--text-small); color: var(--color-text-muted); }
 
 /* ---------- Specs ---------- */
 .mspecs__head {
@@ -447,7 +432,6 @@ main:has(.mnav) section[id], main:has(.mnav) #equipment { scroll-margin-top:calc
 
   .msafety { grid-template-columns: minmax(0, 1fr); gap: 32px; }
 
-  .mconnected { grid-template-columns: minmax(0, 1fr); }
 
   .mspecs { grid-template-columns: minmax(0, 1fr); gap: 32px; }
   .mspecs__groups { grid-template-columns: minmax(0, 1fr); gap: 32px; }
@@ -593,7 +577,11 @@ main:has(.mnav) section[id], main:has(.mnav) #equipment { scroll-margin-top:calc
 @media (max-width:640px) { .mkey__list { grid-template-columns:1fr; gap:16px; } }
 
 /* "Өвлийн нөхцөлд" (WinterSection, 4.4): the key-number list style, then a plain note. */
-.mwinter { display:grid; gap:32px; }
+.mwinter { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:32px 48px; align-items:center; }
+.mwinter__text { display:grid; gap:32px; min-width:0; }
+.mwinter__media { display:flex; flex-direction:column; gap:10px; margin:0; min-width:0; }
+.mwinter__media figcaption { color:var(--color-text-secondary); font-size:14px; }
+@media (max-width:991px) { .mwinter { grid-template-columns:minmax(0, 1fr); } }
 .mwinter__list { max-width:760px; }
 .mwinter__note { max-width:68ch; margin:0; padding:16px 20px; border-left:3px solid #7fb2d9; border-radius:0 10px 10px 0; background:#f2f7fb; color:var(--color-text-secondary); font-size:15px; line-height:1.6; }
 
@@ -833,15 +821,6 @@ button.mpick__trim:hover { background:#f6faf8; }
 .mpick__chips li { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:4px 14px 4px 10px; border:1px solid #dce3ea; border-radius:999px; background:#fff; font-size:14px; line-height:1.3; color:var(--color-text); }
 .mpick__chips li::before { content:""; flex:none; width:16px; height:16px; background:var(--color-primary); -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center / contain no-repeat; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center / contain no-repeat; }
 
-.mpick__band { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px; padding:32px 36px; border-radius:var(--radius-card); background:#10241a; color:#fff; }
-.mpick__band-title { margin:0; font-size:24px; font-weight:700; line-height:1.25; }
-.mpick__band-text { margin:6px 0 0; font-size:15px; color:#c9d6cf; }
-.mpick__band-actions { display:flex; flex-wrap:wrap; gap:10px; }
-.mpick__band-primary { border:1px solid #fff; background:#fff; color:#10241a; box-shadow:none; }
-.mpick__band-primary:hover { background:#eaf3ee; color:#10241a; }
-.mpick__band-secondary { border:1px solid #6b8578; background:transparent; color:#fff; box-shadow:none; }
-.mpick__band-secondary:hover { border-color:#fff; color:#fff; }
-@media (max-width:600px) { .mpick__band { padding:24px 20px; } .mpick__band-actions, .mpick__band-actions .btn { width:100%; } }
 
 .mpick__specs { display:flex; flex-direction:column; gap:24px; }
 .mpick__specs-title { margin:0; }
@@ -859,6 +838,15 @@ button.mpick__trim:hover { background:#f6faf8; }
 /* The label (with its hint) shrinks first; the value keeps whole words ("RWD", "C-EPS" used to break per letter). */
 .mgroup__row dt { flex:1 1 0; min-width:0; color:var(--color-text-secondary); }
 .mgroup__row dd { flex:0 1 auto; margin:0; max-width:60%; text-align:right; font-weight:600; color:var(--color-text); overflow-wrap:break-word; }
+/* Key-number rows: icon before the label, value in the text colour and bold (user, 2026-11-20: the
+   separate key-number list above the cards is gone, its facts live here). */
+.mgroup__row dt { display:flex; align-items:flex-start; gap:10px; }
+.mgroup__row dt > span { min-width:0; }
+.mgroup__row.is-key dt { align-items:center; color:var(--color-text); }
+.mgroup__row.is-key .mkey__icon,
+.mgroup__row.is-key .mkey__icon .mkey__quick { width:22px; height:22px; color:#0f5a3a; }
+.mgroup__row.is-key dd { font-weight:700; }
+.mgroup__row dd a { color:var(--color-primary); text-decoration:underline; text-underline-offset:3px; }
 .mgroup__more > summary { padding:10px 0 2px; border-top:1px solid #eef2f0; color:var(--color-primary); font-size:14px; font-weight:600; cursor:pointer; list-style:none; }
 .mgroup__more > summary::-webkit-details-marker { display:none; }
 .mgroup__more[open] > summary { display:none; }
@@ -875,3 +863,213 @@ button.mpick__trim:hover { background:#f6faf8; }
 .msimilar__value small { font-size:13px; font-weight:500; color:var(--color-text-muted); }
 .msimilar__label { font-size:13px; color:var(--color-text-muted); }
 .msimilar__name { margin-top:6px; font-size:16px; font-weight:700; }
+
+/* ---------- Intro photo: the vehicle in the middle (user, 2026-11-20) ----------
+   The studio photos have a lot of empty sky above the vehicle, which sits around 60% down, so at
+   1100×650 the whole photo showed and the vehicle sat low, behind the icon strip. A lower frame
+   crops the sky and the focus point 80% down brings the vehicle to the middle. Wide street photos
+   (EC31, ~2.2:1) lose only a thin strip at the top. */
+.mintro__hero-frame .mintro__image { height:clamp(360px, 34vw, 460px); object-position:50% 80%; }
+/* Desktop: the icons in one row along the bottom edge of the photo, edge to edge, instead of a
+   3-row block over the vehicle (user, 2026-11-20). */
+@media (min-width:992px) {
+  .mintro__hero-frame .hero__quick-specs {
+    display:flex; flex-wrap:nowrap; justify-content:space-between; gap:12px;
+    left:max(2rem, calc((100% - 1100px) / 2 + 2rem)); right:max(2rem, calc((100% - 1100px) / 2 + 2rem)); bottom:1.25rem;
+    width:auto; max-width:none;
+  }
+  .mintro__hero-frame .hero__quick-spec { flex:none; padding:4px 0; min-height:0; }
+  .mintro__hero-frame .hero__quick-spec strong { font-size:14px; }
+}
+@media (max-width:1199px) {
+  .mintro__hero-frame .hero__quick-specs { gap:8px; }
+  .mintro__hero-frame .hero__quick-icon,
+  .mintro__hero-frame .hero__quick-icon .quick-icon { width:24px; height:24px; }
+  .mintro__hero-frame .hero__quick-spec { gap:5px; }
+  .mintro__hero-frame .hero__quick-spec strong { font-size:12px; }
+}
+/* Phones and tablets: the row wraps, centred, still on the bottom edge of the photo. */
+@media (max-width:991px) {
+  .mintro__hero-frame .hero__quick-specs {
+    display:flex; flex-wrap:wrap; justify-content:center; gap:2px 14px;
+    left:12px; right:12px; bottom:10px; width:auto; padding:0;
+  }
+  .mintro__hero-frame .hero__quick-spec { flex:none; padding:2px 0; min-height:0; }
+  .mintro__hero-frame .hero__quick-spec strong { max-width:none; }
+}
+@media (max-width:991px), (max-aspect-ratio:6/5) {
+  .mintro__hero-frame .mintro__image { height:clamp(300px, 60vw, 460px); }
+}
+
+/* ---------- Hero icon strip straight on the photo (user, 2026-11-20) ----------
+   No white panel: brand-green icons and values sit on the photo with a soft white glow behind them,
+   so they read on light and darker parts of it alike (white with a dark shadow was too faint on the
+   light studio photos). Only where the strip lies over the photo: always in the intro frame, on
+   desktop in the full-width hero (on phones that strip sits below the photo, on the page). */
+.mintro__hero-frame .hero__quick-specs { padding:0; border:0; background:transparent; box-shadow:none; color:#0b4a2e; }
+.mintro__hero-frame .hero__quick-icon { color:#0b4a2e; filter:drop-shadow(0 0 2px rgb(255 255 255 / .95)) drop-shadow(0 0 8px rgb(255 255 255 / .8)); }
+.mintro__hero-frame .hero__quick-spec strong { color:#0b4a2e; font-weight:800; text-shadow:0 0 2px #fff, 0 0 8px rgb(255 255 255 / .9), 0 0 16px rgb(255 255 255 / .7); }
+.mintro__hero-frame .hero__quick-spec.is-missing strong { color:#567063; }
+.mintro__hero-frame .hero__quick-specs.spotlight .hero__quick-spec::before { background:radial-gradient(120px circle at calc(var(--spot-x, 50%) + var(--pad-x)) calc(var(--spot-y, 50%) + var(--pad-y)), rgb(255 255 255 / .55), transparent 70%); }
+.mintro__hero-frame .hero__quick-specs.spotlight .hero__quick-spec:hover .hero__quick-icon { filter:drop-shadow(0 0 3px #fff) drop-shadow(0 4px 10px rgb(15 90 58 / .35)); }
+@media (min-width:992px) {
+  .mhero .hero__quick-specs { padding:0; border:0; background:transparent; box-shadow:none; color:#0b4a2e; }
+  .mhero .hero__quick-icon { color:#0b4a2e; filter:drop-shadow(0 0 2px rgb(255 255 255 / .95)) drop-shadow(0 0 8px rgb(255 255 255 / .8)); }
+  .mhero .hero__quick-spec strong { color:#0b4a2e; font-size:14px; font-weight:800; text-shadow:0 0 2px #fff, 0 0 8px rgb(255 255 255 / .9), 0 0 16px rgb(255 255 255 / .7); }
+  .mhero .hero__quick-spec.is-missing strong { color:#567063; }
+  .mhero .hero__quick-specs.spotlight .hero__quick-spec::before { background:radial-gradient(120px circle at calc(var(--spot-x, 50%) + var(--pad-x)) calc(var(--spot-y, 50%) + var(--pad-y)), rgb(255 255 255 / .55), transparent 70%); }
+  .mhero .hero__quick-specs.spotlight .hero__quick-spec:hover .hero__quick-icon { filter:drop-shadow(0 0 3px #fff) drop-shadow(0 4px 10px rgb(15 90 58 / .35)); }
+}
+
+/* ---------- Hero icon photo preview (QuickPeek; user, 2026-11-20: variant B «Урьдчилан харах») ----------
+   An icon with a photo below on the page opens a small card above it: the photo, its title and one
+   sentence. The card (or a second tap on touch) jumps to that photo, which then flashes green. */
+.hero__quick-spec.has-peek { position:relative; }
+.hero__quick-link { display:flex; align-items:center; gap:inherit; min-width:0; color:inherit; text-decoration:none; border-radius:10px; cursor:pointer; }
+.hero__quick-link:focus-visible { outline:2px solid #0a8a4a; outline-offset:3px; }
+.quick-peek {
+  position:absolute; bottom:calc(100% + 10px); left:50%; z-index:10;
+  display:flex; flex-direction:column; width:240px; max-width:calc(100vw - 32px);
+  border-radius:12px; overflow:hidden; background:#fff; color:var(--color-text); text-align:left; text-decoration:none;
+  box-shadow:0 16px 36px rgb(10 30 20 / .25);
+  opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%, 6px);
+  transition:opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+}
+.has-peek.is-open .quick-peek { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%, 0); transition-delay:0s; }
+.quick-peek--start { left:0; transform:translateY(6px); }
+.quick-peek--end { left:auto; right:0; transform:translateY(6px); }
+.has-peek.is-open .quick-peek--start, .has-peek.is-open .quick-peek--end { transform:none; }
+.quick-peek img { display:block; width:100%; height:auto; aspect-ratio:5 / 3; object-fit:cover; }
+.hero__quick-specs .quick-peek .quick-peek__text { display:flex; flex-direction:column; gap:2px; padding:9px 12px 11px; color:var(--color-text-muted); font-size:12px; font-weight:500; line-height:1.4; white-space:normal; text-shadow:none; }
+.hero__quick-specs .quick-peek .quick-peek__text strong { overflow:visible; color:var(--color-text); font-size:13px; font-weight:700; white-space:normal; text-shadow:none; }
+.quick-peek__text em { color:#0a8a4a; font-style:normal; font-weight:600; }
+/* Phones and tablets: the strip wraps, so the card centres over the whole strip instead of its icon. */
+@media (max-width:991px) {
+  .hero__quick-specs .hero__quick-spec.has-peek { position:static; }
+  .quick-peek, .quick-peek--start, .quick-peek--end { left:50%; right:auto; width:min(260px, 100%); transform:translate(-50%, 6px); }
+  .has-peek.is-open .quick-peek, .has-peek.is-open .quick-peek--start, .has-peek.is-open .quick-peek--end { transform:translate(-50%, 0); }
+}
+@media (prefers-reduced-motion:reduce) { .quick-peek { transition:none; } }
+
+/* Arriving from a preview: the photo flashes green once. */
+main [id^="story-"] { scroll-margin-top:calc(var(--navbar-height) + 72px); }
+@keyframes peek-flash { 0%, 55% { box-shadow:0 0 0 4px #0a8a4a, 0 12px 30px rgb(10 138 74 / .3); } 100% { box-shadow:0 0 0 0 rgb(10 138 74 / 0); } }
+.mcard:target,
+section:target .mfeature__image,
+section:target .mwide { animation:peek-flash 1.8s ease-out .3s backwards; }
+@media (prefers-reduced-motion:reduce) {
+  .mcard:target, section:target .mfeature__image, section:target .mwide { animation:none; box-shadow:0 0 0 3px #0a8a4a; }
+}
+
+/* ---------- Equipment by group, state per trim (user, 2026-11-20: variants A + C with B's groups) ----------
+   Every item any trim has stays in place; switching trims only flips its state:
+   ✓ green = in this trim · ○ = optional extra · – white, struck through = not in this trim. */
+.mequip__head { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 16px; margin-bottom:16px; }
+.mpick__std .mequip__head .h5 { margin:0; }
+.mequip__legend { display:flex; flex-wrap:wrap; gap:6px 16px; margin:0; color:var(--color-text-secondary); font-size:13px; }
+.mequip__legend i { display:inline-block; width:12px; height:12px; margin-right:6px; vertical-align:-1px; border-radius:4px; }
+.mequip__legend i.is-on { border:1px solid #8cc4a4; background:#e2f1e8; }
+.mequip__legend i.is-option { border:1px solid #8cc4a4; background:#fff; }
+.mequip__legend i.is-off { border:1px dashed #c3cec8; background:#fff; }
+.mequip { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:28px 36px; }
+@media (max-width:760px) { .mequip { grid-template-columns:minmax(0, 1fr); gap:22px; } }
+.mequip__group { display:flex; flex-direction:column; gap:10px; min-width:0; }
+.mequip__title { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0; font-size:15px; font-weight:700; }
+.mequip__count { display:inline-flex; flex:none; align-items:center; gap:8px; color:var(--color-text-secondary); font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; }
+.mequip__bar { width:64px; height:6px; overflow:hidden; border-radius:999px; background:#e3e9e5; }
+.mequip__bar i { display:block; height:100%; background:#0f5a3a; transition:width .35s ease; }
+.mequip__chips li { transition:background-color .3s ease, border-color .3s ease, color .3s ease; }
+.mequip__chips li.is-on { border-color:#8cc4a4; background:#e2f1e8; }
+.mequip__chips li.is-option { border-color:#8cc4a4; background:#fff; }
+.mequip__chips li.is-option::before {
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5'%3E%3Ccircle cx='12' cy='12' r='6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5'%3E%3Ccircle cx='12' cy='12' r='6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.mequip__chips li.is-off { border-style:dashed; border-color:#c3cec8; background:#fff; color:var(--color-text-secondary); text-decoration:line-through; text-decoration-color:rgb(90 107 97 / .5); }
+.mequip__chips li.is-off::before {
+  background:#9aa8a0;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M7 12h10'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M7 12h10'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* Equipment mark in the spec cards: a check in a circle before the label, coloured like the chips
+   (user, 2026-11-20). It pops once when a trim switch changes it (the row has .is-changed then). */
+.mcheck { position:relative; display:inline-block; flex:none; width:20px; height:20px; border-radius:50%; vertical-align:-5px; }
+.mgroup__row dt .mcheck { margin-top:1px; }
+.mcheck::after { content:""; position:absolute; inset:4px; }
+.mcheck.is-on { background:#0f5a3a; box-shadow:0 0 0 3px rgb(15 90 58 / .12); }
+.mcheck.is-on::after {
+  background:#fff;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.mcheck.is-option { border:1.5px solid #0f5a3a; background:#fff; }
+.mcheck.is-option::after { inset:5px; border:1.5px solid #0f5a3a; border-radius:50%; }
+.mcheck.is-off { border:1.5px dashed #b9c5be; background:#fff; }
+.mcheck.is-off::after { inset:auto 5px; top:50%; height:1.5px; margin-top:-.75px; background:#9aa8a0; }
+.mgroup__row:has(.mcheck.is-off) dt > span:last-child { color:var(--color-text-secondary); opacity:.75; }
+.mgroup__note { display:block; margin-top:2px; color:var(--color-text); font-size:13px; font-weight:600; }
+.mgroup__row.is-changed .mcheck { animation:check-pop .6s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes check-pop { 0% { transform:scale(.4); } 100% { transform:scale(1); } }
+@media (prefers-reduced-motion:reduce) { .mgroup__row.is-changed .mcheck { animation:none; } }
+.mcheck-legend { display:inline-flex; align-items:center; gap:6px; margin-left:14px; }
+.mcheck-legend .mcheck { width:16px; height:16px; }
+.mcheck-legend .mcheck::after { inset:3px; }
+.mcheck-legend .mcheck.is-option::after { inset:4px; }
+.mcheck-legend .mcheck.is-off::after { inset:auto 4px; }
+
+/* A chip links to its row in the spec cards (the explanation); the whole chip is the click area. */
+.mequip__chips li { position:relative; }
+.mequip__chips li:hover { border-color:#0f5a3a; }
+.mequip__chips a { color:inherit; text-decoration:inherit; }
+.mequip__chips a::after { content:""; position:absolute; inset:0; border-radius:inherit; }
+.mequip__chips a:focus-visible { outline:none; }
+.mequip__chips li:has(a:focus-visible) { outline:2px solid #0a8a4a; outline-offset:2px; }
+.mgroup__row[id] { scroll-margin-top:calc(var(--navbar-height) + 72px); }
+.mgroup__row.is-target { animation:row-target 2.2s ease-out; border-radius:6px; }
+@keyframes row-target { 0%, 50% { background:#fff3bf; box-shadow:0 0 0 2px #e8cf6a; } 100% { background:transparent; box-shadow:0 0 0 0 transparent; } }
+@media (prefers-reduced-motion:reduce) { .mgroup__row.is-target { animation:none; background:#fff3bf; } }
+/* After a trim switch: a flipped chip pulses once, a changed spec value flashes yellow once. */
+.mequip__chips li.is-flipped { animation:chip-flip .7s ease; }
+@keyframes chip-flip { 40% { transform:scale(1.08); } }
+.mgroup__row.is-changed { animation:row-flash 1.6s ease-out; border-radius:6px; }
+@keyframes row-flash { 0%, 40% { background:#fff3bf; } 100% { background:transparent; } }
+@media (prefers-reduced-motion:reduce) {
+  .mequip__chips li, .mequip__bar i { transition:none; }
+  .mequip__chips li.is-flipped, .mgroup__row.is-changed { animation:none; }
+}
+
+/* ---------- Bar under the hero (user, 2026-11-20) ----------
+   Both buttons green (they were pale #eaf3ee, read as white). «Хэмнэлтийн тооцоолуур» is magnetic: it leans
+   toward the mouse within ~90px (Magnetic.tsx) and springs back when the mouse goes. */
+.mstats__actions .btn.saving-calculator__trigger,
+.mstats__actions .btn.btn--tint { border-color:#0f5a3a; background:#0f5a3a; color:#fff; box-shadow:0 8px 20px rgb(15 90 58 / .22); }
+.mstats__actions .btn.saving-calculator__trigger:hover,
+.mstats__actions .btn.btn--tint:hover { border-color:#0b4a2e; background:#0b4a2e; color:#fff; box-shadow:0 10px 24px rgb(15 90 58 / .3); }
+.magnetic { display:inline-flex; transition:transform .5s cubic-bezier(.34, 1.56, .64, 1); will-change:transform; }
+.magnetic.is-pulled { transition:transform .15s ease-out; }
+.savings-anchor { display:inline-flex; }
+@media (max-width:991px) { .mstats__actions .savings-anchor, .mstats__actions .magnetic, .mstats__actions .magnetic .btn { width:100%; } }
+
+/* The same button floating in the bottom-right corner once the bar has scrolled away, until it is clicked
+   (FloatingSavings.tsx). Slides up into view; hidden and inert while not shown. */
+.savings-float {
+  position:fixed; z-index:40;
+  right:max(20px, env(safe-area-inset-right, 0px)); bottom:calc(20px + env(safe-area-inset-bottom, 0px));
+  opacity:0; visibility:hidden; pointer-events:none; transform:translateY(18px) scale(.96);
+  transition:opacity .25s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1), visibility 0s linear .45s;
+}
+.savings-float.is-shown { opacity:1; visibility:visible; pointer-events:auto; transform:none; transition-delay:0s; }
+.savings-float .btn.saving-calculator__trigger {
+  position:static; min-height:48px; padding:12px 20px; border-color:#0f5a3a; border-radius:12px; background:#0f5a3a; color:#fff;
+  font-size:var(--text-small); box-shadow:0 14px 32px rgb(15 90 58 / .35);
+}
+.savings-float .btn.saving-calculator__trigger:hover { border-color:#0b4a2e; background:#0b4a2e; color:#fff; }
+@media (max-width:599px) { .savings-float { right:max(12px, env(safe-area-inset-right, 0px)); bottom:calc(12px + env(safe-area-inset-bottom, 0px)); } }
+/* Quick fuel-cost window (the homepage section) from «Хэмнэлтийн тооцоолуур»: wide enough for its three cards. */
+.savings-modal__dialog--quick { width:min(100%, 1040px); padding:36px 32px 28px; }
+@media (max-width:599px) { .savings-modal__dialog--quick { padding:28px 18px 20px; } }
+/* Following the mouse: placed by script (transform) from the top-left corner; only the fade is a transition. */
+.savings-float.is-following { top:0; right:auto; bottom:auto; left:0; transition:opacity .25s ease, visibility 0s linear .25s; will-change:transform; }
+.savings-float.is-following.is-shown { transition-delay:0s; }
+@media (prefers-reduced-motion:reduce) { .savings-float { transition:opacity .2s ease, visibility 0s linear .2s; transform:none; } }
+@media (prefers-reduced-motion:reduce) { .magnetic { transition:none; } }
