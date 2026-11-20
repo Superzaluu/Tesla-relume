@@ -456,6 +456,8 @@ export type SheetView = {
   /** Number of rows behind "Бүх үзүүлэлтийг харах". */
   total: number;
   picker: Picker;
+  /** "Өвлийн нөхцөлд" block (4.4): battery heating over the trims on the site; PTC cabin heater only when a value names it. */
+  winter: { heating: "yes" | "some" | "option" | "none" | "unknown"; ptc: boolean };
 };
 
 // ---------------------------------------------------------------- fixed key slots
@@ -657,8 +659,21 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
   const total = full.reduce((sum, group) => sum + group.rows.length, 0);
   return {
     configs: cols.map((i) => sheet.configs[i].name), compare, chips, optional, full, total,
-    picker: buildPicker(sheet, cols, fuel, slotSet)
+    picker: buildPicker(sheet, cols, fuel, slotSet),
+    winter: winterFacts(sheet, cols)
   };
+}
+
+/** Battery heating over the shown trims, and whether any shown value mentions a PTC heater (no field for it yet). */
+function winterFacts(sheet: SpecSheet, cols: number[]): SheetView["winter"] {
+  const marks = cols.map((i) => markOf(sheet.values.battery_heating?.[i] ?? ""));
+  const heating = marks.length && marks.every((m) => m === "●") ? "yes"
+    : marks.some((m) => m === "●") ? "some"
+    : marks.some((m) => m === "○") ? "option"
+    : marks.length && marks.every((m) => m === "–") ? "none"
+    : "unknown";
+  const texts = [...Object.values(sheet.values).flatMap((list) => cols.map((i) => list[i] ?? "")), ...sheet.extras.flatMap((row) => cols.map((i) => row.values[i] ?? ""))];
+  return { heating, ptc: texts.some((text) => /\bPTC\b/i.test(text)) };
 }
 
 function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined, slotSet: SlotSet): Picker {

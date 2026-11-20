@@ -592,6 +592,11 @@ main:has(.mnav) section[id], main:has(.mnav) #equipment { scroll-margin-top:calc
 .mkey .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 @media (max-width:640px) { .mkey__list { grid-template-columns:1fr; gap:16px; } }
 
+/* "Өвлийн нөхцөлд" (WinterSection, 4.4): the key-number list style, then a plain note. */
+.mwinter { display:grid; gap:32px; }
+.mwinter__list { max-width:760px; }
+.mwinter__note { max-width:68ch; margin:0; padding:16px 20px; border-left:3px solid #7fb2d9; border-radius:0 10px 10px 0; background:#f2f7fb; color:var(--color-text-secondary); font-size:15px; line-height:1.6; }
+
 /* "Бүх үзүүлэлтийг харах (N)" — the rest of the sheet, opened on demand. */
 .msheet__more > summary { display:inline-flex; align-items:center; gap:10px; min-height:52px; padding:0 24px; border:1px solid #c9d6cf; border-radius:12px; background:#fff; color:var(--color-text); font-weight:600; cursor:pointer; list-style:none; }
 .msheet__more > summary::-webkit-details-marker { display:none; }

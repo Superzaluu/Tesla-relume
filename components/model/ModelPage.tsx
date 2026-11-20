@@ -3,6 +3,7 @@ import { greenLoanHref, preorderHref } from "@/data/models";
 import type { SheetView } from "@/data/specSheet";
 import { SpecSheetSection } from "@/components/model/SpecSheetSection";
 import { ModelNav, type NavItem } from "@/components/model/ModelNav";
+import { WinterSection } from "@/components/model/WinterSection";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -136,6 +137,8 @@ export function ModelPage({ model, category, specView }: { model: Model; categor
       {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       <Gallery model={model} />
       {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} preorder={preorderHref(model.slug)} />}
+      {/* 4.4: models with their own winter section in code (EC75) keep it instead. */}
+      {specView && !own.has("winter") && <WinterSection winter={specView.winter} />}
       <EndCta model={model} />
       <section className="mnotes" aria-label="Тайлбар">
         <ol>{page.notes.map((note) => <li key={note}>{note}</li>)}</ol>
