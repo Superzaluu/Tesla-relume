@@ -20,7 +20,7 @@ export const principles = [
   { title: "Нэг ногоон өнгө", text: "Ruichi ногоон (#0f5a3a) нь бүх үйлдлийн товч, идэвхтэй төлөв, цэсийн өнгө. Бусад өнгө нь саарал, цагаан." },
   { title: "Зураг төвтэй", text: "Tesla.com-ийн бүтэц: бүтэн дэлгэцийн машины зураг, дээр нь цөөн үг, хоёр гол товч." },
   { title: "Нэг фонт", text: "Inter (кирилл, латин) — гарчиг, бичвэр, товч бүгдэд. Гарчиг 700, товч 600, бичвэр 400." },
-  { title: "Тайван хөдөлгөөн", text: "Богино, зөөлөн шилжилт (0.2–0.6 сек). Хөдөлгөөн багасгах тохиргоог хүндэтгэнэ." }
+  { title: "Тайван хөдөлгөөн", text: "Богино, зөөлөн шилжилт (0.2–0.6 сек), нэг муруй cubic-bezier(.2,.8,.2,1). Хөдөлгөөн багасгах тохиргоотой үед аяндаа явагдах хөдөлгөөн (autoplay, гүйлгэхэд гарч ирэх) зогсоно; хүн өөрөө хулгана аваачих, дарахад гарах жижиг хариу үлдэнэ." }
 ];
 
 export const colorGroups = [
@@ -64,7 +64,7 @@ export const spacingTokens = [
 export const radii = [
   { label: "--radius-button", value: "var(--radius-button)", use: "Товч" },
   { label: "--radius-card", value: "var(--radius-card)", use: "Карт, зураг" },
-  { label: "18px", value: "18px", use: "Загварын хуудасны том зураг" },
+  { label: "18px", value: "18px", use: "Загварын хуудасны том зураг, бүлгийн талбай" },
   { label: "999px", value: "999px", use: "Pill — хувилбар сонгогч" },
   { label: "50%", value: "50%", use: "Тойрог — сошиал icon" }
 ];
@@ -117,15 +117,17 @@ export const pageSections = [
     ["GalleryMosaic", "−30°C видео ба зургууд", "/#gallery"],
     ["TestDriveSection", "Туршилтын жолоодлогын маягт", "/#test-drive"]
   ] },
-  { page: "Загварын хуудас (ModelPage)", href: "/models/ec75/", items: [
-    ["Hero / Intro", "EC75, R5: бүтэн зураг · бусад: төвлөрсөн зураг", "/models/c5/"],
-    ["Stats", "4 гол үзүүлэлт + 2 товч", "/models/c5/"],
-    ["Feature", "Зураг + текст + баримтууд", "/models/ec75/#cargo-space"],
-    ["Cards slider", "Ажлын бүтэц, кабин", "/models/ec75/#interior"],
-    ["AdasTabs", "Жолоочийн туслах функц", "/models/ec75/#assist"],
-    ["Safety", "Аюулгүй байдлын карт + chip", "/models/ec75/#safety"],
-    ["SpecGroups", "Хувилбартай үзүүлэлт + харьцуулалт", "/models/r5/#specs"],
-    ["SpecTable", "Дэлгэрэнгүй техникийн хүснэгт", "/models/c5/#specs"]
+  { page: "Загварын хуудас (ModelPage)", href: "/models/c5/", items: [
+    ["Hero / Intro", "EC75, R5: бүтэн зураг · бусад: төвлөрсөн зураг · «Хэмнэлтийн тооцоолуур» (соронзон, гүйлгэхэд хулгана дагана)", "/models/c5/"],
+    ["QuickSpecs + QuickPeek", "Зургийн доод ирмэгийн 9 дүрс; хулгана аваачихад тухайн хэсгийн зурагтай карт", "/models/c5/"],
+    ["ModelNav", "Наалттай цэс: хүрээтэй pill товч, «Ногоон зээл», «Урьдчилсан захиалга», «Туршилтын жолоодлого»", "/models/c5/"],
+    ["ChapterView", "3 бүлэг (Ачаа · Хүч ба цэнэглэлт · Аюулгүй ба ухаалаг), ногоон манан талбай, 18px", "/models/c5/#cargo"],
+    ["Feature", "Зураг + текст + баримтууд (бүлэг дотор)", "/models/c5/#cargo-space"],
+    ["Cards slider", "Ажилд зориулсан бүтэц", "/models/c5/#work"],
+    ["SmartGrid", "Туслах систем, аюулгүй байдал, кабины карт нэг сүлжээнд, шүүлтүүртэй; ганцаардсан карт гаргахгүй", "/models/c5/#smart"],
+    ["WinterSection", "Өвлийн мэдээлэл + EC75-ын хүйтний бичлэг (бүлэг дотор)", "/models/c5/#winter"],
+    ["ConfigPicker", "Иж бүрдэл (сайн нь эхэнд) → тоноглолын чип ✓/○/– (дарахад тайлбар) → техникийн 4 карт", "/models/c5/#specs"],
+    ["SpecGroups", "EC75, R5-ын хувилбартай үзүүлэлт (хүснэгт ороогүй үед)", "/models/r5/#specs"]
   ] },
   { page: "Бусад", href: "/register/", items: [
     ["RegistrationForm", "Бонус бүртгэл", "/register/"],
@@ -139,9 +141,15 @@ export const motion = [
   { name: "Ангиллын dropdown", kind: "Macro", spec: "Хулгана/дарахад нээгдэнэ · гарахад 180ms хүлээж хаагдана · Esc", where: "SiteHeader" },
   { name: "Гүйдэг мессеж", kind: "Macro", spec: "4 мессеж · 16 сек давталт · баруунаас орж ирнэ", where: "EC75 hero" },
   { name: "Карт гүйлгэх", kind: "Macro", spec: "Сум дарахад нэг карт · scroll-snap", where: "Slider" },
-  { name: "Товч дээр хулгана", kind: "Micro", spec: "translateY(-1px) · сүүдэр томорно · 0.2s", where: ".btn" },
+  { name: "Гарч ирэх", kind: "Macro", spec: "Гүйлгэхэд 16px доороос, бүдгээс · 0.6s · нэг мөрөнд 70ms зөрүүтэй", where: "RevealOnScroll" },
+  { name: "Товч дээр хулгана", kind: "Micro", spec: "translateY(-1px) · Товч сүүдэр · 0.2s · дарахад ×0.97", where: ".btn, цэсний pill" },
+  { name: "Карт дээр хулгана", kind: "Micro", spec: "translateY(-4px) (техникийн карт, иж бүрдэл -2px) · Dropdown сүүдэр · 0.3s; зураг ×1.04 · 0.8s", where: ".mcard, .mgroup, .msimilar__card, .mpick__trim" },
+  { name: "Чип ✓ / – солигдох", kind: "Micro", spec: "Тэмдэг хагас хэмжээнээс томорно · 0.35s", where: "ConfigPicker" },
+  { name: "Утга өөрчлөгдөх", kind: "Micro", spec: "Иж бүрдэл солиход өөрчлөгдсөн мөр тод ногооны цайвар өнгөөр 1.6s гэрэлтэнэ", where: "ConfigPicker" },
+  { name: "Соронзон товч", kind: "Micro", spec: "90px дотор хулгана руу ≤14px татагдана · буцахдаа пүрш", where: "Magnetic (Хэмнэлтийн тооцоолуур)" },
+  { name: "Хулгана дагах товч", kind: "Micro", spec: "Hero-оос гарахад хулганаас 56px зайд дагана · хулгана ойртоход зогсоно · дарсны дараа алга", where: "FloatingSavings" },
+  { name: "Hero дүрсний карт", kind: "Micro", spec: "Хулгана аваачихад дээр нь зурагтай карт · 0.18s", where: "QuickPeek" },
   { name: "Хувилбар солих", kind: "Micro", spec: "Зураг, текст шууд солигдоно · URL #cargo / #passenger", where: "VariantToggle" },
   { name: "Видео poster", kind: "Micro", spec: "Дарахад зургийн оронд видео тоглоно", where: "VideoPoster" },
-  { name: "ADAS tab", kind: "Micro", spec: "Сонгосон функцын зураг opacity-оор солигдоно", where: "AdasTabs" },
-  { name: "Хөдөлгөөн багасгах", kind: "Дүрэм", spec: "prefers-reduced-motion үед autoplay, хөдөлгөөн зогсоно", where: "Бүх" }
+  { name: "Хөдөлгөөн багасгах", kind: "Дүрэм", spec: "prefers-reduced-motion үед autoplay, гарч ирэх хөдөлгөөн зогсоно; хулгана аваачих, дарах үеийн жижиг хариу үлдэнэ", where: "Бүх" }
 ];

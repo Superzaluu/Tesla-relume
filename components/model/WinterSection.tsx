@@ -16,10 +16,10 @@ const HEATING: Record<SheetView["winter"]["heating"], string> = {
   unknown: "—"
 };
 
-export function WinterSection({ winter }: { winter: SheetView["winter"] }) {
-  return (
-    <section className="section" id="winter">
-      <div className="container mwinter">
+/** `nested`: inside the «Хүч ба цэнэглэлт» chapter box (ChapterView) instead of a band of its own. */
+export function WinterSection({ winter, nested = false }: { winter: SheetView["winter"]; nested?: boolean }) {
+  const body = (
+      <div className={nested ? "mwinter" : "container mwinter"}>
         <div className="mwinter__text">
           <SectionTitle tagline="Өвөлд бэлэн" title="Өвлийн нөхцөлд" text="Монголын хүйтэнд ажиллах машинд анхаарах гол зүйлс." />
           {(winter.heating !== "unknown" || winter.ptc) && <ul className="mkey__list mwinter__list">
@@ -57,6 +57,8 @@ export function WinterSection({ winter }: { winter: SheetView["winter"] }) {
           <figcaption>EC75-ыг −30°C хүйтэнд, цас мөстэй замд туршсан бичлэг.</figcaption>
         </figure>
       </div>
-    </section>
   );
+  return nested
+    ? <div className="mchapter__part" id="winter">{body}</div>
+    : <section className="section" id="winter">{body}</section>;
 }

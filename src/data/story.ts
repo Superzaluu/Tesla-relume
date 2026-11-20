@@ -205,7 +205,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     val("tyres") && card("tyres", "Дугуй", val("tyres"))
   ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).slice(0, 4);
   if (workCards.length >= 3) {
-    sections.push({ tone: "tight", blocks: [
+    sections.push({ id: "work", tone: "tight", blocks: [
       { type: "title", title: "Ажилд зориулсан бүтэц", text: "Өдөр тутмын ажилд зориулсан хийц." },
       { type: "cards", items: workCards }
     ] });

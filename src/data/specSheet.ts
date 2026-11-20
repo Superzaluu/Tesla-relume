@@ -465,6 +465,11 @@ export function fromLegacy(rows: string[][]): SpecSheet {
 // ---------------------------------------------------------------- sheet → page
 
 /** `icon`: a key-number row (SpecIcon key; "drive" = the cell's own FWD/RWD/AWD icon), shown first in its group card. */
+/**
+ * One equipment chip: its mark per trim, and for the chip's explanation the full label, the hint and the
+ * words after the mark per trim ("● багажны самбарт" → "багажны самбарт"; a text field's whole value).
+ */
+export type EquipmentChip = { key: string; name: string; label: string; hint?: string; marks: string[]; notes: string[] };
 /** `mark`: an equipment row whose cells are ● / ○ / – (with an optional note), drawn as a check before the label. */
 export type CompareRow = { label: string; cells: string[]; hint?: string; icon?: string; href?: string; key?: string; mark?: boolean };
 export type ChipGroup = { heading: string; chips: string[] };
@@ -501,11 +506,12 @@ export type SheetView = {
   compare: CompareRow[];
   chips: ChipGroup[];
   optional: string[];
-  full: { heading: string; rows: CompareRow[] }[];
+  /** `part`: "core" groups are the spec cards; "equipment" groups show as chips, their text rows under the chips. */
+  full: { heading: string; part: Part; rows: CompareRow[] }[];
   /** Number of rows behind "Бүх үзүүлэлтийг харах". */
   total: number;
   /** Every equipment item by group with its mark per trim ("●" / "○" / "–"); differing items first. */
-  equipment: { heading: string; items: { key: string; name: string; marks: string[] }[] }[];
+  equipment: { heading: string; items: EquipmentChip[] }[];
   picker: Picker;
   /** "Өвлийн нөхцөлд" block (4.4): battery heating over the trims on the site; PTC cabin heater only when a value names it. */
   winter: { heating: "yes" | "some" | "option" | "none" | "unknown"; ptc: boolean };
@@ -732,7 +738,7 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
     }
     if (group.key === "battery") rows.push({ label: "Батерейн баталгаа", cells: cols.map(() => DEALER_WARRANTY), icon: "shield", href: "/warranty/" });
     // Stable sort: key rows first, each part keeps the sheet's order.
-    return { heading: group.label, rows: [...rows.filter((row) => row.icon), ...rows.filter((row) => !row.icon)] };
+    return { heading: group.label, part: group.part, rows: [...rows.filter((row) => row.icon), ...rows.filter((row) => !row.icon)] };
   }).filter((group) => group.rows.length);
 
   const total = full.reduce((sum, group) => sum + group.rows.length, 0);
@@ -756,12 +762,24 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
   // A few text fields name a feature people look for as a chip: the chip is ● where the value names it.
   const derived = fields.flatMap((field) => {
     const chip = CHIP_FROM_TEXT[field.key];
-    return chip ? [{ group: field.group, key: field.key, name: chip.name, marks: pick(field).map((value) => (chip.test.test(value) ? "●" : "–")) }] : [];
+    if (!chip) return [];
+    const values = pick(field);
+    const item: EquipmentChip = {
+      key: field.key, name: chip.name, label: field.label, hint: field.hint,
+      marks: values.map((value) => (chip.test.test(value) ? "●" : "–")), notes: values.map((value) => value.trim())
+    };
+    return [{ group: field.group, item }];
   });
   const equipment = groups.filter((group) => group.part === "equipment").map((group) => {
-    const items = fields.filter((field) => field.group === group.key && field.kind === "mark")
-      .map((field) => ({ key: field.key, name: chipName(field), marks: pick(field).map((value) => markOf(value) || "–") }))
-      .concat(derived.filter((item) => item.group === group.key).map(({ key, name, marks }) => ({ key, name, marks })))
+    const items: EquipmentChip[] = fields.filter((field) => field.group === group.key && field.kind === "mark")
+      .map((field): EquipmentChip => {
+        const values = pick(field);
+        return {
+          key: field.key, name: chipName(field), label: field.label, hint: field.hint,
+          marks: values.map((value) => markOf(value) || "–"), notes: values.map((value) => value.replace(/^\s*[●○–-]\s*/, "").trim())
+        };
+      })
+      .concat(derived.filter((entry) => entry.group === group.key).map((entry) => entry.item))
       .filter((item) => item.marks.some((mark) => mark === "●" || mark === "○"));
     const varies = (item: { marks: string[] }) => new Set(item.marks).size > 1;
     return { heading: group.label, items: [...items.filter(varies), ...items.filter((item) => !varies(item))] };

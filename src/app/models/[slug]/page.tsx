@@ -48,5 +48,5 @@ export default async function Page({ params }: Props) {
   // "Төстэй загварууд": up to four other cards from the same menu category.
   const [{ cards }, calc] = await Promise.all([getModelCards(), getCalculatorModel(slug)]);
   const similar = category ? cards.filter((card) => card.categoryId === category.id && card.slug !== slug).slice(0, 4) : [];
-  return <ModelPage model={model} category={category?.label} specView={specView} similar={similar} calc={calc} />;
+  return <ModelPage model={model} specView={specView} similar={similar} calc={calc} />;
 }

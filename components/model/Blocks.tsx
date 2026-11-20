@@ -152,6 +152,24 @@ function BlockView({ block }: { block: Block }) {
   }
 }
 
+/**
+ * A section inside a chapter (ChapterView): no page-wide band, padding or tone of its own; the chapter's tinted
+ * box holds it. Keeps its id so menu and hero-preview links still land on it.
+ */
+export function PartView({ section }: { section: Section }) {
+  const [only] = section.blocks;
+  const single = section.blocks.length === 1 && only.type === "feature" ? only : null;
+  return (
+    <div className="mchapter__part" id={section.id}>
+      {single ? (
+        <div className={`mfeature${single.reverse ? " mfeature--reverse" : ""}`}><FeatureContent block={single} /></div>
+      ) : (
+        section.blocks.map((block, i) => <BlockView block={block} key={i} />)
+      )}
+    </div>
+  );
+}
+
 const TONE = { tight: " section--tight", dark: " section--dark", surface: " section--surface" } as const;
 
 /** One page section. A lone feature block becomes the container itself, as in the original markup. */

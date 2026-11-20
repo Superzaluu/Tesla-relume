@@ -4,11 +4,16 @@
 // B′ (user's Figma, 2026-11-20): a "Туршилтын жолоодлого" button on the right opens the Cal.com calendar.
 import { useEffect, useState } from "react";
 import { calTestDrive } from "@/components/ui/CalTestDrive";
+import { LoadingLink } from "@/components/ui/LoadingLink";
 
 /** `href`: a link to another page (e.g. «Ногоон зээл») instead of a section of this one. */
 export type NavItem = { id: string; label: string; href?: string };
 
-export function ModelNav({ items }: { items: NavItem[] }) {
+/**
+ * `preorder`: "Урьдчилсан захиалга" right after «Ногоон зээл» (user, 2026-11-20), a green button in the sticky
+ * menu so the order is one click away from anywhere on the page; it moved here from the hero.
+ */
+export function ModelNav({ items, preorder }: { items: NavItem[]; preorder?: string }) {
   const [current, setCurrent] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
@@ -38,6 +43,11 @@ export function ModelNav({ items }: { items: NavItem[] }) {
                 : <a href={`#${item.id}`} aria-current={item.id === current ? "true" : undefined} onClick={() => setCurrent(item.id)}>{item.label}</a>}
             </li>
           ))}
+          {preorder && (
+            <li className="mnav__preorder">
+              <LoadingLink className="btn btn--primary" href={preorder}>Урьдчилсан захиалга</LoadingLink>
+            </li>
+          )}
         </ul>
         <button type="button" className="btn btn--primary mnav__cta" {...calTestDrive}>Туршилтын жолоодлого</button>
       </div>

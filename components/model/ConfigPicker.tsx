@@ -1,11 +1,12 @@
 "use client";
-// "Техникийн үзүүлэлт" body, B′ layout (user's Figma, 2026-11-20): trim cards with price (best trim first) →
-// all equipment by group, marked for the chosen trim → every spec group as a card, its key numbers first with an icon.
+// "Техникийн үзүүлэлт" body (user, 2026-11-20, variant B of the tidy pass): trim cards with price (best trim
+// first) → all equipment as chips by group, marked for the chosen trim, with the explanation under a chip on
+// click → the technical groups as cards of equal height, key numbers first with an icon.
 // Everything below the trim cards follows the chosen trim (and cab / body when the model has several).
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useState } from "react";
 import { SpecIcon } from "@/components/model/SpecIcon";
 import { useVariant } from "@/components/model/Variant";
-import { bodyLabel, bodyParts, markOf, type SheetView } from "@/data/specSheet";
+import { bodyLabel, bodyParts, markOf, type EquipmentChip, type SheetView } from "@/data/specSheet";
 
 const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
 /** Rows a spec card shows before its own "Бүгдийг харах". */
@@ -96,23 +97,43 @@ function SpecCard({ heading, rows, col, from }: { heading: string; rows: Row[]; 
 }
 
 /**
- * Equipment chip → its row in the spec cards below, where the hint explains it (user, 2026-11-20). Opens the
- * card's "Бүгдийг харах" when the row is folded away, centres the row and flashes it once.
+ * An equipment group as shown under «Тоноглол» (variant B, user, 2026-11-20): its chips, and its text rows
+ * (screen size, airbags, tyres…) as one small line under them. The equipment spec cards that repeated the
+ * chips are gone; a group with only text rows (colours) still shows its line.
  */
-function showSpecRow(event: MouseEvent<HTMLAnchorElement>, key: string) {
-  const row = document.getElementById(`spec-${key}`);
-  if (!row) return;
-  event.preventDefault();
-  const folded = row.closest("details");
-  if (folded) folded.open = true;
-  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  row.scrollIntoView({ block: "center", behavior: smooth ? "smooth" : "auto" });
-  row.classList.remove("is-target");
-  void row.offsetWidth;
-  row.classList.add("is-target");
-  window.setTimeout(() => row.classList.remove("is-target"), 2200);
-  // No history.replaceState here: Next's router answers it with a re-render that closed the card again.
+type EquipmentBlock = { heading: string; chips: EquipmentChip[]; texts: Row[] };
+
+function equipmentBlocks(view: SheetView): EquipmentBlock[] {
+  return view.full.filter((group) => group.part === "equipment").map((group) => ({
+    heading: group.heading,
+    chips: view.equipment.find((item) => item.heading === group.heading)?.items ?? [],
+    texts: group.rows.filter((row) => !row.mark && !CHIP_TEXT_KEYS.has(row.key ?? ""))
+  })).filter((block) => block.chips.length + block.texts.length > 0);
 }
+/** Text fields that already have a chip (EPB, USB / Type-C): their value is in the chip's explanation. */
+const CHIP_TEXT_KEYS = new Set(["parking_brake", "usb"]);
+
+/**
+ * Groups in two columns: the largest (chips + text rows) go to the wider left column until it holds about
+ * half, the smaller ones stack on the right, so rows of chips line up in long, even blocks.
+ */
+function equipmentColumns(blocks: EquipmentBlock[]): [EquipmentBlock[], EquipmentBlock[]] {
+  const size = (block: EquipmentBlock) => block.chips.length + block.texts.length;
+  const sorted = [...blocks].sort((a, b) => size(b) - size(a));
+  const total = sorted.reduce((sum, block) => sum + size(block), 0);
+  const left: EquipmentBlock[] = [], right: EquipmentBlock[] = [];
+  let leftCount = 0;
+  for (const block of sorted) {
+    if (left.length === 0 || leftCount < total / 2) { left.push(block); leftCount += size(block); }
+    else right.push(block);
+  }
+  return [left, right];
+}
+
+/** Text rows a group shows under its chips before "Дэлгэрэнгүй". */
+const TEXT_ROWS = 4;
+
+const MARK_TEXT: Record<string, string> ={ "●": "Энэ иж бүрдэлд стандартаар", "○": "Нэмэлт сонголтоор" };
 
 /**
  * EC75 / R5 keep cargo and passenger trims in one sheet, named «Ачааны · …» / «Зорчигчийн · …» (migration 0014).
@@ -154,6 +175,9 @@ export function ConfigPicker({ view }: { view: SheetView }) {
 
   const many = trims.length > 1;
   const col = option.col;
+  const blocks = equipmentBlocks(view);
+  /** The chip whose explanation is open (one at a time). */
+  const [openKey, setOpenKey] = useState<string | null>(null);
 
   return (
     <div className="mpick">
@@ -180,13 +204,13 @@ export function ConfigPicker({ view }: { view: SheetView }) {
         </div>
       )}
 
-      {/* 2. Equipment (user, 2026-11-20): every item any trim has, by group with a count. Items stay in place
-          when the trim changes; only their state flips: ✓ green = in this trim, ○ = optional extra, – white =
-          not in this trim. Items that differ between trims come first in each group. */}
-      {view.equipment.length > 0 && (
+      {/* 2. Equipment (above the technical cards since 2026-11-20, user): every item any trim has, by group with a count; ✓ green = in this trim, ○ = optional,
+          – white = not in this trim. A chip opens its explanation under the group; the group's text rows
+          follow as one line. Items that differ between trims come first in each group. */}
+      {blocks.length > 0 && (
         <div id="equipment" className="mpick__std">
           <div className="mequip__head">
-            <h3 className="h5">Тоноглол</h3>
+            <h3 className="h3 mpick__specs-title">Тоноглол</h3>
             {many && (
               <p className="mequip__legend">
                 <span><i className="is-on" aria-hidden="true" />Энэ иж бүрдэлд</span>
@@ -195,55 +219,97 @@ export function ConfigPicker({ view }: { view: SheetView }) {
               </p>
             )}
           </div>
+          <p className="mpick__specs-sub">Чип дээр дарж тайлбарыг нь үзнэ.</p>
           <div className="mequip">
-            {view.equipment.map((group) => {
-              const on = group.items.filter((item) => item.marks[col] === "●").length;
-              return (
-                <div className="mequip__group" key={group.heading}>
-                  <h4 className="mequip__title">
-                    {group.heading}
-                    <span className="mequip__count" aria-label={`${group.items.length}-аас ${on}`}>
-                      {on}/{group.items.length}
-                      <span className="mequip__bar" aria-hidden="true"><i style={{ width: `${(on / group.items.length) * 100}%` }} /></span>
-                    </span>
-                  </h4>
-                  <ul className="mpick__chips mequip__chips">
-                    {group.items.map((item) => {
-                      const mark = item.marks[col];
-                      const state = mark === "●" ? "is-on" : mark === "○" ? "is-option" : "is-off";
-                      const flipped = from !== null && item.marks[from] !== mark;
-                      return (
-                        <li
-                          key={flipped ? `${item.name}-${col}` : item.name}
-                          className={`${state}${flipped ? " is-flipped" : ""}`}
-                        >
-                          <a
-                            href={`#spec-${item.key}`}
-                            onClick={(event) => showSpecRow(event, item.key)}
-                            aria-label={`${item.name}: ${mark === "●" ? "стандарт" : mark === "○" ? "нэмэлт сонголтоор" : "байхгүй"}. Тайлбар руу очих`}
-                          >
-                            {item.name}
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              );
-            })}
+            {equipmentColumns(blocks).map((column, c) => (
+              <div className="mequip__col" key={c}>
+                {column.map((block) => {
+                  const on = block.chips.filter((item) => item.marks[col] === "●").length;
+                  const openChip = block.chips.find((item) => item.key === openKey);
+                  const texts = block.texts.filter((row) => row.cells[col]);
+                  return (
+                    <div className="mequip__group" key={block.heading}>
+                      <h4 className="mequip__title">
+                        {block.heading}
+                        {block.chips.length > 0 && (
+                          <span className="mequip__count" aria-label={`${block.chips.length}-аас ${on}`}>
+                            {on}/{block.chips.length}
+                            <span className="mequip__bar" aria-hidden="true"><i style={{ width: `${(on / block.chips.length) * 100}%` }} /></span>
+                          </span>
+                        )}
+                      </h4>
+                      {block.chips.length > 0 && (
+                        <ul className="mpick__chips mequip__chips">
+                          {block.chips.map((item) => {
+                            const mark = item.marks[col];
+                            const state = mark === "●" ? "is-on" : mark === "○" ? "is-option" : "is-off";
+                            const flipped = from !== null && item.marks[from] !== mark;
+                            return (
+                              <li key={flipped ? `${item.key}-${col}` : item.key} className={`${state}${flipped ? " is-flipped" : ""}${openKey === item.key ? " is-open" : ""}`}>
+                                <button
+                                  type="button" aria-expanded={openKey === item.key} aria-controls={`chip-note-${item.key}`}
+                                  aria-label={`${item.name}: ${MARK_TEXT[mark] ?? "байхгүй"}. Тайлбар`}
+                                  onClick={() => setOpenKey(openKey === item.key ? null : item.key)}
+                                >
+                                  {item.name}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                      {openChip && (
+                        <div className="mequip__note" id={`chip-note-${openChip.key}`} role="region" aria-label={openChip.name}>
+                          <MarkCheck cell={openChip.marks[col]} />
+                          <div>
+                            <b>{openChip.label}</b>
+                            <span className="mequip__note-state">
+                              {MARK_TEXT[openChip.marks[col]] ?? "Энэ иж бүрдэлд байхгүй"}
+                              {openChip.notes[col] && openChip.notes[col] !== openChip.marks[col] ? ` · ${openChip.notes[col]}` : ""}
+                            </span>
+                            {openChip.hint && <p>{openChip.hint}</p>}
+                          </div>
+                          <button type="button" className="mequip__note-close" aria-label="Хаах" onClick={() => setOpenKey(null)}>×</button>
+                        </div>
+                      )}
+                      {texts.length > 0 && (() => {
+                        const line = (row: Row) => {
+                          const changed = from !== null && (row.cells[from] ?? "") !== row.cells[col];
+                          return (
+                            <span key={changed ? `${row.label}-${col}` : row.label} className={changed ? "is-changed" : undefined}>
+                              {row.label.replace(/\s*\([^)]*\)\s*$/, "")}: <b><Value value={row.cells[col]} /></b>
+                            </span>
+                          );
+                        };
+                        // The first TEXT_ROWS show; a long list (the cabin has ~16) folds behind "Дэлгэрэнгүй".
+                        return (
+                          <>
+                            <p className="mequip__texts">{texts.slice(0, TEXT_ROWS).map(line)}</p>
+                            {texts.length > TEXT_ROWS && (
+                              <details className="mequip__more">
+                                <summary>Дэлгэрэнгүй (+{texts.length - TEXT_ROWS})</summary>
+                                <p className="mequip__texts">{texts.slice(TEXT_ROWS).map(line)}</p>
+                              </details>
+                            )}
+                          </>
+                        );
+                      })()}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* 3. Battery choices, then every spec group as a card; the key numbers are the icon rows at the top of
-          each card (the separate key-number list repeated them; user, 2026-11-20). */}
+      {/* 3. Technical groups (general, size, motor, battery, extender) as cards of equal height in one row;
+          the key numbers are the icon rows at the top of each card. */}
       <div className="mpick__specs">
         <h3 className="h3 mpick__specs-title">Техник үзүүлэлт</h3>
         <p className="mpick__specs-sub">
           {option.name}{body && bodies.length > 1 ? ` · ${bodyLabel(body)}` : ""}
-          <span className="mcheck-legend"><span className="mcheck is-on" aria-hidden="true" />стандарт</span>
-          <span className="mcheck-legend"><span className="mcheck is-option" aria-hidden="true" />нэмэлт сонголтоор</span>
-          <span className="mcheck-legend"><span className="mcheck is-off" aria-hidden="true" />байхгүй</span>
+          {many && " · Иж бүрдэл солиход өөрчлөгдсөн утга шараар гэрэлтэнэ."}
         </p>
 
         {cards.length > 0 && (
@@ -260,8 +326,8 @@ export function ConfigPicker({ view }: { view: SheetView }) {
           </div>
         )}
 
-        <div className="mgroups">
-          {view.full.map((group) => <SpecCard key={group.heading} heading={group.heading} rows={group.rows} col={col} from={from} />)}
+        <div className="mgroups mgroups--core">
+          {view.full.filter((group) => group.part === "core").map((group) => <SpecCard key={group.heading} heading={group.heading} rows={group.rows} col={col} from={from} />)}
         </div>
       </div>
     </div>

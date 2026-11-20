@@ -108,13 +108,13 @@ export function FloatingSavings({ calc }: { calc?: CalcModel }) {
   // Mouse: the floating button follows the pointer at a middle distance (user, 2026-11-20: "not close, not
   // far"), below-right of it, flipping sides near the window edges, with a soft lag. When the pointer heads
   // for the button it stops and waits, so it can be caught and clicked; it follows again once the pointer
-  // has moved well away. Touch screens and reduced motion keep it in the bottom-right corner.
+  // has moved well away. It follows whenever a real mouse moves, whatever the browser reports about hover,
+  // pointer type or reduced motion (user, 2026-11-20: it sat still on a Windows laptop that reports one of
+  // those); with no mouse (touch screens) it waits in the bottom-right corner.
   const float = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const box = float.current;
     if (!floating || !box) return;
-    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const GAP = 56, EDGE = 12, CATCH = 44, RELEASE = 170, EASE = 0.12;
     const size = () => ({ w: box.offsetWidth, h: box.offsetHeight });
     const target = (p: { x: number; y: number }) => {

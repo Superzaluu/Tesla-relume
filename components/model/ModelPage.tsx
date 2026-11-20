@@ -5,12 +5,12 @@ import type { SheetView } from "@/data/specSheet";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { SpecSheetSection } from "@/components/model/SpecSheetSection";
 import { ModelNav, type NavItem } from "@/components/model/ModelNav";
-import { WinterSection } from "@/components/model/WinterSection";
+import { ChapterView, groupChapters } from "@/components/model/Chapters";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { FloatingSavings } from "@/components/model/FloatingSavings";
+import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
-import { LoadingLink } from "@/components/ui/LoadingLink";
 import { SectionView } from "@/components/model/Blocks";
 import { Picture, T } from "@/components/model/VariantValues";
 import { VariantProvider, VariantSection, VariantToggle } from "@/components/model/Variant";
@@ -19,18 +19,21 @@ import { VariantProvider, VariantSection, VariantToggle } from "@/components/mod
 // has them, so EC75/R5 (variants, ADAS, charging...) and the simpler catalog
 // models share this code.
 
-function Hero({ model, category }: { model: Model; category?: string }) {
-  const { hero, tagline } = model.page;
+// «Хэмнэлтийн тооцоолуур» sits next to "Урьдчилсан захиалга" (Gestalt variant A, Proximity; user, 2026-11-20):
+// the two actions read as one choice instead of the calculator alone on a white band under the menu.
+function Hero({ model, calc }: { model: Model; calc?: CalcModel }) {
+  const { hero } = model.page;
   if (hero.kind === "intro") {
     return (
       <section className="mintro">
         <div className="mintro__text">
-          {category && <p className="tagline">{category}</p>}
+          {/* The category line above the name and the one-sentence tagline under the descriptor were removed
+              (user, 2026-11-20): name + descriptor + button only. */}
           <h1 className="mintro__title">{model.name}</h1>
           <p className="mintro__desc">{model.desc}</p>
-          {tagline && <p className="mintro__tagline">{tagline}</p>}
+          {/* "Урьдчилсан захиалга" moved into the sticky menu next to «Ногоон зээл» (user, 2026-11-20). */}
           <div className="actions mintro__actions">
-            <LoadingLink className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</LoadingLink>
+            <FloatingSavings calc={calc} />
           </div>
         </div>
         <div className="mintro__hero-frame">
@@ -52,28 +55,12 @@ function Hero({ model, category }: { model: Model; category?: string }) {
         <p className="hero__subtitle"><T v={hero.subtitle} /></p>
         {model.page.variants && <VariantToggle onPhoto />}
         <div className="actions mhero__actions">
-          <LoadingLink className="btn btn--primary btn--wide" href={preorderHref(model.slug)}>Урьдчилсан захиалга</LoadingLink>
+          <FloatingSavings calc={calc} />
         </div>
       </div>
       <Picture image={hero.image} className="hero__bg" eager />
       {model.quick && <QuickSpecs specs={model.quick} peeks={model.page.peeks} />}
     </VariantSection>
-  );
-}
-
-/**
- * Action bar under the hero: «Хэмнэлтийн тооцоолуур» only. "Урьдчилсан захиалга" is in the hero just above;
- * «Ногоон зээл» moved into the in-page menu (user, 2026-11-20).
- */
-function ActionBar({ calc }: { calc?: CalcModel }) {
-  return (
-    <section className="mstats mstats--actions" id="finance" aria-label="Хэмнэлтийн тооцоолуур">
-      <div className="mstats__inner">
-        <div className="actions mstats__actions">
-          <FloatingSavings calc={calc} />
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -123,8 +110,8 @@ function Similar({ cards }: { cards: ModelCardData[] }) {
   );
 }
 
-export function ModelPage({ model, category, specView, similar = [], calc }: {
-  model: Model; category?: string; specView?: SheetView | null; similar?: ModelCardData[];
+export function ModelPage({ model, specView, similar = [], calc }: {
+  model: Model; specView?: SheetView | null; similar?: ModelCardData[];
   /** This model's savings-calculator entry (also for a model not in the menu). */
   calc?: CalcModel;
 }) {
@@ -132,34 +119,28 @@ export function ModelPage({ model, category, specView, similar = [], calc }: {
   const preload = page.hero.kind === "photo" && typeof page.hero.image.src === "object"
     ? [page.hero.image.src.cargo, page.hero.image.src.passenger] : undefined;
 
-  // In-page menu (4.1): only the sections this model has. EC75 / R5 have hand-made sections in code
-  // ("specs", and "assist" / "safety" for the equipment) instead of the spec sheet.
-  const own = new Set((page.sections ?? []).map((section) => section.id).filter(Boolean));
-  // "equipment" is the chosen trim's standard-equipment chips inside the spec section (ConfigPicker).
-  const hasEquipment = page.specTable !== undefined && Boolean(specView?.picker.options.some((option) => option.standard.length > 0));
-  const equipmentId = hasEquipment ? "equipment" : own.has("assist") ? "assist" : own.has("safety") ? "safety" : undefined;
-  const showWinter = Boolean(specView) && !own.has("winter");
+  // Picture sections grouped into chapters (Gestalt variant A); the sheet's winter block joins «Хүч ба цэнэглэлт».
+  const { chapters, rest } = groupChapters(page.sections ?? [], specView?.winter);
+  const hasSpecs = page.specTable !== undefined || rest.some((section) => section.id === "specs");
+  // In-page menu: the chapters by name, then the trims / specs and the gallery (user, 2026-11-20). "Тойм" is
+  // "Эхлэл"; «Ногоон зээл» opens its own page. Equipment and winter live inside «Иж бүрдэл» / «Хүч ба цэнэглэлт».
   const nav: NavItem[] = [
-    // "Тойм" → "Эхлэл", and «Ногоон зээл» (its own page) instead of "Санхүүжилт" (user, 2026-11-20).
     { id: "overview", label: "Эхлэл" },
-    ...(page.specTable !== undefined || own.has("specs") ? [{ id: "specs", label: "Үзүүлэлт" }] : []),
-    ...(equipmentId ? [{ id: equipmentId, label: "Тоноглол" }] : []),
+    ...chapters.map((chapter) => ({ id: chapter.id, label: chapter.label })),
+    ...(hasSpecs ? [{ id: "specs", label: "Иж бүрдэл" }] : []),
     ...((page.gallery ?? []).length > 0 ? [{ id: "gallery", label: "Зураг" }] : []),
-    ...(showWinter || own.has("winter") ? [{ id: "winter", label: "Өвлийн нөхцөлд" }] : []),
     { id: "green-loan", label: "Ногоон зээл", href: greenLoanHref(model.slug) }
   ];
 
   const content = (
     <main id="overview">
-      <Hero model={model} category={category} />
-      <ModelNav items={nav} />
-      <ActionBar calc={calc} />
-      {page.sections?.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
+      <Hero model={model} calc={calc} />
+      <ModelNav items={nav} preorder={preorderHref(model.slug)} />
+      <RevealOnScroll />
+      {chapters.map((chapter) => <ChapterView chapter={chapter} key={chapter.id} />)}
+      {rest.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} />}
-      {/* B′ menu order: Үзүүлэлт → Тоноглол → Зураг → Өвлийн нөхцөлд. */}
       <Gallery model={model} />
-      {/* 4.4: models with their own winter section in code (EC75) keep it instead. */}
-      {showWinter && <WinterSection winter={specView!.winter} />}
       <Similar cards={similar} />
       {/* The closing «Туршаад үзэх үү?» block was removed (user, 2026-11-20): "Урьдчилсан захиалга" is in the
           hero and «Ногоон зээл» in the bar under it. */}
