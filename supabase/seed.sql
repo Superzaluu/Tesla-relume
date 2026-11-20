@@ -32,11 +32,11 @@ insert into public.models (slug, name, description, quick_type, quick_label, dri
   ('c5-drone', 'C5 Дрон', 'Дроны явуулын цэнэглэх станц', 'flatbed4', 'Дроны үйлчилгээ', 'FWD', null, '5990 x 1880 x 2030 мм', '1200 км', '2–4 хаалга', null, 'AC/DC - 30 мин', '2–5 суудал', '2–2.5 т', '1,499 cc');
 
 insert into public.model_stats (model_slug, sort, variant, value, unit, label, note) values
-  ('ec75', 0, null, '420', 'км', 'Туулах зай (CLTC)', 1),
+  ('ec75', 0, null, '401–403', 'км', 'Туулах зай (CLTC)', 1),
   ('ec75', 1, null, '18', 'мин', 'Хурдан цэнэглэлт 20–80%', null),
-  ('ec75', 2, null, '130', 'кВт', 'Моторын оргил чадал', null),
+  ('ec75', 2, null, '70–100', 'кВт', 'Моторын оргил чадал', null),
   ('ec75', 3, 'cargo', '7.7', 'м³', 'Ачааны багтаамж', null),
-  ('ec75', 3, 'passenger', '6–14', 'суудал', 'Суудлын сонголт', null),
+  ('ec75', 3, 'passenger', '6–9', 'суудал', 'Суудлын тоо', null),
   ('r5', 0, 'cargo', '401', 'км хүртэл', 'Туулах зай (CLTC)', 1),
   ('r5', 0, 'passenger', '403', 'км хүртэл', 'Туулах зай (CLTC)', 1),
   ('r5', 1, null, '18', 'мин', 'Хурдан цэнэглэлт 20–80%', null),
@@ -60,8 +60,8 @@ insert into public.model_stats (model_slug, sort, variant, value, unit, label, n
   ('r5pro-cargo', 1, null, '61.94', 'кВт·ц хүртэл', 'Батерейн багтаамж', null),
   ('r5pro-cargo', 2, null, '130', 'кВт', 'Моторын оргил чадал', null),
   ('r5pro-cargo', 3, null, '7.7', 'м³', 'Ачааны багтаамж', null),
-  ('ec35', 0, null, '274', 'км', 'Туулах зай (CLTC)', null),
-  ('ec35', 1, null, '38.64', 'кВт·ц', 'Батерейн багтаамж', null),
+  ('ec35', 0, null, '282', 'км', 'Туулах зай (CLTC)', null),
+  ('ec35', 1, null, '38.4', 'кВт·ц', 'Батерейн багтаамж', null),
   ('ec35', 2, null, '60', 'кВт', 'Моторын оргил чадал', null),
   ('ec35', 3, null, '5.3', 'м³', 'Ачааны багтаамж', null),
   ('ec31', 0, null, '275', 'км', 'Туулах зай (CLTC)', null),

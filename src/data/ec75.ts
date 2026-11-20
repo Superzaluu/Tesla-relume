@@ -8,8 +8,9 @@ export const ec75: Model = {
   slug: "ec75",
   name: "EC75",
   desc: "Цахилгаан фургон",
-  // Checked against Google Sheet «Ruichi specs» EC75 P / EC75 C, 61.94 kWh columns (2026-11-15).
-  quick: { type: "van", label: "Фургон", size: "5130 x 1860 x 2020 мм", range: "415–420 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 18 мин", seats: "2 суудал", seatsPassenger: "6–14 суудал", payload: "1,500–2,000 кг" },
+  // EC75 (not Pro), rc-ev.com EC75HYB / EC75KYB, 58.24 kWh trims (2026-11-20). Until then this page showed the
+  // EC75 Pro figures (61.94 kWh, 130 kW); EC75 Pro has its own pages (ec75pro-cargo / ec75pro-passenger).
+  quick: { type: "van", label: "Фургон", size: "5130 x 1860 x 2020 мм", range: "401–403 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 18 мин", seats: "2 суудал", seatsPassenger: "6–9 суудал", payload: "1,500–2,000 кг" },
   page: {
     pageTitle: "Цахилгаан фургон",
     variants: true,
@@ -23,10 +24,10 @@ export const ec75: Model = {
       }
     },
     stats: [
-      { value: { cargo: "420", passenger: "415" }, unit: "км", label: "Туулах зай (CLTC)", note: 1 },
+      { value: { cargo: "401", passenger: "403" }, unit: "км", label: "Туулах зай (CLTC)", note: 1 },
       { value: "18", unit: "мин", label: "Хурдан цэнэглэлт 20–80%" },
-      { value: "130", unit: "кВт", label: "Моторын оргил чадал" },
-      { value: { cargo: "7.7", passenger: "6–14" }, unit: { cargo: "м³", passenger: "суудал" }, label: { cargo: "Ачааны багтаамж", passenger: "Суудлын сонголт" } }
+      { value: { cargo: "70", passenger: "100" }, unit: "кВт", label: "Моторын оргил чадал" },
+      { value: { cargo: "7.7", passenger: "6–9" }, unit: { cargo: "м³", passenger: "суудал" }, label: { cargo: "Ачааны багтаамж", passenger: "Суудлын тоо" } }
     ],
     statsSecondary: "test-drive",
     sections: [
@@ -42,14 +43,20 @@ export const ec75: Model = {
           card("rear-doors.jpg", 533, "180° арын хаалга", "Арын хаалга бүрэн нээгдэж, ачааны тасалгаа руу шууд хандана.", "EC75-ын онгорхой арын хаалга"),
           card("side-door.jpg", 533, "Хоёр талын гүйдэг хаалга", "Явган хүний зам, нарийн гудамжинд ч хажуугаас нь ачаална.", "EC75-ын онгорхой хажуугийн гүйдэг хаалга"),
           card("cargo-floor.jpg", 533, "Бэхэлгээний цагираг", "PVC шал, ханан дээрх цагирагт ачаагаа найдвартай бэхэлнэ.", "Ачааны тасалгааны шал ба бэхэлгээний цагираг"),
-          card("passenger-seats.jpg", 480, "Зорчигчийн хувилбар", "6, 9, 11 эсвэл 14 суудлын сонголттой.", "EC75 зорчигчийн хувилбарын суудлын байрлал")
+          card("passenger-seats.jpg", 480, "Зорчигчийн хувилбар", "6 эсвэл 9 суудлын сонголттой.", "EC75 зорчигчийн хувилбарын суудлын байрлал")
         ] }
       ] },
       { id: "battery", tone: "dark", blocks: [{
         type: "feature", reverse: true, image: img("battery.jpg", 800, 480, "EC75-ын зайны багц"),
         tagline: "Хүч ба зай", title: "Өдөржин ажиллах хүч",
-        text: "61.94 кВт·ц багтаамжтай, шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей. Урд байрлалтай 130 кВт-ын байнгын соронзон синхрон мотор урд дугуйг хөтөлнө.",
-        facts: [{ label: "Зайны багтаамж", value: "61.94 кВт·ц" }, { label: "Эргэх момент", value: "240 Н·м" }, { label: "Дээд хурд", value: "100 км/ц" }]
+        text: {
+          cargo: "58.24 кВт·ц багтаамжтай, шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей. Урд байрлалтай 70 кВт-ын байнгын соронзон синхрон мотор урд дугуйг хөтөлнө.",
+          passenger: "58.24 кВт·ц багтаамжтай, шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей. Урд байрлалтай 100 кВт-ын байнгын соронзон синхрон мотор урд дугуйг хөтөлнө."
+        },
+        facts: {
+          cargo: [{ label: "Батерейн багтаамж", value: "58.24 кВт·ц" }, { label: "Эргэх момент", value: "230 Н·м" }, { label: "Дээд хурд", value: "90 км/ц" }],
+          passenger: [{ label: "Батерейн багтаамж", value: "58.24 кВт·ц" }, { label: "Эргэх момент", value: "240 Н·м" }, { label: "Дээд хурд", value: "100 км/ц" }]
+        }
       }] },
       { id: "charging", blocks: [
         { type: "title", tagline: "Цэнэглэлт", title: "Хурдан, хаана ч цэнэглэнэ" },
@@ -106,25 +113,25 @@ export const ec75: Model = {
             { label: "Урт × өргөн × өндөр", value: "5,130 × 1,860 × 2,020 мм" },
             { label: "Тэнхлэг хоорондын зай", value: "3,200 мм" },
             { label: "Урд / хойд дугуй хоорондын зай", value: "1,624 / 1,624 мм" },
-            { label: { cargo: "Ачааны тасалгаа", passenger: "Суудал" }, value: { cargo: "3,025 × 1,750 × 1,455 мм · 7.7 м³", passenger: "6 (2+2+2) · 9 · 11 · 14" } }
+            { label: { cargo: "Ачааны тасалгаа", passenger: "Суудал" }, value: { cargo: "3,025 × 1,750 × 1,455 мм · 7.7 м³", passenger: "6 (2+2+2) · 9 (2+2+2+3)" } }
           ] },
-          { heading: "Хүч", rows: [
+          { heading: "Мотор", rows: [
             { label: "Мотор", value: "Байнгын соронзон синхрон, урд" },
-            { label: "Хүч / эргэх момент", value: "130 кВт / 240 Н·м" },
-            { label: "Хөтлөгч", value: "Урд дугуйгаар" },
-            { label: "Дээд хурд", value: "100 км/ц" }
+            { label: "Оргил чадал / эргэх момент", value: { cargo: "70 кВт / 230 Н·м", passenger: "100 кВт / 240 Н·м" } },
+            { label: "Хөтлөгч", value: "Урд дугуйн хөтлөгч (FWD)" },
+            { label: "Дээд хурд", value: { cargo: "90 км/ц", passenger: "100 км/ц" } }
           ] },
           { heading: "Батерей ба цэнэглэлт", rows: [
-            { label: "Зай", value: "61.94 кВт·ц LFP (CALB), шингэн хөргөлт" },
-            { label: "Туулах зай (CLTC)", value: { cargo: "420 км", passenger: "415 км" }, note: 1 },
+            { label: "Батерей", value: "58.24 кВт·ц LFP, шингэн хөргөлт" },
+            { label: "Туулах зай (CLTC)", value: { cargo: "401 км", passenger: "403 км" }, note: 1 },
             { label: "Хурдан цэнэглэлт 20–80%", value: "18 мин" },
             { label: "Удаан цэнэглэлт", value: "6.6 кВт · ойролцоогоор 8 цаг" }
           ] },
           { heading: "Явах эд анги", rows: CHASSIS() }
         ],
-        // Pioneer I Supercharger has no standard rear camera, so it is not sold (dealer rule): one trim is left.
+        // Shown only until EC75's sheet (migration 0014) is in Supabase; then the spec section replaces this block.
         compare: {
-          title: "Иж бүрдлийн тоноглол", columns: ["Тоноглол", "Pioneer I Smart Driving"],
+          title: "Иж бүрдлийн тоноглол", columns: ["Тоноглол", "Smart Supercharge Pioneer I"],
           rows: [
             { head: "Багажны самбар", cells: [{ text: "8.8\" LCD" }] },
             { head: "Аудио", cells: [{ text: "Bluetooth, MP3" }] },

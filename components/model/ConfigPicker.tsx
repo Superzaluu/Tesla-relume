@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { SpecIcon } from "@/components/model/SpecIcon";
 import { LoadingLink } from "@/components/ui/LoadingLink";
 import { calTestDrive } from "@/components/ui/CalTestDrive";
+import { useVariant } from "@/components/model/Variant";
 import { bodyLabel, bodyParts, type SheetView } from "@/data/specSheet";
 
 const money = (n: number) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ₮`;
@@ -64,11 +65,26 @@ function SpecCard({ heading, rows, col }: { heading: string; rows: Row[]; col: n
   );
 }
 
+/**
+ * EC75 / R5 keep cargo and passenger trims in one sheet, named «Ачааны · …» / «Зорчигчийн · …» (migration 0014).
+ * The page shows the side picked in the hero switch (VariantProvider) and the names without the prefix.
+ */
+const SIDE = { cargo: "Ачааны · ", passenger: "Зорчигчийн · " } as const;
+
 export function ConfigPicker({ view, model, preorder }: { view: SheetView; model: string; preorder: string }) {
-  const { trims, cabins, bodies, options, cards } = view.picker;
+  const variant = useVariant();
+  const sided = view.picker.options.some((option) => option.name.startsWith(SIDE.cargo) || option.name.startsWith(SIDE.passenger));
+  const ownSide = sided ? view.picker.options.filter((option) => option.name.startsWith(SIDE[variant])) : view.picker.options;
+  const strip = (text: string) => (sided ? text.replace(SIDE[variant], "") : text);
+  const options = (ownSide.length ? ownSide : view.picker.options).map((option) => ({ ...option, name: strip(option.name), trim: strip(option.trim) }));
+  const trims = [...new Set(options.map((option) => option.trim))];
+  const cabins = [...new Set(options.map((option) => option.cabin).filter(Boolean))];
+  const { bodies, cards } = view.picker;
   const [trim, setTrim] = useState(options[0].trim);
   const [cabin, setCabin] = useState(options[0].cabin);
   const [body, setBody] = useState(bodies[0] ?? "");
+  // Switching cargo ↔ passenger: start again from that side's first trim.
+  useEffect(() => { setTrim(options[0].trim); setCabin(options[0].cabin); }, [variant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const find = (t: string, c: string) => options.find((option) => option.trim === t && option.cabin === c);
   const optionFor = (t: string) => find(t, cabin) ?? options.find((item) => item.trim === t) ?? options[0];

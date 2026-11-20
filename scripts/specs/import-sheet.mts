@@ -13,8 +13,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 type Rule = { cn?: RegExp; en?: RegExp; key?: string; part?: string; extra?: string; group?: string; skip?: true };
 
-// Order matters: the first matching rule wins.
-const RULES: Rule[] = [
+// Order matters: the first matching rule wins. Also used by import-rcev.mts (rc-ev.com product pages).
+export const RULES: Rule[] = [
   { cn: /版本|产品名称|指导价|质保|保修/, en: /^(verison|version|productname|configurationversion|marketguideprice|price|warranty)/, skip: true },
   // Label variants seen in the 2026-11-15 tabs (C9, C5L EV, ED71S, EC31S, EC35II). Before the general rules.
   { cn: /货厢照明/, key: "cargo_light" },
@@ -345,7 +345,7 @@ function english(cell: string) {
   return picked.join(" ").replace(CJK_ALL, "").replace(/\s+/g, " ").trim();
 }
 
-const norm = (label: string) => (label ?? "").toLowerCase().replace(/[（(][^）)]*[）)]/g, "").replace(/[^\p{L}\p{N}]+/gu, "");
+export const norm = (label: string) => (label ?? "").toLowerCase().replace(/[（(][^）)]*[）)]/g, "").replace(/[^\p{L}\p{N}]+/gu, "");
 
 function translate(value: string) {
   let out = value;
