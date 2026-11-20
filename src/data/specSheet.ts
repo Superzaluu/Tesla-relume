@@ -85,6 +85,8 @@ export const GROUPS: Group[] = [
   { key: "extender", label: "Зай сунгагч", part: "core", fuelOnly: true },
   { key: "chassis", label: "Явах эд анги", part: "equipment" },
   { key: "safety", label: "Аюулгүй байдал", part: "equipment" },
+  // 4.3 (user, 2026-11-20): driver-assist systems apart from passive safety, each with a one-line hint.
+  { key: "adas", label: "Жолоодлогын туслах систем (ADAS)", part: "equipment" },
   { key: "comfort", label: "Тохилог ба ухаалаг", part: "equipment" },
   { key: "lights", label: "Гэрэлтүүлэг", part: "equipment" },
   { key: "colors", label: "Өнгө", part: "equipment" }
@@ -185,14 +187,22 @@ export const FIELDS: Field[] = [
   mark("safety", "rear_camera", "Арын камер", ["буцах зураг", "урвуу видео"], { required: true, mustHave: true }),
   mark("safety", "camera360", "360° камер", ["360° панорам зураг"], { short: "360° камер", pitch: "Машиныг тойрсон орчныг дээрээс нь харж, давчуу газар амархан зогсооно." }),
   mark("safety", "radar", "Зогсоолын радар", ["зогсоолын радар", "жолоодох/ухрах радар", "зогсоолын мэдрэгч", "ухрах радар"]),
-  mark("safety", "aeb", "Яаралтай автомат тоормос (AEB)", ["идэвхтэй тоормос", "автомат яаралтай тоормос"], { short: "AEB", pitch: "Мөргөлдөх эрсдэлтэй үед машин өөрөө тоормослоно." }),
-  mark("safety", "fcw", "Мөргөлдөх анхааруулга (FCW)", ["урагш мөргөлдөх анхааруулга"], { short: "FCW" }),
-  mark("safety", "ldw", "Эгнээнээс гарах анхааруулга (LDW)", ["замаас гарах анхааруулга"], { short: "LDW" }),
-  mark("safety", "ldp", "Эгнээ хадгалах туслах (LDP)", ["замаас гарахаас урьдчилан сэргийлэх", "эгнээнээс гарахыг дарах"], { short: "LDP" }),
-  mark("safety", "acc", "Дасан зохицох круиз (ACC)", ["дасан зохицох cruise control"], { short: "ACC", pitch: "Урд машиныг автоматаар дагаж, хурд болон зайгаа барина." }),
-  mark("safety", "ica", "Нэгдсэн круиз (TJA/ICA)", ["нэгдсэн аялал"], { short: "ICA" }),
-  mark("safety", "isa", "Хурд хязгаарлах туслах (ISA)", ["ухаалаг хурд хязгаарлах туслах"], { short: "ISA" }),
-  mark("safety", "dms", "Жолоочийн ядаргааны хяналт (DMS)", ["жолоочийн хяналтын систем"], { short: "DMS" }),
+  mark("adas", "aeb", "Яаралтай автомат тоормос (AEB)", ["идэвхтэй тоормос", "автомат яаралтай тоормос"], {
+    short: "AEB", pitch: "Мөргөлдөх эрсдэлтэй үед машин өөрөө тоормослоно.", hint: "Урд саад, машинтай мөргөлдөх эрсдэлтэй үед өөрөө тоормослоно." }),
+  mark("adas", "fcw", "Мөргөлдөх анхааруулга (FCW)", ["урагш мөргөлдөх анхааруулга"], {
+    short: "FCW", hint: "Урд машин руу хэт ойртоход дуут дохио, дэлгэцээр анхааруулна." }),
+  mark("adas", "ldw", "Эгнээнээс гарах анхааруулга (LDW)", ["замаас гарах анхааруулга"], {
+    short: "LDW", hint: "Эргэх дохио асаалгүй эгнээнээс гарахад анхааруулна." }),
+  mark("adas", "ldp", "Эгнээ хадгалах туслах (LDP)", ["замаас гарахаас урьдчилан сэргийлэх", "эгнээнээс гарахыг дарах"], {
+    short: "LDP", hint: "Санамсаргүй эгнээнээс гарахад жолоог залруулж эгнээнд нь буцаана." }),
+  mark("adas", "acc", "Дасан зохицох круиз (ACC)", ["дасан зохицох cruise control"], {
+    short: "ACC", pitch: "Урд машиныг автоматаар дагаж, хурд болон зайгаа барина.", hint: "Урд машиныг дагаж, хурд болон хоорондын зайг өөрөө барина." }),
+  mark("adas", "ica", "Нэгдсэн круиз (TJA/ICA)", ["нэгдсэн аялал"], {
+    short: "ICA", hint: "Түгжрэл, хурдны замд эгнээндээ урд машиныг дагаж, жолоо барихад туслана." }),
+  mark("adas", "isa", "Хурд хязгаарлах туслах (ISA)", ["ухаалаг хурд хязгаарлах туслах"], {
+    short: "ISA", hint: "Хурдны хязгаарын тэмдгийг таньж, хэтрүүлэхгүй байхыг сануулна." }),
+  mark("adas", "dms", "Жолоочийн ядаргааны хяналт (DMS)", ["жолоочийн хяналтын систем"], {
+    short: "DMS", hint: "Камераар жолоочийн ядаргаа, анхаарал сарнихыг хянаж сануулна." }),
   mark("safety", "edr", "Осол бүртгэгч (EDR)", ["үйл явдлын мэдээлэл бүртгэх систем"], { short: "EDR" }),
   mark("safety", "pedestrian", "Явган зорчигчид өгөх дуут дохио", ["бага хурдтай явган хүний санамж"]),
   mark("safety", "brake_alert", "Яаралтай тоормосны дохио", ["яаралтай тоормосны дохиолол"]),
@@ -607,8 +617,9 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
       if (field.kind === "mark") {
         const signature = `${field.group}|${shown.join("|")}`;
         const row = merged.get(signature);
-        if (row) { row.label += `, ${field.short ?? field.label}`; continue; }
-        const next = { label: field.short ?? field.label, cells: shown };
+        // Merged rows ("AEB, FCW") lose the hint: it explains one item only.
+        if (row) { row.label += `, ${field.short ?? field.label}`; row.hint = undefined; continue; }
+        const next: CompareRow = { label: field.short ?? field.label, cells: shown, hint: field.hint };
         merged.set(signature, next);
         compare.push(next);
       } else {
