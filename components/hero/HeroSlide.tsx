@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { HeroSlide as Slide } from "@/data/home";
-import { SavingsTrigger } from "@/components/forms/SavingsCalculator";
 import { CarShine } from "@/components/ui/CarShine";
 import { glintKey, shineMask } from "@/components/ui/shineMask";
 import { CAR_GLINTS, CAR_SHEENS } from "@/data/carGlints";
@@ -48,7 +47,7 @@ export function HeroSlide({ slide, position, total, active, showImage }: Props) 
         )}
         <div className="actions hero__actions">
           <Link className="btn btn--light btn--wide" href={slide.href}>Дэлгэрэнгүй</Link>
-          <SavingsTrigger model={slide.id.replace(/^hero-/, "")} />
+          {/* No «Хэмнэлтийн тооцоолуур» here (user, 2026-11-21): the calculator section sits right under the hero. */}
         </div>
       </div>
       {showImage && (
