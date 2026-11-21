@@ -223,8 +223,10 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail, coll
         <>
           <p className="m-0 text-tiny font-bold uppercase tracking-[.08em] text-[#147a48]">Бизнесийн зардал хэмнэлт</p>
           <h2 id={`${idPrefix === "teaser" ? "savings-teaser" : `${idPrefix}-title`}`} className="m-0 mt-2 text-[clamp(26px,3vw,42px)] font-bold leading-tight tracking-tight text-ink">
-            {/* The percentage in the saving card's yellow, darkened to stay readable on white (≈4.9:1). */}
-            Түлшний зардлаа <span className="text-[#a16207] tabular-nums">{percent}%</span> бууруулна
+            {/* The percentage in the brand green's complementary colour (user, 2026-11-21: «Complementary / эсрэгцсэн»
+                — the opposite side of the colour wheel stands out most): brand #0f5a3a ≈ hue 154°, opposite ≈ 334°,
+                hsl(334 70% 40%) = #ad1f5c, ≈6.7:1 on white. Was the saving card's darkened yellow #a16207. */}
+            Түлшний зардлаа <span className="text-[#ad1f5c] tabular-nums">{percent}%</span> бууруулна
           </h2>
           <p className="m-0 mt-2 max-w-[62ch] text-regular text-ink-secondary">
             Өдөр бүр ажилладаг дизель машин болон {model.name}-ийн сар, жилийн зардлыг харьцуулаарай.
