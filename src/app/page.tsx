@@ -22,7 +22,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <main>
+      <main className="home-phi">
         {/* The carousel also renders the benefit strip, whose first item is the current slide's range. */}
         <HeroCarousel slides={heroSlides} />
         {/* Cost calculator right under the hero (user, 2026-11-15); the hero subtitles already name each model's work. */}

@@ -33,7 +33,7 @@ function FamilyRow({ row, sizes }: { row: Row; sizes: Record<string, number> }) 
     <section aria-labelledby={`row-${row.id}`} className="grid gap-4">
       <div className="flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <h3 id={`row-${row.id}`} className="m-0 text-[22px] font-bold leading-tight tracking-tight text-ink">{row.label}</h3>
+          <h3 id={`row-${row.id}`} className="m-0 text-[26px] font-bold leading-tight tracking-tight text-ink">{row.label}</h3>
           <p className="m-0 mt-1 text-small text-ink-muted">
             {row.text} · {row.families.length} загвар{versions > row.families.length ? `, ${versions} хувилбар` : ""}
           </p>

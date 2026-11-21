@@ -32,9 +32,9 @@ function Tile({ icon, label, value }: { icon: string; label: string; value: stri
         <QuickIcon icon={icon} className="h-5 w-5" />
       </span>
       <span className="min-w-0">
-        <span className="block text-[10px] font-semibold uppercase tracking-wider text-ink-muted">{label}</span>
+        <span className="block text-tiny font-medium text-ink-muted">{label}</span>
         {/* One line: tons and "415–420 км" fit the tile; anything longer is cut with an ellipsis, the title shows it. */}
-        <span className="block truncate text-[14px] font-bold leading-tight tracking-tight text-ink" title={value || undefined}>{value || "—"}</span>
+        <span className="block truncate text-regular font-bold leading-tight tracking-tight text-ink" title={value || undefined}>{value || "—"}</span>
       </span>
     </div>
   );
@@ -73,12 +73,12 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <p className="m-0 text-[11px] font-semibold uppercase tracking-wider text-ink-muted">{categories}</p>
-          <h3 className="m-0 mt-0.5 text-[22px] font-bold leading-tight tracking-tight text-ink">
+          <p className="m-0 text-tiny font-semibold uppercase tracking-wider text-ink-muted">{categories}</p>
+          <h3 className="m-0 mt-0.5 text-[26px] font-bold leading-tight tracking-tight text-ink">
             <Link href={lead.href} className="hover:text-[#0f5a3a]">{name}</Link>
           </h3>
           {/* The family's lowest «Эхлэх үнэ» (user, 2026-11-21): the price of its cheapest trim. */}
-          {priceFrom !== undefined && <PriceFrom value={priceFrom} />}
+          {priceFrom !== undefined && <PriceFrom value={priceFrom} className="m-0 mt-1 text-regular text-ink-secondary" />}
         </div>
 
         <div className="grid grid-cols-2 gap-2">
@@ -94,7 +94,7 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
               <li key={member.key}>
                 <Link
                   href={member.href} title={`${member.name} — ${member.desc}`}
-                  className="inline-flex rounded-full border border-solid border-line bg-white px-2.5 py-1 text-xs font-medium text-ink-secondary hover:border-[#0f5a3a] hover:text-[#0f5a3a]"
+                  className="inline-flex rounded-full border border-solid border-line bg-white px-2.5 py-1 text-tiny font-medium text-ink-secondary hover:border-[#0f5a3a] hover:text-[#0f5a3a]"
                 >
                   {chipLabel(member, name)}
                 </Link>
@@ -104,7 +104,7 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
               <li>
                 <button
                   type="button" onClick={() => setAllChips((v) => !v)} aria-expanded={allChips}
-                  className="inline-flex rounded-full bg-[#eaf3ee] px-2.5 py-1 text-xs font-semibold text-[#0f5a3a] hover:bg-[#d6e9de]"
+                  className="inline-flex rounded-full bg-[#eaf3ee] px-2.5 py-1 text-tiny font-semibold text-[#0f5a3a] hover:bg-[#d6e9de]"
                 >
                   {allChips ? "Хураах" : `+${members.length - SHOWN_CHIPS}`}
                 </button>

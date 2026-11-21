@@ -49,8 +49,8 @@ function Card({ tone, label, value, note, share }: { tone: "diesel" | "ruichi" |
   return (
     <div className={`flex min-w-0 items-end justify-between gap-4 rounded-card border border-solid p-5 ${styles.box}`}>
       <div className="min-w-0">
-        <p className={`m-0 text-xs font-bold uppercase tracking-[.06em] ${styles.label}`}>{label}</p>
-        <p className={`m-0 mt-2 text-[clamp(24px,2.6vw,32px)] font-bold leading-none tracking-tight tabular-nums ${styles.value}`}>{value}</p>
+        <p className={`m-0 text-tiny font-bold uppercase tracking-[.06em] ${styles.label}`}>{label}</p>
+        <p className={`m-0 mt-2 text-[clamp(26px,2.4vw,33px)] font-bold leading-none tracking-tight tabular-nums ${styles.value}`}>{value}</p>
         <p className={`m-0 mt-2 text-small ${styles.note}`}>{note}</p>
       </div>
       {/* Bar on a fixed scale: rises and falls with the km slider. The figure is in the text, so it is hidden. */}
@@ -127,11 +127,11 @@ function LoanPart({ model, saving, idPrefix }: { model: CalcModel; saving: numbe
             {loan.needsRealEstate && " 150 сая ₮-өөс дээш зээлд үл хөдлөх хөрөнгө нэмэлт барьцаанд шаардлагатай."}
           </p>
           <p className="m-0 text-right">
-            <span className={`block text-xs font-bold uppercase tracking-[.06em] ${net >= 0 ? "text-white/80" : "text-[#6b4e00]"}`}>
+            <span className={`block text-tiny font-bold uppercase tracking-[.06em] ${net >= 0 ? "text-white/80" : "text-[#6b4e00]"}`}>
               {net >= 0 ? "Зээл төлөөд сард үлдэх" : "Сард нэмж төлөх"}
             </span>
             <span className="block text-[26px] font-bold leading-tight tracking-tight tabular-nums">{tugrik(Math.abs(net))}</span>
-            <span className={`block text-xs ${net >= 0 ? "text-white/80" : "text-ink-muted"}`}>жилд {tugrik(Math.abs(net) * 12)}</span>
+            <span className={`block text-tiny ${net >= 0 ? "text-white/80" : "text-ink-muted"}`}>жилд {tugrik(Math.abs(net) * 12)}</span>
           </p>
         </div>
       )}
@@ -139,9 +139,9 @@ function LoanPart({ model, saving, idPrefix }: { model: CalcModel; saving: numbe
       <div className="mt-3 rounded-card border border-solid border-line bg-[#fafcfb] p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="m-0 text-[16px] font-bold tracking-tight text-ink">Зээлийн нөхцөл</h3>
-          <a className="text-xs font-semibold text-[#0f5a3a] hover:underline" href={`/green-loan/?model=${encodeURIComponent(model.slug)}`}>Ногоон зээлийн дэлгэрэнгүй →</a>
+          <a className="text-tiny font-semibold text-[#0f5a3a] hover:underline" href={`/green-loan/?model=${encodeURIComponent(model.slug)}`}>Ногоон зээлийн дэлгэрэнгүй →</a>
         </div>
-        <p className="m-0 mt-1 text-xs text-ink-muted">
+        <p className="m-0 mt-1 text-tiny text-ink-muted">
           Хаан банкны ногоон тээврийн хэрэгслийн зээл, сарын {rate.monthly}% (жилийн {rate.annual}%). Тэнцүү төлбөрөөр тооцсон ойролцоо дүн.
         </p>
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -152,7 +152,7 @@ function LoanPart({ model, saving, idPrefix }: { model: CalcModel; saving: numbe
               onChange={(e) => { const n = digits(e.target.value); setPriceText(n ? n.toLocaleString("en-US") : ""); }}
               className="mt-1.5 w-full rounded-lg border border-solid border-line bg-white px-3 py-2 font-[inherit] text-regular tabular-nums text-ink focus:border-[#0f5a3a] focus:outline-none"
             />
-            {model.priceFrom && <p className="m-0 mt-1 text-xs text-ink-muted">Эхлэх үнэ: {tugrik(model.priceFrom)}</p>}
+            {model.priceFrom && <p className="m-0 mt-1 text-tiny text-ink-muted">Эхлэх үнэ: {tugrik(model.priceFrom)}</p>}
           </div>
           <div>
             <label className={label} htmlFor={id("down")}>Урьдчилгаа {down}%{loan ? ` · ${tugrik(loan.downPayment)}` : ""}</label>
@@ -221,8 +221,8 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail, coll
   const km = `${idPrefix}-km`;
   return (
         <>
-          <p className="m-0 text-xs font-bold uppercase tracking-[.08em] text-[#147a48]">Бизнесийн зардал хэмнэлт</p>
-          <h2 id={`${idPrefix === "teaser" ? "savings-teaser" : `${idPrefix}-title`}`} className="m-0 mt-2 text-[clamp(26px,3.2vw,40px)] font-bold leading-tight tracking-tight text-ink">
+          <p className="m-0 text-tiny font-bold uppercase tracking-[.08em] text-[#147a48]">Бизнесийн зардал хэмнэлт</p>
+          <h2 id={`${idPrefix === "teaser" ? "savings-teaser" : `${idPrefix}-title`}`} className="m-0 mt-2 text-[clamp(26px,3vw,42px)] font-bold leading-tight tracking-tight text-ink">
             {/* The percentage in the saving card's yellow, darkened to stay readable on white (≈4.9:1). */}
             Түлшний зардлаа <span className="text-[#a16207] tabular-nums">{percent}%</span> бууруулна
           </h2>
@@ -254,14 +254,14 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail, coll
           <div className="mt-5 rounded-card border border-solid border-line bg-[#fafcfb] px-5 pb-4 pt-4">
             <div className="flex items-baseline justify-between gap-3">
               <label htmlFor={km} className="text-small font-semibold text-ink-secondary">Өдөрт явах дундаж зай</label>
-              <output htmlFor={km} className="text-[24px] font-bold tabular-nums text-[#0f5a3a]">{kmPerDay} км</output>
+              <output htmlFor={km} className="text-[26px] font-bold tabular-nums text-[#0f5a3a]">{kmPerDay} км</output>
             </div>
             <input
               id={km} type="range" min={KM_MIN} max={kmMax} step={STEP} value={kmPerDay}
               onChange={(e) => setKmPerDay(Number(e.target.value))} className="mt-2 w-full accent-[#0f5a3a]"
             />
             {/* Stops at their own place on the slider; a click jumps there. */}
-            <div className="relative mt-1 h-9 text-xs text-ink-muted">
+            <div className="relative mt-1 h-9 text-tiny text-ink-muted">
               {stops.map((stop, i) => (
                 <button
                   key={stop.km} type="button" onClick={() => setKmPerDay(stop.km)}
@@ -295,7 +295,7 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail, coll
           <LoanPart key={model.value} model={model} saving={saving} idPrefix={idPrefix} />
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-            <p className="m-0 max-w-[70ch] text-xs leading-relaxed text-ink-muted">
+            <p className="m-0 max-w-[70ch] text-tiny leading-relaxed text-ink-muted">
               Сард {DAYS} өдөр. {model.compare.name}: {model.compare.consumption} л/100 км, дизель {tugrik(fuelPrices.prices.dt)}/л
               ({fuelPrices.source === "benzin.mn" ? `benzin.mn, ${fuelPrices.asOf}` : `${fuelPrices.asOf}-ны үнэ`}). {model.name}: {model.evConsumption} кВт·ц/100 км,
               цахилгаан {ELECTRICITY_PRICE}₮/кВт·ц{extender ? `, өдөрт ${model.evRangeKm} км-ээс илүүд бензин ${EXTENDER_FUEL_USE} л/100 км` : ""}. Зөвхөн түлш, цэнэгийн зардал.

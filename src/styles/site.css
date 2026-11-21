@@ -2026,3 +2026,23 @@ body::before { display:none; }
   .btn-loading.is-loading .btn-loading__fill { animation:none; }
   .btn-loading__spinner { animation-duration:1.6s; }
 }
+
+/* ---------- Golden ratio, variant B (user, 2026-11-21) ----------
+   Homepage type on one √φ (≈1.272) scale: 13 · 16 · 20 · 26 · 33 · 42 · 54 — it replaces the mix of 11/12 px labels,
+   15/17 px text, 22 px card titles and 56 px hero names. Card and savings components use the tokens / sizes below.
+   Hero: with the menu bar it takes 61.8 % of the screen height, so the benefit strip lands on the golden line; it never
+   goes under 600 px or under width / 2.5 (the winter photos need ~270 px of sky for the copy above the vehicle and lose
+   the tyres when cropped flatter than ~2.5:1: on a 1920×1080 screen the golden 611 px cut them under the strip), and
+   never over the photo's own 2.25:1 shape + 80 px. */
+.home-phi { --text-tiny: 13px; --text-small: 13px; --text-regular: 16px; --text-medium: 20px; --heading-5: 26px; }
+.home-phi .h2 { font-size: clamp(33px, 3vw, 42px); }
+.hero-carousel .hero__model { font-size: 54px; }
+.hero-carousel .hero__subtitle { font-size: 20px; }
+@media (min-width: 992px) and (min-aspect-ratio: 6/5) {
+  .hero-carousel .hero { height: clamp(600px, max(calc(61.8svh - var(--navbar-height)), calc(100vw / 2.5)), calc(100vw / 2.25 + 80px)); }
+}
+@media (max-width: 991px) {
+  .home-phi { --text-medium: 16px; }
+  .hero-carousel .hero__model { font-size: 42px; }
+  .hero-carousel .hero__subtitle { font-size: 16px; }
+}
