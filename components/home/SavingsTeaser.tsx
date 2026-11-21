@@ -69,7 +69,8 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
     <section className="section" aria-labelledby="savings-teaser">
       <div className="container">
         <div className="tw rounded-card border border-solid border-line bg-white p-5 shadow-[0_10px_30px_rgb(15_35_56/.06)] sm:p-8">
-          <SavingsPanel models={models} fuelPrices={fuelPrices} idPrefix="teaser" />
+          {/* Folded on the homepage (user, 2026-11-21): title and line only, «Дэлгэрэнгүй» opens the calculator. */}
+          <SavingsPanel models={models} fuelPrices={fuelPrices} idPrefix="teaser" collapsible />
         </div>
       </div>
     </section>
@@ -185,9 +186,12 @@ function LoanPart({ model, saving, idPrefix }: { model: CalcModel; saving: numbe
  * `own`: the one model to calculate for (the model page's own model; user, 2026-11-20), with no model chips.
  * `onDetail` runs before "Дэлгэрэнгүй тооцоолох" opens the full calculator (the window closes itself there).
  */
-export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail }: {
+export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail, collapsible = false }: {
   models: CalcModel[]; fuelPrices: FuelPrices; idPrefix: string; own?: CalcModel; onDetail?: () => void;
+  /** Start folded to the title and line, with «Дэлгэрэнгүй» to open the rest (homepage section). */
+  collapsible?: boolean;
 }) {
+  const [expanded, setExpanded] = useState(!collapsible);
   const openCalculator = useOpenSavings();
   const choices = useMemo(
     () => (own ? [own] : MODELS.map((value) => models.find((m) => m.value === value)).filter((m): m is CalcModel => Boolean(m))),
@@ -225,6 +229,16 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail }: {
           <p className="m-0 mt-2 max-w-[62ch] text-regular text-ink-secondary">
             Өдөр бүр ажилладаг дизель машин болон {model.name}-ийн сар, жилийн зардлыг харьцуулаарай.
           </p>
+
+          {!expanded ? (
+            <button
+              type="button" aria-expanded={false} aria-controls={`${idPrefix}-body`} onClick={() => setExpanded(true)}
+              className="btn btn--primary mt-5 min-h-[44px] gap-1.5 px-5"
+            >
+              Дэлгэрэнгүй <span aria-hidden="true">↓</span>
+            </button>
+          ) : (
+          <div id={`${idPrefix}-body`}>
 
           {choices.length > 1 && <div className="mt-5 flex flex-wrap gap-1.5" role="group" aria-label="Загвар">
             {choices.map((m, i) => (
@@ -292,6 +306,8 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail }: {
             <summary className="cursor-pointer font-semibold text-[#0f5a3a]">Өнөөдрийн шатахууны үнэ</summary>
             <FuelPriceTable fuelPrices={fuelPrices} selected={model.compare.fuel} />
           </details>
+          </div>
+          )}
         </>
   );
 }
