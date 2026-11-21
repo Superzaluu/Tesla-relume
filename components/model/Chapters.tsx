@@ -13,7 +13,9 @@ import { WinterSection } from "@/components/model/WinterSection";
 type ChapterDef = { id: string; label: string; kicker: string; tone: "sand" | "blue" | "green"; parts: string[] };
 
 export const CHAPTERS: ChapterDef[] = [
-  { id: "cargo", label: "Ачаа", kicker: "Ачаа ба бүтэц", tone: "sand", parts: ["cargo-space", "space", "work", "service"] },
+  // id "load", not "cargo": #cargo / #passenger pick the EC75 / R5 side, and an element with id "cargo" made the
+  // browser jump past the hero on /models/ec75/#cargo (and on the R5 Pro / EC75 Pro redirects; 2026-11-21).
+  { id: "load", label: "Ачаа", kicker: "Ачаа ба бүтэц", tone: "sand", parts: ["cargo-space", "space", "work", "service"] },
   { id: "power", label: "Хүч ба цэнэглэлт", kicker: "Хүч ба цэнэглэлт", tone: "blue", parts: ["battery", "charging", "winter"] },
   { id: "smart", label: "Аюулгүй ба ухаалаг", kicker: "Аюулгүй ба ухаалаг", tone: "green", parts: ["assist", "safety", "interior"] }
 ];

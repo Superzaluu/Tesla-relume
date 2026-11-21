@@ -102,7 +102,8 @@ export type Block =
 export type Section = { id?: string; tone?: "tight" | "dark" | "surface"; blocks: Block[] };
 
 export type ModelHero =
-  | { kind: "intro"; image: Img; maxWidth: number }
+  /** position: CSS object-position when the photo is not composed like C5's (default "50% 80%", model.css). */
+  | { kind: "intro"; image: Img; maxWidth: number; position?: string }
   | { kind: "photo"; image: Img; sky: V<string>; light?: boolean; wide?: boolean; subtitle: V<string> };
 
 export type EndCta = { title: string; text: string; image?: Img; secondary: { label: string; href: string } };

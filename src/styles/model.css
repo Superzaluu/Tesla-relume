@@ -1263,3 +1263,28 @@ section:target .mwide { animation:peek-flash 1.8s ease-out .3s backwards; }
 .mpower__card dd { margin:0; font-size:var(--text-regular); font-weight:700; white-space:nowrap; }
 /* R5 / EC75 list both sides in one comparison table; the picker hides the other side's columns. */
 .mcompare .is-other-side { display:none; }
+/* «Хэмнэлтийн тооцоолуур» in the sticky menu (user, 2026-11-21): centred between "Урьдчилсан захиалга" and
+   "Туршилтын жолоодлого", outlined like the hero buttons, the menu buttons' height. It lifts off from here to
+   follow the mouse (FloatingSavings); while it does, its place stays empty. Phones: hidden like the test-drive
+   button; the floating copy waits in the bottom-right corner there. */
+.mnav__actions { display:flex; flex:none; align-items:center; gap:8px; }
+.mnav__actions .mnav__preorder { margin-left:0; }
+.mnav__savings { flex:none; }
+/* Section links a little tighter, and faded at the right edge when they scroll, so the actions keep their room. */
+.mnav__inner .mnav__list { gap:6px; padding-right:12px; mask-image:linear-gradient(90deg, #000 calc(100% - 16px), transparent); }
+.mnav__list > li > a:not(.btn) { padding:7px 10px; }
+.mnav__actions { gap:6px; }
+.mnav__actions .btn, .mnav .mnav__actions .mnav__preorder a.btn, .mnav__savings .btn.saving-calculator__trigger { padding-inline:12px; }
+@media (min-width:992px) { .mnav__inner { padding-inline:32px; } }
+.mnav__savings .btn.saving-calculator__trigger {
+  position:static; min-height:38px; padding:8px 12px; border:1.5px solid #0f5a3a; border-radius:var(--radius-button);
+  background:#fff; color:#0f5a3a; font-size:var(--text-small); white-space:nowrap; box-shadow:none; backdrop-filter:none;
+}
+.mnav__savings .btn.saving-calculator__trigger:hover { background:#eef5f3; color:#083d28; }
+.savings-anchor.is-lifted { visibility:hidden; }
+@media (max-width:767px) { .mnav__savings { display:none; } }
+/* «Эхлэх үнэ» (user, 2026-11-21): under the hero descriptor, and under the trim section's intro. */
+.mintro__price { margin:6px 0 0; color:var(--color-text-secondary); font-size:var(--text-regular); }
+.mintro__price strong { color:#0f5a3a; font-size:var(--heading-5); font-weight:700; }
+.msheet__price { margin:8px 0 0; color:var(--color-text-secondary); font-size:var(--text-small); }
+.msheet__price strong { color:#0f5a3a; font-size:var(--text-regular); font-weight:700; }

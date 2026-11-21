@@ -14,13 +14,14 @@ export const ec75: Model = {
   page: {
     pageTitle: "Цахилгаан фургон",
     variants: true,
+    // Standard intro hero like C5 (user, 2026-11-21): one studio photo per side, the backdrop extended to 1100 × 750
+    // with the van in the middle, shown from the centre, so the whole van fits the desktop frame and stays above the
+    // icon strip on phones; the cargo / passenger switch sits next to the calculator.
     hero: {
-      kind: "photo",
-      sky: { cargo: "#255681", passenger: "#346488" },
-      subtitle: { cargo: "Цахилгаан ачааны фургон", passenger: "Цахилгаан зорчигч тээврийн фургон" },
+      kind: "intro", maxWidth: 1100, position: "50% 50%",
       image: {
-        src: { cargo: "/assets/ec75/hero-cargo.jpg", passenger: "/assets/ec75/hero-passenger.jpg" }, width: 1920, height: 1028,
-        alt: { cargo: "Зам дээр явж буй EC75 ачааны фургон", passenger: "EC75 зорчигч тээврийн фургон" }
+        src: { cargo: "/assets/hero/ec75-cargo.jpg", passenger: "/assets/hero/ec75-passenger.jpg" }, width: 1100, height: 750,
+        alt: { cargo: "EC75 ачааны фургон", passenger: "EC75 зорчигч тээврийн фургон" }
       }
     },
     stats: [
@@ -98,7 +99,7 @@ export const ec75: Model = {
       { id: "interior", blocks: [
         { type: "title", tagline: "Кабин", title: "Жолоочид зориулсан кабин", text: "Энгийн, ойлгомжтой удирдлага бүхий цэвэрхэн кабин." },
         { type: "cards", items: [
-          card("interior-cockpit.jpg", 534, "8.8 инчийн багажны самбар", "Олон үйлдэлт жолооны хүрд, цахилгаан цонх өргөгч.", "EC75-ын жолоочийн кабин"),
+          card("interior-cockpit.jpg", 534, "8.8 инчийн хянах самбар", "Олон үйлдэлт жолооны хүрд, цахилгаан цонх өргөгч.", "EC75-ын жолоочийн кабин"),
           card("interior-seats.jpg", 533, "Даавуун суудал", "Урт замд ч эвтэйхэн, арчилгаа багатай.", "EC75-ын даавуун суудал"),
           card("interior-shifter.jpg", 533, "Баганын араа солигч", "Түлхүүргүй асаалт, гарт ойр удирдлага.", "EC75-ын араа солигч"),
           card("interior-console.jpg", 519, "Хадгалах зай", "Аяганы тавиур, жижиг эд зүйлийн тасалгаа.", "EC75-ын төв консол, аяганы тавиур")
@@ -132,9 +133,9 @@ export const ec75: Model = {
         compare: {
           title: "Иж бүрдлийн тоноглол", columns: ["Тоноглол", "Smart Supercharge Pioneer I"],
           rows: [
-            { head: "Багажны самбар", cells: [{ text: "8.8\" LCD" }] },
+            { head: "Хянах самбар", cells: [{ text: "8.8\" LCD" }] },
             { head: "Аудио", cells: [{ text: "Bluetooth, MP3" }] },
-            { head: "Арын камер", cells: [{ text: "● багажны самбарт" }] },
+            { head: "Арын камер", cells: [{ text: "● хянах самбарт" }] },
             { head: "Дугуйн даралтын хяналт (TPMS)", cells: [{ text: "●" }] },
             { head: "Тогтвортой байдлын систем (ESC), AUTO HOLD", cells: [{ text: "●" }] },
             { head: "ACC, TJA/ICA круиз", cells: [{ text: "●" }] },

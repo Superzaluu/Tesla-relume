@@ -67,6 +67,10 @@ export default async function EditCardPage({ params, searchParams }: {
               name="variant" label="Хувилбар" value={listing.variant ?? ""}
               options={[["", "Нэг хувилбартай"], ["cargo", "Ачааны хувилбар"], ["passenger", "Зорчигчийн хувилбар"]]}
             />
+            <TextInput
+              name="price_from" label="Эхлэх үнэ (₮)" value={listing.price_from ? String(listing.price_from) : ""} placeholder="67745600"
+              hint="Хамгийн бага иж бүрдлийн үнэ. Карт, загварын хуудсанд «Эхлэх үнэ» гэж гарна. Хоосон бол үнэ харагдахгүй."
+            />
             <div className="sm:col-span-2"><ImageField name="thumb_file" label="Картын зураг" current={listingThumb(listing)} /></div>
             <Checkbox name="active" label="Сайт дээр харуулах" checked={listing.active} />
           </div>

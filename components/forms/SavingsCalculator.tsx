@@ -58,8 +58,9 @@ export function SavingsProvider({ children, models: menuModels, fuelPrices }: { 
   const [kmPerDay, setKmPerDay] = useState("80");
   const [days, setDays] = useState("26");
   const [priceText, setPriceText] = useState("");
-  const [downPercent, setDownPercent] = useState(20);
-  const [months, setMonths] = useState(36);
+  // Same starting loan as the quick window (user, 2026-11-21): 30% down, 54 months.
+  const [downPercent, setDownPercent] = useState(30);
+  const [months, setMonths] = useState(54);
   const [income, setIncome] = useState<IncomeType>("salary");
   const lastFocus = useRef<HTMLElement | null>(null);
   const firstField = useRef<HTMLSelectElement>(null);
@@ -72,6 +73,9 @@ export function SavingsProvider({ children, models: menuModels, fuelPrices }: { 
   const choose = (value: string, known?: CalcModel) => {
     const next = known ?? models.find((item) => item.value === value);
     setModelValue(value);
+    // The loan step starts from the model's «Эхлэх үнэ» (user, 2026-11-21); a price is per model, so switching
+    // models replaces it (empty when the card has none).
+    setPriceText(next?.priceFrom ? String(next.priceFrom) : "");
     // Only the automatic comparison follows the Ruichi model; a car the visitor picked stays.
     if (next && compareChoice === "similar") { setCompareFuel(next.compare.fuel); setConsumption(String(next.compare.consumption)); }
   };

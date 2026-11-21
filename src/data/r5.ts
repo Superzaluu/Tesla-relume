@@ -15,10 +15,15 @@ export const r5: Model = {
   page: {
     pageTitle: "Цахилгаан фургон",
     variants: true,
+    // Standard intro hero like C5 (user, 2026-11-21): one studio photo per side, the backdrop extended to 1100 × 750
+    // with the van in the middle, shown from the centre, so the whole van fits the desktop frame and stays above the
+    // icon strip on phones; the cargo / passenger switch sits next to the calculator.
     hero: {
-      kind: "photo", light: true, wide: true, sky: "#77a5c9",
-      subtitle: { cargo: "Цахилгаан ачааны фургон", passenger: "Цахилгаан зорчигч тээврийн фургон" },
-      image: { src: "/assets/r5/hero.jpg", width: 1920, height: 1160, alt: "Ногоон R5 ачааны фургон ба цагаан R5 зорчигчийн фургон" }
+      kind: "intro", maxWidth: 1100, position: "50% 50%",
+      image: {
+        src: { cargo: "/assets/hero/r5-cargo.jpg", passenger: "/assets/hero/r5-passenger.jpg" }, width: 1100, height: 750,
+        alt: { cargo: "Ногоон R5 ачааны фургон", passenger: "Цагаан R5 зорчигчийн фургон" }
+      }
     },
     stats: [
       { value: { cargo: "401", passenger: "403" }, unit: "км", label: "Туулах зай (CLTC)", note: 1 },
@@ -102,8 +107,8 @@ export const r5: Model = {
         { type: "feature", image: img("cockpit.jpg", 800, 533, "R5-ын кабин, төв дэлгэц"),
           tagline: "Кабин", title: "Ухаалаг кабин",
           // "Beyond II" is an R5 Pro trim name; R5's top trim is "Smart Supercharge Transcendence I" (10.1" on cargo).
-          text: "8.8 инчийн LCD багажны самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Дээд иж бүрдэлд төв дэлгэц, дуут удирдлага нэмэгдэнэ.",
-          facts: [{ label: "Багажны самбар", value: "8.8\"" }, { label: "Төв дэлгэц", value: "10.1–15.6\"" }, { label: "Түдгэлзүүлэлт", value: "MacPherson" }] }
+          text: "8.8 инчийн LCD хянах самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Дээд иж бүрдэлд төв дэлгэц, дуут удирдлага нэмэгдэнэ.",
+          facts: [{ label: "Хянах самбар", value: "8.8\"" }, { label: "Төв дэлгэц", value: "10.1–15.6\"" }, { label: "Түдгэлзүүлэлт", value: "MacPherson" }] }
       ] },
       { id: "specs", tone: "surface", blocks: [{
         type: "specGroups", title: "R5-ын үзүүлэлт",
@@ -133,7 +138,7 @@ export const r5: Model = {
         compare: {
           title: "Иж бүрдлийн харьцуулалт", columns: ["Иж бүрдэл", "Pioneer I Smart Driving", "Beyond II Smart Driving"],
           rows: [
-            { head: "Багажны самбар / дэлгэц", cells: [{ text: "8.8\" LCD" }, { text: "8.8\" LCD + 15.6\" төв дэлгэц" }] },
+            { head: "Хянах самбар / дэлгэц", cells: [{ text: "8.8\" LCD" }, { text: "8.8\" LCD + 15.6\" төв дэлгэц" }] },
             { head: "Арын камер, TPMS, ESC, AUTO HOLD", cells: [{ text: "●" }, { text: "●" }] },
             { head: "Автомат гэрэл, HMA", cells: [{ text: "●" }, { text: "●" }] },
             { head: "ACC, ICA, AEB, FCW, LDW, LDP, ISA", cells: [{ text: "●" }, { text: "●" }] },

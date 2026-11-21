@@ -53,39 +53,40 @@ function SavingsQuick({ calc, onClose }: { calc?: CalcModel; onClose: () => void
 const SEEN = "savings-calculator-opened";
 
 /**
- * «Хэмнэлтийн тооцоолуур» under the hero (user, 2026-11-20). When the visitor scrolls past it, a copy appears
- * and follows the mouse at a middle distance (bottom-right corner on touch screens) until it is clicked;
- * clicking either opens the quick fuel-cost window and stops the following for the rest of the session.
- * The one in the bar is magnetic.
+ * «Хэмнэлтийн тооцоолуур» in the sticky model menu, between "Урьдчилсан захиалга" and "Туршилтын жолоодлого"
+ * (user, 2026-11-21; it was under the hero before). At the first mouse movement the button lifts off from that
+ * place and follows the mouse at a middle distance until it is clicked.
+ * Clicking either opens the quick fuel-cost window and stops the following for the rest of the session.
+ * Phones have no room in the menu: there it waits in the bottom-right corner instead. The one in the menu is magnetic.
  */
 export function FloatingSavings({ calc }: { calc?: CalcModel }) {
   const anchor = useRef<HTMLSpanElement>(null);
   const [away, setAway] = useState(false);
+  const [narrow, setNarrow] = useState(false);
   const [opened, setOpened] = useState(false);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
     try { if (sessionStorage.getItem(SEEN)) setOpened(true); } catch { /* storage blocked: keep following */ }
+    // Same breakpoint as the menu's own buttons (model.css: .mnav__cta / .mnav__savings hidden below 768px).
+    const query = window.matchMedia("(max-width: 767px)");
+    const update = () => setNarrow(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
   }, []);
 
   useEffect(() => {
-    const el = anchor.current;
-    if (!el) return;
-    // Away = the button has gone up under the sticky bars (~120px), not merely below the fold.
-    let frame = 0;
-    const check = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setAway(el.getBoundingClientRect().bottom < 120));
+    // It lifts off at the first real mouse movement (user, 2026-11-21: "тэндээс эхэлж хулгана дагаж хөдөлнө";
+    // waiting for the hero to scroll away looked like it did not move at all). Touch screens never send one.
+    const start = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      setAway(true);
+      window.removeEventListener("pointermove", start);
     };
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
-    };
+    window.addEventListener("pointermove", start, { passive: true });
+    return () => window.removeEventListener("pointermove", start);
   }, []);
 
   const [quick, setQuick] = useState(false);
@@ -95,7 +96,7 @@ export function FloatingSavings({ calc }: { calc?: CalcModel }) {
     setQuick(true);
     try { sessionStorage.setItem(SEEN, "1"); } catch { /* storage blocked: hide for this page view only */ }
   };
-  const floating = away && !opened;
+  const floating = (away || narrow) && !opened;
 
   // The last mouse position, known before the button appears so it starts next to the pointer.
   const pointer = useRef<{ x: number; y: number } | null>(null);
@@ -127,7 +128,11 @@ export function FloatingSavings({ calc }: { calc?: CalcModel }) {
         y: Math.min(Math.max(y, EDGE), window.innerHeight - h - EDGE)
       };
     };
-    const start = pointer.current ? target(pointer.current) : { x: window.innerWidth - size().w - 20, y: window.innerHeight - size().h - 20 };
+    // It starts where the menu button is, so it visibly lifts off from there; on phones (no menu button) from
+    // the bottom-right corner.
+    const slot = anchor.current?.getBoundingClientRect();
+    const start = slot && slot.width > 0 ? { x: slot.left, y: slot.top }
+      : pointer.current ? target(pointer.current) : { x: window.innerWidth - size().w - 20, y: window.innerHeight - size().h - 20 };
     let { x, y } = start;
     let waiting = false;
     let frame = 0;
@@ -175,7 +180,8 @@ export function FloatingSavings({ calc }: { calc?: CalcModel }) {
 
   return (
     <>
-      <span ref={anchor} className="savings-anchor">
+      {/* While its copy follows the mouse, the menu button keeps its place but is hidden: it has "left" it. */}
+      <span ref={anchor} className={`savings-anchor${floating ? " is-lifted" : ""}`}>
         <Magnetic><QuickTrigger onOpen={open} /></Magnetic>
       </span>
       {/* In <body>, so no transformed or filtered ancestor can turn `position: fixed` into a local box. */}

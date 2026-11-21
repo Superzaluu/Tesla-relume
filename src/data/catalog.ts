@@ -73,12 +73,14 @@ const entries: Entry[] = [
     tagline: "Цэвэр цахилгаан C5: 2C хурдан цэнэглэлттэй 58.24 кВт·ц зай, 110 кВт мотор, 3.6 м задгай тэвш.",
     stats: [["326", "км", "Туулах зай (CLTC)"], ["58.24", "кВт·ц", "Батерейн багтаамж"], ["110", "кВт", "Моторын оргил чадал"], ["2–2.5", "т", "Бодит даац"]],
     gallery: Array(8).fill([800, 450]), quick: quick("flatbed", "Задгай тэвш", "5990 x 1880 x 2015 мм", "326 км", { drive: "FWD", payload: "2–2.5 т" }) },
-  { slug: "c5-cng", name: "C5 CNG", desc: "CNG зай сунгагчтай ачааны машин", hero: ["/assets/hero/c5-gold.jpg", 1920, 1160],
+  // C5 CNG / EREV pages are the single-cab flatbed (user, 2026-11-21): c5-gold.jpg is the double cab, so they use the
+  // single-cab C5 hero; rc-ev.com shows the same white single-cab photo in all three C5 galleries (g5).
+  { slug: "c5-cng", name: "C5 CNG", desc: "CNG зай сунгагчтай ачааны машин", hero: ["/assets/hero/c5.jpg", 1920, 1160],
     tagline: "CNG зай сунгагчтай C5: ойрын замд цахилгаанаар, холын замд CNG генератор зайг цэнэглэж явна.",
     stats: [["70", "км", "Цэвэр цахилгаанаар (WLTC)"], ["25", "кВт·ц", "Батерейн багтаамж"], ["110", "кВт", "Моторын оргил чадал"], ["95", "км/ц", "Дээд хурд"]],
     gallery: [...Array(7).fill([800, 450]), [800, 449]],
     quick: quick("flatbed4", "Задгай тэвш", "5990 x 1880 x 2030 мм", "70 км EV", { drive: "FWD", doors: "2–4 хаалга", seats: "2–5 суудал", payload: "2–2.5 т", charge: "AC/DC - 30 мин", fuel: "CNG", engine: "1,499 cc" }) },
-  { slug: "c5-reev", name: "C5 EREV", desc: "Бензин зай сунгагчтай ачааны машин", hero: ["/assets/hero/c5-gold.jpg", 1920, 1160],
+  { slug: "c5-reev", name: "C5 EREV", desc: "Бензин зай сунгагчтай ачааны машин", hero: ["/assets/hero/c5.jpg", 1920, 1160],
     tagline: "Бензин зай сунгагчтай C5: 25 кВт·ц зай, бензин генератор зайг цэнэглэж нийт 1200 гаруй км явна.",
     stats: [["1200+", "км", "Нийт явах зай"], ["25", "кВт·ц", "Батерейн багтаамж"], ["110", "кВт", "Моторын оргил чадал"], ["95", "км/ц", "Дээд хурд"]],
     gallery: [...Array(7).fill([800, 450]), [800, 449]],

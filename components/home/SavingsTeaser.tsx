@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { FuelPriceTable, useOpenSavings } from "@/components/forms/SavingsCalculator";
 import { calculateSavings, ELECTRICITY_PRICE, EXTENDER_FUEL_USE, type CalcModel, type FuelPrices } from "@/data/savings";
+import { calculateLoan, INCOME_TYPES, MAX_TERM, MIN_DOWN_PERCENT, MIN_TERM, rateFor, type IncomeType } from "@/data/greenLoan";
 
 // Fuel-cost section right under the hero (user, 2026-11-15; reference: a "business profit calculator" with a
 // km slider and three result cards). One model and the visitor's km per day give three figures: the diesel
@@ -31,7 +32,7 @@ function costs(model: CalcModel, kmPerDay: number, prices: FuelPrices["prices"])
 }
 
 /** A result card: label, figure, note, and a bar whose height is value / max. */
-function Card({ tone, label, value, note, share }: { tone: "diesel" | "ruichi" | "saving"; label: string; value: string; note: string; share: number }) {
+function Card({ tone, label, value, note, share }: { tone: "diesel" | "ruichi" | "saving" | "loan" | "loanMain"; label: string; value: string; note: string; share: number }) {
   // Traffic-light colours (user's Figma, 2026-11-15): diesel red, Ruichi green, the saving yellow. Tinted
   // cards with the strong colour on the bar and the label, so text keeps its contrast; the saving card is
   // the solid one, as the figure the section is about. Each card is named in text, so red/green is never
@@ -39,7 +40,11 @@ function Card({ tone, label, value, note, share }: { tone: "diesel" | "ruichi" |
   const styles = {
     diesel: { box: "border-[#f3c4c4] bg-[#fdf2f2]", label: "text-[#b42318]", value: "text-ink", note: "text-ink-muted", track: "bg-[#f7dcdc]", bar: "bg-[#e5484d]" },
     ruichi: { box: "border-[#bcd7c7] bg-[#f3f9f5]", label: "text-[#0f5a3a]", value: "text-[#0f5a3a]", note: "text-ink-muted", track: "bg-[#e1efe6]", bar: "bg-[#1f8a57]" },
-    saving: { box: "border-[#f0c53b] bg-[#ffd84d]", label: "text-[#6b4e00]", value: "text-ink", note: "text-[#5c4300]", track: "bg-white/50", bar: "bg-[#14213d]" }
+    saving: { box: "border-[#f0c53b] bg-[#ffd84d]", label: "text-[#6b4e00]", value: "text-ink", note: "text-[#5c4300]", track: "bg-white/50", bar: "bg-[#14213d]" },
+    // Loan cards under them (user, 2026-11-21: "same design"): the monthly payment in the brand green, the
+    // interest and yearly figures neutral, so the traffic-light colours above keep their meaning.
+    loanMain: { box: "border-[#0f5a3a] bg-[#eef5f3]", label: "text-[#0f5a3a]", value: "text-[#0f5a3a]", note: "text-ink-muted", track: "bg-[#d9e9e0]", bar: "bg-[#0f5a3a]" },
+    loan: { box: "border-line bg-[#f5f7fa]", label: "text-ink-secondary", value: "text-ink", note: "text-ink-muted", track: "bg-[#e4e9ef]", bar: "bg-[#667085]" }
   }[tone];
   return (
     <div className={`flex min-w-0 items-end justify-between gap-4 rounded-card border border-solid p-5 ${styles.box}`}>
@@ -68,6 +73,110 @@ export function SavingsTeaser({ models, fuelPrices }: { models: CalcModel[]; fue
         </div>
       </div>
     </section>
+  );
+}
+
+// Starting values (user, 2026-11-21): 30% down, 54 months.
+const LOAN_DOWN = 30, LOAN_TERM = 54;
+/** "67,745,600" while typing → 67745600. */
+const digits = (text: string) => Number(text.replace(/[^\d]/g, "")) || 0;
+
+/**
+ * «Зээлээр авбал» (user, 2026-11-21): Khan Bank's green vehicle loan on the model's price (its «Эхлэх үнэ»
+ * when the card has one, else typed in), with the visitor's down payment, term and income type. Shows the
+ * monthly payment, its average interest part and the yearly total, and how much of the payment the fuel
+ * saving covers. Same annuity formula and rates as /green-loan/ (src/data/greenLoan.ts).
+ */
+function LoanPart({ model, saving, idPrefix }: { model: CalcModel; saving: number; idPrefix: string }) {
+  const [priceText, setPriceText] = useState(model.priceFrom ? model.priceFrom.toLocaleString("en-US") : "");
+  const [down, setDown] = useState(LOAN_DOWN);
+  const [income, setIncome] = useState<IncomeType>("salary");
+  const [termChosen, setTerm] = useState(LOAN_TERM);
+  const term = Math.min(termChosen, MAX_TERM[income]);
+  const price = digits(priceText);
+  const loan = price > 0 ? calculateLoan({ price, downPercent: down, months: term, income, realEstate: false }) : null;
+  const interest = loan && term > 0 ? loan.totalInterest / term : 0;
+  const covered = loan && loan.monthly > 0 ? Math.round((Math.max(0, saving) / loan.monthly) * 100) : 0;
+  const id = (name: string) => `${idPrefix}-loan-${name}`;
+  const label = "text-small font-semibold text-ink-secondary";
+
+  const net = loan ? Math.max(0, saving) - loan.monthly : 0;
+  // Bar scale: the bigger of the monthly payment and the monthly fuel saving (yearly: both × 12).
+  const monthScale = Math.max(1, loan?.monthly ?? 0, saving);
+  const rate = loan?.rate ?? rateFor(income, term);
+
+  return (
+    <div className="mt-3" aria-live="polite">
+      {/* Results first, right under the cost cards (user, 2026-11-21); the settings follow below them. */}
+      {/* Same cards as the costs above (user, 2026-11-21). Bars: the figure against the fuel saving of the same
+          period, so a bar taller than the saving's shows the payment is bigger than what the fuel saves. */}
+      <div className="grid gap-3 md:grid-cols-3">
+        <Card tone="loanMain" label="Сарын төлбөр" value={loan ? tugrik(loan.monthly) : "—"} note={loan ? `Зээл ${tugrik(loan.loan)}, ${term} сар` : "Машины үнээ доор оруулна уу"} share={loan ? loan.monthly / monthScale : 0} />
+        <Card tone="loan" label="Сарын хүү (дунджаар)" value={loan ? tugrik(interest) : "—"} note={loan ? `Нийт хүү ${tugrik(loan.totalInterest)}` : "Сарын төлбөрийн хүүгийн хэсэг"} share={loan ? interest / monthScale : 0} />
+        <Card tone="loan" label="Жилийн төлбөр" value={loan ? tugrik(loan.monthly * 12) : "—"} note={loan ? `Нийт төлөх ${tugrik(loan.totalPaid)}` : "12 сарын төлбөр"} share={loan ? (loan.monthly * 12) / (monthScale * 12) : 0} />
+      </div>
+
+      {/* The point of the block (user, 2026-11-21): what buying on the loan costs once the fuel saving is counted. */}
+      {loan && loan.monthly > 0 && (
+        <div className={`mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl px-5 py-4 ${net >= 0 ? "bg-[#0f5a3a] text-white" : "border border-solid border-[#f0c53b] bg-[#fff8e1] text-ink"}`}>
+          <p className="m-0 max-w-[60ch] text-small leading-relaxed">
+            {net >= 0
+              ? <>Түлшний хэмнэлт сарын зээлийн төлбөрийг <strong>бүрэн нөхөөд</strong> сард илүү үлдэнэ.</>
+              : <>Түлшний хэмнэлт сарын төлбөрийн <strong>{covered}%</strong>-ийг нөхнө. Үлдсэнийг сар бүр нэмж төлнө.</>}
+            {loan.needsRealEstate && " 150 сая ₮-өөс дээш зээлд үл хөдлөх хөрөнгө нэмэлт барьцаанд шаардлагатай."}
+          </p>
+          <p className="m-0 text-right">
+            <span className={`block text-xs font-bold uppercase tracking-[.06em] ${net >= 0 ? "text-white/80" : "text-[#6b4e00]"}`}>
+              {net >= 0 ? "Зээл төлөөд сард үлдэх" : "Сард нэмж төлөх"}
+            </span>
+            <span className="block text-[26px] font-bold leading-tight tracking-tight tabular-nums">{tugrik(Math.abs(net))}</span>
+            <span className={`block text-xs ${net >= 0 ? "text-white/80" : "text-ink-muted"}`}>жилд {tugrik(Math.abs(net) * 12)}</span>
+          </p>
+        </div>
+      )}
+
+      <div className="mt-3 rounded-card border border-solid border-line bg-[#fafcfb] p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="m-0 text-[16px] font-bold tracking-tight text-ink">Зээлийн нөхцөл</h3>
+          <a className="text-xs font-semibold text-[#0f5a3a] hover:underline" href={`/green-loan/?model=${encodeURIComponent(model.slug)}`}>Ногоон зээлийн дэлгэрэнгүй →</a>
+        </div>
+        <p className="m-0 mt-1 text-xs text-ink-muted">
+          Хаан банкны ногоон тээврийн хэрэгслийн зээл, сарын {rate.monthly}% (жилийн {rate.annual}%). Тэнцүү төлбөрөөр тооцсон ойролцоо дүн.
+        </p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <label className={label} htmlFor={id("price")}>Машины үнэ (₮)</label>
+            <input
+              id={id("price")} inputMode="numeric" value={priceText} placeholder="Үнээ оруулна уу"
+              onChange={(e) => { const n = digits(e.target.value); setPriceText(n ? n.toLocaleString("en-US") : ""); }}
+              className="mt-1.5 w-full rounded-lg border border-solid border-line bg-white px-3 py-2 font-[inherit] text-regular tabular-nums text-ink focus:border-[#0f5a3a] focus:outline-none"
+            />
+            {model.priceFrom && <p className="m-0 mt-1 text-xs text-ink-muted">Эхлэх үнэ: {tugrik(model.priceFrom)}</p>}
+          </div>
+          <div>
+            <label className={label} htmlFor={id("down")}>Урьдчилгаа {down}%{loan ? ` · ${tugrik(loan.downPayment)}` : ""}</label>
+            <input id={id("down")} type="range" min={MIN_DOWN_PERCENT} max={90} step={5} value={down} onChange={(e) => setDown(Number(e.target.value))} className="mt-3 w-full accent-[#0f5a3a]" />
+          </div>
+          <div>
+            <label className={label} htmlFor={id("term")}>Хугацаа {term} сар</label>
+            <input id={id("term")} type="range" min={MIN_TERM} max={MAX_TERM[income]} step={6} value={term} onChange={(e) => setTerm(Number(e.target.value))} className="mt-3 w-full accent-[#0f5a3a]" />
+          </div>
+          <div>
+            <span className={label}>Орлого</span>
+            <div className="mt-1.5 flex gap-1.5" role="group" aria-label="Орлогын төрөл">
+              {INCOME_TYPES.map((type) => (
+                <button
+                  key={type.value} type="button" aria-pressed={income === type.value} onClick={() => setIncome(type.value)} title={type.hint}
+                  className={`flex-1 cursor-pointer rounded-lg border border-solid px-2 py-2 font-[inherit] text-[13px] font-semibold ${income === type.value ? "border-[#0f5a3a] bg-[#0f5a3a] text-white" : "border-line bg-white text-ink hover:border-[#9cc4ad]"}`}
+                >
+                  {type.label.replace(" орлого", "")}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -166,6 +275,10 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail }: {
               note={`Сар бүр ${tugrik(saving)} хэмнэнэ`} share={(saving * 12) / Math.max(1, atMax.saving * 12)}
             />
           </div>
+
+          {/* Right under the cost cards (user, 2026-11-21): the same model bought on the green loan — monthly
+              payment, its interest part, the yearly total — and what is left of the fuel saving after paying it. */}
+          <LoanPart key={model.value} model={model} saving={saving} idPrefix={idPrefix} />
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <p className="m-0 max-w-[70ch] text-xs leading-relaxed text-ink-muted">

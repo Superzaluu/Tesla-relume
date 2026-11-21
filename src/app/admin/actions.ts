@@ -142,12 +142,15 @@ export async function saveCard(form: FormData) {
 
   const thumb = await upload(supabase, form.get("thumb_file"), `cards/${key}`, back);
   const variant = text(form, "variant");
+  // «Эхлэх үнэ» (migration 0016): "67,745,600 ₮" or "67745600" → 67745600; empty or implausible → not shown.
+  const priceFrom = Number(String(text(form, "price_from") ?? "").replace(/[^\d]/g, ""));
   const listingUpdate: Record<string, unknown> = {
     category_id: text(form, "category_id"),
     description: text(form, "listing_description"),
     variant: variant === "cargo" || variant === "passenger" ? variant : null,
     sort: int(form, "sort"),
-    active: form.get("active") === "on"
+    active: form.get("active") === "on",
+    price_from: priceFrom >= 1_000_000 && priceFrom <= 2_000_000_000 ? priceFrom : null
   };
   if (thumb) listingUpdate.thumb = thumb;
   const { error: listingError } = await supabase.from("model_listings").update(listingUpdate).eq("key", key);

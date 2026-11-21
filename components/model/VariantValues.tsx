@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { isByVariant, type Fact, type Img, type V } from "@/data/types";
 import { VariantFacts, VariantImg, VariantText } from "@/components/model/Variant";
 
@@ -8,11 +9,11 @@ export function T({ v }: { v: V<string> }) {
   return isByVariant(v) ? <VariantText value={v} /> : <>{v}</>;
 }
 
-export function Picture({ image, className, eager }: { image: Img; className?: string; eager?: boolean }) {
+export function Picture({ image, className, eager, style }: { image: Img; className?: string; eager?: boolean; style?: CSSProperties }) {
   const loading = eager ? undefined : "lazy";
   const fetchPriority = eager ? "high" : undefined;
-  if (isByVariant(image.src) || isByVariant(image.alt)) return <VariantImg image={image} className={className} loading={loading} fetchPriority={fetchPriority} />;
-  return <img className={className} src={image.src as string} width={image.width} height={image.height} alt={image.alt as string} loading={loading} fetchPriority={fetchPriority} />;
+  if (isByVariant(image.src) || isByVariant(image.alt)) return <VariantImg image={image} className={className} style={style} loading={loading} fetchPriority={fetchPriority} />;
+  return <img className={className} style={style} src={image.src as string} width={image.width} height={image.height} alt={image.alt as string} loading={loading} fetchPriority={fetchPriority} />;
 }
 
 export function Facts({ facts }: { facts: V<Fact[]> }) {

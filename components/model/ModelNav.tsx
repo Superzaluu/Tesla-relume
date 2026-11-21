@@ -5,6 +5,8 @@
 import { useEffect, useState } from "react";
 import { calTestDrive } from "@/components/ui/CalTestDrive";
 import { LoadingLink } from "@/components/ui/LoadingLink";
+import { FloatingSavings } from "@/components/model/FloatingSavings";
+import type { CalcModel } from "@/data/savings";
 
 /** `href`: a link to another page (e.g. «Ногоон зээл») instead of a section of this one. */
 export type NavItem = { id: string; label: string; href?: string };
@@ -12,8 +14,10 @@ export type NavItem = { id: string; label: string; href?: string };
 /**
  * `preorder`: "Урьдчилсан захиалга" right after «Ногоон зээл» (user, 2026-11-20), a green button in the sticky
  * menu so the order is one click away from anywhere on the page; it moved here from the hero.
+ * `calc`: «Хэмнэлтийн тооцоолуур» sits between that button and "Туршилтын жолоодлого" (user, 2026-11-21) and
+ * lifts off from there to follow the mouse once the hero is scrolled away (FloatingSavings).
  */
-export function ModelNav({ items, preorder }: { items: NavItem[]; preorder?: string }) {
+export function ModelNav({ items, preorder, calc }: { items: NavItem[]; preorder?: string; calc?: CalcModel }) {
   const [current, setCurrent] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
@@ -43,13 +47,18 @@ export function ModelNav({ items, preorder }: { items: NavItem[]; preorder?: str
                 : <a href={`#${item.id}`} aria-current={item.id === current ? "true" : undefined} onClick={() => setCurrent(item.id)}>{item.label}</a>}
             </li>
           ))}
-          {preorder && (
-            <li className="mnav__preorder">
-              <LoadingLink className="btn btn--primary" href={preorder}>Урьдчилсан захиалга</LoadingLink>
-            </li>
-          )}
         </ul>
-        <button type="button" className="btn btn--primary mnav__cta" {...calTestDrive}>Туршилтын жолоодлого</button>
+        {/* The three actions as one group on the right that never scrolls away (user, 2026-11-21: the calculator
+            between the two green buttons); the section links on the left scroll sideways when space runs out. */}
+        <div className="mnav__actions">
+          {preorder && (
+            <span className="mnav__preorder">
+              <LoadingLink className="btn btn--primary" href={preorder}>Урьдчилсан захиалга</LoadingLink>
+            </span>
+          )}
+          <div className="mnav__savings"><FloatingSavings calc={calc} /></div>
+          <button type="button" className="btn btn--primary mnav__cta" {...calTestDrive}>Туршилтын жолоодлого</button>
+        </div>
       </div>
     </nav>
   );

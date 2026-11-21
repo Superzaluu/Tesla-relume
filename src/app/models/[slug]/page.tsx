@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ModelPage } from "@/components/model/ModelPage";
-import { getCalculatorModel, getCategory, getModel, getModelCards, getModelSlugs, getSpecSheet } from "@/data/content";
+import { getCalculatorModel, getCategory, getModel, getModelCards, getModelSlugs, getNavigation, getSpecSheet } from "@/data/content";
 import { models } from "@/data/models";
 import { slotSetFor, viewSheet } from "@/data/specSheet";
-import { buildStory } from "@/data/story";
+import { buildStory, peeksFromSections } from "@/data/story";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -37,7 +37,9 @@ export default async function Page({ params }: Props) {
   // section replaces their own "specs" block. Every other model gets sections built from its sheet.
   let page = found.page;
   if (sheet && page.sections) {
-    page = { ...page, specTable: true, sections: page.sections.filter((section) => section.id !== "specs") };
+    // Hand-written sections (EC75 / R5): copies, since peeksFromSections gives target cards an id.
+    const sections = structuredClone(page.sections.filter((section) => section.id !== "specs"));
+    page = { ...page, specTable: true, sections, peeks: page.peeks ?? peeksFromSections(sections) };
   } else if (sheet && page.specTable !== false) {
     const story = buildStory(sheet, found.name, slug, found.quick?.fuel, slotSet, page.notes.length);
     page = { ...page, specTable: true, sections: story.sections, notes: [...page.notes, ...story.notes], peeks: story.peeks };
@@ -46,7 +48,13 @@ export default async function Page({ params }: Props) {
   const specView = page.specTable && sheet ? viewSheet(sheet, model.quick?.fuel, slotSet) : null;
 
   // "Төстэй загварууд": up to four other cards from the same menu category.
-  const [{ cards }, calc] = await Promise.all([getModelCards(), getCalculatorModel(slug)]);
+  const [{ cards }, calc, navigation] = await Promise.all([getModelCards(), getCalculatorModel(slug), getNavigation()]);
   const similar = category ? cards.filter((card) => card.categoryId === category.id && card.slug !== slug).slice(0, 4) : [];
-  return <ModelPage model={model} specView={specView} similar={similar} calc={calc} />;
+  // «Эхлэх үнэ» per side from this page's menu cards (a one-version card counts as cargo).
+  const own = navigation.flatMap((c) => c.items).filter((item) => item.slug === slug);
+  const prices = {
+    cargo: own.find((item) => (item.variant ?? "cargo") === "cargo" && item.priceFrom)?.priceFrom,
+    passenger: own.find((item) => item.variant === "passenger" && item.priceFrom)?.priceFrom
+  };
+  return <ModelPage model={model} specView={specView} similar={similar} calc={calc} prices={prices} />;
 }

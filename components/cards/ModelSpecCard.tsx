@@ -2,6 +2,7 @@ import Link from "next/link";
 import { hasEngine, type QuickSpecs } from "@/data/types";
 import { compactSize, countOnly, MISSING_SHORT, payloadValue, QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
+import { PriceFrom } from "@/components/cards/PriceFrom";
 import { CarShine } from "@/components/ui/CarShine";
 import { shineMask } from "@/components/ui/shineMask";
 
@@ -19,7 +20,10 @@ export type ModelCardData = {
   category: string;
   stats: { value: string; unit: string; label: string }[];
   quick?: QuickSpecs;
+  /** «Эхлэх үнэ» in ₮ (the lowest trim); undefined = not shown. */
+  priceFrom?: number;
 };
+
 
 // The card has room for one-line stat labels only; the model page keeps the full wording.
 // Old labels ("Цэнэглэлтийн зай", "Зайн багтаамж") stay until migration 0010 has renamed them in the database.
@@ -83,6 +87,7 @@ export function ModelSpecCard({ model }: { model: ModelCardData }) {
         <h3 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-ink">
           <Link href={model.href} className="hover:text-[#0f5a3a]">{model.name}</Link>
         </h3>
+        {model.priceFrom && <PriceFrom value={model.priceFrom} />}
         {model.stats.length > 0 && (
           // Hierarchy: the first stat (range) is the one big green number; the other two are secondary.
           // Common Region: a tinted panel, not a second outline inside the card's own border (box in box).

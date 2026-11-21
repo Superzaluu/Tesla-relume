@@ -1,12 +1,14 @@
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ConfigPicker, RowHint, Value } from "@/components/model/ConfigPicker";
 import type { SheetView } from "@/data/specSheet";
+import type { Variant } from "@/data/types";
+import { VariantPriceFrom } from "@/components/model/Variant";
 
 // One "Техникийн үзүүлэлт" section for specs and trims (they are the same information), B′ layout
 // (user's Figma, 2026-11-20): trim cards, the chosen trim's standard equipment and
 // every spec group as a card (ConfigPicker). With several trims, a table of only the differences opens below.
 
-export function SpecSheetSection({ view }: { view: SheetView | null }) {
+export function SpecSheetSection({ view, prices = {} }: { view: SheetView | null; prices?: Partial<Record<Variant, number>> }) {
   if (!view || view.picker.options.length === 0) {
     return (
       <section className="section section--surface" id="specs">
@@ -28,6 +30,9 @@ export function SpecSheetSection({ view }: { view: SheetView | null }) {
             title={many ? "Иж бүрдлээ сонгоно уу" : "Иж бүрдэл"}
             text={many ? intro : "Монголд нийлүүлэгдэх иж бүрдлийн тоноглол, үзүүлэлт."}
           />
+          {/* «Эхлэх үнэ» (user, 2026-11-21): the lowest trim's price; the trims say «Үнэ лавлах», the visitor
+              picks one and asks for its price. */}
+          <VariantPriceFrom prices={prices} className="msheet__price" note="— хамгийн бага иж бүрдлийн үнэ. Бусад иж бүрдлийн үнийг сонгоод лавлана уу." />
           {/* When the numbers were last checked (user, 2026-11-20). Update the date after the next check. */}
           <p className="msheet__checked">Үзүүлэлтийг 2026.11-д үйлдвэрлэгчийн хүснэгтээс шалгасан.</p>
         </div>

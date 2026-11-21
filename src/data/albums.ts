@@ -70,7 +70,7 @@ export const ALBUMS: Record<string, AlbumItem[]> = {
     { src: "/assets/r5/album/parking.jpg", width: 800, height: 450, title: "Зогсоолд", text: "Камерын дүрсээр давчуу газар зогсооно." },
     { src: "/assets/r5/album/night.jpg", width: 800, height: 450, title: "Шөнийн замд", text: "Туслах системүүд шөнө ч ажиллана." },
     // R5 Pro is a power choice on this page (src/data/pro.ts): its own photos, tagged as R5 Pro.
-    { src: at("r5pro-cargo", "album/van.jpg"), width: 517, height: 530, tag: "R5 Pro", title: "130 кВт мотор", text: "61.94 кВт·ц батерей, 420–430 км." },
+    { src: at("r5pro-cargo", "album/van.jpg"), width: 517, height: 530, tag: "R5 Pro", title: "R5 Pro", text: "61.94 кВт·ц батерей, 130 кВт мотор, 420–430 км." },
     { src: at("r5pro-cargo", "album/shifter.jpg"), width: 674, height: 375, tag: "R5 Pro", title: "Хурдны хөшүүрэг", text: "Суудлын машин шиг хялбар." },
     { src: at("r5pro-cargo", "story/chassis.jpg"), width: 640, height: 384, tag: "R5 Pro", title: "Ухаалаг шасси", text: "Батерей шалан доор, жин нь доогуур." }
   ],
@@ -101,7 +101,7 @@ export const ALBUMS: Record<string, AlbumItem[]> = {
     { src: at("c3", "album/side.jpg"), width: 1620, height: 720, title: "3.3 м тэвш", text: "Урт тэвшэнд нэг удаад их ачаа." },
     { src: at("c3", "album/front.jpg"), width: 1620, height: 870, title: "Урт хамар", text: "Урд талын бүтэц мөргөлдөлтийн энергийг шингээнэ." },
     { src: at("c3", "g3.jpg"), width: 800, height: 450, title: "Тэгш шалтай кабин", text: "Үргэлжилсэн суудал, өргөн зай." },
-    { src: at("c3", "g2.jpg"), width: 800, height: 450, title: "Хоёр дэлгэц", text: "15.6 инч төв дэлгэц, 8.8 инч багажны самбар." },
+    { src: at("c3", "g2.jpg"), width: 800, height: 450, title: "Хоёр дэлгэц", text: "15.6 инч төв дэлгэц, 8.8 инч хянах самбар." },
     { src: at("c3", "album/shifter.jpg"), width: 725, height: 405, title: "Хурдны хөшүүрэг", text: "Суудлын машин шиг хялбар удирдлага." }
   ],
   c5l: [

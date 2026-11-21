@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
+import { PriceFrom } from "@/components/cards/PriceFrom";
 import { payloadKg, payloadText, rangeTile, seats, spanText, type Family } from "@/components/cards/modelFilters";
 import { QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
@@ -48,6 +49,8 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
   const chips = allChips ? members : members.slice(0, SHOWN_CHIPS);
   const filtered = members.length < total;
   const thumbMask = shineMask(lead.thumb);
+  const prices = members.map((m) => m.priceFrom).filter((p): p is number => typeof p === "number");
+  const priceFrom = prices.length ? Math.min(...prices) : undefined;
 
   return (
     <article className="flex w-[308px] shrink-0 snap-start flex-col overflow-hidden rounded-card border border-solid border-line bg-white shadow-[0_8px_24px_rgb(15_35_56/.08)] sm:w-[336px]">
@@ -74,6 +77,8 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
           <h3 className="m-0 mt-0.5 text-[22px] font-bold leading-tight tracking-tight text-ink">
             <Link href={lead.href} className="hover:text-[#0f5a3a]">{name}</Link>
           </h3>
+          {/* The family's lowest «Эхлэх үнэ» (user, 2026-11-21): the price of its cheapest trim. */}
+          {priceFrom !== undefined && <PriceFrom value={priceFrom} />}
         </div>
 
         <div className="grid grid-cols-2 gap-2">

@@ -7,40 +7,37 @@ import { SpecSheetSection } from "@/components/model/SpecSheetSection";
 import { ModelNav, type NavItem } from "@/components/model/ModelNav";
 import { ChapterView, groupChapters } from "@/components/model/Chapters";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
-import { FloatingSavings } from "@/components/model/FloatingSavings";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { SectionView } from "@/components/model/Blocks";
 import { albumOf, type AlbumItem } from "@/data/albums";
 import { Picture, T } from "@/components/model/VariantValues";
-import { VariantProvider, VariantSection, VariantToggle } from "@/components/model/Variant";
+import { VariantPriceFrom, VariantProvider, VariantSection, VariantToggle } from "@/components/model/Variant";
+import type { Variant } from "@/data/types";
 
 // One template for every model. Sections only render when the model's data
 // has them, so EC75/R5 (variants, ADAS, charging...) and the simpler catalog
 // models share this code.
 
-// «Хэмнэлтийн тооцоолуур» sits next to "Урьдчилсан захиалга" (Gestalt variant A, Proximity; user, 2026-11-20):
-// the two actions read as one choice instead of the calculator alone on a white band under the menu.
-function Hero({ model, calc }: { model: Model; calc?: CalcModel }) {
+// «Хэмнэлтийн тооцоолуур» lives in the sticky menu between "Урьдчилсан захиалга" and "Туршилтын жолоодлого"
+// since 2026-11-21 (user): it starts there and follows the mouse from there (ModelNav → FloatingSavings).
+function Hero({ model, prices }: { model: Model; prices: Prices }) {
   const { hero } = model.page;
   if (hero.kind === "intro") {
     return (
       <section className="mintro">
         <div className="mintro__text">
           {/* The category line above the name and the one-sentence tagline under the descriptor were removed
-              (user, 2026-11-20): name + descriptor + button only. */}
+              (user, 2026-11-20): name + descriptor only. EC75 / R5 (cargo + passenger on one page) get their
+              switch here, the photo follows it (user, 2026-11-21: their full-bleed photo hero was not the standard).
+              «Эхлэх үнэ» under the descriptor (user, 2026-11-21): the lowest trim's price of the side shown. */}
           <h1 className="mintro__title">{model.name}</h1>
           <p className="mintro__desc">{model.desc}</p>
-          {/* "Урьдчилсан захиалга" moved into the sticky menu next to «Ногоон зээл» (user, 2026-11-20). */}
-          <div className="actions mintro__actions">
-            <FloatingSavings calc={calc} />
-          </div>
+          <VariantPriceFrom prices={prices} className="mintro__price" />
+          {model.page.variants && <div className="actions mintro__actions"><VariantToggle /></div>}
         </div>
         <div className="mintro__hero-frame">
-          <img
-            className="mintro__image" src={hero.image.src as string} width={hero.image.width} height={hero.image.height}
-            style={{ maxWidth: hero.maxWidth }} alt={hero.image.alt as string} fetchPriority="high"
-          />
+          <Picture image={hero.image} className="mintro__image" style={{ maxWidth: hero.maxWidth, objectPosition: hero.position }} eager />
           {model.quick && <QuickSpecs specs={model.quick} peeks={model.page.peeks} />}
         </div>
       </section>
@@ -54,9 +51,6 @@ function Hero({ model, calc }: { model: Model; calc?: CalcModel }) {
         <h1 className="mhero__title">{model.name}</h1>
         <p className="hero__subtitle"><T v={hero.subtitle} /></p>
         {model.page.variants && <VariantToggle onPhoto />}
-        <div className="actions mhero__actions">
-          <FloatingSavings calc={calc} />
-        </div>
       </div>
       <Picture image={hero.image} className="hero__bg" eager />
       {model.quick && <QuickSpecs specs={model.quick} peeks={model.page.peeks} />}
@@ -118,13 +112,17 @@ function Similar({ cards }: { cards: ModelCardData[] }) {
   );
 }
 
-export function ModelPage({ model, specView, similar = [], calc }: {
+/** «Эхлэх үнэ» per side, from the page's menu cards (model_listings.price_from); a one-version model uses cargo. */
+export type Prices = Partial<Record<Variant, number>>;
+
+export function ModelPage({ model, specView, similar = [], calc, prices = {} }: {
   model: Model; specView?: SheetView | null; similar?: ModelCardData[];
   /** This model's savings-calculator entry (also for a model not in the menu). */
   calc?: CalcModel;
+  prices?: Prices;
 }) {
   const { page } = model;
-  const preload = page.hero.kind === "photo" && typeof page.hero.image.src === "object"
+  const preload = typeof page.hero.image.src === "object"
     ? [page.hero.image.src.cargo, page.hero.image.src.passenger] : undefined;
 
   // Picture sections grouped into chapters (Gestalt variant A); the sheet's winter block joins «Хүч ба цэнэглэлт».
@@ -143,12 +141,12 @@ export function ModelPage({ model, specView, similar = [], calc }: {
 
   const content = (
     <main id="overview">
-      <Hero model={model} calc={calc} />
-      <ModelNav items={nav} preorder={preorderHref(model.slug)} />
+      <Hero model={model} prices={prices} />
+      <ModelNav items={nav} preorder={preorderHref(model.slug)} calc={calc} />
       <RevealOnScroll />
       {chapters.map((chapter) => <ChapterView chapter={chapter} key={chapter.id} />)}
       {rest.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
-      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} />}
+      {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} prices={prices} />}
       <Album items={album} />
       <Similar cards={similar} />
       {/* The closing «Туршаад үзэх үү?» block was removed (user, 2026-11-20): "Урьдчилсан захиалга" is in the

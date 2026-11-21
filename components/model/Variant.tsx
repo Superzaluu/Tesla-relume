@@ -46,15 +46,30 @@ export function VariantToggle({ onPhoto = false }: { onPhoto?: boolean }) {
   );
 }
 
+/**
+ * «Эхлэх үнэ» of the side shown (cargo / passenger have their own card and price; a one-version model uses
+ * "cargo"). Nothing when that side has no price.
+ */
+export function VariantPriceFrom({ prices, className, note }: { prices: Partial<Record<Variant, number>>; className?: string; note?: string }) {
+  const value = prices[useVariant()];
+  if (!value) return null;
+  return (
+    <p className={className}>
+      Эхлэх үнэ <strong className="tabular-nums">{`${value.toLocaleString("en-US")} ₮`}</strong>
+      {note && <span> {note}</span>}
+    </p>
+  );
+}
+
 /** Text that changes with the variant. */
 export function VariantText({ value }: { value: V<string> }) {
   return <>{pick(value, useVariant())}</>;
 }
 
 /** Image whose src/alt change with the variant. */
-export function VariantImg({ image, className, loading, fetchPriority }: { image: Img; className?: string; loading?: "lazy"; fetchPriority?: "high" }) {
+export function VariantImg({ image, className, style, loading, fetchPriority }: { image: Img; className?: string; style?: CSSProperties; loading?: "lazy"; fetchPriority?: "high" }) {
   const variant = useVariant();
-  return <img className={className} src={pick(image.src, variant)} width={image.width} height={image.height} alt={pick(image.alt, variant)} loading={loading} fetchPriority={fetchPriority} />;
+  return <img className={className} style={style} src={pick(image.src, variant)} width={image.width} height={image.height} alt={pick(image.alt, variant)} loading={loading} fetchPriority={fetchPriority} />;
 }
 
 export function VariantFacts({ facts }: { facts: V<Fact[]> }) {

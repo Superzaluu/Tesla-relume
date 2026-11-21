@@ -37,6 +37,8 @@ export type ModelRow = {
 export type ListingRow = {
   key: string; category_id: string; model_slug: string; variant: Variant | null;
   description: string | null; sort: number; active: boolean; thumb: string | null;
+  /** «Эхлэх үнэ» in ₮ (migration 0016); null = not shown. */
+  price_from?: number | null;
 };
 export type HeroRow = {
   model_slug: string; sort: number; active: boolean; theme: "light" | "dark"; theme_sm: "light" | "dark" | null; sky: string;
@@ -202,7 +204,7 @@ export const getNavigation = cache(async (): Promise<NavCategory[]> => {
           return {
             key: listing.key, slug: listing.model_slug, variant: listing.variant ?? undefined, name: model.name,
             desc: listing.description || model.description, href: modelHref(listing.model_slug, listing.variant ?? undefined),
-            thumb: listingThumb(listing)
+            thumb: listingThumb(listing), priceFrom: listing.price_from ?? undefined
           };
         })
     }))
@@ -227,6 +229,7 @@ export const getModelCards = cache(async (): Promise<{ cards: ModelCardData[]; c
         }));
         return {
           key: item.key, slug: item.slug, href: item.href, preorderHref: preorderHref(item.slug, item.variant), thumb: item.thumb, name: item.name, desc: item.desc,
+          priceFrom: item.priceFrom,
           categoryId: category.id, category: category.label, stats,
           // A card shows one version, so it gets that version's seats.
           quick: model.quick && {
@@ -242,10 +245,10 @@ export const getModelCards = cache(async (): Promise<{ cards: ModelCardData[]; c
 });
 
 /** One calculator entry from a model row. */
-function toCalcModel(row: ModelRow, value: string, name: string, category: string): CalcModel {
+function toCalcModel(row: ModelRow, value: string, name: string, category: string, priceFrom?: number): CalcModel {
   const evRange = statText(row.stats, /цахилгаанаар/i);
   return {
-    value, slug: row.slug, name, category,
+    value, slug: row.slug, name, category, priceFrom,
     fuel: toFuelType(row.fuel, row.engine),
     evConsumption: Number(row.ev_consumption) || DEFAULT_EV_CONSUMPTION,
     evRangeKm: evRange ? Number.parseFloat(evRange) || undefined : undefined,
@@ -264,7 +267,7 @@ export const getCalculatorModels = cache(async (): Promise<CalcModel[]> => {
   return navigation.flatMap((category) =>
     category.items.flatMap((item) => {
       const row = rows.get(item.slug);
-      return row ? [toCalcModel(row, `${item.slug}|${item.variant ?? ""}`, item.name, category.label)] : [];
+      return row ? [toCalcModel(row, `${item.slug}|${item.variant ?? ""}`, item.name, category.label, item.priceFrom)] : [];
     })
   );
 });

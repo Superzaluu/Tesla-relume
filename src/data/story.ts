@@ -96,7 +96,7 @@ const C5_TEXT: Partial<Record<Slot | "battery-note", Caption>> = {
   cabin: { title: "Тэгш шалтай кабин", text: "{v}. Кабины шал урдаасаа хойш тэгш, нэг болон давхар кабин аль аль нь өргөн." },
   chassis: { title: "Рам ба хойд тэнхлэг", text: "{v}. 2 уртааш, 12 хөндлөн бат бөх ган рам, 3 тонны хойд тэнхлэг — хөнгөн ачааны машины түвшний бүтэц." },
   brakes: { title: "Тоормос", text: "{v}. Цахилгаан удирдлагатай EHB тоормос, агааржуулалттай диск: тоормос миллисекундэд хариу өгнө." },
-  "interior-screen": { title: "Дэлгэц ба багажны самбар", text: "{v}. Хэвтээ үргэлжилсэн самбар, гол мэдээлэл нэг харцанд." },
+  "interior-screen": { title: "Дэлгэц ба хянах самбар", text: "{v}. Хэвтээ үргэлжилсэн самбар, гол мэдээлэл нэг харцанд." },
   "interior-seats": { title: "Өргөн кабин, суудал", text: "{v}. 1.8 м өргөн тэгш кабин, үргэлжилсэн суудал." },
   "adas-acc": { text: "0–95 км/ц хурдны бүх мужид урд машиныг дагаж, хурд болон зайгаа барина." },
   "battery-note": { text: "3 давхар дулааны хамгаалалттай, −30°C-аас 65°C хүртэл дулааны удирдлагатай." }
@@ -195,6 +195,60 @@ function collectPeeks(sections: Section[], slug: string): Partial<Record<PeekKey
     if (slot) peeks[key] = found.get(slot);
   }
   return peeks;
+}
+
+/**
+ * Previews for the hero icons of a page whose sections are written by hand (EC75 / R5, src/data/ec75.ts, r5.ts):
+ * there are no story slots, so each icon takes the first picture of the section that is about it, matched by
+ * section id and, for cards, by words in the card title (user, 2026-11-21: the icons did nothing on EC75 / R5).
+ * A card that becomes a target gets an id, so the preview jumps to that card (e.g. seats → the cabin card in
+ * «Аюулгүй ба ухаалаг»). Variant pictures and texts use the cargo side.
+ */
+export function peeksFromSections(sections: Section[]): Partial<Record<PeekKey, Peek>> {
+  const side = <T,>(value: T | { cargo: T; passenger: T } | undefined): T | undefined =>
+    value && typeof value === "object" && "cargo" in (value as object) ? (value as { cargo: T }).cargo : (value as T | undefined);
+  const byId = (...ids: string[]): Peek | undefined => {
+    for (const id of ids) {
+      const section = sections.find((item) => item.id === id);
+      if (!section) continue;
+      const heading = section.blocks.find((block) => block.type === "title");
+      for (const block of section.blocks) {
+        if (block.type === "feature" && block.image) {
+          return { src: str(side(block.image.src)), title: str(side(block.title)), text: firstSentence(str(side(block.text))), href: `#${id}` };
+        }
+        if (block.type === "wideImage") {
+          const columns = section.blocks.find((other) => other.type === "columns");
+          return {
+            src: str(side(block.image.src)), title: heading?.type === "title" ? str(side(heading.title)) : "",
+            text: columns?.type === "columns" ? columns.items[0]?.text ?? "" : "", href: `#${id}`
+          };
+        }
+      }
+    }
+    return undefined;
+  };
+  const byCard = (key: string, words: RegExp): Peek | undefined => {
+    for (const section of sections) {
+      for (const block of section.blocks) {
+        if (block.type !== "cards" && block.type !== "safety") continue;
+        const card = block.items.find((item) => words.test(str(side(item.title))) && item.image);
+        if (!card) continue;
+        card.id ??= `story-${key}`;
+        return { src: str(side(card.image.src)), title: str(side(card.title)), text: firstSentence(str(side(card.text))), href: `#${card.id}` };
+      }
+    }
+    return undefined;
+  };
+  const battery = byId("battery");
+  const cargo = byId("cargo-space", "space");
+  const peeks: Partial<Record<PeekKey, Peek | undefined>> = {
+    fuel: battery, range: battery, motor: battery, drive: battery,
+    charging: byId("charging") ?? battery,
+    dimension: cargo, payload: cargo,
+    doors: byCard("doors", /хаалга/i),
+    seats: byCard("seats", /суудал/i) ?? cargo
+  };
+  return Object.fromEntries(Object.entries(peeks).filter(([, peek]) => peek?.src)) as Partial<Record<PeekKey, Peek>>;
 }
 
 export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: string | undefined, slotSet: SlotSet, noteCount: number):
@@ -364,7 +418,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   // 7. Cabin: picture cards for what the sheet fills in. The connected features (app, OTA, internet, Bluetooth,
   // 12V) that used to follow are «Тоноглол» chips in the spec section (user, 2026-11-20: they repeated them).
   const interior = [
-    val("cluster") && card("interior-cluster", "Багажны самбар", val("cluster")),
+    val("cluster") && card("interior-cluster", "Хянах самбар", val("cluster")),
     val("screen") && card("interior-screen", "Төв дэлгэц, аудио", val("screen")),
     val("seat_material") && card("interior-seats", "Суудал", val("seat_material")),
     has("ac") && card("interior-ac", "Агааржуулагч", val("ac_control") || "Стандартаар"),
@@ -374,7 +428,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     sections.push({ id: "interior", blocks: [{
       type: "feature", image: image("interior-screen", "Ухаалаг кабин"), tagline: "Кабин", title: "Жолоочид тухтай ухаалаг кабин",
       text: "Тод дэлгэц, энгийн удирдлага болон өдөр тутмын ажилд тохирсон тав тухтай жолоодлогын орчин.",
-      facts: facts([["Багажны самбар", val("cluster")], ["Төв дэлгэц", val("screen")], ["Агааржуулагч", val("ac_control") || "Стандартаар"]])
+      facts: facts([["Хянах самбар", val("cluster")], ["Төв дэлгэц", val("screen")], ["Агааржуулагч", val("ac_control") || "Стандартаар"]])
     }] });
   } else if (interior.length >= 2) {
     sections.push({ id: "interior", blocks: [

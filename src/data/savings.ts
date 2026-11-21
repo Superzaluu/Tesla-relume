@@ -74,6 +74,8 @@ export type CalcModel = {
   /** Full range from the models table (BEV: one charge; EREV: battery + extender), km. */
   rangeKm?: number;
   compare: { name: string; fuel: FuelCode; consumption: number };
+  /** «Эхлэх үнэ» of the card, ₮ (model_listings.price_from): the loan part starts from it. */
+  priceFrom?: number;
 };
 
 export type SavingsInput = {

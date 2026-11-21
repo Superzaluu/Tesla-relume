@@ -12,20 +12,27 @@ how something should look or behave, open C5 and match it.
 ## Page order (top to bottom)
 
 1. **Hero** (`Hero` in ModelPage.tsx)
-   - `intro` kind (all models but EC75/R5): name, descriptor, «Хэмнэлтийн тооцоолуур» (outlined, magnetic),
-     photo 1100 × clamp(360px, 34vw, 460px), `object-position: 50% 80%` so the vehicle sits in the middle.
-     No category line, no tagline sentence, no «Урьдчилсан захиалга» here (it lives in the menu).
-   - `photo` kind (EC75, R5): full-bleed photo, variant toggle, the same calculator button.
+   - `intro` kind (every model): name, descriptor, photo 1100 × clamp(360px, 34vw, 460px),
+     `object-position: 50% 80%` so the vehicle sits in the middle. No category line, no tagline sentence, no
+     buttons here: «Урьдчилсан захиалга» and «Хэмнэлтийн тооцоолуур» live in the menu.
+   - EC75 / R5 use the same `intro` hero since 2026-11-21 (the full-bleed `photo` kind put the icons over the
+     van and hid the name): the Ачааны / Зорчигчийн switch sits next to the calculator, the photo follows it
+     (`image.src` per variant), `position: "50% 50%"` because their studio photos were extended to 1100 × 750
+     with the van in the middle (scratchpad widen2.ps1: sides, top and bottom continued, seams feathered).
    - **Icon strip** (`components/ui/QuickSpecs.tsx`): 9 fixed slots on the photo's bottom edge, one row on
      desktop, dark green #083d28 with a white glow. A slot with a photo below gets a **QuickPeek** card on
      hover / first tap (`components/ui/QuickPeek.tsx`, peeks built in `story.ts collectPeeks`, slot → photo
-     map `PEEK_SLOTS`).
+     map `PEEK_SLOTS`); a click jumps to that section / card (e.g. seats → the cabin card in «Аюулгүй ба
+     ухаалаг»). EC75 / R5 (hand-written sections) get theirs from `peeksFromSections` (section ids + card titles).
+     Check: `scripts/peek-test.mjs <url> <iconIndex> <out.png>`.
 2. **ModelNav** (sticky, `components/model/ModelNav.tsx`): outlined pills «Эхлэл · Ачаа · Хүч ба цэнэглэлт ·
-   Аюулгүй ба ухаалаг · Иж бүрдэл · Зураг · Ногоон зээл» (green outline, own page), then the green
-   «Урьдчилсан захиалга» button, «Туршилтын жолоодлого» on the right. Only items the model has.
+   Аюулгүй ба ухаалаг · Иж бүрдэл · Зураг · Ногоон зээл» (green outline, own page), then on the right one
+   group: green «Урьдчилсан захиалга», outlined «Хэмнэлтийн тооцоолуур», green «Туршилтын жолоодлого».
+   Only items the model has.
 3. **Chapters** (`components/model/Chapters.tsx`, Gestalt common region): sections grouped by id into three
    pale-green boxes (#eef5f3, radius 18px):
-   - `cargo` «Ачаа ба бүтэц»: `cargo-space`, `space`, `work`, `service`
+   - `load` «Ачаа ба бүтэц»: `cargo-space`, `space`, `work`, `service` (never id `cargo`: #cargo / #passenger
+     are the EC75 / R5 side switch, an element with that id makes the browser skip the hero)
    - `power` «Хүч ба цэнэглэлт»: `battery`, `charging`, `winter` (+ the sheet's WinterSection with the EC75
      −30°C video, captioned as EC75's test)
    - `smart` «Аюулгүй ба ухаалаг»: `assist`, `safety`, `interior` → ONE `SmartGrid` of equal cards with
@@ -91,9 +98,14 @@ how something should look or behave, open C5 and match it.
 - Chip / check marks pop from ×0.5, 0.35s; changed values flash pale brand green 1.6s.
 - Entrance: `RevealOnScroll` — below-the-fold blocks rise 16px and fade in, 0.6s, 70ms stagger; the page is
   complete without JS.
-- «Хэмнэлтийн тооцоолуур»: magnetic in the hero (`components/ui/Magnetic.tsx`); after scrolling past it
-  a copy follows the mouse at ~56px (`FloatingSavings.tsx`), waits when the mouse heads for it, disappears
-  for the session once clicked. It follows on any real mouse movement, not on media-query guesses.
+- «Хэмнэлтийн тооцоолуур» (since 2026-11-21): in the sticky ModelNav between «Урьдчилсан захиалга» and
+  «Туршилтын жолоодлого» (the three actions are one right-hand group `.mnav__actions`; the section links scroll
+  sideways with a fade when space runs out, all fit from 1440px). Magnetic there (`components/ui/Magnetic.tsx`).
+  At the first real mouse movement the button lifts off from its menu place (its slot stays empty) and follows
+  the mouse at ~56px (`FloatingSavings.tsx`), waits when the mouse heads for it, and stops for the session once
+  clicked (then it stays in the menu; test in a new tab). Waiting for the hero to scroll away was tried and read
+  as "it does not move" (user, 2026-11-21). Phones (<768px): no menu slot, it waits bottom-right. It follows
+  on any real mouse movement, not on media-query guesses. Check: `scripts/float-test.mjs <url> <outPrefix>`.
 - Reduced motion: entrance and autoplay stop; small hover/press feedback stays (the owner's Windows
   machine reports reduced motion — gating hover on it made the site look dead). No light sweeps on
   pictures (tried, rejected).
