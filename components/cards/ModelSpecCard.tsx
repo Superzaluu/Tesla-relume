@@ -38,7 +38,7 @@ const shortStatLabel = (label: string) => SHORT_LABELS.reduce((text, [pattern, s
 /** "км хүртэл" → "км": "up to" adds a line without changing the number. */
 const shortStatUnit = (unit: string) => unit.replace(/\s*хүртэл$/, "");
 
-const FUEL_NAMES: Record<QuickSpecs["fuel"], string> = { BEV: "Цахилгаан", EREV: "Зай сунгагчтай", PHEV: "Хайбрид" };
+const FUEL_NAMES: Record<QuickSpecs["fuel"], string> = { BEV: "Цахилгаан", EREV: "Зай сунгагчтай", PHEV: "Хайбрид", GASOLINE: "Бензин", CNG: "Газ" };
 
 /** Model card with photo, key stats and icon facts. Used in the homepage "Бүх загвар" grid. */
 export function ModelSpecCard({ model }: { model: ModelCardData }) {

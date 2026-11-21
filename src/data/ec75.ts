@@ -9,7 +9,7 @@ export const ec75: Model = {
   name: "EC75",
   desc: "Цахилгаан фургон",
   // EC75 (not Pro), rc-ev.com EC75HYB / EC75KYB, 58.24 kWh trims (2026-11-20). Until then this page showed the
-  // EC75 Pro figures (61.94 kWh, 130 kW); EC75 Pro has its own pages (ec75pro-cargo / ec75pro-passenger).
+  // EC75 Pro figures (61.94 kWh, 130 kW). Since 2026-11-21 EC75 Pro is a power choice on this page (src/data/pro.ts).
   quick: { type: "van", label: "Фургон", size: "5130 x 1860 x 2020 мм", range: "401–403 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 18 мин", seats: "2 суудал", seatsPassenger: "6–9 суудал", payload: "1,500–2,000 кг" },
   page: {
     pageTitle: "Цахилгаан фургон",
@@ -48,14 +48,15 @@ export const ec75: Model = {
       ] },
       { id: "battery", tone: "dark", blocks: [{
         type: "feature", reverse: true, image: img("battery.jpg", 800, 480, "EC75-ын зайны багц"),
-        tagline: "Хүч ба зай", title: "Өдөржин ажиллах хүч",
+        tagline: "Хүч ба зай", title: "EC75 эсвэл илүү хүчтэй EC75 Pro",
+        // EC75 Pro is a power choice on this page since 2026-11-21 (src/data/pro.ts); numbers from both sheets.
         text: {
-          cargo: "58.24 кВт·ц багтаамжтай, шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей. Урд байрлалтай 70 кВт-ын байнгын соронзон синхрон мотор урд дугуйг хөтөлнө.",
-          passenger: "58.24 кВт·ц багтаамжтай, шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей. Урд байрлалтай 100 кВт-ын байнгын соронзон синхрон мотор урд дугуйг хөтөлнө."
+          cargo: "Шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей, урд дугуйг хөтлөх байнгын соронзон синхрон мотор: EC75 нь 58.24 кВт·ц, 70 кВт, 401 км; EC75 Pro нь 61.94 кВт·ц, 130 кВт, 420 км.",
+          passenger: "Шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей, урд дугуйг хөтлөх байнгын соронзон синхрон мотор: EC75 нь 58.24 кВт·ц, 100 кВт, 403 км; EC75 Pro нь 61.94 кВт·ц, 130 кВт, 430 км."
         },
         facts: {
-          cargo: [{ label: "Батерейн багтаамж", value: "58.24 кВт·ц" }, { label: "Эргэх момент", value: "230 Н·м" }, { label: "Дээд хурд", value: "90 км/ц" }],
-          passenger: [{ label: "Батерейн багтаамж", value: "58.24 кВт·ц" }, { label: "Эргэх момент", value: "240 Н·м" }, { label: "Дээд хурд", value: "100 км/ц" }]
+          cargo: [{ label: "Батерей", value: "58.24 / 61.94 кВт·ц" }, { label: "Мотор", value: "70 / 130 кВт" }, { label: "Дээд хурд", value: "90 / 100 км/ц" }],
+          passenger: [{ label: "Батерей", value: "58.24 / 61.94 кВт·ц" }, { label: "Мотор", value: "100 / 130 кВт" }, { label: "Дээд хурд", value: "100 км/ц" }]
         }
       }] },
       { id: "charging", blocks: [

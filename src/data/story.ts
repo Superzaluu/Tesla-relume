@@ -21,13 +21,71 @@ const family = (dir: string, slots: Slot[], cargo?: string): Partial<Record<Slot
 const C5: Slot[] = ["cabin", "chassis", "brakes", "battery", "charging", "adas-acc", "adas-ica", "adas-aeb", "adas-ldw", "adas-ldp",
   "adas-isa", "adas-hma", "safety-camera360", "safety-esc", "safety-tpms", "interior-screen", "interior-seats"];
 
+const C5_SINGLE_BOX: Partial<Record<Slot, string>> = { ...family("c5", C5), cargo: "/assets/models/c5l/album/side.jpg" };
+
 /** Photo files per model slug and slot. Add a model here after copying its photos. */
 export const STORY_IMAGES: Record<string, Partial<Record<Slot, string>>> = {
   c5: family("c5", C5, "cargo"), "c5-cng": family("c5", C5, "cargo"), "c5-reev": family("c5", C5, "cargo"),
   "c5-cng-crew": family("c5", C5, "cargo-crew"), "c5-reev-crew": family("c5", C5, "cargo-crew"), "c5-drone": family("c5", C5, "cargo-crew"),
-  "c5-box": family("c5", C5, "cargo-box"), "c5-cng-box": family("c5", C5, "cargo-box"), "c5-reev-box": family("c5", C5, "cargo-box"),
+  // Single-cab box = the C5L box truck (user, 2026-11-21): its side photo, not the double-cab box.
+  "c5-box": C5_SINGLE_BOX, "c5-cng-box": C5_SINGLE_BOX, "c5-reev-box": C5_SINGLE_BOX,
   "c5-cng-crew-box": family("c5", C5, "cargo-box"), "c5-reev-crew-box": family("c5", C5, "cargo-box")
 };
+
+/**
+ * Models with only SOME photos so far (2026-11-20). These slots show their photo; every other slot keeps its
+ * text card, so no section drops out. Cut from the model's rc-ev.com «车型概览» poster with none of its Chinese
+ * text, only pictures of this body (no cargo-van photo on the passenger page). Move a model to STORY_IMAGES once
+ * it has the whole set. ED71S, C3 cold, R5 service and the single-cab C5 box have no poster photos on rc-ev.com.
+ */
+const C3: Slot[] = ["battery", "brakes", "cabin", "interior-screen", "interior-cluster", "safety-autohold", "adas-acc", "adas-dms",
+  "safety-camera360", "safety-tpms"];
+const STORY_SOME: Record<string, Partial<Record<Slot, string>>> = {
+  "ec75pro-passenger": family("ec75pro-passenger", ["battery", "chassis", "interior-screen", "interior-cluster"]),
+  // EC75 Pro Cargo: clean, text-free derivatives from the supplied product sheet.
+  // Versioned filenames deliberately make browsers request the new assets instead of reusing an image cache.
+  "ec75pro-cargo": {
+    cargo: "/assets/models/ec75pro-cargo/story/cargo-clean.jpg",
+    battery: "/assets/models/ec75pro-cargo/story/battery-clean.jpg",
+    chassis: "/assets/models/ec75pro-cargo/story/chassis-clean.jpg",
+    "interior-screen": "/assets/models/ec75pro-cargo/story/interior-screen-clean.jpg",
+    "interior-cluster": "/assets/models/ec75pro-cargo/story/interior-cluster-clean.jpg"
+  },
+  "r5pro-cargo": {
+    ...family("r5pro-cargo", ["cargo", "battery", "chassis"]),
+    "cabin": "/assets/r5/cockpit.jpg",
+    "side-door": "/assets/r5/cargo-side-door.jpg",
+    "rear-door": "/assets/r5/cargo-rear.jpg",
+    "interior-screen": "/assets/models/r5pro-cargo/story/interior-screen-clean.png",
+    // R5 Pro Cargo follows the same nine-card safety layout as the R5 Cargo page.
+    "adas-acc": "/assets/r5/adas-acc.jpg",
+    "adas-ica": "/assets/r5/adas-ica.jpg",
+    "adas-aeb": "/assets/r5/adas-aeb.jpg",
+    "adas-ldw": "/assets/r5/adas-ldw.jpg",
+    "adas-isa": "/assets/r5/adas-isa.jpg",
+    "adas-hma": "/assets/r5/adas-hma.jpg",
+    "safety-esc": "/assets/r5/safety-esc.jpg",
+    "safety-autohold": "/assets/r5/safety-autohold.jpg",
+    "safety-tpms": "/assets/r5/safety-tpms.jpg"
+  },
+  "r5pro-passenger": family("r5pro-passenger", ["battery", "chassis", "interior-screen"]),
+  c3: family("c3", ["cargo", ...C3]),
+  // Same truck with a refrigerated body: the cab, chassis and electronics photos are true for it, the flatbed is not.
+  // Cargo: rc-ev.com's own C3 冷藏 studio photo (menu image, 640×310 on white), 2026-11-20.
+  "c3-cold": family("c3", C3, "cargo-cold"),
+  // Cabin + seats: rc-ev.com C5L «精彩图集» studio photos (full size via an exporter's copy), 2026-11-21.
+  c5l: family("c5l", ["cargo", "cabin", "chassis", "battery", "interior-seats"]),
+  c9: family("c9", ["cargo", "cabin", "chassis", "brakes", "battery", "interior-screen", "interior-cluster"]),
+  ec31: family("ec31", ["cargo", "cabin"]),
+  ec31l: family("ec31l", ["cargo", "cabin"]),
+  ec31s: family("ec31s", ["cargo", "cabin"]),
+  ec35: family("ec35", ["cargo", "interior-seats"]),
+  // ED71S is the C5 BEV with leaf springs front and rear (user, 2026-11-20): the C5's cab, battery, interior and
+  // flatbed photos are true for it; the chassis and brake (suspension) photos are not.
+  // Cargo: its own rc-ev.com studio photo (ED71S plate) instead of the C5's.
+  ed71s: { ...family("c5", C5.filter((slot) => slot !== "chassis" && slot !== "brakes")), cargo: "/assets/models/ed71s/story/cargo.jpg" }
+};
+const photosOf = (slug: string) => STORY_IMAGES[slug] ?? STORY_SOME[slug];
 
 /**
  * Captions that go with a family's photos (rc-ev.com poster captions in our words). `text` replaces the card text;
@@ -103,7 +161,7 @@ const str = (value: unknown) => (typeof value === "string" ? value : "");
  * not shown below gets no preview. Story cards get an id here so a preview can jump to the card itself.
  */
 function collectPeeks(sections: Section[], slug: string): Partial<Record<PeekKey, Peek>> {
-  const files = STORY_IMAGES[slug];
+  const files = photosOf(slug);
   if (!files) return {};
   const slotOf = new Map(Object.entries(files).map(([slot, file]) => [file as string, slot as Slot]));
   const found = new Map<Slot, Peek>();
@@ -151,7 +209,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     return marks.every((mark) => mark === "●") ? "all" : marks.some((mark) => mark === "●") ? "some" : "";
   };
   const image = (slot: Slot, alt: string): Img => {
-    const file = STORY_IMAGES[slug]?.[slot];
+    const file = photosOf(slug)?.[slot];
     return file
       ? { src: file, width: 1200, height: 720, alt: `${name} — ${alt}` }
       : { src: COMING_SOON, width: 1200, height: 720, alt: `${name} — ${alt} (зураг удахгүй нэмэгдэнэ)` };
@@ -160,6 +218,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   // Marks inside a sentence read as words: "2 хаалга / ○ 4 хаалга" → "2 хаалга / нэмэлт сонголтоор 4 хаалга".
   const words_ = (text: string) => text.replace(/○\s*/g, "нэмэлт сонголтоор ").replace(/●\s*/g, "");
   const captions = STORY_TEXT[slug] ?? {};
+  const isR5ProCargo = slug === "r5pro-cargo";
   const card = (slot: Slot, title: string, text: string, tag?: string): Card => {
     const caption = captions[slot];
     const heading = caption?.title ?? title;
@@ -170,6 +229,8 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   // Models without photos keep the "Coming soon" cards as placeholders.
   const photoSet = Boolean(STORY_IMAGES[slug]);
   const pictured = (img: Img) => !photoSet || img.src !== COMING_SOON;
+  // Some photos only (STORY_SOME): cards with a photo first, so a row starts with pictures, then text cards.
+  const photoFirst = (a: Card, b: Card) => Number(b.image.src !== COMING_SOON) - Number(a.image.src !== COMING_SOON);
 
   const sections: Section[] = [];
   const notes: string[] = [];
@@ -195,7 +256,11 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
 
   // 2. Built for work: cabin, doors, floor and chassis as picture cards.
   const cabin = val("cabin");
-  const workCards = [
+  const workCards = isR5ProCargo ? [
+    card("side-door", "Хажуугийн гулсдаг хаалга", "Гулсдаг хажуу хаалгаар ачааны тасалгаанд хялбар нэвтэрч, ачих буулгах ажлыг хурдан хийнэ."),
+    card("rear-door", "180° арын хаалга", "Арын хаалга бүрэн нээгдэж, ачааны тасалгаанд шууд хандана."),
+    card("cabin", "Жолоочийн кабин", "2 суудалтай, тод дэлгэц ба энгийн удирдлагатай кабин.")
+  ] : [
     (cabin || seats) && card("cabin", "Кабин", [cabin, seats && `${seats} суудал`].filter(Boolean).join(", ")),
     val("rear_door") && card("rear-door", "Арын хаалга", val("rear_door")),
     val("side_doors") && card("side-door", "Хажуугийн хаалга", val("side_doors")),
@@ -203,7 +268,7 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     val("rear_susp") && card("chassis", "Хойд тэнхлэг", val("rear_susp")),
     val("brakes") && card("brakes", "Тоормос", val("brakes")),
     val("tyres") && card("tyres", "Дугуй", val("tyres"))
-  ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).slice(0, 4);
+  ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).sort(photoFirst).slice(0, 4);
   if (workCards.length >= 3) {
     sections.push({ id: "work", tone: "tight", blocks: [
       { type: "title", title: "Ажилд зориулсан бүтэц", text: "Өдөр тутмын ажилд зориулсан хийц." },
@@ -256,10 +321,20 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   }
 
   // 5. Driver assistance: only systems the sheet marks as standard on at least one trim.
-  const adas = ADAS.filter((item) => has(item.key) && !(item.key === "fcw" && has("aeb")))
+  // Keep this chapter visually identical to R5 Cargo: six driver-assistance cards,
+  // then three safety cards. Other equipment remains in the specification table.
+  const adasSource: typeof ADAS = isR5ProCargo ? [
+    { key: "acc", slot: "adas-acc", name: "Дасан зохицох круиз контрол", code: "ACC", text: "Урд машиныг автоматаар дагаж, хурд болон зайгаа барина." },
+    { key: "ica", slot: "adas-ica", name: "Нэгдсэн круиз", code: "TJA/ICA", text: "Түгжрэл болон хурдны замд эгнээндээ урд машиныг дагаж, жолоочийн ядаргааг бууруулна." },
+    { key: "aeb", slot: "adas-aeb", name: "Яаралтай автомат тоормос", code: "AEB", text: "Урд талын зайг хянаж, мөргөлдөх эрсдэлтэй үед автоматаар тоормослоно." },
+    { key: "ldw", slot: "adas-ldw", name: "Эгнээ хадгалах туслах", code: "LDW · LDP", text: "Эгнээг тасралтгүй хянаж, эгнээнээс гарахад анхааруулж, жолоодлогыг дэмжинэ." },
+    { key: "isa", slot: "adas-isa", name: "Ухаалаг хурд хязгаарлагч", code: "ISA", text: "Хурдны хязгаарын тэмдгийг таньж, хэтрүүлэхгүй байхыг сануулна." },
+    { key: "hma", slot: "adas-hma", name: "Ухаалаг гэрэл", code: "HMA", text: "Эсрэг ирж буй машинд холын гэрлээ автоматаар бууруулна." }
+  ] : ADAS.filter((item) => has(item.key) && !(item.key === "fcw" && has("aeb")));
+  const adas = adasSource
     .map((item) => ({
       id: item.key, name: item.name, code: item.key === "aeb" && has("fcw") ? "AEB · FCW" : item.code,
-      text: `${captions[item.slot]?.text ?? item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, image: image(item.slot, `${item.name} (${item.code})`)
+      text: `${captions[item.slot]?.text ?? item.text}${!isR5ProCargo && has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, image: image(item.slot, `${item.name} (${item.code})`)
     }))
     .filter((item) => pictured(item.image));
   if (adas.length >= 2) {
@@ -273,8 +348,11 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
   // 6. Safety: picture cards for the main systems. As in ADAS: a system on some trims only still gets its
   // card, marked "Зарим иж бүрдэлд". The other systems are in the «Тоноглол» chips of the spec section; the
   // "Бүх иж бүрдэлд стандартаар" chips that used to follow the cards repeated them (user, 2026-11-20).
-  const safetyCards = SAFETY_CARDS.filter((item) => has(item.key))
-    .map((item) => card(item.slot, item.title, `${item.text}${has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, item.tag))
+  const safetySource = isR5ProCargo
+    ? SAFETY_CARDS.filter((item) => ["esc", "autohold", "tpms"].includes(item.key))
+    : SAFETY_CARDS.filter((item) => has(item.key));
+  const safetyCards = safetySource
+    .map((item) => card(item.slot, item.title, `${item.text}${!isR5ProCargo && has(item.key) === "some" ? " Зарим иж бүрдэлд." : ""}`, item.tag))
     .filter((item) => pictured(item.image));
   if (safetyCards.length > 0) {
     sections.push({ id: "safety", tone: "surface", blocks: [
@@ -291,8 +369,14 @@ export function buildStory(sheet: SpecSheet, name: string, slug: string, fuel: s
     val("seat_material") && card("interior-seats", "Суудал", val("seat_material")),
     has("ac") && card("interior-ac", "Агааржуулагч", val("ac_control") || "Стандартаар"),
     val("start") && card("interior-start", "Асаалт", val("start"))
-  ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).slice(0, 4);
-  if (interior.length >= 2) {
+  ].filter((item): item is Card => Boolean(item) && pictured((item as Card).image)).sort(photoFirst).slice(0, 4);
+  if (isR5ProCargo) {
+    sections.push({ id: "interior", blocks: [{
+      type: "feature", image: image("interior-screen", "Ухаалаг кабин"), tagline: "Кабин", title: "Жолоочид тухтай ухаалаг кабин",
+      text: "Тод дэлгэц, энгийн удирдлага болон өдөр тутмын ажилд тохирсон тав тухтай жолоодлогын орчин.",
+      facts: facts([["Багажны самбар", val("cluster")], ["Төв дэлгэц", val("screen")], ["Агааржуулагч", val("ac_control") || "Стандартаар"]])
+    }] });
+  } else if (interior.length >= 2) {
     sections.push({ id: "interior", blocks: [
       { type: "title", tagline: "Кабин", title: "Жолоочид зориулсан кабин", text: "Энгийн, ойлгомжтой удирдлага бүхий кабин." },
       { type: "cards", items: interior }

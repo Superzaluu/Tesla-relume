@@ -12,7 +12,7 @@ import { shineMask } from "@/components/ui/shineMask";
 // Two tiles give the family's range of the numbers buyers compare (as in "Battery options 45 / 55 kWh"),
 // chips lead to each version's page. Icons are the same QuickIcon set as on the version cards.
 
-const FUEL_NAMES: Record<string, string> = { BEV: "Цахилгаан", EREV: "Зай сунгагчтай", PHEV: "Хайбрид" };
+const FUEL_NAMES: Record<string, string> = { BEV: "Цахилгаан", EREV: "Зай сунгагчтай", PHEV: "Хайбрид", GASOLINE: "Бензин", CNG: "Газ" };
 const COMING_SOON = "/assets/coming-soon.svg";
 const SHOWN_CHIPS = 4;
 

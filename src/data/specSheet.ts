@@ -45,7 +45,8 @@ export type Field = {
 };
 
 /** price: dealer price in ₮; missing → "Үнэ лавлах". */
-export type SpecConfig = { name: string; sold: boolean; price?: number };
+/** power: the model's power choice ("R5" / "R5 Pro") when two sheets are shown as one page (src/data/pro.ts). */
+export type SpecConfig = { name: string; sold: boolean; price?: number; power?: string };
 export type ExtraRow = { group: string; label: string; values: string[] };
 export type SpecSheet = {
   configs: SpecConfig[];
@@ -484,6 +485,8 @@ export type PickerOption = {
   name: string;
   trim: string;
   cabin: string;
+  /** Power choice ("R5" / "R5 Pro"); "" when the page has one. */
+  power: string;
   price?: number;
   /** Key numbers, per body type ("" when the model has one body). */
   specs: { body: string; items: KeySpec[] }[];
@@ -497,8 +500,10 @@ export type Picker = {
   trims: string[];
   cabins: string[];
   bodies: string[];
+  /** Power choices in sheet order ("R5", "R5 Pro"); empty when the page has one. */
+  powers: string[];
   options: PickerOption[];
-  /** Battery choices side by side (R5 / EC75 style), only when there are two or more. */
+  /** Battery choices side by side, only when there are two or more (and no power choice, which shows them itself). */
   cards: { title: string; lines: { label: string; value: string }[] }[];
 };
 export type SheetView = {
@@ -786,10 +791,16 @@ export function viewSheet(sheet: SpecSheet, fuel?: string, slotSet: SlotSet = "s
   }).filter((group) => group.items.length);
 
   return {
-    configs: cols.map((i) => sheet.configs[i].name), compare, chips, optional, full, total, equipment,
+    // With a power choice the comparison header names it: "Ачааны · R5 Pro · Pioneer I Smart Driving".
+    configs: cols.map((i) => configLabel(sheet.configs[i])), compare, chips, optional, full, total, equipment,
     picker,
     winter: winterFacts(sheet, cols)
   };
+}
+
+/** A configuration's name with its power choice after the cargo / passenger side: "Ачааны · R5 Pro · …". */
+function configLabel(config: SpecConfig) {
+  return config.power ? config.name.replace(/^((?:Ачааны|Зорчигчийн) · )?/, `$1${config.power} · `) : config.name;
 }
 
 /** Chip text: the short name, or the label without its "(English full name)" part — "AEB", "ISOFIX". */
@@ -867,14 +878,17 @@ function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined,
     const name = sheet.configs[i].name;
     const trim = cabin && name.endsWith(` · ${cabin}`) ? name.slice(0, -` · ${cabin}`.length) : name;
     // standard / highlights are filled in by viewSheet, which knows the visible equipment fields.
-    return { col, name, trim, cabin, price: sheet.configs[i].price, specs: specs(i), equipment: equipment(i), standard: [], highlights: [] };
+    const power = sheet.configs[i].power ?? "";
+    return { col, name, trim, cabin, power, price: sheet.configs[i].price, specs: specs(i), equipment: equipment(i), standard: [], highlights: [] };
   });
   const trims = [...new Set(options.map((option) => option.trim))];
   const cabins = [...new Set(options.map((option) => option.cabin).filter(Boolean))];
+  // Sheet order, not the best-trim order: the base model before its Pro.
+  const powers = [...new Set(cols.slice().sort((a, b) => a - b).map((i) => sheet.configs[i].power ?? "").filter(Boolean))];
 
   const cards: Picker["cards"] = [];
   const byBattery = new Map<string, number[]>();
-  for (const i of cols) {
+  for (const i of powers.length > 1 ? [] : cols) {
     const kwh = value("battery_kwh", i);
     if (kwh) byBattery.set(kwh, [...(byBattery.get(kwh) ?? []), i]);
   }
@@ -888,7 +902,7 @@ function buildPicker(sheet: SpecSheet, cols: number[], fuel: string | undefined,
     }
   }
 
-  return { trims, cabins, bodies, options, cards };
+  return { trims, cabins, bodies, powers, options, cards };
 }
 
 /** Dealer minimum (`required`) missing on a configuration that is for sale. */

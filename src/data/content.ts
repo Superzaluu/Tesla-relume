@@ -12,6 +12,7 @@ import type { HeroSlide } from "./home";
 import { greenLoanHref, modelBySlug as pageModelBySlug, modelHref, preorderHref } from "./models";
 import type { NavCategory } from "./navigation";
 import { buildSpecRows, type SpecRow } from "./specTable";
+import { MERGED_INTO, mergeSheets, PRO_MERGE, widenStats } from "./pro";
 import { fromLegacy, viewSheet, type SheetView, type SlotSet, type SpecSheet } from "./specSheet";
 import { isByVariant, pick, toFuelType, type CategoryId, type Model, type QuickSpecs, type Stat, type Variant } from "./types";
 
@@ -81,8 +82,22 @@ const THUMB_FILES = new Set([
   "ec75pro-cargo", "ec75pro-passenger", "ed71s", "r5-cargo", "r5-passenger", "r5-service", "r5pro-cargo", "r5pro-passenger"
 ]);
 export const COMING_SOON = "/assets/coming-soon.svg";
+/** A stored value that is empty or the placeholder: a photo shipped in code may take its place. */
+const isPlaceholder = (src: string | null | undefined) => !src || src === COMING_SOON;
+
+/**
+ * Single-cab C5 box (BEV / CNG / EREV): the C5L is this box truck (user, 2026-11-21), so its rc-ev.com studio
+ * photo (no plate) is their hero and card. Used only while the admin row still holds the placeholder, so a photo
+ * uploaded in /admin wins. [hero src, width, height]; the card is /assets/thumbs/c5-box.jpg.
+ */
+const C5_BOX_HERO: [string, number, number] = ["/assets/hero/c5-box.jpg", 2520, 1050];
+const SHIPPED: Record<string, { hero: [string, number, number]; thumb: string }> = Object.fromEntries(
+  ["c5-box", "c5-cng-box", "c5-reev-box"].map((slug) => [slug, { hero: C5_BOX_HERO, thumb: "/assets/thumbs/c5-box.jpg" }])
+);
+
 export const listingThumb = (listing: Pick<ListingRow, "key" | "thumb">) =>
-  listing.thumb || (THUMB_FILES.has(listing.key) ? `/assets/thumbs/${listing.key}.jpg` : COMING_SOON);
+  !isPlaceholder(listing.thumb) ? listing.thumb!
+    : SHIPPED[listing.key]?.thumb ?? (THUMB_FILES.has(listing.key) ? `/assets/thumbs/${listing.key}.jpg` : COMING_SOON);
 
 /** A cargo/passenger value as one string: "70" + "70–100" → "70–100", "7.7" + "6–14" → "7.7/6–14". */
 const flatten = (value: Stat["value"]): string => {
@@ -120,13 +135,14 @@ export function toQuick(row: ModelRow): QuickSpecs | undefined {
 
 /** Standard page for a model added in /admin (no hand-made page in code). */
 function standardPage(row: ModelRow, photo: string | undefined): Model["page"] {
-  const width = row.image_width ?? 1200;
-  const height = row.image_height ?? 720;
+  const shipped = isPlaceholder(row.image_src) ? SHIPPED[row.slug]?.hero : undefined;
+  const width = shipped?.[1] ?? row.image_width ?? 1200;
+  const height = shipped?.[2] ?? row.image_height ?? 720;
   return {
     tagline: row.tagline ?? undefined,
     hero: {
       kind: "intro",
-      image: { src: row.image_src || photo || COMING_SOON, width, height, alt: `${row.name} — ${row.description}` },
+      image: { src: shipped?.[0] ?? (row.image_src || photo || COMING_SOON), width, height, alt: `${row.name} — ${row.description}` },
       maxWidth: Math.min(1100, Math.round(width * 1.5))
     },
     stats: row.stats,
@@ -148,11 +164,19 @@ function standardPage(row: ModelRow, photo: string | undefined): Model["page"] {
 /** A model's page: its layout from code (or the standard page), with name, description, icon facts and stats from Supabase. */
 export const getModel = cache(async (slug: string): Promise<Model | undefined> => {
   const base = pageModelBySlug(slug);
-  const row = (await getModelRows()).get(slug);
+  const rows = await getModelRows();
+  const row = rows.get(slug);
   if (!row) return base;
-  const content = { slug, name: row.name, desc: row.description, quick: toQuick(row) };
+  // R5 / EC75 hold their Pro as a power choice: the icon strip and card numbers span both ("401–430 км").
+  const merge = PRO_MERGE[slug];
+  const pro = merge ? { cargo: rows.get(merge.cargo), passenger: rows.get(merge.passenger) } : undefined;
+  const both = (key: "sheet_range" | "sheet_power" | "sheet_dc" | "sheet_payload") =>
+    [...(row[key] ?? []), ...(pro?.cargo?.[key] ?? []), ...(pro?.passenger?.[key] ?? [])];
+  const quickRow = pro ? { ...row, sheet_range: both("sheet_range"), sheet_power: both("sheet_power"), sheet_dc: both("sheet_dc"), sheet_payload: both("sheet_payload") } : row;
+  const content = { slug, name: row.name, desc: row.description, quick: toQuick(quickRow) };
   if (base) {
-    return { ...base, ...content, page: { ...base.page, stats: row.stats.length > 0 ? row.stats : base.page.stats } };
+    const stats = row.stats.length > 0 ? row.stats : base.page.stats;
+    return { ...base, ...content, page: { ...base.page, stats: pro ? widenStats(stats, { cargo: pro.cargo?.stats, passenger: pro.passenger?.stats }) : stats } };
   }
   // A model added in /admin has a page only while one of its cards is shown.
   const listing = (await getListingRows()).find((item) => item.model_slug === slug);
@@ -171,7 +195,8 @@ export const getNavigation = cache(async (): Promise<NavCategory[]> => {
       id: category.id as CategoryId,
       label: category.label,
       items: listings
-        .filter((listing) => listing.category_id === category.id && models.has(listing.model_slug))
+        // A Pro merged into its base page (src/data/pro.ts) has no card of its own, whatever the admin row says.
+        .filter((listing) => listing.category_id === category.id && models.has(listing.model_slug) && !MERGED_INTO[listing.model_slug])
         .map((listing) => {
           const model = models.get(listing.model_slug)!;
           return {
@@ -293,10 +318,18 @@ export const getSpecRows = cache(async (slug: string): Promise<SpecRow[] | null>
 });
 
 /** The structured spec sheet: saved from the admin form, or converted from the old table until then. */
-export async function getSpecSheet(slug: string): Promise<SpecSheet | null> {
+async function ownSpecSheet(slug: string): Promise<SpecSheet | null> {
   const [row] = await select<{ spec: string[][] | null; specs: SpecSheet | null }>("models", `select=spec,specs&slug=eq.${encodeURIComponent(slug)}`);
   if (row?.specs?.configs?.length) return row.specs;
   return row?.spec?.length ? fromLegacy(row.spec) : null;
+}
+
+/** The model's spec sheet; R5 / EC75 include their Pro's sheets as the second power choice (src/data/pro.ts). */
+export async function getSpecSheet(slug: string): Promise<SpecSheet | null> {
+  const merge = PRO_MERGE[slug];
+  if (!merge) return ownSpecSheet(slug);
+  const [base, cargo, passenger] = await Promise.all([ownSpecSheet(slug), ownSpecSheet(merge.cargo), ownSpecSheet(merge.passenger)]);
+  return base ? mergeSheets(merge, base, { cargo, passenger }) : null;
 }
 
 /** What the model page shows from the spec sheet (only configurations marked for sale). */

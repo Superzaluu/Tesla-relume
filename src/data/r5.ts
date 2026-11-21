@@ -9,7 +9,8 @@ export const r5: Model = {
   slug: "r5",
   name: "R5",
   desc: "Цахилгаан фургон",
-  // Sold in Mongolia with the 58.24 kWh battery only (one step below R5 Pro's 61.94 kWh; dealer, 2026-11-15).
+  // R5 (58.24 kWh) with R5 Pro (61.94 kWh, 130 kW) as a power choice on this page (src/data/pro.ts, 2026-11-21).
+  // quick / stats below are fallbacks: Supabase's row, widened by the Pro rows, is what shows.
   quick: { type: "van", label: "Фургон", size: "5170 x 1860 x 2020 мм", range: "401–403 км", drive: "FWD", fuel: "BEV", doors: "5 хаалга", charge: "DC - 18 мин", seats: "2 суудал", seatsPassenger: "6–9 суудал", payload: "1,500–2,000 кг" },
   page: {
     pageTitle: "Цахилгаан фургон",
@@ -55,11 +56,15 @@ export const r5: Model = {
       ] },
       { id: "battery", tone: "dark", blocks: [
         { type: "feature", reverse: true, image: img("glow.jpg", 800, 450, "Шөнийн замд гэрэлтэж буй R5"),
-          tagline: "Батерей ба цэнэглэлт", title: "Ажлын хэрэгцээндээ тохирох зай",
-          text: "58.24 кВт·ц багтаамжтай, шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей. 2C хурдан цэнэглэлтээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэж, нэг цэнэглэлтээр 401–403 км явна.",
+          tagline: "Батерей ба цэнэглэлт", title: "R5 эсвэл илүү хүчтэй R5 Pro",
+          // R5 Pro is a power choice on this page since 2026-11-21 (src/data/pro.ts); numbers from both sheets.
+          text: {
+            cargo: "Шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей: R5 нь 58.24 кВт·ц, 70 кВт мотортой, 401 км; R5 Pro нь 61.94 кВт·ц, 130 кВт мотортой, 420 км явна. Аль аль нь 2C хурдан цэнэглэлтээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ.",
+            passenger: "Шингэн хөргөлттэй литийн төмрийн фосфат (LFP) батерей: R5 нь 58.24 кВт·ц, 100 кВт мотортой, 403 км; R5 Pro нь 61.94 кВт·ц, 130 кВт мотортой, 430 км явна. Аль аль нь 2C хурдан цэнэглэлтээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ."
+          },
           facts: {
-            cargo: [{ label: "Хүч / эргэх момент", value: "70 кВт / 230 Н·м" }, { label: "Дээд хурд", value: "90 км/ц" }, { label: "Хөтлөгч", value: "Урд" }],
-            passenger: [{ label: "Хүч / эргэх момент", value: "100 кВт / 240 Н·м" }, { label: "Дээд хурд", value: "100 км/ц" }, { label: "Хөтлөгч", value: "Урд" }]
+            cargo: [{ label: "Батерей", value: "58.24 / 61.94 кВт·ц" }, { label: "Мотор", value: "70 / 130 кВт" }, { label: "Дээд хурд", value: "90 / 100 км/ц" }],
+            passenger: [{ label: "Батерей", value: "58.24 / 61.94 кВт·ц" }, { label: "Мотор", value: "100 / 130 кВт" }, { label: "Дээд хурд", value: "100 км/ц" }]
           } },
         { type: "columns", items: [
           { value: "18 мин", title: "Хурдан цэнэглэлт", text: "Хурдан цэнэглэгчээр 20%-аас 80% хүртэл 18 минутад цэнэглэгдэнэ." },
@@ -96,8 +101,9 @@ export const r5: Model = {
       { id: "interior", blocks: [
         { type: "feature", image: img("cockpit.jpg", 800, 533, "R5-ын кабин, төв дэлгэц"),
           tagline: "Кабин", title: "Ухаалаг кабин",
-          text: "8.8 инчийн LCD багажны самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Beyond II иж бүрдэлд 15.6 инчийн төв дэлгэц, дуут удирдлага, утасгүй цэнэглэгч нэмэгдэнэ.",
-          facts: [{ label: "Багажны самбар", value: "8.8\"" }, { label: "Төв дэлгэц", value: "15.6\"" }, { label: "Түдгэлзүүлэлт", value: "MacPherson" }] }
+          // "Beyond II" is an R5 Pro trim name; R5's top trim is "Smart Supercharge Transcendence I" (10.1" on cargo).
+          text: "8.8 инчийн LCD багажны самбар, олон үйлдэлт жолооны хүрд, түлхүүргүй асаалт. Дээд иж бүрдэлд төв дэлгэц, дуут удирдлага нэмэгдэнэ.",
+          facts: [{ label: "Багажны самбар", value: "8.8\"" }, { label: "Төв дэлгэц", value: "10.1–15.6\"" }, { label: "Түдгэлзүүлэлт", value: "MacPherson" }] }
       ] },
       { id: "specs", tone: "surface", blocks: [{
         type: "specGroups", title: "R5-ын үзүүлэлт",

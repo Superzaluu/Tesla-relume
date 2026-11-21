@@ -37,19 +37,22 @@ type Entry = {
 };
 
 const entries: Entry[] = [
-  { slug: "ec75pro-passenger", name: "EC75 Pro", desc: "Зорчигч тээврийн машин", hero: ["/assets/hero/ec75pro.jpg", 1640, 440],
+  // Own hero (2026-11-20): the passenger van alone, cut from the rc-ev.com EC75Pro 客运版 banner; the shared
+  // two-van strip lost both vans at the frame edges.
+  { slug: "ec75pro-passenger", name: "EC75 Pro", desc: "Зорчигч тээврийн машин", hero: ["/assets/hero/ec75pro-passenger.jpg", 1010, 423],
     tagline: "Шинэчлэгдсэн EC75 Pro зорчигчийн хувилбар: 6 эсвэл 9 суудал, 61.94 кВт·ц батерей, 130 кВт мотор, 2C хурдан цэнэглэлт, 430 км явах зай.",
     stats: [["430", "км", "Туулах зай (CLTC)"], ["61.94", "кВт·ц", "Батерейн багтаамж"], ["130", "кВт", "Моторын оргил чадал"], ["6–9", "суудал", "Суудлын тоо"]],
     gallery: [[2268, 4018]], quick: quick("van", "Зорчигч фургон", "5130 x 1860 x 2020 мм", "430 км", { drive: "FWD", doors: "5 хаалга", seats: "6–9 суудал" }) },
-  { slug: "ec75pro-cargo", name: "EC75 Pro", desc: "Ачаа тээврийн машин", hero: ["/assets/hero/ec75pro.jpg", 1640, 440],
+  // Own heroes (2026-11-20): each van alone, cut from its rc-ev.com banner (EC75Pro 货运版, R5Pro 客/货运版).
+  { slug: "ec75pro-cargo", name: "EC75 Pro", desc: "Ачаа тээврийн машин", hero: ["/assets/hero/ec75pro-cargo.jpg", 850, 356],
     tagline: "Шинэчлэгдсэн EC75 Pro: 61.94 кВт·ц батерей, 130 кВт мотор, 2C хурдан цэнэглэлт, 7.7 м³ ачааны тасалгаа, 420 км явах зай.",
     stats: [["420", "км хүртэл", "Туулах зай (CLTC)"], ["61.94", "кВт·ц хүртэл", "Батерейн багтаамж"], ["130", "кВт", "Моторын оргил чадал"], ["7.7", "м³", "Ачааны багтаамж"]],
     gallery: [[2268, 4018]], quick: quick("van", "Ачааны фургон", "5130 x 1860 x 2020 мм", "420 км", { drive: "FWD", doors: "5 хаалга" }) },
-  { slug: "r5pro-passenger", name: "R5 Pro", desc: "Зорчигч тээврийн машин", hero: ["/assets/hero/r5pro.jpg", 1640, 440],
+  { slug: "r5pro-passenger", name: "R5 Pro", desc: "Зорчигч тээврийн машин", hero: ["/assets/hero/r5pro-passenger.jpg", 840, 351],
     tagline: "R5 Pro зорчигчийн хувилбар: 6 эсвэл 9 суудал, 61.94 кВт·ц батерей, 130 кВт мотор, 2C хурдан цэнэглэлт, 420 км явах зай.",
     stats: [["430", "км хүртэл", "Туулах зай (CLTC)"], ["61.94", "кВт·ц хүртэл", "Батерейн багтаамж"], ["130", "кВт", "Моторын оргил чадал"], ["6–9", "суудал", "Суудлын тоо"]],
     gallery: [[2268, 4019]], quick: quick("van", "Зорчигч фургон", "5170 x 1860 x 2020 мм", "430 км", { drive: "FWD", doors: "5 хаалга", seats: "6–9 суудал" }) },
-  { slug: "r5pro-cargo", name: "R5 Pro", desc: "Ачаа тээврийн машин", hero: ["/assets/hero/r5pro.jpg", 1640, 440],
+  { slug: "r5pro-cargo", name: "R5 Pro", desc: "Ачаа тээврийн машин", hero: ["/assets/hero/r5pro-cargo.jpg", 840, 351],
     tagline: "R5 Pro: 61.94 кВт·ц батерей, 130 кВт мотор, 2C хурдан цэнэглэлт, 7.7 м³ ачааны тасалгаа, 420 км явах зай.",
     stats: [["420", "км хүртэл", "Туулах зай (CLTC)"], ["61.94", "кВт·ц хүртэл", "Батерейн багтаамж"], ["130", "кВт", "Моторын оргил чадал"], ["7.7", "м³", "Ачааны багтаамж"]],
     gallery: [[2268, 4019]], quick: quick("van", "Ачааны фургон", "5170 x 1860 x 2020 мм", "420 км", { drive: "FWD", doors: "5 хаалга" }) },

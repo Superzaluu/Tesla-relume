@@ -25,12 +25,17 @@ export type Fact = { label: string; value: string };
  * - drive: FWD 06 · AWD 07 (бүх дугуйгаар хөтлөгчтэй загвар ирэхэд) · RWD 08
  * - fuel (09): BEV · EREV · PHEV, бүх загварт · engine (17): хөдөлгүүрийн багтаамж, зөвхөн EREV/PHEV загварт
  */
-export const FUEL_TYPES = ["BEV", "EREV", "PHEV"] as const;
+export const FUEL_TYPES = ["BEV", "EREV", "PHEV", "GASOLINE", "CNG"] as const;
 export type FuelType = (typeof FUEL_TYPES)[number];
 
-/** Stored fuel value → BEV/EREV/PHEV. Old values (empty, "CNG", "Бензин") fall back to EREV when the model has an engine. */
-export const toFuelType = (fuel?: string | null, engine?: string | null): FuelType =>
-  (FUEL_TYPES as readonly string[]).includes(fuel ?? "") ? (fuel as FuelType) : engine ? "EREV" : "BEV";
+/** Stored fuel value → a fuel filter value. Older Mongolian labels are accepted as well. */
+export const toFuelType = (fuel?: string | null, engine?: string | null): FuelType => {
+  const value = (fuel ?? "").trim().toUpperCase();
+  if ((FUEL_TYPES as readonly string[]).includes(value)) return value as FuelType;
+  if (["БЕНЗИН", "БИНЗЕН", "PETROL", "GASOLINE"].includes(value)) return "GASOLINE";
+  if (["ГАЗ", "CNG", "LPG"].includes(value)) return "CNG";
+  return engine ? "EREV" : "BEV";
+};
 
 /** Engine size is shown only for models with a combustion engine. */
 export const hasEngine = (specs: Pick<QuickSpecs, "fuel" | "engine">) => specs.fuel !== "BEV" && Boolean(specs.engine);

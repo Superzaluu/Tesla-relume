@@ -140,21 +140,41 @@ const MARK_TEXT: Record<string, string> ={ "●": "Энэ иж бүрдэлд с
  * The page shows the side picked in the hero switch (VariantProvider) and the names without the prefix.
  */
 const SIDE = { cargo: "Ачааны · ", passenger: "Зорчигчийн · " } as const;
+/** Key numbers on the power cards (KeySpec icons): what R5 Pro changes. */
+const POWER_LINES = ["battery", "motor", "range"];
 
 export function ConfigPicker({ view }: { view: SheetView }) {
   const variant = useVariant();
   const sided = view.picker.options.some((option) => option.name.startsWith(SIDE.cargo) || option.name.startsWith(SIDE.passenger));
   const ownSide = sided ? view.picker.options.filter((option) => option.name.startsWith(SIDE[variant])) : view.picker.options;
   const strip = (text: string) => (sided ? text.replace(SIDE[variant], "") : text);
-  const options = (ownSide.length ? ownSide : view.picker.options).map((option) => ({ ...option, name: strip(option.name), trim: strip(option.trim) }));
+  const sideOptions = (ownSide.length ? ownSide : view.picker.options).map((option) => ({ ...option, name: strip(option.name), trim: strip(option.trim) }));
+  // R5 / EC75 with their Pro (src/data/pro.ts): a power choice first, then that power's trims.
+  const powers = view.picker.powers.filter((p) => sideOptions.some((option) => option.power === p));
+  const [power, setPower] = useState(powers[0] ?? "");
+  const ofPower = (p: string) => (powers.length > 1 ? sideOptions.filter((option) => option.power === p) : sideOptions);
+  const options = ofPower(powers.includes(power) ? power : powers[0] ?? "");
   const trims = [...new Set(options.map((option) => option.trim))];
   const cabins = [...new Set(options.map((option) => option.cabin).filter(Boolean))];
   const { bodies, cards } = view.picker;
   const [trim, setTrim] = useState(options[0].trim);
   const [cabin, setCabin] = useState(options[0].cabin);
   const [body, setBody] = useState(bodies[0] ?? "");
-  // Switching cargo ↔ passenger: start again from that side's first trim.
+  // Switching cargo ↔ passenger: start again from that side's first trim (the power choice stays).
   useEffect(() => { setTrim(options[0].trim); setCabin(options[0].cabin); }, [variant]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Switching power keeps the trim's rank (best → best), so only the power-train numbers change and flash.
+  const pickPower = (p: string) => {
+    const next = [...new Set(ofPower(p).map((option) => option.trim))];
+    setPower(p);
+    setTrim(next[Math.min(Math.max(trims.indexOf(trim), 0), next.length - 1)]);
+  };
+
+  // The comparison table lists both sides; show this side's columns only.
+  useEffect(() => {
+    if (!sided) return;
+    const own = new Set(sideOptions.map((option) => String(option.col)));
+    document.querySelectorAll<HTMLElement>(".mcompare [data-col]").forEach((el) => el.classList.toggle("is-other-side", !own.has(el.dataset.col ?? "")));
+  }, [variant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const find = (t: string, c: string) => options.find((option) => option.trim === t && option.cabin === c);
   const optionFor = (t: string) => find(t, cabin) ?? options.find((item) => item.trim === t) ?? options[0];
@@ -181,6 +201,35 @@ export function ConfigPicker({ view }: { view: SheetView }) {
 
   return (
     <div className="mpick">
+      {/* 0. Power choice (R5 | R5 Pro): the only numbers that differ, side by side; picking one filters the trims. */}
+      {powers.length > 1 && (
+        <div className="mpower">
+          <div className="mpower__head">
+            <h3 className="h5">Хүчний сонголт</h3>
+            <p>Их бие, ачааны тасалгаа нь ижил. Ялгаа нь батерей, мотор, туулах зайд.</p>
+          </div>
+          <div className="mpower__list" role="group" aria-label="Хүчний сонголт">
+            {powers.map((p) => (
+              <button key={p} type="button" className="mpower__card" aria-pressed={p === power} onClick={() => pickPower(p)}>
+                <span className="mpower__name">{p}</span>
+                <dl>
+                  {POWER_LINES.map((icon) => {
+                    const items = ofPower(p).map((item) => item.specs[0]?.items.find((spec) => spec.icon === icon)).filter((spec) => spec?.value);
+                    if (items.length === 0) return null;
+                    return (
+                      <div key={icon}>
+                        <dt><SpecIcon icon={icon} />{items[0]!.label}</dt>
+                        <dd>{[...new Set(items.map((spec) => spec!.value))].join(" / ")}</dd>
+                      </div>
+                    );
+                  })}
+                </dl>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 1. Trim cards: name, price and what this trim adds over the others. */}
       <div className="mpick__trims" role={many ? "group" : undefined} aria-label={many ? "Иж бүрдэл" : undefined}>
         {trims.map((t) => {
@@ -308,7 +357,7 @@ export function ConfigPicker({ view }: { view: SheetView }) {
       <div className="mpick__specs">
         <h3 className="h3 mpick__specs-title">Техник үзүүлэлт</h3>
         <p className="mpick__specs-sub">
-          {option.name}{body && bodies.length > 1 ? ` · ${bodyLabel(body)}` : ""}
+          {powers.length > 1 && `${option.power} · `}{option.name}{body && bodies.length > 1 ? ` · ${bodyLabel(body)}` : ""}
           {many && " · Иж бүрдэл солиход өөрчлөгдсөн утга шараар гэрэлтэнэ."}
         </p>
 

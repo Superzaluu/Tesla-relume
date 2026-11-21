@@ -47,7 +47,7 @@ export function rangeTile(cards: ModelCardData[]): { label: string; value: strin
     : { label: "Туулах зай", value: spanText(cards.map(rangeKm), "км") };
 }
 
-const FUEL_LABEL: Record<string, string> = { BEV: "Цэвэр цахилгаан", EREV: "Зай сунгагчтай", PHEV: "Хайбрид" };
+const FUEL_LABEL: Record<string, string> = { BEV: "Цэвэр цахилгаан", EREV: "Зай сунгагчтай", PHEV: "Хайбрид", GASOLINE: "Бензин", CNG: "Газ" };
 const DRIVE_LABEL: Record<string, string> = { FWD: "Урд (FWD)", RWD: "Хойд (RWD)", AWD: "Бүх дугуй (AWD)" };
 
 /** The filter groups for these cards; options no model has are left out. */
@@ -60,7 +60,14 @@ export function buildGroups(cards: ModelCardData[], categories: { id: string; la
     },
     {
       id: "fuel", label: "Түлшний төрөл", kind: "pills",
-      options: present(["BEV", "EREV", "PHEV"].map((f) => ({ id: f, label: FUEL_LABEL[f], test: (card) => card.quick?.fuel === f })))
+      // EREV has a petrol range-extender, so it belongs under the visitor-facing “Бензин” choice.
+      options: [
+        { id: "BEV", label: FUEL_LABEL.BEV, test: (card: ModelCardData) => card.quick?.fuel === "BEV" },
+        { id: "GASOLINE", label: FUEL_LABEL.GASOLINE, test: (card: ModelCardData) => card.quick?.fuel === "EREV" || card.quick?.fuel === "GASOLINE" },
+        { id: "EREV", label: FUEL_LABEL.EREV, test: (card: ModelCardData) => card.quick?.fuel === "EREV" || card.quick?.fuel === "CNG" },
+        { id: "CNG", label: FUEL_LABEL.CNG, test: (card: ModelCardData) => card.quick?.fuel === "CNG" },
+        { id: "PHEV", label: FUEL_LABEL.PHEV, test: (card: ModelCardData) => card.quick?.fuel === "PHEV" }
+      ]
     },
     {
       id: "payload", label: "Даац", kind: "pills",

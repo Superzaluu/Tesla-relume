@@ -8,7 +8,8 @@ import { calculateSavings, ELECTRICITY_PRICE, EXTENDER_FUEL_USE, type CalcModel,
 // vehicle's monthly fuel, the Ruichi's monthly charging, and the yearly saving. Each card has a bar on a fixed
 // scale (the figure at the slider's maximum), so the bars rise and fall as the slider moves. Same formula,
 // models and today's fuel prices as the full calculator, which "Дэлгэрэнгүй тооцоолох" opens.
-const MODELS = ["ec75pro-cargo", "r5pro-passenger", "c5-reev", "c3", "ed71s"];
+// Menu entries as "slug|variant": EC75 / R5 hold their Pro since 2026-11-21 (src/data/pro.ts), whose cards are gone.
+const MODELS = ["ec75|cargo", "r5|passenger", "c5-reev|", "c3|", "ed71s|"];
 const DAYS = 26;
 const KM_MIN = 20, KM_START = 80, STEP = 10;
 // The slider ends at the chosen model's range (user, 2026-11-15): 420 km for EC75 Pro / R5 Pro, 327 for C3,
@@ -80,7 +81,7 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail }: {
 }) {
   const openCalculator = useOpenSavings();
   const choices = useMemo(
-    () => (own ? [own] : MODELS.map((slug) => models.find((m) => m.slug === slug)).filter((m): m is CalcModel => Boolean(m))),
+    () => (own ? [own] : MODELS.map((value) => models.find((m) => m.value === value)).filter((m): m is CalcModel => Boolean(m))),
     [models, own]
   );
   const [index, setIndex] = useState(0);

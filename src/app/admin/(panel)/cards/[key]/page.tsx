@@ -109,7 +109,7 @@ export default async function EditCardPage({ params, searchParams }: {
             <TextInput name="doors" label="Хаалга" value={model.doors} placeholder="5 хаалга" />
             <TextInput name="door_label" label="Хаалганы гарчиг" value={model.door_label} placeholder="Хаалга" hint="Хоосон бол &quot;Хаалга&quot;." />
             <Select name="fuel" label="Түлш" value={toFuelType(model.fuel, model.engine)} options={[
-              ["BEV", "BEV — цэвэр цахилгаан"], ["EREV", "EREV — зай сунгагчтай"], ["PHEV", "PHEV — залгууртай хайбрид"]
+              ["BEV", "BEV — цэвэр цахилгаан"], ["EREV", "EREV — зай сунгагчтай"], ["PHEV", "PHEV — залгууртай хайбрид"], ["GASOLINE", "Бензин"], ["CNG", "Газ (CNG)"]
             ]} />
             <TextInput name="engine" label="Хөдөлгүүр" value={model.engine} placeholder="1,499 cc" hint="Зөвхөн EREV, PHEV загварт харагдана." />
           </div>

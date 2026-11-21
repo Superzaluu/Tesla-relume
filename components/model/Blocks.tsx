@@ -1,4 +1,4 @@
-import type { Block, Section, TableRow } from "@/data/types";
+import type { Block, Card, Img, Section, TableRow } from "@/data/types";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Slider } from "@/components/ui/Slider";
 import { VideoPoster } from "@/components/ui/VideoPoster";
@@ -7,10 +7,31 @@ import { VariantToggle } from "@/components/model/Variant";
 
 type FeatureBlock = Extract<Block, { type: "feature" }>;
 
+/**
+ * Model page standard (user, 2026-11-20): a picture that does not exist yet is left out, never shown as a
+ * "Coming soon" box. The text keeps its place: a feature goes full width, a card becomes a text card, a wide
+ * picture is skipped. Story sections still pass the placeholder file, so it is recognised here.
+ */
+export const hasPicture = (image?: Img) =>
+  Boolean(image) && !(typeof image!.src === "string" && image!.src.endsWith("coming-soon.svg"));
+
+const featureClass = (block: FeatureBlock) =>
+  `mfeature${block.reverse ? " mfeature--reverse" : ""}${!hasPicture(block.image) && !block.video ? " mfeature--solo" : ""}`;
+
+function CardView({ card, grid = false }: { card: Card; grid?: boolean }) {
+  const pictured = hasPicture(card.image);
+  return (
+    <figure className={`mcard${grid ? " mcard--grid" : ""}${pictured ? "" : " mcard--text"}`} id={card.id}>
+      {pictured && <Picture image={card.image} />}
+      <figcaption><h3>{card.title}{card.tag && <> <span>{card.tag}</span></>}</h3><p>{card.text}</p></figcaption>
+    </figure>
+  );
+}
+
 function FeatureContent({ block }: { block: FeatureBlock }) {
   return (
     <>
-      {block.image && <Picture image={block.image} className="mfeature__image" />}
+      {block.image && hasPicture(block.image) && <Picture image={block.image} className="mfeature__image" />}
       {block.video && (
         <VideoPoster className="mvideo" src={block.video.src} label={block.video.label}>
           <img className="mvideo__poster" src={block.video.poster.src as string} width={block.video.poster.width} height={block.video.poster.height} alt="" loading="lazy" />
@@ -50,20 +71,15 @@ function BlockView({ block }: { block: Block }) {
     case "title":
       return <SectionTitle tagline={block.tagline} title={block.title} text={block.text} note={block.note} />;
     case "feature":
-      return <div className={`mfeature${block.reverse ? " mfeature--reverse" : ""}`}><FeatureContent block={block} /></div>;
+      return <div className={featureClass(block)}><FeatureContent block={block} /></div>;
     case "cards":
       return (
         <Slider>
-          {block.items.map((card) => (
-            <figure className="mcard" key={card.title} id={card.id}>
-              <Picture image={card.image} />
-              <figcaption><h3>{card.title}</h3><p>{card.text}</p></figcaption>
-            </figure>
-          ))}
+          {block.items.map((card) => <CardView card={card} key={card.title} />)}
         </Slider>
       );
     case "wideImage":
-      return <Picture image={block.image} className="mwide" />;
+      return hasPicture(block.image) ? <Picture image={block.image} className="mwide" /> : null;
     case "columns":
       return (
         <div className="mcolumns">
@@ -90,24 +106,14 @@ function BlockView({ block }: { block: Block }) {
       // Same picture cards as the safety section: every photo visible at once, no tabs to discover.
       return (
         <div className="msafety">
-          {block.items.map((item) => (
-            <figure className="mcard mcard--grid" key={item.id}>
-              <Picture image={item.image} />
-              <figcaption><h3>{item.name} <span>{item.code}</span></h3><p>{item.text}</p></figcaption>
-            </figure>
-          ))}
+          {block.items.map((item) => <CardView card={{ image: item.image, title: item.name, tag: item.code, text: item.text }} grid key={item.id} />)}
         </div>
       );
     case "safety":
       return (
         <>
           <div className="msafety">
-            {block.items.map((card) => (
-              <figure className="mcard mcard--grid" key={card.title} id={card.id}>
-                <Picture image={card.image} />
-                <figcaption><h3>{card.title} <span>{card.tag}</span></h3><p>{card.text}</p></figcaption>
-              </figure>
-            ))}
+            {block.items.map((card) => <CardView card={card} grid key={card.title} />)}
           </div>
           {block.chips && block.chips.length > 0 && (
             <div className="mchips">
@@ -162,7 +168,7 @@ export function PartView({ section }: { section: Section }) {
   return (
     <div className="mchapter__part" id={section.id}>
       {single ? (
-        <div className={`mfeature${single.reverse ? " mfeature--reverse" : ""}`}><FeatureContent block={single} /></div>
+        <div className={featureClass(single)}><FeatureContent block={single} /></div>
       ) : (
         section.blocks.map((block, i) => <BlockView block={block} key={i} />)
       )}
@@ -179,7 +185,7 @@ export function SectionView({ section }: { section: Section }) {
   return (
     <section className={`section${section.tone ? TONE[section.tone] : ""}`} id={section.id}>
       {single ? (
-        <div className={`container mfeature${single.reverse ? " mfeature--reverse" : ""}`}><FeatureContent block={single} /></div>
+        <div className={`container ${featureClass(single)}`}><FeatureContent block={single} /></div>
       ) : (
         <div className="container container--gap-80">
           {section.blocks.map((block, i) => <BlockView block={block} key={i} />)}

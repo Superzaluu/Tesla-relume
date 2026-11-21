@@ -10,8 +10,8 @@ import { QuickSpecs } from "@/components/ui/QuickSpecs";
 import { FloatingSavings } from "@/components/model/FloatingSavings";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { Slider } from "@/components/ui/Slider";
 import { SectionView } from "@/components/model/Blocks";
+import { albumOf, type AlbumItem } from "@/data/albums";
 import { Picture, T } from "@/components/model/VariantValues";
 import { VariantProvider, VariantSection, VariantToggle } from "@/components/model/Variant";
 
@@ -64,18 +64,26 @@ function Hero({ model, calc }: { model: Model; calc?: CalcModel }) {
   );
 }
 
-function Gallery({ model }: { model: Model }) {
-  const images = model.page.gallery ?? [];
-  if (images.length === 0) return null;
+// «Гадна ба дотор орчин» as a photo album (user, 2026-11-20): up to 6 of the model's own photos, the first one
+// large, each with its caption on the photo (src/data/albums.ts). Replaces the old slider of rc-ev posters.
+function Album({ items }: { items: AlbumItem[] }) {
+  if (items.length === 0) return null;
   return (
     <section className="section" id="gallery">
       <div className="container container--gap-80">
         <SectionTitle tagline="Загварын танилцуулга" title="Гадна ба дотор орчин" text="Тухайн загварын гадна хийц, ажлын тасалгаа болон жолоодлогын орчинтой танилцаарай." />
-        <Slider>
-          {images.map((image) => (
-            <figure className="mcard mcard--plain" key={image.src as string}><Picture image={image} /></figure>
+        <div className="malbum" data-count={items.length}>
+          {items.map((item) => (
+            <figure className="malbum__item" key={item.src}>
+              <img src={item.src} width={item.width} height={item.height} alt={item.title} loading="lazy" />
+              <figcaption>
+                {item.tag && <span className="malbum__tag">{item.tag}</span>}
+                <strong>{item.title}</strong>
+                {item.text && <span>{item.text}</span>}
+              </figcaption>
+            </figure>
           ))}
-        </Slider>
+        </div>
       </div>
     </section>
   );
@@ -121,6 +129,7 @@ export function ModelPage({ model, specView, similar = [], calc }: {
 
   // Picture sections grouped into chapters (Gestalt variant A); the sheet's winter block joins «Хүч ба цэнэглэлт».
   const { chapters, rest } = groupChapters(page.sections ?? [], specView?.winter);
+  const album = albumOf(model.slug);
   const hasSpecs = page.specTable !== undefined || rest.some((section) => section.id === "specs");
   // In-page menu: the chapters by name, then the trims / specs and the gallery (user, 2026-11-20). "Тойм" is
   // "Эхлэл"; «Ногоон зээл» opens its own page. Equipment and winter live inside «Иж бүрдэл» / «Хүч ба цэнэглэлт».
@@ -128,7 +137,7 @@ export function ModelPage({ model, specView, similar = [], calc }: {
     { id: "overview", label: "Эхлэл" },
     ...chapters.map((chapter) => ({ id: chapter.id, label: chapter.label })),
     ...(hasSpecs ? [{ id: "specs", label: "Иж бүрдэл" }] : []),
-    ...((page.gallery ?? []).length > 0 ? [{ id: "gallery", label: "Зураг" }] : []),
+    ...(album.length > 0 ? [{ id: "gallery", label: "Зураг" }] : []),
     { id: "green-loan", label: "Ногоон зээл", href: greenLoanHref(model.slug) }
   ];
 
@@ -140,7 +149,7 @@ export function ModelPage({ model, specView, similar = [], calc }: {
       {chapters.map((chapter) => <ChapterView chapter={chapter} key={chapter.id} />)}
       {rest.map((section, i) => <SectionView section={section} key={section.id ?? i} />)}
       {page.specTable !== undefined && <SpecSheetSection view={specView ?? null} />}
-      <Gallery model={model} />
+      <Album items={album} />
       <Similar cards={similar} />
       {/* The closing «Туршаад үзэх үү?» block was removed (user, 2026-11-20): "Урьдчилсан захиалга" is in the
           hero and «Ногоон зээл» in the bar under it. */}
