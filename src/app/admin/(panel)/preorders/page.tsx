@@ -95,6 +95,13 @@ export default async function PreordersPage({ searchParams }: { searchParams: Pr
                     )}
                   </p>
                 ) : null}
+                {row.voucher_code && (
+                  <p className="m-0 mt-1 flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className="rounded-full bg-[#fff4d6] px-2 py-0.5 font-semibold text-[#8a5a00]">🎁 {row.prize_label}</span>
+                    <a href={`/preorder/voucher/?ref=${row.id}`} target="_blank" rel="noreferrer" className="font-mono text-[#0f5a3a] hover:underline">{row.voucher_code}</a>
+                    {row.prize_claimed_at && <span className="text-ink-muted">· олгосон</span>}
+                  </p>
+                )}
               </div>
               <p className="m-0 whitespace-pre-line text-small text-ink-secondary">{row.note || <span className="text-ink-muted">—</span>}</p>
               <form action={setPreorderStatus} className="flex items-center gap-2">

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { brandName } from "@/data/brand";
 import { useState } from "react";
 import type { ModelCardData } from "@/components/cards/ModelSpecCard";
 import { PriceFrom } from "@/components/cards/PriceFrom";
@@ -75,7 +76,7 @@ export function ModelFamilyCard({ family, total, passengers }: { family: Family;
         <div>
           <p className="m-0 text-tiny font-semibold uppercase tracking-wider text-ink-muted">{categories}</p>
           <h3 className="m-0 mt-0.5 text-[26px] font-bold leading-tight tracking-tight text-ink">
-            <Link href={lead.href} className="hover:text-[#0f5a3a]">{name}</Link>
+            <Link href={lead.href} className="hover:text-[#0f5a3a]">{brandName(name)}</Link>
           </h3>
           {/* The family's lowest «Эхлэх үнэ» (user, 2026-11-21): the price of its cheapest trim. */}
           {priceFrom !== undefined && <PriceFrom value={priceFrom} className="m-0 mt-1 text-regular text-ink-secondary" />}

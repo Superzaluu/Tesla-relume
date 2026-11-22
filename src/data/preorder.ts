@@ -43,6 +43,8 @@ export type PreorderRow = {
   paid_amount: number | null; paid_at: string | null;
   /** Bonus from /register/ matched by phone; the dealer deducts it from the final price. */
   bonus_amount: number | null;
+  /** «Азын хүрд» prize (migration 0019); absent before it has run. */
+  prize_label?: string | null; voucher_code?: string | null; prize_claimed_at?: string | null;
 };
 
 /** One choice in the model list: a menu card (model + variant); deposit = online deposit in MNT, if any. */

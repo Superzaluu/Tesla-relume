@@ -4,6 +4,14 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { NavCategory } from "@/data/navigation";
 import { useSiteChrome } from "@/components/layout/SiteChrome";
+import { brandName } from "@/data/brand";
+
+/** House outline for «Нүүр хуудас» (user test #1, item 9: people looked for the way back home). */
+const HomeIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3.5 11 12 4l8.5 7M6 9.5V20h4.5v-5.5h3V20H18V9.5" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 // Pages with a dark full-bleed photo under the navbar keep it transparent with
 // white text; template model pages start on a light background; form pages
@@ -85,6 +93,13 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
           {/* Gold glint across the logo shape on hover (site.css, "Logo shine"). */}
           <span className="logo-shine" aria-hidden="true" />
         </Link>
+        {/* Right next to the logo on every page but the homepage (user test #1, item 9: the logo alone was not
+            read as "home"). The logo's auto margin moves to this link (ux-test.css). */}
+        {pathname !== "/" && pathname !== "/index" && (
+          <Link className="navbar__home" href="/" onClick={closeAll}>
+            <HomeIcon /><span>Нүүр хуудас</span>
+          </Link>
+        )}
 
         <nav className={`navbar__links${mobileOpen ? " is-open" : ""}`} id="nav-links" aria-label="Загварууд">
           {navigation.map((category) => {
@@ -104,7 +119,7 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
                       <li key={item.key}>
                         <Link className="navmenu__card" href={item.href} onClick={closeAll}>
                           <img src={item.thumb} width={400} height={240} alt="" loading="lazy" />
-                          <span className="navmenu__name">{item.name}</span>
+                          <span className="navmenu__name">{brandName(item.name)}</span>
                           <span className="navmenu__desc">{item.desc}</span>
                         </Link>
                       </li>
@@ -114,6 +129,8 @@ export function SiteHeader({ navigation }: { navigation: NavCategory[] }) {
               </div>
             );
           })}
+          {/* «Ruichi гэж хэн бэ?» (user test #1, item 11): the maker's page, after the model menus. */}
+          <Link className="navmenu__trigger navbar__plain" href="/brand/" aria-current={pathname.startsWith("/brand") ? "page" : undefined} onClick={closeAll}>Ruichi брэнд</Link>
         </nav>
 
         {/* "Ногоон зээл" and "Туршилтын жолоодлого" moved from here to the strip under the hero (user, 2026-11-15),

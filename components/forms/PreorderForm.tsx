@@ -1,7 +1,10 @@
 "use client";
 import Link from "next/link";
+import { brandName } from "@/data/brand";
 import { useActionState, useState } from "react";
 import { submitPreorder, type PreorderState } from "@/app/preorder/actions";
+import { PrizeWheel } from "@/components/forms/PrizeWheel";
+import { CONTACT_BONUS } from "@/data/prizes";
 import { BONUS_AMOUNT, DEPOSIT_REFUND_DAYS, PAYMENTS, tugrikText as money, type PreorderModel } from "@/data/preorder";
 
 /** "Урьдчилгаа 1,000,000 + бонус 100,000 = нийт 1,100,000 ₮" — both are taken off the final price. */
@@ -47,6 +50,8 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
             Төлбөрийн хуудсыг одоогоор нээж чадсангүй. Урьдчилгааг зөвлөх тантай холбогдохдоо хэрхэн төлөхийг хэлж өгнө.
           </p>
         )}
+        {/* Prize wheel (user test #1, item 8): every order wins a gift, handed over with the vehicle. */}
+        {state.id && <div className="mt-8"><PrizeWheel preorderId={state.id} /></div>}
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link className="btn btn--tint px-6" href="/">Нүүр хуудас</Link>
           <Link className="btn btn--primary px-6" href="/#models">Бусад загвар үзэх</Link>
@@ -63,7 +68,7 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
             <img src={chosen.thumb} alt="" width={400} height={240} className="block aspect-[5/3] w-full bg-surface object-cover" />
             <div className="p-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-[#147a48]">{chosen.category}</p>
-              <p className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-ink">{chosen.name}</p>
+              <p className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-ink">{brandName(chosen.name)}</p>
               <p className="mt-1 text-small text-ink-secondary">{chosen.desc}</p>
             </div>
           </>
@@ -111,8 +116,13 @@ export function PreorderForm({ models, initial }: { models: PreorderModel[]; ini
               <input id="po-email" name="email" type="email" autoComplete="email" required maxLength={160} placeholder="name@example.mn" className={input} />
             </div>
             <div className="sm:col-span-2">
-              <label className={label} htmlFor="po-facebook">Facebook нэр <span className="font-normal text-ink-muted">(заавал биш)</span></label>
-              <input id="po-facebook" name="facebook" maxLength={120} placeholder="Facebook дээрх таны нэр" className={input} />
+              <label className={label} htmlFor="po-facebook">Facebook хаяг <span className="font-normal text-ink-muted">(заавал биш)</span></label>
+              <input id="po-facebook" name="facebook" maxLength={120} placeholder="facebook.com/таны-нэр эсвэл Facebook дээрх нэр" className={input} />
+            </div>
+            {/* User test #1, item 8: say what e-mail and Facebook bring. */}
+            <div className="po-bonus sm:col-span-2" role="note">
+              <p><span aria-hidden="true">🎁</span> <b>И-мэйл:</b> {CONTACT_BONUS.email}</p>
+              <p><span aria-hidden="true">🎁</span> <b>Facebook:</b> {CONTACT_BONUS.facebook}</p>
             </div>
           </div>
 

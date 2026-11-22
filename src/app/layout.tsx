@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import "@/styles/site.css";
 import "@/styles/model.css";
+import "@/styles/ux-test.css";
 import "./globals.css";
 import { SavingsProvider } from "@/components/forms/SavingsCalculator";
 import { SiteChromeProvider } from "@/components/layout/SiteChrome";
@@ -10,6 +11,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SpotlightTracker } from "@/components/ui/SpotlightTracker";
 import { CalScript } from "@/components/ui/CalTestDrive";
+import { AssistantWidget } from "@/components/assistant/AssistantWidget";
 import { getCalculatorModels, getNavigation } from "@/data/content";
 import { getFuelPrices } from "@/lib/fuelPrices";
 
@@ -31,6 +33,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <SiteHeader navigation={navigation} />
             {children}
             <SiteFooter navigation={navigation} />
+            <AssistantWidget />
           </SavingsProvider>
         </SiteChromeProvider>
         <SpotlightTracker />

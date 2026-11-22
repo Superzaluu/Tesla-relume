@@ -9,6 +9,8 @@ import { calTestDrive } from "@/components/ui/CalTestDrive";
 // TODO: real phone number, opening hours, street address and social URLs (the icons still point to "#").
 
 const services = [
+  { label: "Ruichi брэнд", href: "/brand/" },
+  { label: "Хэмнэлтийн тооцоолуур", href: "/savings/" },
   { label: "Ногоон зээл", href: "/green-loan/" },
   { label: "Батерейн баталгаа", href: "/warranty/" },
   { label: "Туршилтын жолоодлого", href: "/#test-drive" },

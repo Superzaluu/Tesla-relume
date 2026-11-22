@@ -12,7 +12,8 @@ import { getDeposits } from "@/lib/deposits";
 import { contactError, findListing, formText, insertPreorder } from "@/lib/preorders";
 
 /** bonus: 100,000 ₮ bonus found for this phone (deducted from the final price by the dealer). */
-export type PreorderState = { ok?: boolean; error?: string; paymentFailed?: boolean; bonus?: number };
+/** id: the new pre-order, for the prize wheel shown after it (user test #1, 2026-11-23, item 8). */
+export type PreorderState = { ok?: boolean; error?: string; paymentFailed?: boolean; bonus?: number; id?: string };
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -54,7 +55,7 @@ export async function submitPreorder(_prev: PreorderState, form: FormData): Prom
   const deposit = (await getDeposits())[item.slug];
   if (!deposit || !bylConfigured()) {
     if (!(await insertPreorder(row))) return failed;
-    return { ok: true, bonus: await applyBonus(id, phone) };
+    return { ok: true, id, bonus: await applyBonus(id, phone) };
   }
 
   const origin = await siteOrigin();
@@ -71,7 +72,7 @@ export async function submitPreorder(_prev: PreorderState, form: FormData): Prom
   // Byl unavailable: keep the request so the dealer can still call, and say the payment did not start.
   if (!checkout) {
     if (!(await insertPreorder(row))) return failed;
-    return { ok: true, paymentFailed: true, bonus: await applyBonus(id, phone) };
+    return { ok: true, id, paymentFailed: true, bonus: await applyBonus(id, phone) };
   }
 
   const saved = await insertPreorder({

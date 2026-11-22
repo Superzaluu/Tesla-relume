@@ -11,7 +11,8 @@ const links = [
   { href: "/admin/cards/", label: "Машины карт" },
   { href: "/admin/hero/", label: "Hero слайд" },
   { href: "/admin/preorders/", label: "Урьдчилсан захиалга" },
-  { href: "/admin/bonus/", label: "Бонус бүртгэл" }
+  { href: "/admin/bonus/", label: "Бонус бүртгэл" },
+  { href: "/admin/assistant/", label: "AI туслах" }
 ];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {

@@ -73,9 +73,10 @@ how something should look or behave, open C5 and match it.
   `CHIP_FROM_TEXT` (EPB, USB / Type-C).
 - **Data stays in the sheet.** Copy never claims more than the spec sheet; EC75/R5 hand-written sections
   live in `src/data/ec75.ts`, `r5.ts`, all others are built by `src/data/story.ts`.
-- **Savings calculator is per model.** The quick window (homepage section as a modal) calculates only the
-  page's model (`getCalculatorModel(slug)`, also for models not in the menu); «Дэлгэрэнгүй тооцоолох»
-  opens the full calculator on the same model.
+- **Savings calculator is per model.** Since user test #1 (2026-11-23) the button opens its own page
+  `/savings/?model=<slug>&variant=<side>` (`components/savings/SavingsPage.tsx`): one km slider with a dragging
+  hand until touched, one big yearly figure that counts up while coins drop. The old quick window is gone;
+  «Өөрийн машинтай харьцуулах» still opens the full calculator modal.
 
 ## Style guide (src/data/styleguide.ts, /styleguide/)
 
@@ -141,3 +142,22 @@ not used. The single-cab C5 box (c5-box, c5-cng-box, c5-reev-box) IS the C5L box
 cargo photo = C5L side; wired in content.ts `SHIPPED`, used while the admin row still holds coming-soon.svg.
 Still without photos: R5 service story (no sheet), C3 cold album. r5-service has no spec
 sheet (no chapters, no trims). These need real photos / sheet data from the user, not code.
+
+## User test #1 (2026-11-23) — what changed on every model page
+
+Styles in `src/styles/ux-test.css` (one file for the whole round).
+- Title is «**Ruichi** C5» (`.mintro__brand`); menu / cards / similar / pre-order use `brandName()` (`src/data/brand.ts`).
+  Names in Supabase and in sentences stay plain.
+- Hero photo (`HeroPhotoActions.tsx`): lights up on hover; hover / first tap shows «Үзүүлэлт харах ↓» (→ #specs)
+  and «Зураг үзэх» (→ #gallery); a second click on the photo goes to #specs. Touch screens get a small
+  «Дарж үзүүлэлт харах» badge. The icon strip keeps its own QuickPeek previews.
+- «Цэнэглэх хугацаа» (`ChargeTimes` in ConfigPicker): right under the trim cards, home AC time (ac_time / ac_power)
+  and DC time for the chosen trim; those three rows are left out of the battery card (nothing twice).
+- Trim cards: a hint line with a tapping hand, the not-chosen cards nudge once in view (`useTrimNudge`) and
+  carry «Харьцуулах →» until the visitor picks one.
+- Equipment chip explanation: «Зурагтай тайлбарыг харах ↑» when a SmartGrid card explains the same key
+  (`data-features` from the card id / code / tag, `featuresOf` in Chapters.tsx); it resets the grid filter
+  (event `smartgrid:show-all`), scrolls to the card and outlines it (`.is-spotlit`).
+- «Хэмнэлтийн тооцоолуур» button is `.savings-cta` (gold ₮ coin with a pulsing ring, filled pill, arrow).
+- Site-wide: «Нүүр хуудас» pill next to the logo (icon only at 1200–1439px and on phones), «Ruichi брэнд» link
+  (/brand/), «AI туслах» bottom-left (`AssistantWidget.tsx`, /api/assistant/, admin /admin/assistant/).

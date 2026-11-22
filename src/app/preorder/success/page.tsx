@@ -4,6 +4,8 @@ import { DEPOSIT_REFUND_DAYS, tugrikText } from "@/data/preorder";
 import { getCheckout } from "@/lib/byl";
 import { markPaid } from "@/lib/deposits";
 import { serviceRest } from "@/lib/supabase-service";
+import { PrizeWheel } from "@/components/forms/PrizeWheel";
+import { isDemo } from "@/lib/voucher";
 
 // Where Byl sends the buyer after paying. The webhook is the source of truth; this page also asks
 // Byl directly (server-side), so the buyer sees the right state even if the webhook is late.
@@ -60,6 +62,8 @@ export default async function PreorderSuccessPage({ searchParams }: { searchPara
               <dd className="m-0 text-right font-bold">{money(result.row.deposit_amount + result.row.bonus_amount)}</dd>
             </dl>
           ) : null}
+          {/* Prize wheel once the deposit is paid or being checked (user test #1, item 8); ?ref=demo tries it locally. */}
+          {(((state === "paid" || state === "verifying") && result) || isDemo(ref)) && <div className="mt-8"><PrizeWheel preorderId={ref} /></div>}
           {state === "paid" && (
             <p className="mx-auto mt-3 max-w-[480px] text-xs text-ink-muted">Захиалгаа цуцалбал урьдчилгааг {DEPOSIT_REFUND_DAYS} хоногийн дотор буцаан олгоно.</p>
           )}

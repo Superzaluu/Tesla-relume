@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { brandName } from "@/data/brand";
 import { hasEngine, type QuickSpecs } from "@/data/types";
 import { compactSize, countOnly, MISSING_SHORT, payloadValue, QuickIcon } from "@/components/ui/QuickSpecs";
 import { LoadingLink } from "@/components/ui/LoadingLink";
@@ -85,7 +86,7 @@ export function ModelSpecCard({ model }: { model: ModelCardData }) {
       <div className="flex flex-1 flex-col p-6">
         <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">{model.category}</p>
         <h3 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-ink">
-          <Link href={model.href} className="hover:text-[#0f5a3a]">{model.name}</Link>
+          <Link href={model.href} className="hover:text-[#0f5a3a]">{brandName(model.name)}</Link>
         </h3>
         {model.priceFrom && <PriceFrom value={model.priceFrom} />}
         {model.stats.length > 0 && (

@@ -4,7 +4,8 @@ import { useEffect, useState, type CSSProperties } from "react";
 import type { Img } from "@/data/types";
 import { Picture } from "@/components/model/VariantValues";
 
-export type SmartItem = { key: string; id?: string; title: string; tag?: string; text: string; image: Img };
+/** `features`: equipment keys this card explains (space-separated), the target of a chip's «Зурагтай тайлбар». */
+export type SmartItem = { key: string; id?: string; title: string; tag?: string; text: string; image: Img; features?: string };
 export type SmartGroup = { label: string; items: SmartItem[] };
 
 /** A card without its photo yet is a text card, not a "Coming soon" box (same rule as Blocks' hasPicture). */
@@ -20,7 +21,9 @@ export function SmartGrid({ groups }: { groups: SmartGroup[] }) {
   useEffect(() => {
     const reset = () => setFilter("all");
     window.addEventListener("hashchange", reset);
-    return () => window.removeEventListener("hashchange", reset);
+    // An equipment chip jumping to its picture card (ConfigPicker) shows every card first.
+    window.addEventListener("smartgrid:show-all", reset);
+    return () => { window.removeEventListener("hashchange", reset); window.removeEventListener("smartgrid:show-all", reset); };
   }, []);
   const total = groups.reduce((sum, group) => sum + group.items.length, 0);
   const shown = groups.filter((group) => filter === "all" || group.label === filter);
@@ -48,7 +51,7 @@ export function SmartGrid({ groups }: { groups: SmartGroup[] }) {
       )}
       <div className="msmart__grid" style={{ "--cols": cols } as CSSProperties}>
         {items.map((item, i) => (
-          <figure className={`mcard mcard--grid${i === featuredIndex ? " is-featured" : ""}${pictured(item) ? "" : " mcard--text"}`} key={item.key} id={item.id}>
+          <figure className={`mcard mcard--grid${i === featuredIndex ? " is-featured" : ""}${pictured(item) ? "" : " mcard--text"}`} key={item.key} id={item.id} data-features={pictured(item) && item.features ? item.features : undefined}>
             {pictured(item) && <Picture image={item.image} />}
             <figcaption><h3>{item.title} {item.tag && <span>{item.tag}</span>}</h3><p>{item.text}</p></figcaption>
           </figure>

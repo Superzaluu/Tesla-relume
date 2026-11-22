@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { brandName } from "@/data/brand";
 import { notFound } from "next/navigation";
 import { ModelPage } from "@/components/model/ModelPage";
 import { getCalculatorModel, getCategory, getModel, getModelCards, getModelSlugs, getNavigation, getSpecSheet } from "@/data/content";
@@ -20,7 +21,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const model = await getModel((await params).slug);
   if (!model) return {};
-  return { title: `${model.name} — ${model.page.pageTitle ?? model.desc}`, description: model.page.tagline ?? model.desc };
+  return { title: `${brandName(model.name)} — ${model.page.pageTitle ?? model.desc}`, description: model.page.tagline ?? model.desc };
 }
 
 export default async function Page({ params }: Props) {

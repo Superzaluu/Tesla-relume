@@ -88,7 +88,7 @@ const digits = (text: string) => Number(text.replace(/[^\d]/g, "")) || 0;
  * monthly payment, its average interest part and the yearly total, and how much of the payment the fuel
  * saving covers. Same annuity formula and rates as /green-loan/ (src/data/greenLoan.ts).
  */
-function LoanPart({ model, saving, idPrefix }: { model: CalcModel; saving: number; idPrefix: string }) {
+export function LoanPart({ model, saving, idPrefix }: { model: CalcModel; saving: number; idPrefix: string }) {
   const [priceText, setPriceText] = useState(model.priceFrom ? model.priceFrom.toLocaleString("en-US") : "");
   const [down, setDown] = useState(LOAN_DOWN);
   const [income, setIncome] = useState<IncomeType>("salary");
@@ -191,7 +191,7 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail, coll
   /** Start folded to the title and line, with «Дэлгэрэнгүй» to open the rest (homepage section). */
   collapsible?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(!collapsible);
+  const [expanded] = useState(!collapsible);
   const openCalculator = useOpenSavings();
   const choices = useMemo(
     () => (own ? [own] : MODELS.map((value) => models.find((m) => m.value === value)).filter((m): m is CalcModel => Boolean(m))),
@@ -233,12 +233,11 @@ export function SavingsPanel({ models, fuelPrices, idPrefix, own, onDetail, coll
           </p>
 
           {!expanded ? (
-            <button
-              type="button" aria-expanded={false} aria-controls={`${idPrefix}-body`} onClick={() => setExpanded(true)}
-              className="btn btn--primary mt-5 min-h-[44px] gap-1.5 px-5"
-            >
-              Дэлгэрэнгүй <span aria-hidden="true">↓</span>
-            </button>
+            // The calculator is its own page since user test #1 (2026-11-23, item 6); the homepage links to it.
+            <a href={`/savings/?model=${encodeURIComponent(model.slug)}${model.value.split("|")[1] ? `&variant=${model.value.split("|")[1]}` : ""}`} className="btn savings-cta mt-5 min-h-[44px] gap-1.5 px-5">
+              <span className="savings-cta__icon" aria-hidden="true">₮</span>
+              Хэмнэлтээ тооцоолох <span className="savings-cta__arrow" aria-hidden="true">→</span>
+            </a>
           ) : (
           <div id={`${idPrefix}-body`}>
 

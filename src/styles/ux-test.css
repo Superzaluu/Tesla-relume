@@ -1,0 +1,386 @@
+/* ==========================================================================
+   User test #1 (2026-11-23): fixes from watching a real visitor use the site.
+   One file so the round of changes can be read (and reverted) together. Brand green family only, plus the
+   gold of the savings coins (item 7 asked for coins that feel like money won).
+   ========================================================================== */
+
+/* ---------- 9. «Нүүр хуудас» next to the logo ---------- */
+.navbar__logo:has(+ .navbar__home) { margin-right: 0; }
+.navbar__home {
+  display: inline-flex; align-items: center; gap: 6px; margin-right: auto;
+  padding: 7px 12px; border: 1px solid #dce3ea; border-radius: 999px; background: #fff;
+  color: #0f5a3a; font-size: 13px; font-weight: 600; line-height: 1.2; text-decoration: none; white-space: nowrap;
+  transition: background-color .2s, border-color .2s, transform .2s var(--ease-out, ease-out);
+}
+.navbar__home:hover { background: #eef5f3; border-color: #0f5a3a; transform: translateY(-1px); }
+/* The bar is full at 1200–1439px (six menus + brand link): the home link shows its icon only there and on phones. */
+@media (max-width: 480px), (min-width: 1200px) and (max-width: 1439px) { .navbar__home span { display: none; } .navbar__home { padding: 8px; } }
+.navbar__plain { text-decoration: none; }
+.navbar__plain[aria-current="page"] { background: #eef5f3; color: #147a48; }
+@media (max-width: 1199px) { .navbar__plain { display: flex; border-bottom: 1px solid #eeeeee; border-radius: 0; } }
+
+/* ---------- 11. «Ruichi» before the model name ---------- */
+.mintro__brand { color: #147a48; font-weight: 700; }
+
+/* ---------- 1. Hero photo: lights up, «Үзүүлэлт харах» on click ---------- */
+.mintro__photo { position: relative; cursor: pointer; border-radius: var(--radius-card); }
+.mintro__photo .mintro__image { transition: filter .4s var(--ease-out, ease-out), transform .8s var(--ease-out, ease-out); }
+.mintro__photo:hover .mintro__image, .mintro__photo.is-open .mintro__image { filter: brightness(1.06) saturate(1.08); }
+.mintro__photo-actions {
+  position: absolute; top: 18px; left: 50%; z-index: 3; display: flex; gap: 8px;
+  opacity: 0; transform: translate(-50%, -8px); pointer-events: none;
+  transition: opacity .25s var(--ease-out, ease-out), transform .3s var(--ease-out, ease-out);
+}
+.mintro__photo:hover .mintro__photo-actions,
+.mintro__photo.is-open .mintro__photo-actions,
+.mintro__photo:focus-within .mintro__photo-actions { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.mintro__photo-actions .btn { min-height: 42px; padding-inline: 18px; box-shadow: 0 10px 24px rgb(15 35 56 / .18); white-space: nowrap; }
+.mintro__photo-actions .btn--secondary { background: #fff; border-color: #0f5a3a; color: #0f5a3a; }
+/* Touch screens have no hover: a soft hint says the photo can be tapped. */
+@media (hover: none) {
+  .mintro__photo::after {
+    content: "Дарж үзүүлэлт харах"; position: absolute; top: 12px; right: 12px; z-index: 2;
+    padding: 5px 10px; border-radius: 999px; background: rgb(255 255 255 / .9); color: #0f5a3a;
+    font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgb(15 35 56 / .12);
+  }
+  .mintro__photo.is-open::after { display: none; }
+}
+
+/* ---------- 2. «Цэнэглэх хугацаа» at the start of the specs ---------- */
+.mcharge { max-width: 980px; margin-top: 24px; padding: 20px 22px; border: 1px solid #dce3ea; border-radius: var(--radius-card); background: #fff; }
+.mcharge__title { margin: 0 0 14px; }
+.mcharge__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.mcharge__item {
+  display: grid; grid-template-columns: auto 1fr; grid-template-areas: "icon label" "icon value" "note note";
+  column-gap: 14px; row-gap: 2px; align-items: center; padding: 16px 18px; border-radius: 12px; background: #f5f7fa;
+}
+.mcharge__item.is-home { background: #eef5f3; box-shadow: inset 0 0 0 1px rgb(15 90 58 / .25); }
+.mcharge__item.is-changed { animation: mcharge-flash 1.6s ease-out; }
+@keyframes mcharge-flash { 0% { background: rgb(15 90 58 / .18); } 100% { } }
+.mcharge__icon { grid-area: icon; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #fff; color: #0f5a3a; }
+.mcharge__label { grid-area: label; font-size: var(--text-small); font-weight: 600; color: #344054; }
+.mcharge__value { grid-area: value; font-size: 30px; font-weight: 700; line-height: 1.1; letter-spacing: -.02em; color: #0f5a3a; font-variant-numeric: tabular-nums; }
+.mcharge__value small { font-size: var(--text-regular); font-weight: 600; color: #344054; }
+.mcharge__note { grid-area: note; margin-top: 8px; font-size: var(--text-small); line-height: 1.45; color: #667085; }
+.mcharge__link { display: inline-block; margin-top: 12px; font-size: var(--text-small); font-weight: 600; color: #0f5a3a; }
+
+/* ---------- 3. «Хэмнэлтийн тооцоолуур» looks like a button ---------- */
+.btn.savings-cta {
+  position: relative; display: inline-flex; align-items: center; gap: 8px;
+  min-height: 42px; padding: 8px 16px 8px 8px; border: 2px solid #0f5a3a; border-radius: 999px;
+  background: linear-gradient(180deg, #fff, #eef5f3); color: #0f5a3a; font-weight: 700; white-space: nowrap; cursor: pointer;
+  box-shadow: 0 6px 16px rgb(15 90 58 / .22), inset 0 -2px 0 rgb(15 90 58 / .12);
+  text-decoration: none;
+}
+.btn.savings-cta:hover { background: #0f5a3a; color: #fff; transform: translateY(-1px); box-shadow: 0 10px 22px rgb(15 90 58 / .3); }
+.btn.savings-cta:active { transform: scale(.97); }
+.savings-cta__icon {
+  position: relative; display: grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe58a, #f2b705 60%, #c98b00); color: #6b4e00;
+  font-size: 15px; font-weight: 800; box-shadow: inset 0 -2px 0 rgb(0 0 0 / .15), 0 1px 2px rgb(0 0 0 / .2);
+}
+/* A ring pulses out of the coin every few seconds, so the eye finds the button. */
+.savings-cta__icon::after {
+  content: ""; position: absolute; inset: -4px; border: 2px solid #f2b705; border-radius: 50%;
+  animation: savings-ping 2.4s var(--ease-out, ease-out) infinite;
+}
+@keyframes savings-ping { 0% { transform: scale(.8); opacity: .9; } 60%, 100% { transform: scale(1.7); opacity: 0; } }
+.savings-cta__arrow { transition: transform .2s var(--ease-out, ease-out); }
+.btn.savings-cta:hover .savings-cta__arrow { transform: translateX(3px); }
+.mnav__savings .btn.savings-cta { min-height: 38px; padding-block: 4px; }
+.savings-float .btn.savings-cta { box-shadow: 0 12px 28px rgb(15 35 56 / .28); }
+
+/* ---------- 4. Trim cards say they can be clicked ---------- */
+.mpick__hint { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: var(--text-small); font-weight: 600; color: #0f5a3a; }
+.mpick__hint.is-done { color: #667085; font-weight: 500; }
+.mpick__hint-hand { display: inline-block; font-size: 20px; animation: hint-tap 1.4s var(--ease-out, ease-out) infinite; }
+.mpick__hint.is-done .mpick__hint-hand { animation: none; opacity: .6; }
+@keyframes hint-tap { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-5px); } 60% { transform: translateY(1px) scale(.92); } }
+.mpick__trims { overflow: visible; }
+button.mpick__trim { position: relative; }
+.mpick__trim-cta {
+  align-self: flex-start; margin-top: 4px; padding: 4px 10px; border-radius: 999px; background: #eef5f3;
+  color: #0f5a3a; font-size: 12px; font-weight: 700; transition: background-color .2s, color .2s;
+}
+button.mpick__trim:hover .mpick__trim-cta { background: #0f5a3a; color: #fff; }
+/* Once in view: each card that is not chosen lifts and glows in turn. */
+.mpick__trims.is-nudging button.mpick__trim[aria-pressed="false"] { animation: trim-nudge 1.1s var(--ease-out, ease-out) calc(var(--nudge-i, 0) * 260ms) 2 both; }
+@keyframes trim-nudge {
+  0%, 100% { transform: none; box-shadow: none; }
+  35% { transform: translateY(-4px); box-shadow: 0 0 0 2px rgb(15 90 58 / .45), 0 12px 24px rgb(15 35 56 / .12); }
+}
+
+/* ---------- 5. Chip explanation → its picture card ---------- */
+.mequip__note-jump {
+  align-self: flex-start; margin-top: 8px; padding: 6px 12px; border: 1px solid #0f5a3a; border-radius: 999px;
+  background: #fff; color: #0f5a3a; font: inherit; font-size: var(--text-small); font-weight: 600; cursor: pointer;
+}
+.mequip__note-jump:hover { background: #0f5a3a; color: #fff; }
+.mcard.is-spotlit { animation: card-spotlit 2.4s var(--ease-out, ease-out); }
+@keyframes card-spotlit {
+  0%, 60% { box-shadow: 0 0 0 4px #147a48, 0 18px 40px rgb(15 90 58 / .25); transform: translateY(-4px); }
+  100% { box-shadow: none; transform: none; }
+}
+
+/* ---------- 6 + 7. /savings/: one question, one big figure, coins ---------- */
+.savings-main { min-height: 100vh; padding: calc(var(--navbar-height) + 40px) var(--padding-global) 64px; background: linear-gradient(to bottom, #eef5f3, #f5f7fa 60%); }
+.savings-page { max-width: 820px; margin: 0 auto; display: grid; gap: 20px; }
+.savings-page__empty { padding: 80px 0; text-align: center; color: #667085; }
+.savings-page__head { text-align: center; }
+.savings-page__kicker { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #147a48; }
+.savings-page__title { margin: 8px 0 14px; font-size: clamp(28px, 4vw, 42px); font-weight: 700; line-height: 1.12; letter-spacing: -.03em; color: #14213d; }
+.savings-page__model select {
+  min-height: 42px; padding: 8px 36px 8px 14px; border: 1px solid #dce3ea; border-radius: 999px; background: #fff;
+  font: inherit; font-weight: 600; color: #14213d; cursor: pointer;
+}
+.savings-km, .savings-win { position: relative; padding: 24px; border: 1px solid #dce3ea; border-radius: 18px; background: #fff; box-shadow: 0 10px 30px rgb(15 35 56 / .06); }
+.savings-km__top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.savings-km__top label { font-size: var(--text-medium); font-weight: 700; color: #14213d; }
+.savings-km__value { font-size: 40px; font-weight: 700; color: #0f5a3a; font-variant-numeric: tabular-nums; }
+.savings-km__value small { font-size: 18px; }
+.savings-km__track { position: relative; margin-top: 14px; }
+.savings-km__track input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 14px; margin: 0; border-radius: 999px; cursor: pointer;
+  background: linear-gradient(to right, #0f5a3a calc(var(--share) * 100%), #e1efe6 calc(var(--share) * 100%));
+}
+.savings-km__track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 34px; height: 34px; border: 4px solid #fff; border-radius: 50%; background: #0f5a3a;
+  box-shadow: 0 4px 12px rgb(15 35 56 / .3), 0 0 0 1px #0f5a3a;
+}
+.savings-km__track input[type="range"]::-moz-range-thumb {
+  width: 26px; height: 26px; border: 4px solid #fff; border-radius: 50%; background: #0f5a3a; box-shadow: 0 4px 12px rgb(15 35 56 / .3);
+}
+.savings-km__track.is-hinting input[type="range"]::-webkit-slider-thumb { animation: thumb-glow 1.6s ease-in-out infinite; }
+@keyframes thumb-glow { 50% { box-shadow: 0 4px 12px rgb(15 35 56 / .3), 0 0 0 10px rgb(15 90 58 / .18); } }
+/* The hand starts on the thumb and drags it to the right and back (item 6: "move it with your finger"). */
+.savings-km__hand {
+  position: absolute; top: 2px; left: calc(var(--share) * (100% - 34px) + 8px); pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgb(15 35 56 / .25)); animation: hand-drag 2.6s var(--ease-out, ease-out) infinite;
+}
+@keyframes hand-drag {
+  0% { transform: translate(0, 10px) scale(1); opacity: 0; }
+  12% { opacity: 1; transform: translate(0, 6px) scale(.92); }
+  55% { transform: translate(90px, 6px) scale(.92); }
+  75% { transform: translate(90px, 12px) scale(1); opacity: 1; }
+  100% { transform: translate(90px, 14px); opacity: 0; }
+}
+.savings-km__hint { margin: 30px 0 0; text-align: center; font-size: var(--text-small); font-weight: 600; color: #147a48; transition: opacity .3s; }
+.savings-km__hint.is-hidden { opacity: 0; }
+.savings-km__stops { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 12px; }
+.savings-km__stops button {
+  padding: 7px 14px; border: 1px solid #dce3ea; border-radius: 999px; background: #fff; font: inherit; font-size: 13px;
+  color: #344054; cursor: pointer;
+}
+.savings-km__stops button[aria-pressed="true"] { border-color: #0f5a3a; background: #0f5a3a; color: #fff; }
+
+.savings-win { overflow: hidden; padding-top: 32px; text-align: center; background: radial-gradient(120% 90% at 50% 0%, #fff8db 0%, #fff 55%); }
+.savings-win__label { position: relative; z-index: 2; margin: 0; font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #6b4e00; }
+.savings-win__value {
+  position: relative; z-index: 2; margin: 6px 0 0; font-size: clamp(44px, 8vw, 76px); font-weight: 800; line-height: 1;
+  letter-spacing: -.035em; color: #0f5a3a; font-variant-numeric: tabular-nums; text-shadow: 0 2px 0 #fff;
+}
+.savings-win__line { position: relative; z-index: 2; margin: 14px 0 0; font-size: var(--text-regular); color: #344054; }
+.savings-win__line b { color: #0f5a3a; }
+.savings-win__compare { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 14px 0 0; font-size: 13px; }
+.savings-win__compare span { padding: 5px 12px; border-radius: 999px; }
+.savings-win__compare .is-diesel { background: #f5f7fa; color: #667085; text-decoration: line-through; text-decoration-color: rgb(102 112 133 / .5); }
+.savings-win__compare .is-ruichi { background: #eef5f3; color: #0f5a3a; font-weight: 600; }
+
+/* Coins: gold discs with ₮, falling from the top of the card with a spin and a bounce. */
+.scoin {
+  display: grid; place-items: center; border-radius: 50%; color: #6b4e00; font-weight: 800; font-size: 14px;
+  background: radial-gradient(circle at 35% 30%, #fff2b3 0 12%, #ffd54a 35%, #f2b705 65%, #c98b00 100%);
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / .14), inset 0 0 0 2px rgb(255 255 255 / .35), 0 3px 6px rgb(107 78 0 / .25);
+}
+.scoin-rain { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.scoin-rain .scoin { position: absolute; top: -40px; animation: coin-fall 1.5s cubic-bezier(.3, .7, .4, 1) both; }
+@keyframes coin-fall {
+  0% { transform: translateY(0) rotate(0); opacity: 0; }
+  10% { opacity: 1; }
+  70% { transform: translateY(calc(100% + 230px)) rotate(calc(var(--spin) * 300deg)); }
+  82% { transform: translateY(calc(100% + 205px)) rotate(calc(var(--spin) * 330deg)); }
+  100% { transform: translateY(calc(100% + 230px)) rotate(calc(var(--spin) * 360deg)); opacity: 0; }
+}
+.scoin-stack { position: relative; z-index: 2; display: flex; flex-direction: column-reverse; align-items: center; margin: 16px auto 0; padding-top: 8px; }
+.scoin--flat {
+  width: 88px; height: 18px; margin-top: -9px; border-radius: 50%;
+  animation: coin-stack .45s var(--ease-out, ease-out) calc(var(--i) * 60ms) both;
+}
+@keyframes coin-stack { from { transform: translateY(-30px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.savings-page__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.savings-page__actions .btn { min-height: 46px; padding-inline: 22px; }
+.savings-page__loan { padding: 8px 0 0; }
+.savings-page__note { margin: 0; text-align: center; font-size: 12.5px; line-height: 1.6; color: #667085; }
+.savings-page__more { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: #0f5a3a; cursor: pointer; text-decoration: underline; }
+@media (max-width: 600px) {
+  .savings-km, .savings-win { padding: 18px; }
+  .savings-km__value { font-size: 32px; }
+  .savings-page__actions .btn { flex: 1 1 100%; }
+}
+
+/* ---------- 11. /brand/ ---------- */
+.brand-page { background: #f5f7fa; }
+.brand-hero { padding: calc(var(--navbar-height) + 64px) var(--padding-global) 56px; background: linear-gradient(160deg, #083d28, #0f5a3a 60%, #147a48); color: #fff; }
+.brand-hero__inner { max-width: 1100px; margin: 0 auto; }
+.brand-kicker { margin: 0 0 10px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #147a48; }
+.brand-hero .brand-kicker { color: #bfe3cf; }
+.brand-hero__title { max-width: 18ch; margin: 0; font-size: clamp(34px, 5vw, 60px); font-weight: 700; line-height: 1.05; letter-spacing: -.035em; }
+.brand-hero__text { max-width: 60ch; margin: 18px 0 0; font-size: var(--text-medium); line-height: 1.6; color: #dfeee6; }
+.brand-hero__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.brand-hero__actions .btn--primary { background: #fff; border-color: #fff; color: #0f5a3a; }
+.brand-hero__actions .btn--secondary { background: transparent; border-color: rgb(255 255 255 / .6); color: #fff; }
+.brand-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.brand-facts li { padding: 22px; border: 1px solid #dce3ea; border-radius: 18px; background: #fff; }
+.brand-facts strong { display: block; font-size: 34px; font-weight: 800; letter-spacing: -.03em; color: #0f5a3a; }
+.brand-facts__label { display: block; margin-top: 2px; font-weight: 700; color: #14213d; }
+.brand-facts p { margin: 8px 0 0; font-size: var(--text-small); line-height: 1.5; color: #667085; }
+.brand-video {
+  display: grid; place-items: center; align-content: center; gap: 6px; aspect-ratio: 16 / 7; border-radius: 18px;
+  background: linear-gradient(135deg, #eef5f3, #dce3ea); color: #0f5a3a; text-align: center;
+}
+.brand-video__play { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: #fff; box-shadow: 0 10px 30px rgb(15 35 56 / .12); }
+.brand-video__title { margin: 10px 0 0; font-size: var(--text-medium); font-weight: 700; color: #14213d; }
+.brand-video__text { margin: 0; font-size: var(--text-small); color: #667085; }
+.brand-h2 { margin: 0 0 28px; }
+.brand-timeline { position: relative; display: grid; gap: 18px; margin: 0; padding: 0 0 0 28px; list-style: none; }
+.brand-timeline::before { content: ""; position: absolute; top: 6px; bottom: 6px; left: 7px; width: 2px; background: #cfe2d8; }
+.brand-timeline li { position: relative; display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 18px 20px; border-radius: 14px; background: #fff; border: 1px solid #dce3ea; }
+.brand-timeline li::before { content: ""; position: absolute; top: 24px; left: -27px; width: 14px; height: 14px; border: 3px solid #0f5a3a; border-radius: 50%; background: #fff; }
+.brand-timeline__year { font-size: var(--text-medium); font-weight: 800; color: #0f5a3a; }
+.brand-timeline h3 { margin: 0; font-size: var(--text-regular); font-weight: 700; color: #14213d; }
+.brand-timeline p { margin: 4px 0 0; font-size: var(--text-small); line-height: 1.55; color: #667085; }
+@media (max-width: 600px) { .brand-timeline li { grid-template-columns: 1fr; gap: 4px; } }
+.brand-pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.brand-pillars li { padding: 22px; border-radius: 18px; background: #eef5f3; }
+.brand-pillars h3 { margin: 0; font-size: var(--text-regular); font-weight: 700; color: #0f5a3a; }
+.brand-pillars p { margin: 6px 0 0; font-size: var(--text-small); line-height: 1.55; color: #344054; }
+.brand-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 28px; padding: 22px 24px; border-radius: 18px; background: #fff; border: 1px solid #dce3ea; }
+.brand-cta p { margin: 0; font-weight: 600; color: #14213d; }
+.brand-sources { margin: 22px 0 0; font-size: 12px; color: #667085; }
+.brand-sources a { color: #667085; }
+
+/* ---------- 8. Pre-order: contact bonus, prize wheel, voucher ---------- */
+.po-bonus { display: grid; gap: 4px; padding: 12px 14px; border: 1px dashed #f2b705; border-radius: 10px; background: #fffbea; }
+.po-bonus p { margin: 0; font-size: 13px; line-height: 1.5; color: #5c4300; }
+.po-bonus b { color: #3d2c00; }
+
+.pspin { display: grid; justify-items: center; gap: 10px; padding: 24px 16px; border-radius: 18px; background: radial-gradient(120% 100% at 50% 0%, #fff8db, #fff 60%); border: 1px solid #f3e3a1; }
+.pspin__title { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -.02em; color: #14213d; }
+.pspin__text { max-width: 44ch; margin: 0; font-size: var(--text-small); color: #667085; text-align: center; }
+.pspin__button { min-width: 220px; min-height: 48px; font-size: 16px; }
+.pspin__error { margin: 0; color: #a32020; font-size: var(--text-small); }
+.pwheel { position: relative; width: min(300px, 80vw); aspect-ratio: 1; margin: 8px 0; }
+.pwheel__disc { width: 100%; height: 100%; filter: drop-shadow(0 12px 24px rgb(15 35 56 / .22)); }
+.pwheel__pointer {
+  position: absolute; top: -10px; left: 50%; z-index: 2; width: 0; height: 0; transform: translateX(-50%);
+  border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 28px solid #c98b00;
+  filter: drop-shadow(0 3px 3px rgb(0 0 0 / .25));
+}
+
+.pwin { position: relative; display: grid; gap: 16px; }
+.pwin__title { margin: 0; text-align: center; font-size: clamp(20px, 3vw, 26px); font-weight: 700; color: #14213d; }
+.pwin__title b { color: #0f5a3a; }
+.pwin__burst { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.pwin__burst span {
+  position: absolute; top: 10px; left: 50%; width: 18px; height: 18px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff2b3, #f2b705 60%, #c98b00);
+  animation: burst 1.3s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * 30ms) both;
+  --a: calc(var(--i) * 25.7deg);
+}
+@keyframes burst {
+  0% { transform: rotate(var(--a)) translateY(0) scale(.4); opacity: 1; }
+  100% { transform: rotate(var(--a)) translateY(-170px) scale(1); opacity: 0; }
+}
+
+.pvoucher-wrap { display: grid; gap: 12px; }
+.pvoucher {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); overflow: hidden; text-align: left;
+  border-radius: 18px; background: #fff; border: 2px solid #0f5a3a; box-shadow: 0 16px 40px rgb(15 35 56 / .14);
+}
+.pvoucher__photo { position: relative; background: linear-gradient(160deg, #eef5f3, #dce3ea); }
+.pvoucher__photo { display: grid; place-items: center; }
+.pvoucher__photo img { display: block; width: 100%; height: auto; min-height: 0; object-fit: contain; padding: 36px 10px 10px; }
+.pvoucher__brand { position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 999px; background: #0f5a3a; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .06em; }
+.pvoucher__body { position: relative; display: grid; align-content: center; gap: 8px; padding: 22px 24px; border-left: 2px dashed #cfe2d8; }
+.pvoucher__body::before, .pvoucher__body::after { content: ""; position: absolute; left: -13px; width: 24px; height: 24px; border-radius: 50%; background: #f5f7f8; border: 2px solid #0f5a3a; }
+.pvoucher__body::before { top: -14px; }
+.pvoucher__body::after { bottom: -14px; }
+.pvoucher__kicker { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #147a48; }
+.pvoucher__prize { margin: 0; font-size: clamp(24px, 3.4vw, 32px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; color: #14213d; }
+.pvoucher__claim { margin: 0; font-size: 13px; line-height: 1.5; color: #344054; }
+.pvoucher__code { display: grid; justify-items: start; gap: 4px; margin-top: 6px; }
+.pvoucher__barcode { width: 100%; max-width: 280px; height: 56px; }
+.pvoucher__code-text { padding: 0; border: 0; background: none; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 18px; font-weight: 700; letter-spacing: .12em; color: #14213d; cursor: pointer; }
+.pvoucher__code-text small { margin-left: 6px; font-family: var(--font-inter, inherit); font-size: 11px; font-weight: 600; letter-spacing: 0; color: #147a48; }
+.pvoucher__secure { margin: 0; font-size: 11.5px; color: #667085; }
+.pvoucher__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.pvoucher__messenger { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: #0866ff; border-color: #0866ff; color: #fff; font-weight: 600; text-decoration: none; }
+.pvoucher__messenger.is-off { background: #f1f2f4; color: #667085; font-size: 13px; cursor: not-allowed; }
+.pvoucher__sent { margin: 0; text-align: center; font-size: 13px; color: #667085; }
+@media (max-width: 600px) {
+  .pvoucher { grid-template-columns: 1fr; }
+  .pvoucher__body { border-left: 0; border-top: 2px dashed #cfe2d8; }
+  .pvoucher__body::before, .pvoucher__body::after { display: none; }
+}
+/* Print: the voucher only. */
+@media print {
+  body * { visibility: hidden !important; }
+  .pvoucher, .pvoucher * { visibility: visible !important; }
+  .pvoucher { position: fixed; top: 20px; left: 20px; right: 20px; box-shadow: none; }
+}
+
+/* ---------- 10. «AI туслах» (bottom-left; the savings button waits bottom-right on phones) ---------- */
+.aiw-fab {
+  position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 60;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 6px 18px 6px 6px; border: 0; border-radius: 999px;
+  background: #0f5a3a; color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 12px 30px rgb(15 35 56 / .3); transition: transform .2s var(--ease-out, ease-out), background-color .2s;
+}
+.aiw-fab:hover { background: #083d28; transform: translateY(-2px); }
+.aiw-fab__icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: #0f5a3a; font-size: 26px; line-height: 1; }
+.aiw-fab:not(.is-open) .aiw-fab__icon { animation: aiw-bob 3.2s ease-in-out infinite; }
+@keyframes aiw-bob { 0%, 80%, 100% { transform: none; } 88% { transform: translateY(-4px) rotate(-8deg); } 94% { transform: translateY(0) rotate(6deg); } }
+@media (max-width: 600px) { .aiw-fab__label { display: none; } .aiw-fab { padding: 6px; } }
+.aiw-panel {
+  position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(80px + env(safe-area-inset-bottom, 0px)); z-index: 61;
+  display: flex; flex-direction: column; width: min(380px, calc(100vw - 32px)); height: min(560px, calc(100vh - 120px));
+  border: 1px solid #dce3ea; border-radius: 18px; background: #fff; box-shadow: 0 24px 60px rgb(15 35 56 / .25); overflow: hidden;
+  opacity: 0; visibility: hidden; transform: translateY(16px) scale(.98); transform-origin: bottom left;
+  transition: opacity .2s, transform .25s var(--ease-out, ease-out), visibility 0s linear .25s;
+}
+.aiw-panel.is-open { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.aiw-panel__head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: linear-gradient(135deg, #083d28, #0f5a3a); color: #fff; }
+.aiw-panel__avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: #0f5a3a; font-size: 13px; font-weight: 800; }
+.aiw-panel__title { margin: 0; font-weight: 700; }
+.aiw-panel__sub { margin: 0; font-size: 12px; color: #cfe2d8; }
+.aiw-panel__close { margin-left: auto; border: 0; background: none; color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
+.aiw-list { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 14px; overflow-y: auto; background: #f5f7fa; }
+.aiw-msg { max-width: 86%; padding: 10px 13px; border-radius: 14px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.aiw-msg.is-assistant { align-self: flex-start; background: #fff; color: #14213d; border: 1px solid #e4e9ee; border-bottom-left-radius: 4px; }
+.aiw-msg.is-user { align-self: flex-end; background: #0f5a3a; color: #fff; border-bottom-right-radius: 4px; }
+.aiw-msg.is-admin { border-color: #0f5a3a; background: #eef5f3; }
+.aiw-msg__tag { display: block; margin-top: 6px; font-size: 11px; font-weight: 700; color: #147a48; }
+.aiw-msg.is-admin .aiw-msg__tag { margin: 0 0 4px; }
+.aiw-msg__tag.is-forwarded { color: #8a5a00; }
+.aiw-msg.is-typing { display: flex; gap: 4px; }
+.aiw-msg.is-typing i { width: 7px; height: 7px; border-radius: 50%; background: #9cc4ad; animation: aiw-dot 1s infinite; }
+.aiw-msg.is-typing i:nth-child(2) { animation-delay: .15s; }
+.aiw-msg.is-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes aiw-dot { 50% { transform: translateY(-4px); background: #0f5a3a; } }
+.aiw-suggest { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.aiw-suggest button { padding: 7px 11px; border: 1px solid #cfe2d8; border-radius: 999px; background: #fff; color: #0f5a3a; font: inherit; font-size: 13px; cursor: pointer; text-align: left; }
+.aiw-suggest button:hover { background: #eef5f3; }
+.aiw-contact { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: #fffbea; border: 1px dashed #f2b705; }
+.aiw-contact label { font-size: 12.5px; font-weight: 600; color: #5c4300; }
+.aiw-contact div { display: flex; gap: 6px; }
+.aiw-contact input { flex: 1; min-width: 0; min-height: 38px; padding: 6px 10px; border: 1px solid #dce3ea; border-radius: 8px; font: inherit; font-size: 14px; }
+.aiw-contact .btn { min-height: 38px; padding-inline: 12px; }
+.aiw-form { display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px; border-top: 1px solid #e4e9ee; background: #fff; }
+.aiw-form textarea { flex: 1; min-height: 42px; max-height: 120px; padding: 10px 12px; border: 1px solid #dce3ea; border-radius: 12px; font: inherit; font-size: 14px; resize: none; outline: none; }
+.aiw-form textarea:focus { border-color: #0f5a3a; box-shadow: 0 0 0 3px rgb(15 90 58 / .15); }
+.aiw-form__send { display: grid; place-items: center; width: 42px; height: 42px; flex: none; border: 0; border-radius: 50%; background: #0f5a3a; color: #fff; cursor: pointer; }
+.aiw-form__send:disabled { background: #cfe2d8; cursor: default; }
+@media print { .aiw-fab, .aiw-panel { display: none !important; } }
+/* 1200–1299px: a little less padding per menu so «Ruichi брэнд» still fits on the bar. */
+@media (min-width: 1200px) and (max-width: 1299px) { .navbar__links .navmenu__trigger { padding-inline: 7px; } .navbar__container { gap: 16px; } }

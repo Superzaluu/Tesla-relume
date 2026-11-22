@@ -1,4 +1,5 @@
 import type { Model } from "@/data/types";
+import { brandName } from "@/data/brand";
 import type { CalcModel } from "@/data/savings";
 import { greenLoanHref, preorderHref } from "@/data/models";
 import type { SheetView } from "@/data/specSheet";
@@ -7,6 +8,7 @@ import { SpecSheetSection } from "@/components/model/SpecSheetSection";
 import { ModelNav, type NavItem } from "@/components/model/ModelNav";
 import { ChapterView, groupChapters } from "@/components/model/Chapters";
 import { QuickSpecs } from "@/components/ui/QuickSpecs";
+import { HeroPhotoActions } from "@/components/model/HeroPhotoActions";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { SectionView } from "@/components/model/Blocks";
@@ -21,7 +23,7 @@ import type { Variant } from "@/data/types";
 
 // «Хэмнэлтийн тооцоолуур» lives in the sticky menu between "Урьдчилсан захиалга" and "Туршилтын жолоодлого"
 // since 2026-11-21 (user): it starts there and follows the mouse from there (ModelNav → FloatingSavings).
-function Hero({ model, prices }: { model: Model; prices: Prices }) {
+function Hero({ model, prices, gallery }: { model: Model; prices: Prices; gallery: boolean }) {
   const { hero } = model.page;
   if (hero.kind === "intro") {
     return (
@@ -31,13 +33,16 @@ function Hero({ model, prices }: { model: Model; prices: Prices }) {
               (user, 2026-11-20): name + descriptor only. EC75 / R5 (cargo + passenger on one page) get their
               switch here, the photo follows it (user, 2026-11-21: their full-bleed photo hero was not the standard).
               «Эхлэх үнэ» under the descriptor (user, 2026-11-21): the lowest trim's price of the side shown. */}
-          <h1 className="mintro__title">{model.name}</h1>
+          {/* «Ruichi» before the name (user test #1, item 11: people did not know what a "C5" is). */}
+          <h1 className="mintro__title"><span className="mintro__brand">Ruichi</span> {model.name}</h1>
           <p className="mintro__desc">{model.desc}</p>
           <VariantPriceFrom prices={prices} className="mintro__price" />
           {model.page.variants && <div className="actions mintro__actions"><VariantToggle /></div>}
         </div>
         <div className="mintro__hero-frame">
-          <Picture image={hero.image} className="mintro__image" style={{ maxWidth: hero.maxWidth, objectPosition: hero.position }} eager />
+          <HeroPhotoActions gallery={gallery}>
+            <Picture image={hero.image} className="mintro__image" style={{ maxWidth: hero.maxWidth, objectPosition: hero.position }} eager />
+          </HeroPhotoActions>
           {model.quick && <QuickSpecs specs={model.quick} peeks={model.page.peeks} />}
         </div>
       </section>
@@ -100,7 +105,7 @@ function Similar({ cards }: { cards: ModelCardData[] }) {
                   <span className="msimilar__text">
                     {stat && <span className="msimilar__value">{stat.value}<small> {stat.unit}</small></span>}
                     {stat && <span className="msimilar__label">{stat.label}</span>}
-                    <span className="msimilar__name">{card.name}</span>
+                    <span className="msimilar__name">{brandName(card.name)}</span>
                   </span>
                 </a>
               </li>
@@ -141,7 +146,7 @@ export function ModelPage({ model, specView, similar = [], calc, prices = {} }: 
 
   const content = (
     <main id="overview">
-      <Hero model={model} prices={prices} />
+      <Hero model={model} prices={prices} gallery={album.length > 0} />
       <ModelNav items={nav} preorder={preorderHref(model.slug)} calc={calc} />
       <RevealOnScroll />
       {chapters.map((chapter) => <ChapterView chapter={chapter} key={chapter.id} />)}

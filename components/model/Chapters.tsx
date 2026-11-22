@@ -37,6 +37,18 @@ export function groupChapters(sections: Section[], winter?: SheetView["winter"])
 const SMART_GROUP: Record<string, string> = { adas: "Туслах систем", safety: "Аюулгүй байдал", cards: "Кабин" };
 
 /**
+ * Equipment keys a picture card explains (user test #1, 2026-11-23, item 5): an equipment chip with the same
+ * key gets «Зурагтай тайлбар харах», which jumps to the card. From the card's id (ADAS: the field key) and its
+ * code / tag ("AEB · FCW", "TJA/ICA", "360°"), plus the cabin's air-conditioning card by title.
+ */
+const TAG_FEATURE: Record<string, string> = { "360°": "camera360", "auto hold": "autohold", "tja": "ica" };
+const featuresOf = (id: string | undefined, code: string | undefined, title = "") => [...new Set([
+  id ?? "",
+  ...(code ?? "").toLowerCase().split(/\s*[·/]\s*/).map((part) => TAG_FEATURE[part.trim()] ?? part.trim()),
+  /агааржуулагч/i.test(title) ? "ac" : ""
+])].filter((key) => /^[a-z0-9_]+$/.test(key)).join(" ");
+
+/**
  * «Аюулгүй ба ухаалаг»: the picture cards of its sections become one filterable grid (SmartGrid); the ADAS
  * title (with its footnote) heads the chapter; anything else (R5's cabin feature) follows the grid.
  */
@@ -51,9 +63,9 @@ function SmartChapter({ sections }: { sections: Section[] }) {
   for (const section of sections) {
     for (const block of section.blocks) {
       if (block.type === "title") { if (section.id === "assist") heading = block; continue; }
-      if (block.type === "adas") add(SMART_GROUP.adas, block.items.map((item) => ({ key: `adas-${item.id}`, title: item.name, tag: item.code, text: item.text, image: item.image })));
-      else if (block.type === "safety") add(SMART_GROUP.safety, block.items.map((card) => ({ key: `safety-${card.title}`, id: card.id, title: card.title, tag: card.tag, text: card.text, image: card.image })));
-      else if (block.type === "cards") add(SMART_GROUP.cards, block.items.map((card) => ({ key: `cabin-${card.title}`, id: card.id, title: card.title, tag: card.tag, text: card.text, image: card.image })));
+      if (block.type === "adas") add(SMART_GROUP.adas, block.items.map((item) => ({ key: `adas-${item.id}`, title: item.name, tag: item.code, text: item.text, image: item.image, features: featuresOf(item.id, item.code) })));
+      else if (block.type === "safety") add(SMART_GROUP.safety, block.items.map((card) => ({ key: `safety-${card.title}`, id: card.id, title: card.title, tag: card.tag, text: card.text, image: card.image, features: featuresOf(undefined, card.tag, card.title) })));
+      else if (block.type === "cards") add(SMART_GROUP.cards, block.items.map((card) => ({ key: `cabin-${card.title}`, id: card.id, title: card.title, tag: card.tag, text: card.text, image: card.image, features: featuresOf(undefined, card.tag, card.title) })));
       else other.push(block);
     }
   }
